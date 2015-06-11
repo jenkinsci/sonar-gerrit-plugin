@@ -1,6 +1,6 @@
 package com.aquarellian.genar.data.entity;
 
-import com.aquarellian.genar.data.entity.interfaces.SonarIssue;
+
 
 import java.util.Date;
 
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 
 //todo javadoc
-public class SonarIssueImpl implements SonarIssue {
+public class Issue {
     private String key;
     private String component;
     private Integer line;
@@ -24,10 +24,10 @@ public class SonarIssueImpl implements SonarIssue {
     private Boolean isNew;
     private Date creationDate;
 
-    public SonarIssueImpl() {
+    public Issue() {
     }
 
-    public SonarIssueImpl(
+    public Issue(
             String key,
             String component,
             Integer line,
@@ -87,7 +87,7 @@ public class SonarIssueImpl implements SonarIssue {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SonarIssueImpl issue = (SonarIssueImpl) o;
+        Issue issue = (Issue) o;
 
         if (component != null ? !component.equals(issue.component) : issue.component != null)
             return false;

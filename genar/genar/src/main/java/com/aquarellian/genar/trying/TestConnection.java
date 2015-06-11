@@ -1,7 +1,7 @@
 package com.aquarellian.genar.trying;
 
 import com.aquarellian.genar.data.SonarReportBuilder;
-import com.aquarellian.genar.data.entity.interfaces.SonarReport;
+import com.aquarellian.genar.data.entity.Report;
 import org.sonar.wsclient.Sonar;
 import org.sonar.wsclient.SonarClient;
 import org.sonar.wsclient.services.Property;
@@ -32,7 +32,7 @@ public class TestConnection {
      */
     public static void main(String[] args) {
         String json = readFile("/Users/aquarellian/Documents/work/genar/genar/src/main/resources/example/example.json");
-        SonarReport rep = new SonarReportBuilder().fromJson(json);
+        Report rep = new SonarReportBuilder().fromJson(json);
 
         //localSonar = Sonar.create("http://localhost:9000");//pointed to my instance of Sonar
 
@@ -53,12 +53,12 @@ public class TestConnection {
         System.out.println(sonarStartTime);//print out this object
     }
 
-    private static String readFile(String file){
+    private static String readFile(String file) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
             StringBuilder sb = new StringBuilder();
-            for (String s: lines){
-              sb.append(s);
+            for (String s : lines) {
+                sb.append(s);
             }
             return sb.toString();
         } catch (IOException e) {

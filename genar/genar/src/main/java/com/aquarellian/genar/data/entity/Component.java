@@ -1,6 +1,6 @@
 package com.aquarellian.genar.data.entity;
 
-import com.aquarellian.genar.data.entity.interfaces.SonarComponent;
+
 
 /**
  * Project: genar
@@ -9,17 +9,17 @@ import com.aquarellian.genar.data.entity.interfaces.SonarComponent;
  * <p/>
  * $Id$
  */
-public class SonarComponentImpl implements SonarComponent{
+public class Component {
     private  String key;
 
     private  String path;
 
-    public SonarComponentImpl(String key, String path) {
+    public Component(String key, String path) {
         this.key = key;
         this.path = path;
     }
 
-    public SonarComponentImpl() {
+    public Component() {
     }
 
     public String getKey() {
@@ -35,7 +35,7 @@ public class SonarComponentImpl implements SonarComponent{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SonarComponentImpl component = (SonarComponentImpl) o;
+        Component component = (Component) o;
 
         if (key != null ? !key.equals(component.key) : component.key != null)
             return false;

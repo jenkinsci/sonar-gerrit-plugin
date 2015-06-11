@@ -1,4 +1,4 @@
-package com.aquarellian.genar.data.entity.interfaces;
+package com.aquarellian.genar.data.entity;
 
 /**
  * Project: genar
@@ -7,7 +7,7 @@ package com.aquarellian.genar.data.entity.interfaces;
  * <p/>
  * $Id$
  */
-public enum SonarSeverity {
+public enum Severity {
     BLOCKER,
     CRITICAL,
     MAJOR,

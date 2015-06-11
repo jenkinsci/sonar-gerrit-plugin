@@ -1,6 +1,6 @@
 package com.aquarellian.genar.data.entity;
 
-import com.aquarellian.genar.data.entity.interfaces.SonarRule;
+
 
 /**
  * Project: genar
@@ -9,20 +9,20 @@ import com.aquarellian.genar.data.entity.interfaces.SonarRule;
  * <p/>
  * $Id$
  */
-public class SonarRuleImpl implements SonarRule{
+public class Rule {
     private String key;
     private String rule;
     private String repository;
     private String name;
 
-    public SonarRuleImpl(String key, String rule, String repository, String name) {
+    public Rule(String key, String rule, String repository, String name) {
         this.key = key;
         this.rule = rule;
         this.repository = repository;
         this.name = name;
     }
 
-    public SonarRuleImpl() {
+    public Rule() {
     }
 
     public void setKey(String key) {
@@ -63,7 +63,7 @@ public class SonarRuleImpl implements SonarRule{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SonarRule rule1 = (SonarRule) o;
+        Rule rule1 = (Rule) o;
 
         if (key != null ? !key.equals(rule1.getKey()) : rule1.getKey() != null)
             return false;

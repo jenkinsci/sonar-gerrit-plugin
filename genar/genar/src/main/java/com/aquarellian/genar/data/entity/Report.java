@@ -1,6 +1,6 @@
 package com.aquarellian.genar.data.entity;
 
-import com.aquarellian.genar.data.entity.interfaces.*;
+
 
 import java.util.List;
 
@@ -11,43 +11,31 @@ import java.util.List;
  * <p/>
  * $Id$
  */
-public class SonarReportImpl implements SonarReport {
+public class Report  {
 
     private String version;
-    private List<SonarIssueImpl> issues;
-    private List<SonarComponentImpl> components;
-    private List<SonarRuleImpl> rules;
-    private List<SonarUserImpl> users;
-
-
-    public SonarReportImpl(String version, List<SonarIssueImpl> issues, List<SonarComponentImpl> components, List<SonarRuleImpl> rules, List<SonarUserImpl> users) {
-        this.version = version;
-        this.issues = issues;
-        this.components = components;
-        this.rules = rules;
-        this.users = users;
-    }
-
-    public SonarReportImpl() {
-    }
+    private List<Issue> issues;
+    private List<Component> components;
+    private List<Rule> rules;
+    private List<User> users;
 
     public String getVersion() {
         return version;
     }
 
-    public List<SonarIssueImpl> getIssues() {
+    public List<Issue> getIssues() {
         return issues;
     }
 
-    public List<SonarComponentImpl> getComponents() {
+    public List<Component> getComponents() {
         return components;
     }
 
-    public List<SonarRuleImpl> getRules() {
+    public List<Rule> getRules() {
         return rules;
     }
 
-    public List<SonarUserImpl> getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
@@ -57,7 +45,7 @@ public class SonarReportImpl implements SonarReport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SonarReportImpl that = (SonarReportImpl) o;
+        Report that = (Report) o;
 
         if (components != null ? !components.equals(that.components) : that.components != null)
             return false;
@@ -85,7 +73,7 @@ public class SonarReportImpl implements SonarReport {
 
     @Override
     public String toString() {
-        return "SonarReportImpl{" +
+        return "Report{" +
                 "version='" + version + '\'' +
                 ", issues=" + issues +
                 ", components=" + components +
