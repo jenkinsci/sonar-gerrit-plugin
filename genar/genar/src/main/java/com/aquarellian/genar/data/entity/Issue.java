@@ -18,34 +18,11 @@ public class Issue {
     private String component;
     private Integer line;
     private String message;
-    private String severity;
+    private Severity severity;
     private String rule;
     private String status;
     private Boolean isNew;
     private Date creationDate;
-
-    public Issue() {
-    }
-
-    public Issue(
-            String key,
-            String component,
-            Integer line,
-            String message,
-            String severity,
-            String rule,
-            String status,
-            Boolean isNew) {
-
-        this.key = key;
-        this.component = component;
-        this.line = line;
-        this.message = message;
-        this.severity = severity;
-        this.rule = rule;
-        this.status = status;
-        this.isNew = isNew;
-    }
 
     public String getKey() {
         return key;
@@ -63,7 +40,7 @@ public class Issue {
         return message;
     }
 
-    public String getSeverity() {
+    public Severity getSeverity() {
         return severity;
     }
 
@@ -75,8 +52,8 @@ public class Issue {
         return status;
     }
 
-    public Boolean getIsNew() {
-        return isNew;
+    public Boolean isNew() {
+        return isNew != null && isNew;
     }
 
     public Date getCreationDate(){return creationDate;}
