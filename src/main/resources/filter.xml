@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<filter>
+    <include>
+        <statuses>str1234</statuses>
+        <severities>str1234</severities>
+        <components>str1234</components>
+        <rules>str1234</rules>
+        <new>true</new>
+        <createdfrom>2012-12-13</createdfrom>
+        <createdto>2012-12-13</createdto>
+    </include>
+    <exclude>
+        <statuses>str1234</statuses>
+        <severities>str1234</severities>
+        <components>str1234</components>
+        <rules>str1234</rules>
+        <new>true</new>
+        <createdfrom>2012-12-13</createdfrom>
+        <createdto>2012-12-13</createdto>
+    </exclude>
+</filter>

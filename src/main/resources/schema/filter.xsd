@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+           jaxb:version="2.1">
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:globalBindings generateIsSetMethod="true">
+                <xjc:serializable uid="1"/>
+            </jaxb:globalBindings>
+        </xs:appinfo>
+    </xs:annotation>
+
+    <xs:complexType name="IssueFilter">
+        <xs:sequence>
+            <xs:sequence>
+                <xs:element name="statuses" type="xs:string" maxOccurs="unbounded"/>
+                <!-- todo enum? -->
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="severities" type="xs:string" maxOccurs="unbounded"/>
+                <!-- todo enum? -->
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="components" type="xs:string" maxOccurs="unbounded"/>
+                <!-- todo complicated component? -->
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="rules" type="xs:string" maxOccurs="unbounded"/>
+                <!-- todo complicated rule? -->
+            </xs:sequence>
+            <!--<xs:element name="statuses" type="statuses"/>-->
+            <!--<xs:element name="rules" type="rules"/>-->
+            <!--<xs:element name="components" type="components"/>-->
+            <!--<xs:element name="severities" type="severities"/>-->
+            <xs:element name="new" type="xs:boolean" default="false"/>
+            <xs:element name="createdfrom" type="xs:date"/>
+            <xs:element name="createdto" type="xs:date"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filter">
+        <xs:sequence>
+            <xs:sequence>
+                <xs:element name="include" type="IssueFilter"  />
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="exclude" type="IssueFilter"  />
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="filter" type="filter"/>
+</xs:schema>
