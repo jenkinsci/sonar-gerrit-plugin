@@ -1,2 +1,0 @@
-# genar
-sonar + gerrit integration
