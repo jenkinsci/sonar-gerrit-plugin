@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<filter>
+    <include>
+        <statuses>OPEN</statuses>
+        <severities>MAJOR</severities>
+        <components>str1234</components>
+        <components>str5678</components>
+        <rules>str1234</rules>
+        <anew>true</anew>
+        <createdfrom>2012-12-13 12:24:45</createdfrom>
+        <createdto>2013-12-13 12:24:45</createdto>
+    </include>
+    <exclude>
+        <statuses>OPEN</statuses>
+        <severities>MINOR</severities>
+        <components>3579</components>
+        <rules>str3579</rules>
+        <createdfrom>2012-12-13</createdfrom>
+        <createdto>2013-12-13</createdto>
+    </exclude>
+</filter>
+

@@ -28,7 +28,7 @@
                             <goal>xsdtojava</goal>
                         </goals>
                         <configuration>
-                            <sourceRoot>${basedir}/target/generated-sources/src/main/java</sourceRoot>
+                            <sourceRoot>${basedir}/src/main/java</sourceRoot>
                             <xsdOptions>
                                 <xsdOption>
                                     <xsd>src/main/resources/schema/filter.xsd</xsd>

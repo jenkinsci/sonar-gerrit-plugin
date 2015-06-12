@@ -15,41 +15,38 @@
     <xs:complexType name="IssueFilter">
         <xs:sequence>
             <xs:sequence>
-                <xs:element name="statuses" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="statuses" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                 <!-- todo enum? -->
             </xs:sequence>
             <xs:sequence>
-                <xs:element name="severities" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="severities" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                 <!-- todo enum? -->
             </xs:sequence>
             <xs:sequence>
-                <xs:element name="components" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="components" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                 <!-- todo complicated component? -->
             </xs:sequence>
             <xs:sequence>
-                <xs:element name="rules" type="xs:string" maxOccurs="unbounded"/>
+                <xs:element name="rules" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                 <!-- todo complicated rule? -->
             </xs:sequence>
-            <!--<xs:element name="statuses" type="statuses"/>-->
-            <!--<xs:element name="rules" type="rules"/>-->
-            <!--<xs:element name="components" type="components"/>-->
-            <!--<xs:element name="severities" type="severities"/>-->
-            <xs:element name="new" type="xs:boolean" default="false"/>
-            <xs:element name="createdfrom" type="xs:date"/>
-            <xs:element name="createdto" type="xs:date"/>
+            <xs:element name="anew" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="createdfrom" type="xs:date" minOccurs="0"/>
+            <xs:element name="createdto" type="xs:date" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="filter">
-        <xs:sequence>
-            <xs:sequence>
-                <xs:element name="include" type="IssueFilter"  />
-            </xs:sequence>
-            <xs:sequence>
-                <xs:element name="exclude" type="IssueFilter"  />
-            </xs:sequence>
-        </xs:sequence>
-    </xs:complexType>
 
-    <xs:element name="filter" type="filter"/>
+    <xs:element name="filter" >
+        <xs:complexType>
+            <xs:sequence>
+                <xs:sequence>
+                    <xs:element name="include" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
+                </xs:sequence>
+                <xs:sequence>
+                    <xs:element name="exclude" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
+                </xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 </xs:schema>
