@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple single filter -->
+<filter>
+    <filters>
+        <statuses>OPEN</statuses>
+        <severities>MAJOR</severities>
+        <components>MyComponent1</components>
+        <components>MyComponent2</components>
+        <rules>MyRule1</rules>
+        <anew>true</anew>
+        <createdfrom>2012-12-13</createdfrom>
+        <createdto>2013-12-14</createdto>
+        <include>true</include>
+    </filters>
+</filter>
+

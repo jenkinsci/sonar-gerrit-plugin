@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+
+    <!-- first allowed component-->
+    <entry key="simple_single_test.issue1">true</entry>
+    <!-- second allowed component-->
+    <entry key="simple_single_test.issue2">true</entry>
+    <!-- property component doesn't match criteria-->
+    <entry key="simple_single_test.issue3">false</entry>
+    <!-- property severity doesn't match criteria-->
+    <entry key="simple_single_test.issue4">false</entry>
+    <!-- property rule doesn't match criteria-->
+    <entry key="simple_single_test.issue5">false</entry>
+    <!-- property status doesn't match criteria-->
+    <entry key="simple_single_test.issue6">false</entry>
+    <!-- property isNew doesn't match criteria -->
+    <entry key="simple_single_test.issue7">false</entry>
+    <!-- date not in range-->
+    <entry key="simple_single_test.issue8">false</entry>
+
+
+    <entry key="simple_test.issue1">true</entry>
+    <entry key="simple_test.issue2">true</entry>
+    <entry key="simple_test.issue3">true</entry>
+    <entry key="simple_test.issue4">true</entry>
+    <entry key="simple_test.issue5">true</entry>
+    <entry key="simple_test.issue6">false</entry>
+    <entry key="simple_test.issue7">true</entry>
+    <entry key="simple_test.issue12">false</entry>
+    <entry key="simple_test.issue13">false</entry>
+    <entry key="simple_test.issue14">false</entry>
+    <entry key="simple_test.issue15">false</entry>
+    <entry key="simple_test.issue23">false</entry>
+
+
+    <entry key="single_criteria_test.issue1">false</entry>
+    <entry key="single_criteria_test.issue2">true</entry>
+    <entry key="single_criteria_test.issue3">true</entry>
+    <entry key="single_criteria_test.issue4">true</entry>
+    <entry key="single_criteria_test.issue5">true</entry>
+    <entry key="single_criteria_test.issue6">true</entry>
+    <entry key="single_criteria_test.issue7">true</entry>
+
+
+    <entry key="simple_exception_test.issue1">true</entry>
+    <entry key="simple_exception_test.issue2">false</entry>
+    <entry key="simple_exception_test.issue3">false</entry>
+    <entry key="simple_exception_test.issue4">true</entry>
+
+
+    <entry key="complicated_exception_test.issue1">true</entry>
+    <entry key="complicated_exception_test.issue2">false</entry>
+    <entry key="complicated_exception_test.issue3">true</entry>
+    <entry key="complicated_exception_test.issue4">false</entry>
+</properties>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Single filter with complicated exception -->
+<!-- returns all issues for component  MyComponent1 excluding those that have severity = MINOR,
+but still includes those MINOR exceptions that have OPEN status if rule is not MyRuleEx -->
+<filter>
+    <filters>
+        <components>MyComponent1</components>
+        <include>true</include>
+        <exceptions>
+            <severities>MINOR</severities>
+            <include>false</include>
+            <exceptions>
+                <statuses>OPEN</statuses>
+                <include>true</include>
+                <exceptions>
+                    <rules>MyRuleEx</rules>
+                    <include>true</include>
+                </exceptions>
+            </exceptions>
+        </exceptions>
+    </filters>
+</filter>

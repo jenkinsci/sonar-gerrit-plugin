@@ -1,0 +1,65 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "complicated_exception_test.issue1",
+      "component": "MyComponent1",
+      "line": 66,
+      "message": "Add the \"@Override\" annotation above this method signature",
+      "severity": "MAJOR",
+      "rule": "MyRule1",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2010-12-13T18:25:45+0300"
+    },
+    {
+      "key": "complicated_exception_test.issue2",
+      "component": "MyComponent1",
+      "line": 66,
+      "message": "Add the \"@Override\" annotation above this method signature",
+      "severity": "MINOR",
+      "rule": "MyRule1",
+      "status": "CLOSE",
+      "isNew": false,
+      "creationDate": "2010-12-13T18:25:45+0300"
+    },
+    {
+      "key": "complicated_exception_test.issue3",
+      "component": "MyComponent1",
+      "line": 66,
+      "message": "Add the \"@Override\" annotation above this method signature",
+      "severity": "MINOR",
+      "rule": "MyRule1",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2010-12-13T18:25:45+0300"
+    },
+    {
+      "key": "complicated_exception_test.issue4",
+      "component": "MyComponent1",
+      "line": 66,
+      "message": "Add the \"@Override\" annotation above this method signature",
+      "severity": "MINOR",
+      "rule": "MyRuleEx",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2010-12-13T18:25:45+0300"
+    }
+  ],
+  "components": [
+    {
+      "key": "MyComponent1.key",
+      "path": "MyComponent1",
+      "moduleKey": "MyComponent1.module.key"
+    }
+  ],
+  "rules": [
+    {
+      "key": "MyRule1.key",
+      "rule": "MyRule1",
+      "repository": "squid",
+      "name": "Control flow statements \"if\", \"for\", \"while\", \"switch\" and \"try\" should not be nested too deeply"
+    }
+  ],
+  "users": []
+}
