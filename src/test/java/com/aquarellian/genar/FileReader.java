@@ -34,12 +34,11 @@ public final class FileReader {
         }
     }
 
-    public static Properties loadProperties(String file) throws Exception {
+    public static Properties loadProperties(URL file) throws Exception {
         Properties prop = new Properties();
         FileInputStream fis =
-                new FileInputStream(file);
+                new FileInputStream(file.getFile());
         prop.loadFromXML(fis);
-        prop.list(System.out);
         return prop;
     }
 }

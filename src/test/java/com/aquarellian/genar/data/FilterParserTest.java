@@ -9,6 +9,7 @@ import org.junit.Test;
 import javax.xml.bind.JAXBException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Project: genar
@@ -25,20 +26,23 @@ public class FilterParserTest {
         Filter f = new FilterParser().parseFilter("filter.xml");
 
         Assert.assertNotNull(f);
-        IssueFilter include = f.getInclude().get(0);
-        Assert.assertNotNull(include);
-        Assert.assertEquals(2, include.getComponents().size());
-        Assert.assertEquals("str1234", include.getComponents().get(0));
-        Assert.assertEquals("str5678", include.getComponents().get(1));
-        Assert.assertEquals(1, include.getRules().size());
-        Assert.assertEquals("str1234", include.getRules().get(0));
-        Assert.assertEquals("MAJOR", include.getSeverities().get(0));
-        Assert.assertEquals("OPEN", include.getStatuses().get(0));
-        Assert.assertTrue(include.isAnew());
-//        Assert.assertEquals(createDate(2012, 12, 13, 0, 0, 0), include.getCreatedfrom());
-//        Assert.assertEquals(createDate(2013, 12, 13, 0, 0, 0), include.getCreatedto());
+        IssueFilter filter = f.getFilters().get(0);
+        Assert.assertEquals(2, filter.getComponents().size());
+        Assert.assertEquals("str1234", filter.getComponents().get(0));
+        Assert.assertEquals("str5678", filter.getComponents().get(1));
+        Assert.assertEquals(1, filter.getRules().size());
+        Assert.assertEquals("str1234", filter.getRules().get(0));
+        Assert.assertEquals("MAJOR", filter.getSeverities().get(0));
+        Assert.assertEquals("OPEN", filter.getStatuses().get(0));
+        Assert.assertTrue(filter.isSetAnew());
+        Assert.assertTrue(filter.isInclude());
+//        Assert.assertEquals(createDate(2012, 12, 13, 0, 0, 0), filter.getCreatedfrom());
+//        Assert.assertEquals(createDate(2013, 12, 13, 0, 0, 0), filter.getCreatedto());
+        List<IssueFilter> exceptions = filter.getExceptions();
+        Assert.assertNotNull(exceptions);
+        Assert.assertEquals(1, exceptions.size());
 
-        IssueFilter exclude = f.getExclude().get(0);
+        IssueFilter exclude = exceptions.get(0);
         Assert.assertNotNull(exclude);
         Assert.assertEquals(1, exclude.getComponents().size());
         Assert.assertEquals("3579", exclude.getComponents().get(0));
@@ -46,7 +50,7 @@ public class FilterParserTest {
         Assert.assertEquals("str3579", exclude.getRules().get(0));
         Assert.assertEquals("MINOR", exclude.getSeverities().get(0));
         Assert.assertEquals("OPEN", exclude.getStatuses().get(0));
-        Assert.assertFalse(exclude.isAnew() != null && exclude.isAnew());
+        Assert.assertFalse(exclude.isSetAnew());
 //        Assert.assertEquals(createDate(2012, 12, 13, 0, 0, 0), include.getCreatedfrom());
 //        Assert.assertEquals(createDate(2013, 12, 13, 0, 0, 0), include.getCreatedto());
 

@@ -8,6 +8,11 @@
         <xs:appinfo>
             <jaxb:globalBindings generateIsSetMethod="true">
                 <xjc:serializable uid="1"/>
+                <jaxb:javaType
+                        name="java.util.Calendar"
+                        xmlType="xs:dateTime"
+                        parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime"
+                        printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
             </jaxb:globalBindings>
         </xs:appinfo>
     </xs:annotation>
@@ -30,22 +35,21 @@
                 <xs:element name="rules" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                 <!-- todo complicated rule? -->
             </xs:sequence>
+            <xs:sequence>
+                <xs:element name="exceptions" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
+            </xs:sequence>
             <xs:element name="anew" type="xs:boolean" default="false" minOccurs="0"/>
-            <xs:element name="createdfrom" type="xs:date" minOccurs="0"/>
-            <xs:element name="createdto" type="xs:date" minOccurs="0"/>
+            <xs:element name="createdfrom" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="createdto" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="include" type="xs:boolean" maxOccurs="1" default="true"/>
         </xs:sequence>
     </xs:complexType>
 
 
-    <xs:element name="filter" >
+    <xs:element name="filter">
         <xs:complexType>
             <xs:sequence>
-                <xs:sequence>
-                    <xs:element name="include" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
-                </xs:sequence>
-                <xs:sequence>
-                    <xs:element name="exclude" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
-                </xs:sequence>
+                <xs:element name="filters" type="IssueFilter" maxOccurs="unbounded" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

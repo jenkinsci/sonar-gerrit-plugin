@@ -1,16 +1,12 @@
 package com.aquarellian.genar.data;
 
+import com.aquarellian.genar.FileReader;
 import com.aquarellian.genar.data.entity.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -25,7 +21,7 @@ public class SonarReportBuilderTest {
     @Test
     public void testLargeFile() {
         URL url = getClass().getClassLoader().getResource("example.json");
-        String json = readFile(url);
+        String json = FileReader.readFile(url);
         Report rep = new SonarReportBuilder().fromJson(json);
         Assert.assertNotNull(rep);
         Assert.assertNotNull(rep.getComponents());
@@ -41,7 +37,7 @@ public class SonarReportBuilderTest {
     @Test
     public void testSmallFile() {
         URL url = getClass().getClassLoader().getResource("test.json");
-        String json = readFile(url);
+        String json = FileReader.readFile(url);
         Report rep = new SonarReportBuilder().fromJson(json);
         Assert.assertNotNull(rep);
         Assert.assertNotNull(rep.getComponents());
@@ -86,19 +82,5 @@ public class SonarReportBuilderTest {
         Assert.assertEquals("com.maxifier.guice:guice-mbean", c2.getModuleKey());
         Assert.assertEquals("SAME", c2.getStatus());
 
-    }
-
-
-    private static String readFile(URL file) {
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(file.getFile()), Charset.defaultCharset());
-            StringBuilder sb = new StringBuilder();
-            for (String s : lines) {
-                sb.append(s);
-            }
-            return sb.toString();
-        } catch (IOException e) {
-            return "";
-        }
     }
 }
