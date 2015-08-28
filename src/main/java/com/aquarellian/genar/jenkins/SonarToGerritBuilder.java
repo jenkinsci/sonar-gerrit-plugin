@@ -86,6 +86,8 @@ public class SonarToGerritBuilder extends Builder {
         println(listener, "WORKSPACE = " + workspace);
         String fullPath = workspace + File.separator + path;
         println(listener, "fullpath = " + fullPath);
+        listener.getLogger().println("GERRIT_HOST" + " ---> " + envVars.get("GERRIT_HOST"));
+        listener.getLogger().println("GERRIT_PORT" + " ---> " + envVars.get("GERRIT_PORT"));
         try {
             String json = readFile(fullPath);
             Report rep = new SonarReportBuilder().fromJson(json);
