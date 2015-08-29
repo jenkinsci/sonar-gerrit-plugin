@@ -24,11 +24,12 @@ import javax.servlet.ServletException;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static com.google.common.base.MoreObjects.*;
 
 /**
  * Sample {@link Builder}.
@@ -47,15 +48,17 @@ import java.util.List;
  *
  * @author Kohsuke Kawaguchi
  */
+@SuppressWarnings("unused")
 public class SonarToGerritBuilder extends Builder {
 
-    private final String path;
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
+
+    private final String path;
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
     public SonarToGerritBuilder(String path) {
-        this.path = path != null ? path : DEFAULT_PATH;
+        this.path = firstNonNull(path, DEFAULT_PATH);
     }
 
     /**
@@ -67,6 +70,7 @@ public class SonarToGerritBuilder extends Builder {
 
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+        println(listener, getPath());
         println(listener, "Load issue filter");
 
         Filter f = null;
@@ -80,7 +84,7 @@ public class SonarToGerritBuilder extends Builder {
 
         println(listener, "Load Sonar report for path = " + path);
 
-        EnvVars envVars = new EnvVars();
+        EnvVars envVars;
         envVars = build.getEnvironment(listener);
         String workspace = envVars.get("WORKSPACE");
         println(listener, "WORKSPACE = " + workspace);
@@ -107,9 +111,9 @@ public class SonarToGerritBuilder extends Builder {
 //            listener.getLogger().println(s + "--->" + v);
 //        }
 //        listener.getLogger().println("sonar.surefire.reportsPath" + " ---> " + envVars.get("sonar.surefire.reportsPath"));
-//        listener.getLogger().println("GERRIT_HOST" + " ---> " + envVars.get("GERRIT_HOST"));
-//        listener.getLogger().println("GERRIT_PORT" + " ---> " + envVars.get("GERRIT_PORT"));      //"target/sonar/sonar-report.json"
-//        listener.getLogger().println("");
+        listener.getLogger().println("GERRIT_HOST" + " ---> " + envVars.get("GERRIT_HOST"));
+        listener.getLogger().println("GERRIT_PORT" + " ---> " + envVars.get("GERRIT_PORT"));      //"target/sonar/sonar-report.json"
+        listener.getLogger().println("");
         return true;
     }
 
@@ -173,7 +177,7 @@ public class SonarToGerritBuilder extends Builder {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        public FormValidation doCheckName(@QueryParameter String value)
+        public FormValidation doCheckPath(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
                 return FormValidation.error("Please set a path");
