@@ -1,0 +1,39 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "c48d7f88-64bb-45ec-b64d-b5a536384183",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "line": 5,
+      "message": "Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.",
+      "severity": "MINOR",
+      "rule": "squid:UselessImportCheck",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.maxifier.guice:guice-mbean",
+      "path": "guice-mbean"
+    },
+
+    {
+      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "path": "src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "status": "SAME"
+    }
+
+  ],
+  "rules": [
+    {
+      "key": "squid:ModifiersOrderCheck",
+      "rule": "ModifiersOrderCheck",
+      "repository": "squid",
+      "name": "Modifiers should be declared in the correct order"
+    }
+  ],
+  "users": []
+}

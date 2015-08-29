@@ -148,7 +148,7 @@ public class SonarToGerritBuilder extends Builder {
          * This human readable path is used in the configuration screen.
          */
         public String getDisplayName() {
-            return "Say hello world";
+            return "Send Sonar report to Gerrit";
         }
 
         @Override
