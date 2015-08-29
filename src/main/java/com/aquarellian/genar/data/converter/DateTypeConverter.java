@@ -4,11 +4,11 @@ import com.google.gson.*;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.lang.reflect.Type;
-import java.text.ParseException;
 
 /**
  * Project: genar

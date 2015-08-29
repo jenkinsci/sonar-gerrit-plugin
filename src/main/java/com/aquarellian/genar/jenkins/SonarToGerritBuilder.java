@@ -3,11 +3,14 @@ package com.aquarellian.genar.jenkins;
 import com.aquarellian.genar.data.SonarReportBuilder;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
-import com.aquarellian.genar.filter.FilterEngine;
-import com.aquarellian.genar.filter.FilterParser;
-import com.aquarellian.genar.filter.model.Filter;
-import hudson.EnvVars;
+import com.aquarellian.genar.data.entity.Severity;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -21,15 +24,9 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.servlet.ServletException;
-import javax.xml.bind.JAXBException;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
-
-import static com.google.common.base.MoreObjects.*;
 
 /**
  * Sample {@link Builder}.
@@ -48,17 +45,14 @@ import static com.google.common.base.MoreObjects.*;
  *
  * @author Kohsuke Kawaguchi
  */
-@SuppressWarnings("unused")
 public class SonarToGerritBuilder extends Builder {
-
-    private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
 
     private final String path;
 
     // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
     public SonarToGerritBuilder(String path) {
-        this.path = firstNonNull(path, DEFAULT_PATH);
+        this.path = path;
     }
 
     /**
@@ -69,67 +63,26 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-        println(listener, getPath());
-        println(listener, "Load issue filter");
+    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+        FilePath reportPath = build.getWorkspace().child(getPath());
+        listener.getLogger().println("Getting Sonar Report from: " + reportPath);
+        SonarReportBuilder builder = new SonarReportBuilder();
+        String reportJson = reportPath.readToString();
+        Report report = builder.fromJson(reportJson);
+        listener.getLogger().println(report);
 
-        Filter f = null;
-        try {
-            f = new FilterParser().parseFilter("filter.xml");    //todo
-            println(listener, "Issue filter loaded");
-        } catch (JAXBException e) {
-            println(listener, "Unable to load filter");
-        }
+        List<Issue> issues = report.getIssues();
 
+        Severity reportedSeverity = Severity.MAJOR;  // TODO From build step params
 
-        println(listener, "Load Sonar report for path = " + path);
+        Iterable<Issue> filtered = Iterables.filter(issues,
+                Predicates.and(
+                        BySeverityPredicate.equalOrHigher(reportedSeverity)
+                )
+        );
+        listener.getLogger().println("Filtered issues:\n" + filtered);
 
-        EnvVars envVars;
-        envVars = build.getEnvironment(listener);
-        String workspace = envVars.get("WORKSPACE");
-        println(listener, "WORKSPACE = " + workspace);
-        String fullPath = workspace + File.separator + path;
-        println(listener, "fullpath = " + fullPath);
-        listener.getLogger().println("GERRIT_HOST" + " ---> " + envVars.get("GERRIT_HOST"));
-        listener.getLogger().println("GERRIT_PORT" + " ---> " + envVars.get("GERRIT_PORT"));
-        try {
-            String json = readFile(fullPath);
-            Report rep = new SonarReportBuilder().fromJson(json);
-            FilterEngine engine = new FilterEngine(f, rep.getIssues());
-            for (Issue i : engine.getFiltered()) {
-                println(listener, "Found issue: " + i.getKey());
-            }
-        } catch (IOException ex) {
-            println(listener, String.format("Unable to open file '%s'", path));
-        }
-
-
-
-//        envVars = build.getEnvironment(listener);
-//        for (String s : envVars.keySet()) {
-//            String v = envVars.get(s);
-//            listener.getLogger().println(s + "--->" + v);
-//        }
-//        listener.getLogger().println("sonar.surefire.reportsPath" + " ---> " + envVars.get("sonar.surefire.reportsPath"));
-        listener.getLogger().println("GERRIT_HOST" + " ---> " + envVars.get("GERRIT_HOST"));
-        listener.getLogger().println("GERRIT_PORT" + " ---> " + envVars.get("GERRIT_PORT"));      //"target/sonar/sonar-report.json"
-        listener.getLogger().println("");
         return true;
-    }
-
-    private void println(BuildListener listener, String format) {
-        listener.getLogger().println(format);
-    }
-
-
-    private String readFile(String file) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(file), Charset.defaultCharset());
-        StringBuilder sb = new StringBuilder();
-        for (String s : lines) {
-            sb.append(s);
-        }
-        return sb.toString();
-
     }
 
     // Overridden for better type safety.
@@ -195,7 +148,7 @@ public class SonarToGerritBuilder extends Builder {
          * This human readable path is used in the configuration screen.
          */
         public String getDisplayName() {
-            return "Send Sonar results to Gerrit";
+            return "Say hello world";
         }
 
         @Override
@@ -219,5 +172,28 @@ public class SonarToGerritBuilder extends Builder {
             return useFrench;
         }
     }
+
+    private static class BySeverityPredicate implements Predicate<Issue> {
+
+        private final Severity severity;
+
+        public static BySeverityPredicate equalOrHigher(Severity severity) {
+            return new BySeverityPredicate(severity);
+        }
+
+        private BySeverityPredicate(Severity severity) {
+            this.severity = severity;
+        }
+
+        @Override
+        public boolean apply(Issue issue) {
+            return issue.getSeverity().equals(severity);   // TODO Right now by exact match only
+        }
+
+
+
+    }
+
+
 }
 

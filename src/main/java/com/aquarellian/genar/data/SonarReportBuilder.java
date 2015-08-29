@@ -1,7 +1,6 @@
 package com.aquarellian.genar.data;
 
-import com.aquarellian.genar.data.converter.*;
-
+import com.aquarellian.genar.data.converter.DateTypeConverter;
 import com.aquarellian.genar.data.entity.Report;
 import com.google.gson.*;
 
