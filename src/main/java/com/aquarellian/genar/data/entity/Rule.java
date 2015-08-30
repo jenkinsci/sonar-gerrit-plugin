@@ -3,12 +3,9 @@ package com.aquarellian.genar.data.entity;
 
 
 /**
- * Project: genar
- * Author:  Tatiana Didik
- * Created: 11.06.2015 15:43
- * <p/>
- * $Id$
+ * @author Tatiana Didik (aquarellian@gmail.com)
  */
+
 public class Rule {
     private String key;
     private String rule;
@@ -55,35 +52,6 @@ public class Rule {
 
     public String getName() {
         return name;
-    }
-
-    @SuppressWarnings("RedundantIfStatement")
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Rule rule1 = (Rule) o;
-
-        if (key != null ? !key.equals(rule1.getKey()) : rule1.getKey() != null)
-            return false;
-        if (name != null ? !name.equals(rule1.getName()) : rule1.getName() != null)
-            return false;
-        if (repository != null ? !repository.equals(rule1.getRepository()) : rule1.getRepository() != null)
-            return false;
-        if (rule != null ? !rule.equals(rule1.getRule()) : rule1.getRule() != null)
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (rule != null ? rule.hashCode() : 0);
-        result = 31 * result + (repository != null ? repository.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
     }
 
     @Override

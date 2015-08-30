@@ -1,11 +1,7 @@
 package com.aquarellian.genar.data.entity;
 
 /**
- * Project: genar
- * Author:  Tatiana Didik
- * Created: 11.06.2015 10:28
- * <p/>
- * $Id$
+ * @author Tatiana Didik (aquarellian@gmail.com)
  */
 public enum Severity {
     INFO,

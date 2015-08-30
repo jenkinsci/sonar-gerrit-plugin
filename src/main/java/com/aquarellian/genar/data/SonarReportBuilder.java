@@ -7,11 +7,7 @@ import com.google.gson.*;
 import java.util.Date;
 
 /**
- * Project: genar
- * Author:  Tatiana Didik
- * Created: 11.06.2015 16:52
- * <p/>
- * $Id$
+ * @author Tatiana Didik (aquarellian@gmail.com)
  */
 public class SonarReportBuilder {
     private final Gson GSON = new GsonBuilder()
@@ -21,7 +17,5 @@ public class SonarReportBuilder {
     public Report fromJson(String json) {
         return GSON.fromJson(json, Report.class);
     }
-
-
 
 }

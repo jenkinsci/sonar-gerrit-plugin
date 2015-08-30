@@ -1,13 +1,12 @@
 package com.aquarellian.genar.data.entity;
 
 
+import javax.annotation.Nullable;
+
 /**
- * Project: genar
- * Author:  Tatiana Didik
- * Created: 11.06.2015 15:43
- * <p/>
- * $Id$
+ * @author Tatiana Didik (aquarellian@gmail.com)
  */
+
 public class Component {
     private String key;
 
@@ -21,50 +20,21 @@ public class Component {
         return key;
     }
 
+    @Nullable
     public String getPath() {
         return path;
     }
 
+    @Nullable
     public String getModuleKey() {
         return moduleKey;
     }
 
+    @Nullable
     public String getStatus() {
         return status;
     }
 
-    @Override
-    public boolean equals(Object o) { //NOSONAR
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Component component = (Component) o;
-
-        if (key != null ? !key.equals(component.key) : component.key != null) {
-            return false;
-        }
-        if (path != null ? !path.equals(component.path) : component.path != null) {
-            return false;
-        }
-        if (moduleKey != null ? !moduleKey.equals(component.moduleKey) : component.moduleKey != null) {
-            return false;
-        }
-
-        if (status != null ? !status.equals(component.status) : component.status != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = key != null ? key.hashCode() : 0;
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        result = 31 * result + (moduleKey != null ? moduleKey.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        return result;
-    }
 
     @Override
     public String toString() {

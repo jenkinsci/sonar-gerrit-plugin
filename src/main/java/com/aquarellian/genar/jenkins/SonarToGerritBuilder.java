@@ -38,11 +38,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Project: genar
- * Author:  Tatiana Didik
- * Created: 29.08.2015 16:54
- * <p/>
- * $Id$
+ * @author Tatiana Didik
  */
 public class SonarToGerritBuilder extends Builder {
 
@@ -52,7 +48,6 @@ public class SonarToGerritBuilder extends Builder {
     private final Severity severity;
     private final boolean changedLinesOnly;
 
-    // Fields in config.jelly must match the parameter names in the "DataBoundConstructor"
     @DataBoundConstructor
     public SonarToGerritBuilder(String path, String severity, boolean changedLinesOnly) {
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
@@ -60,9 +55,6 @@ public class SonarToGerritBuilder extends Builder {
         this.changedLinesOnly = changedLinesOnly;
     }
 
-    /**
-     * We'll use this from the <tt>config.jelly</tt>.
-     */
     public String getPath() {
         return path;
     }
@@ -84,10 +76,30 @@ public class SonarToGerritBuilder extends Builder {
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
 
-        EnvVars envVars = build.getEnvironment(listener);
-        int changeNumber = Integer.valueOf(envVars.get("GERRIT_CHANGE_NUMBER"));
-        int patchSetNumber = Integer.valueOf(envVars.get("GERRIT_PATCHSET_NUMBER"));
+        // Step 1 - Filter issues by issues only predicates
+        List<Issue> issues = report.getIssues();
+        Iterable<Issue> filtered = Iterables.filter(issues, BySeverityPredicate.equalOrHigher(severity));
 
+        // Step 2 - Calculate real file name for issues and store to multimap
+        Multimap<String, Issue> file2issues = HashMultimap.create();
+        for (Component component : report.getComponents()) {
+            for (Issue issue : filtered) {
+                String issueComponent = issue.getComponent();
+                if (issueComponent.equals(component.getKey()) && component.getModuleKey() != null) {
+                    for (Component component1 : report.getComponents()) {
+                        if (component.getModuleKey().equals(component1.getKey())) {
+                            String moduleName = component1.getPath();
+                            String realFileName =
+                                    moduleName != null ? moduleName + "/" + component.getPath() : component.getPath();
+                            file2issues.put(realFileName, issue);
+                        }
+                    }
+                }
+
+            }
+        }
+
+        // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
 
@@ -96,39 +108,27 @@ public class SonarToGerritBuilder extends Builder {
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
+            EnvVars envVars = build.getEnvironment(listener);
+            int changeNumber = Integer.valueOf(envVars.get("GERRIT_CHANGE_NUMBER"));
+            int patchSetNumber = Integer.valueOf(envVars.get("GERRIT_PATCHSET_NUMBER"));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
-            Map<String, FileInfo> files = revision.files();
 
-            List<Issue> issues = report.getIssues();
-//            listener.getLogger().println("Count of issues in report = " + issues.size());
-//            listener.getLogger().println(report);
-            Iterable<Issue> filtered = Iterables.filter(issues,
-                    Predicates.and(
-                            BySeverityPredicate.equalOrHigher(severity),
-                            ByLinePredicate.equalOrDoesNotMatter(changedLinesOnly, revision)
-                    )
-            );
-
-            HashMultimap<String, Issue> file2issues = HashMultimap.create();
-
-            for (Component component : report.getComponents()) {
-                for (Issue issue : filtered) {
-                    String issueComponent = issue.getComponent();
-                    if (issueComponent.equals(component.getKey()) && component.getModuleKey() != null) {
-                        for (Component component1 : report.getComponents()) {
-                            if (component.getModuleKey().equals(component1.getKey())) {
-                                String moduleName = component1.getPath();
-                                String realFileName = moduleName != null ? moduleName + "/" + component.getPath() : component.getPath();
-                                file2issues.put(realFileName, issue);
-                            }
-                        }
-                    }
-
+            // Step 4 - Filter issues by changed files
+            final Map<String, FileInfo> files = revision.files();
+            file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
+                @Override
+                public boolean apply(@Nullable String input) {
+                    return input != null && files.keySet().contains(input);
                 }
+            });
+
+            if (isChangedLinesOnly()) {
+                // Step 4a - Filter issues by changed lines in file only
+                // TODO aquarellian
             }
 
-
-            ReviewInput reviewInput = new ReviewInput().message("TODO Message From Jenkins");
+            // Step 6 - Send review to Gerrit
+            ReviewInput reviewInput = new ReviewInput().message("TODO Message From Sonar");
 
             reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
             for (Map.Entry<String, Collection<Issue>> fileIssue : file2issues.asMap().entrySet()) {
@@ -140,6 +140,7 @@ public class SonarToGerritBuilder extends Builder {
                                                 @Override
                                                 public ReviewInput.CommentInput apply(@Nullable Issue input) {
                                                     ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                                    commentInput.id = input.getKey();
                                                     commentInput.line = input.getLine();
                                                     commentInput.message = input.getMessage();
                                                     return commentInput;
@@ -151,7 +152,6 @@ public class SonarToGerritBuilder extends Builder {
                     );
                 }
             }
-
             revision.review(reviewInput);
         } catch (RestApiException e) {
             listener.error(e.getMessage());
