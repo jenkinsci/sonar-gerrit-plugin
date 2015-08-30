@@ -4,12 +4,8 @@ import com.aquarellian.genar.data.SonarReportBuilder;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
 import com.aquarellian.genar.data.entity.Severity;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.FileApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -35,12 +31,14 @@ import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Project: genar
@@ -103,8 +101,7 @@ public class SonarToGerritBuilder extends Builder {
         try {
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             Map<String, FileInfo> files = revision.files();
-
-
+                                                      
             List<Issue> issues = report.getIssues();
             listener.getLogger().println("Count of issues in report = " + issues.size());
             listener.getLogger().println(report);
@@ -114,17 +111,31 @@ public class SonarToGerritBuilder extends Builder {
                     )
             );
 
+            HashMultimap<String, Issue> file2issues = HashMultimap.create();
+            for (Issue issue : filtered) {
+               final String component = issue.getComponent();
+                Optional<String> owner = Iterables.tryFind(files.keySet(), new Predicate<String>() {
+                    @Override
+                    public boolean apply(@Nullable String s) {
+                        return s.equals(component);   //todo
+                    }
+                });
+                if (owner.isPresent()) {
+                    file2issues.put(owner.get(), issue);
+                }
+            }
+
             ReviewInput reviewInput = new ReviewInput().message("TODO Message From Jenkins");
 
             reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-            for (Issue issue : filtered) {
+            for (Map.Entry<String, Issue> fileIssue : file2issues.entries()) {
                 ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                commentInput.line = issue.getLine();
-                commentInput.message = issue.getMessage();
+                commentInput.line = fileIssue.getValue().getLine();
+                commentInput.message = fileIssue.getValue().getMessage();
 
-
-                reviewInput.comments.put("src/main/java/" + issue.getComponent(), ImmutableList.of(commentInput));  //todo
+                reviewInput.comments.put(fileIssue.getKey(), ImmutableList.of(commentInput));
             }
+
             revision.review(reviewInput);
         } catch (RestApiException e) {
             listener.error(e.getMessage());
