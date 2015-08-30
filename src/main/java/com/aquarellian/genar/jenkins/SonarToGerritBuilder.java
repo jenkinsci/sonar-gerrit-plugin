@@ -7,8 +7,19 @@ import com.aquarellian.genar.data.entity.Severity;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.changes.ReviewInput;
+import com.google.gerrit.extensions.api.changes.RevisionApi;
+import com.google.gerrit.extensions.common.FileInfo;
+import com.google.gerrit.extensions.restapi.RestApiException;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+import com.urswolfer.gerrit.client.rest.GerritAuthData;
+import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -24,7 +35,9 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project: genar
@@ -65,12 +78,41 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
+            InterruptedException {
         FilePath reportPath = build.getWorkspace().child(getPath());
         listener.getLogger().println("Getting Sonar Report from: " + reportPath);
         SonarReportBuilder builder = new SonarReportBuilder();
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
+
+        listener.getLogger().println(report);
+
+        String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
+        IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
+
+        int changeNumber = 1;
+        int patchSetNumber = 1;
+
+
+        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(), gerritConfig.getGerritHttpUserName(),
+                gerritConfig.getGerritHttpPassword());
+        GerritApi gerritApi = gerritRestApiFactory.create(authData);
+        try {
+            RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
+            Map<String, FileInfo> files = revision.files();
+            ReviewInput reviewInput = new ReviewInput().message("Sonar Violations are commented.");
+            reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
+            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+            commentInput.line = 83;
+            commentInput.message = "Hello world!";
+            reviewInput.comments.put("src/main/java/com/aquarellian/genar/jenkins/SonarToGerritBuilder.java", ImmutableList.of(commentInput));
+            revision.review(reviewInput);
+        } catch (RestApiException e) {
+            e.printStackTrace();
+        }
+
         List<Issue> issues = report.getIssues();
 
         listener.getLogger().println("Count of issues in report = " + issues.size());
