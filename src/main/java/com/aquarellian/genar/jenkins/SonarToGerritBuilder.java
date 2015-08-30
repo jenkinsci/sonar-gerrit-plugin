@@ -5,9 +5,11 @@ import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
 import com.aquarellian.genar.data.entity.Severity;
 import com.google.common.base.*;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.api.GerritApi;
-import com.google.gerrit.extensions.api.changes.FileApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
@@ -35,10 +37,7 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Project: genar
@@ -101,19 +100,20 @@ public class SonarToGerritBuilder extends Builder {
         try {
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             Map<String, FileInfo> files = revision.files();
-                                                      
+
             List<Issue> issues = report.getIssues();
-            listener.getLogger().println("Count of issues in report = " + issues.size());
-            listener.getLogger().println(report);
+//            listener.getLogger().println("Count of issues in report = " + issues.size());
+//            listener.getLogger().println(report);
             Iterable<Issue> filtered = Iterables.filter(issues,
                     Predicates.and(
-                            BySeverityPredicate.equalOrHigher(severity)
+                            BySeverityPredicate.equalOrHigher(severity),
+                            ByLinePredicate.equalOrDoesNotMatter(changedLinesOnly, revision)
                     )
             );
 
             HashMultimap<String, Issue> file2issues = HashMultimap.create();
             for (Issue issue : filtered) {
-               final String component = issue.getComponent();
+                final String component = issue.getComponent();
                 Optional<String> owner = Iterables.tryFind(files.keySet(), new Predicate<String>() {
                     @Override
                     public boolean apply(@Nullable String s) {
@@ -219,6 +219,52 @@ public class SonarToGerritBuilder extends Builder {
         @Override
         public boolean apply(Issue issue) {
             return issue.getSeverity().equals(severity) || issue.getSeverity().ordinal() >= severity.ordinal();
+        }
+    }
+
+    private static class ByLinePredicate implements Predicate<Issue> {
+
+        private final boolean changedLinesOnly;
+        private final RevisionApi revision;
+
+        public static ByLinePredicate equalOrDoesNotMatter(boolean changedLinesOnly, RevisionApi revision) {
+            return new ByLinePredicate(changedLinesOnly, revision);
+        }
+
+        private ByLinePredicate(boolean changedLinesOnly, RevisionApi revision) {
+            this.changedLinesOnly = changedLinesOnly;
+            this.revision = revision;
+        }
+
+        @Override
+        public boolean apply(Issue issue) {
+            return !changedLinesOnly || getChangedLines(issue).contains(issue.getLine());
+        }
+
+        private Set<Integer> getChangedLines(Issue issue) {
+            final List<DiffInfo.ContentEntry> content;
+            try {
+                content = revision.file(issue.getComponent()).diff().content;  //todo replace issue.getComponent() by actual filename
+            } catch (RestApiException e) {
+                return Collections.EMPTY_SET;
+            }
+
+            Iterable<DiffInfo.ContentEntry> filtered = Iterables.filter(content,
+                    new Predicate<DiffInfo.ContentEntry>() {
+                        @Override
+                        public boolean apply(@Nullable DiffInfo.ContentEntry contentEntry) {
+                            return contentEntry != null && !contentEntry.a.equals(contentEntry.b);
+                        }
+                    }
+            );
+            Iterable<Integer> changedLines = Iterables.transform(filtered, new Function<DiffInfo.ContentEntry, Integer>() {
+                @Nullable
+                @Override
+                public Integer apply(@Nullable DiffInfo.ContentEntry contentEntry) {
+                    return content.indexOf(contentEntry) + 1; // think about it. is that a right way to get changed line number?
+                }
+            });
+            return Sets.newHashSet(changedLines);
         }
     }
 }
