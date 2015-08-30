@@ -2,3 +2,5 @@
 **/*.iml
 target/**
 .DS_Store
+/work/**
+/work/jobs

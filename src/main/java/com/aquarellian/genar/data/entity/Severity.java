@@ -8,9 +8,9 @@ package com.aquarellian.genar.data.entity;
  * $Id$
  */
 public enum Severity {
-    BLOCKER,
-    CRITICAL,
-    MAJOR,
+    INFO,
     MINOR,
-    INFO
+    MAJOR,
+    CRITICAL,
+    BLOCKER
 }

@@ -1,16 +1,40 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!--
-    This jelly script is used for per-project configuration.
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <!--
+      This jelly script is used for per-project configuration.
 
-    See global.jelly for a general discussion about jelly script.
-  -->
+      See global.jelly for a general discussion about jelly script.
+    -->
 
-  <!--
-    Creates a text field that shows the value of the "path" property.
-    When submitted, it will be passed to the corresponding constructor parameter.
-  -->
-  <f:entry title="Path" field="path">
-    <f:textbox />
-  </f:entry>
+    <!--
+      Creates a text field that shows the value of the "path" property.
+      When submitted, it will be passed to the corresponding constructor parameter.
+    -->
+
+    <f:section title="Sonar settings">
+        <f:entry title="Path" field="path">
+            <f:textbox default="target/sonar/sonar-report.json"/>
+        </f:entry>
+    </f:section>
+
+    <f:section title="Filter settings">
+        <!--<f:entry title="Choose severity level"-->
+                 <!--field="name">-->
+            <!--<f:enum>${it.name}</f:enum>-->
+        <!--</f:entry>-->
+        <f:entry title="Choose severity level" field="severity">
+            <select name="severity">
+                <option value="INFO">INFO</option>
+                <option value="MINOR">MINOR</option>
+                <option value="MAJOR" selected="true">MAJOR</option>
+                <option value="CRITICAL">CRITICAL</option>
+                <option value="BLOCKER">BLOCKER</option>
+            </select>
+        </f:entry>
+
+        <f:entry title="Lines" field="changedLinesOnly"
+                 description="Comment only changed lines">
+            <f:checkbox checked="true"/>
+        </f:entry>
+    </f:section>
 </j:jelly>
