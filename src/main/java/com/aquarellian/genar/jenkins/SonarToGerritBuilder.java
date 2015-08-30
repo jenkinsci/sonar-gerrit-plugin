@@ -5,7 +5,10 @@ import com.aquarellian.genar.data.entity.Component;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
 import com.aquarellian.genar.data.entity.Severity;
-import com.google.common.base.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -43,6 +46,7 @@ import java.util.*;
 public class SonarToGerritBuilder extends Builder {
 
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
+    public static final String GERRIT_FILE_DELIMITER = "/";
 
     private final String path;
     private final Severity severity;
@@ -77,27 +81,10 @@ public class SonarToGerritBuilder extends Builder {
         Report report = builder.fromJson(reportJson);
 
         // Step 1 - Filter issues by issues only predicates
-        List<Issue> issues = report.getIssues();
-        Iterable<Issue> filtered = Iterables.filter(issues, BySeverityPredicate.equalOrHigher(severity));
+        Iterable<Issue> filtered = filterIssuesByPredicates(report);
 
         // Step 2 - Calculate real file name for issues and store to multimap
-        Multimap<String, Issue> file2issues = HashMultimap.create();
-        for (Component component : report.getComponents()) {
-            for (Issue issue : filtered) {
-                String issueComponent = issue.getComponent();
-                if (issueComponent.equals(component.getKey()) && component.getModuleKey() != null) {
-                    for (Component component1 : report.getComponents()) {
-                        if (component.getModuleKey().equals(component1.getKey())) {
-                            String moduleName = component1.getPath();
-                            String realFileName =
-                                    moduleName != null ? moduleName + "/" + component.getPath() : component.getPath();
-                            file2issues.put(realFileName, issue);
-                        }
-                    }
-                }
-
-            }
-        }
+        Multimap<String, Issue> file2issues = generateFilenameToIssuesMap(report, filtered);
 
         // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
@@ -122,42 +109,139 @@ public class SonarToGerritBuilder extends Builder {
                 }
             });
 
+            Map<String, Collection<Issue>> finalIssues = file2issues.asMap();
+
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
-                // TODO aquarellian
+                finalIssues = filterIssuesByChangedLines(finalIssues, revision);
             }
 
             // Step 6 - Send review to Gerrit
-            ReviewInput reviewInput = new ReviewInput().message("TODO Message From Sonar");
+            ReviewInput reviewInput = getReviewResult(finalIssues);
 
-            reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-            for (Map.Entry<String, Collection<Issue>> fileIssue : file2issues.asMap().entrySet()) {
-                if (files.containsKey(fileIssue.getKey())) {
-                    reviewInput.comments.put(fileIssue.getKey(), Lists.newArrayList(
-                                    Collections2.transform(fileIssue.getValue(),
-                                            new Function<Issue, ReviewInput.CommentInput>() {
-                                                @Nullable
-                                                @Override
-                                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                                    commentInput.id = input.getKey();
-                                                    commentInput.line = input.getLine();
-                                                    commentInput.message = input.getMessage();
-                                                    return commentInput;
-                                                }
-
-                                            }
-                                    )
-                            )
-                    );
-                }
-            }
+            // Step 7 - Post review
             revision.review(reviewInput);
         } catch (RestApiException e) {
             listener.error(e.getMessage());
         }
 
         return true;
+    }
+
+    @VisibleForTesting
+    ReviewInput getReviewResult(Map<String, Collection<Issue>> finalIssues) {
+        ReviewInput reviewInput = new ReviewInput().message("TODO Message From Sonar");
+
+        reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
+        for (String file : finalIssues.keySet()) {
+            reviewInput.comments.put(file, Lists.newArrayList(
+                            Collections2.transform(finalIssues.get(file),
+                                    new Function<Issue, ReviewInput.CommentInput>() {
+                                        @Nullable
+                                        @Override
+                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                            commentInput.id = input.getKey();
+                                            commentInput.line = input.getLine();
+                                            commentInput.message = input.getMessage();
+                                            return commentInput;
+                                        }
+
+                                    }
+                            )
+                    )
+            );
+        }
+        return reviewInput;
+    }
+
+    @VisibleForTesting
+    Map<String, Collection<Issue>> filterIssuesByChangedLines(Map<String, Collection<Issue>> finalIssues, RevisionApi revision) throws RestApiException {
+        Map<String, Collection<Issue>> res = new HashMap<String, Collection<Issue>> ();
+
+        for (String filename : finalIssues.keySet()) {
+            List<DiffInfo.ContentEntry> content = revision.file(filename).diff().content;
+            int processed = 0;
+            final RangeSet<Integer> rangeSet = TreeRangeSet.create();
+            for (DiffInfo.ContentEntry contentEntry : content) {
+                if (contentEntry.ab != null) {
+                    processed += contentEntry.ab.size();
+                } else if (contentEntry.b != null) {
+                    rangeSet.add(Range.closed(processed + 1, processed + contentEntry.b.size()));
+                    processed += contentEntry.b.size();
+                }
+            }
+
+            if (res.get(filename) == null) {
+                res.put(filename, new ArrayList<Issue>()) ;
+            }
+            for (Issue i : finalIssues.get(filename)) {
+                if (rangeSet.contains(i.getLine())) {
+                    res.get(filename).add(i);
+                }
+            }
+        }
+//        return Maps.transformValues(finalIssues, new Function<Collection<Issue>, Collection<Issue>>() {
+//            @Nullable
+//            @Override
+//            public Collection<Issue> apply(@Nullable Collection<Issue> input) {
+//                Iterable<Issue> filteredElements = Iterables.filter(input, new Predicate<Issue>() {
+//                    @Override
+//                    public boolean apply(@Nullable Issue issue) {
+//                        return rangeSet.contains(issue.getLine());
+//                    }
+//                });
+//                return Lists.newArrayList(filteredElements);
+//            }
+//        });
+        return res;
+    }
+
+    @VisibleForTesting
+    Multimap<String, Issue> generateFilenameToIssuesMap(Report report, Iterable<Issue> filtered) {
+        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+
+/*       The next code prepares data to process situations like this one:
+        {
+            "key": "com.maxifier.guice:guice-bootstrap",
+            "path": "guice-bootstrap"
+        },
+        {
+            "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+            "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+            "moduleKey": "com.maxifier.guice:guice-bootstrap",
+            "status": "SAME"
+        }
+        */
+        Map<String, String> component2module = Maps.newHashMap();
+        Map<String, String> component2path = Maps.newHashMap();
+
+        for (Component component : report.getComponents()) {
+            component2path.put(component.getKey(), component.getPath());
+        }
+        for (Component component : report.getComponents()) {
+            if (component.getModuleKey() != null) {
+                component2module.put(component.getKey(), component2path.get(component.getModuleKey()));
+            }
+        }
+
+
+        // generating map consisting of real file names to corresponding issues collections.
+        for (Issue issue : filtered) {
+            String issueComponent = issue.getComponent();
+            String moduleName = component2module.get(issueComponent);
+            String componentPath = component2path.get(issueComponent);
+            String realFileName = moduleName != null ? moduleName + GERRIT_FILE_DELIMITER + componentPath : componentPath;
+            file2issues.put(realFileName, issue);
+
+        }
+        return file2issues;
+    }
+
+    @VisibleForTesting
+    Iterable<Issue> filterIssuesByPredicates(Report report) {
+        List<Issue> issues = report.getIssues();
+        return Iterables.filter(issues, BySeverityPredicate.equalOrHigher(getSeverity()));
     }
 
     // Overridden for better type safety.
