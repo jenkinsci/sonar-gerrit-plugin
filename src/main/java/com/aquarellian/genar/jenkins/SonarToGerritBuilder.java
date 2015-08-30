@@ -1,14 +1,12 @@
 package com.aquarellian.genar.jenkins;
 
 import com.aquarellian.genar.data.SonarReportBuilder;
+import com.aquarellian.genar.data.entity.Component;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
 import com.aquarellian.genar.data.entity.Severity;
 import com.google.common.base.*;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
@@ -112,28 +110,46 @@ public class SonarToGerritBuilder extends Builder {
             );
 
             HashMultimap<String, Issue> file2issues = HashMultimap.create();
-            for (Issue issue : filtered) {
-                final String component = issue.getComponent();
-                Optional<String> owner = Iterables.tryFind(files.keySet(), new Predicate<String>() {
-                    @Override
-                    public boolean apply(@Nullable String s) {
-                        return s.equals(component);   //todo
+
+            for (Component component : report.getComponents()) {
+                for (Issue issue : filtered) {
+                    String issueComponent = issue.getComponent();
+                    if (issueComponent.equals(component.getKey()) && component.getModuleKey() != null) {
+                        for (Component component1 : report.getComponents()) {
+                            if (component.getModuleKey().equals(component1.getKey())) {
+                                String moduleName = component1.getPath();
+                                String realFileName = moduleName != null ? moduleName + "/" + component.getPath() : component.getPath();
+                                file2issues.put(realFileName, issue);
+                            }
+                        }
                     }
-                });
-                if (owner.isPresent()) {
-                    file2issues.put(owner.get(), issue);
+
                 }
             }
+
 
             ReviewInput reviewInput = new ReviewInput().message("TODO Message From Jenkins");
 
             reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-            for (Map.Entry<String, Issue> fileIssue : file2issues.entries()) {
-                ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                commentInput.line = fileIssue.getValue().getLine();
-                commentInput.message = fileIssue.getValue().getMessage();
+            for (Map.Entry<String, Collection<Issue>> fileIssue : file2issues.asMap().entrySet()) {
+                if (files.containsKey(fileIssue.getKey())) {
+                    reviewInput.comments.put(fileIssue.getKey(), Lists.newArrayList(
+                                    Collections2.transform(fileIssue.getValue(),
+                                            new Function<Issue, ReviewInput.CommentInput>() {
+                                                @Nullable
+                                                @Override
+                                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                                    commentInput.line = input.getLine();
+                                                    commentInput.message = input.getMessage();
+                                                    return commentInput;
+                                                }
 
-                reviewInput.comments.put(fileIssue.getKey(), ImmutableList.of(commentInput));
+                                            }
+                                    )
+                            )
+                    );
+                }
             }
 
             revision.review(reviewInput);
