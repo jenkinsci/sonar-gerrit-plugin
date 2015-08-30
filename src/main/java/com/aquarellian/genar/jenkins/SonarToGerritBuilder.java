@@ -11,8 +11,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.changes.FileApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
+import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
@@ -20,6 +22,7 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -86,46 +89,46 @@ public class SonarToGerritBuilder extends Builder {
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
 
-        listener.getLogger().println(report);
+        EnvVars envVars = build.getEnvironment(listener);
+        int changeNumber = Integer.valueOf(envVars.get("GERRIT_CHANGE_NUMBER"));
+        int patchSetNumber = Integer.valueOf(envVars.get("GERRIT_PATCHSET_NUMBER"));
 
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
 
-        int changeNumber = 1;
-        int patchSetNumber = 1;
-
-
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(), gerritConfig.getGerritHttpUserName(),
-                gerritConfig.getGerritHttpPassword());
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
+                gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             Map<String, FileInfo> files = revision.files();
-            ReviewInput reviewInput = new ReviewInput().message("Sonar Violations are commented.");
+
+
+            List<Issue> issues = report.getIssues();
+            listener.getLogger().println("Count of issues in report = " + issues.size());
+            listener.getLogger().println(report);
+            Iterable<Issue> filtered = Iterables.filter(issues,
+                    Predicates.and(
+                            BySeverityPredicate.equalOrHigher(severity)
+                    )
+            );
+
+            ReviewInput reviewInput = new ReviewInput().message("TODO Message From Jenkins");
+
             reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-            commentInput.line = 83;
-            commentInput.message = "Hello world!";
-            reviewInput.comments.put("src/main/java/com/aquarellian/genar/jenkins/SonarToGerritBuilder.java", ImmutableList.of(commentInput));
+            for (Issue issue : filtered) {
+                ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                commentInput.line = issue.getLine();
+                commentInput.message = issue.getMessage();
+
+
+                reviewInput.comments.put("src/main/java/" + issue.getComponent(), ImmutableList.of(commentInput));  //todo
+            }
             revision.review(reviewInput);
         } catch (RestApiException e) {
-            e.printStackTrace();
+            listener.error(e.getMessage());
         }
-
-        List<Issue> issues = report.getIssues();
-
-        listener.getLogger().println("Count of issues in report = " + issues.size());
-        listener.getLogger().println(report);
-        Iterable<Issue> filtered = Iterables.filter(issues,
-                Predicates.and(
-                        BySeverityPredicate.equalOrHigher(severity)
-                )
-        );
-
-        listener.getLogger().println();
-        listener.getLogger().println("Count of filtered = " + Lists.newArrayList(filtered).size());
-        listener.getLogger().println("Filtered issues:\n" + filtered);
 
         return true;
     }
