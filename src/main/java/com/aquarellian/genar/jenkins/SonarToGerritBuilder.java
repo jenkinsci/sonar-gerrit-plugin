@@ -157,23 +157,29 @@ public class SonarToGerritBuilder extends Builder {
 
     @VisibleForTesting
     Map<String, Collection<Issue>> filterIssuesByChangedLines(Map<String, Collection<Issue>> finalIssues, RevisionApi revision) throws RestApiException {
-        Map<String, Collection<Issue>> res = new HashMap<String, Collection<Issue>> ();
+        Map<String, Collection<Issue>> res = new HashMap<String, Collection<Issue>>();
 
         for (String filename : finalIssues.keySet()) {
             List<DiffInfo.ContentEntry> content = revision.file(filename).diff().content;
             int processed = 0;
-            final RangeSet<Integer> rangeSet = TreeRangeSet.create();
+//            final RangeSet<Integer> rangeSet = TreeRangeSet.create();
+            Set<Integer> rangeSet = new HashSet<Integer>();
             for (DiffInfo.ContentEntry contentEntry : content) {
                 if (contentEntry.ab != null) {
                     processed += contentEntry.ab.size();
                 } else if (contentEntry.b != null) {
-                    rangeSet.add(Range.closed(processed + 1, processed + contentEntry.b.size()));
+                    int start = processed + 1;
+                    int end = processed + contentEntry.b.size();
+                    for (int i = start; i <= end; i++) {    // todo use guava for this purpose
+                        rangeSet.add(i);
+                    }
+//                    rangeSet.add(Range.closed(start, end));
                     processed += contentEntry.b.size();
                 }
             }
 
             if (res.get(filename) == null) {
-                res.put(filename, new ArrayList<Issue>()) ;
+                res.put(filename, new ArrayList<Issue>());
             }
             for (Issue i : finalIssues.get(filename)) {
                 if (rangeSet.contains(i.getLine())) {
@@ -181,19 +187,6 @@ public class SonarToGerritBuilder extends Builder {
                 }
             }
         }
-//        return Maps.transformValues(finalIssues, new Function<Collection<Issue>, Collection<Issue>>() {
-//            @Nullable
-//            @Override
-//            public Collection<Issue> apply(@Nullable Collection<Issue> input) {
-//                Iterable<Issue> filteredElements = Iterables.filter(input, new Predicate<Issue>() {
-//                    @Override
-//                    public boolean apply(@Nullable Issue issue) {
-//                        return rangeSet.contains(issue.getLine());
-//                    }
-//                });
-//                return Lists.newArrayList(filteredElements);
-//            }
-//        });
         return res;
     }
 
@@ -346,7 +339,7 @@ public class SonarToGerritBuilder extends Builder {
             try {
                 content = revision.file(issue.getComponent()).diff().content;  //todo replace issue.getComponent() by actual filename
             } catch (RestApiException e) {
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
 
             Iterable<DiffInfo.ContentEntry> filtered = Iterables.filter(content,
