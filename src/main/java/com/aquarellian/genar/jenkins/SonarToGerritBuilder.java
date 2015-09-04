@@ -1,6 +1,8 @@
 package com.aquarellian.genar.jenkins;
 
 import com.aquarellian.genar.data.SonarReportBuilder;
+import com.aquarellian.genar.data.converter.BasicIssueFormatter;
+import com.aquarellian.genar.data.converter.IssueFormatter;
 import com.aquarellian.genar.data.entity.Component;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
@@ -143,7 +145,7 @@ public class SonarToGerritBuilder extends Builder {
                                             ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
                                             commentInput.id = input.getKey();
                                             commentInput.line = input.getLine();
-                                            commentInput.message = input.getMessage();
+                                            commentInput.message = new BasicIssueFormatter(input).getMessage();
                                             return commentInput;
                                         }
 
