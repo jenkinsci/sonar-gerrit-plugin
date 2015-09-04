@@ -8,4 +8,5 @@ package com.aquarellian.genar.data.converter;
  * $Id$
  */
 public interface IssueFormatter {
+    public String getMessage();
 }
