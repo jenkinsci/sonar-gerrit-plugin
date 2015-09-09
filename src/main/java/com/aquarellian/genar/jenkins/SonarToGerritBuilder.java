@@ -2,7 +2,6 @@ package com.aquarellian.genar.jenkins;
 
 import com.aquarellian.genar.data.SonarReportBuilder;
 import com.aquarellian.genar.data.converter.BasicIssueFormatter;
-import com.aquarellian.genar.data.converter.IssueFormatter;
 import com.aquarellian.genar.data.entity.Component;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
@@ -53,6 +52,7 @@ public class SonarToGerritBuilder extends Builder {
     private final String path;
     private final Severity severity;
     private final boolean changedLinesOnly;
+    private final boolean extendedLogging = true;
 
     @DataBoundConstructor
     public SonarToGerritBuilder(String path, String severity, boolean changedLinesOnly) {
@@ -77,16 +77,30 @@ public class SonarToGerritBuilder extends Builder {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
             InterruptedException {
         FilePath reportPath = build.getWorkspace().child(getPath());
-        listener.getLogger().println("Getting Sonar Report from: " + reportPath);
+        if (extendedLogging) {
+            listener.getLogger().println("[GENAR] Getting Sonar Report from: " + reportPath);
+        }
         SonarReportBuilder builder = new SonarReportBuilder();
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
-
+        if (extendedLogging) {
+            listener.getLogger().println(String.format("[GENAR] Report has loaded and contains %d issues ", report.getIssues().size()));
+        }
         // Step 1 - Filter issues by issues only predicates
         Iterable<Issue> filtered = filterIssuesByPredicates(report);
-
+        if (extendedLogging) {
+            listener.getLogger().println(String.format("[GENAR] %d issues has left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size()));
+        }
         // Step 2 - Calculate real file name for issues and store to multimap
         Multimap<String, Issue> file2issues = generateFilenameToIssuesMap(report, filtered);
+        if (extendedLogging) {
+            listener.getLogger().println(String.format("[GENAR] file2issues map contains %d elements", file2issues.keySet().size()));
+            Map<String, Collection<Issue>> asMap = file2issues.asMap();
+            for (String file : asMap.keySet()) {
+                Collection<Issue> issues = asMap.get(file);
+                listener.getLogger().println(String.format("\n [GENAR] File %s contains %d issues:\n %s", file, issues.size(), issues));
+            }
+        }
 
         // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
@@ -101,7 +115,9 @@ public class SonarToGerritBuilder extends Builder {
             int changeNumber = Integer.valueOf(envVars.get("GERRIT_CHANGE_NUMBER"));
             int patchSetNumber = Integer.valueOf(envVars.get("GERRIT_PATCHSET_NUMBER"));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
-
+            if (extendedLogging) {
+                listener.getLogger().println(String.format("[GENAR] Connected to Gerrit: server name: %s. Change Number: %d, PatchSetNumber: %d", gerritServerName, changeNumber, patchSetNumber));
+            }
             // Step 4 - Filter issues by changed files
             final Map<String, FileInfo> files = revision.files();
             file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
@@ -110,12 +126,26 @@ public class SonarToGerritBuilder extends Builder {
                     return input != null && files.keySet().contains(input);
                 }
             });
-
+            listener.getLogger().println("[GENAR] Filter issues by changed files:");
+            if (extendedLogging) {
+                Map<String, Collection<Issue>> asMap = file2issues.asMap();
+                for (String file : asMap.keySet()) {
+                    Collection<Issue> issues = asMap.get(file);
+                    listener.getLogger().println(String.format("\n [GENAR] File %s contains %d issues: %s", file, issues.size(), issues));
+                }
+            }
             Map<String, Collection<Issue>> finalIssues = file2issues.asMap();
 
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
                 finalIssues = filterIssuesByChangedLines(finalIssues, revision);
+                if (extendedLogging) {
+                    listener.getLogger().println("[GENAR] Filter issues by changed lines:");
+                    for (String file : finalIssues.keySet()) {
+                        Collection<Issue> issues = finalIssues.get(file);
+                        listener.getLogger().println(String.format("\n [GENAR]  File %s contains %d issues: %s", file, issues.size(), issues));
+                    }
+                }
             }
 
             // Step 6 - Send review to Gerrit
@@ -123,6 +153,9 @@ public class SonarToGerritBuilder extends Builder {
 
             // Step 7 - Post review
             revision.review(reviewInput);
+            if (extendedLogging) {
+                listener.getLogger().println("[GENAR] Review has been sent");
+            }
         } catch (RestApiException e) {
             listener.error(e.getMessage());
         }
