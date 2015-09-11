@@ -93,19 +93,19 @@ public class SonarToGerritBuilderTest {
         RevisionApi revApi = new DummyRevisionApi(path2changedValues);
 
 
-        Map<String, Collection<Issue>> resMap = multimap.asMap();
-        resMap = builder.filterIssuesByChangedLines(resMap, revApi);
+
+        builder.filterIssuesByChangedLines(multimap, revApi);
 
         // list of lines commented by sonar : 37, 54,81, 99, 106, 108, 122, 162
         // list of lines affected by change : 37, 99, 106, 108
         Set<Integer> resultIssues = Sets.newHashSet(37, 99, 106, 108);
 
-        Collection<Issue> issues = resMap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java");
+        Collection<Issue> issues = multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java");
         for (Issue  issue : issues) {
                 Assert.assertTrue(resultIssues.contains(issue.getLine()));
         }
 
-        issues = resMap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java");
+        issues = multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java");
         Assert.assertEquals(0, issues.size());
     }
 
