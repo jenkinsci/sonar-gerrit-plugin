@@ -27,9 +27,13 @@
     <!-- If you want this to appear on the wiki page:
     <developers>
       <developer>
-        <id>bhacker</id>
-        <name>Bob Q. Hacker</name>
-        <email>bhacker@nowhere.net</email>
+        <id>aquarellian</id>
+        <name>Tatiana Didik (Goretskaya)</name>
+        <email>aquarellian@gmail.com</email>
+      </developer>
+      <developer>
+        <id>didik</id>
+        <name>Aleksey Didik</name>
       </developer>
     </developers>
     -->

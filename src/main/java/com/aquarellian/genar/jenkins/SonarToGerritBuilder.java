@@ -10,6 +10,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -52,13 +53,15 @@ public class SonarToGerritBuilder extends Builder {
     private final String path;
     private final Severity severity;
     private final boolean changedLinesOnly;
+    private final boolean newIssuesOnly;
     private final boolean extendedLogging = true;
 
     @DataBoundConstructor
-    public SonarToGerritBuilder(String path, String severity, boolean changedLinesOnly) {
+    public SonarToGerritBuilder(String path, String severity, boolean changedLinesOnly, boolean isNewIssuesOnly) {
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
         this.changedLinesOnly = changedLinesOnly;
+        this.newIssuesOnly = isNewIssuesOnly;
     }
 
     public String getPath() {
@@ -71,6 +74,10 @@ public class SonarToGerritBuilder extends Builder {
 
     public boolean isChangedLinesOnly() {
         return changedLinesOnly;
+    }
+
+    public boolean isNewIssuesOnly() {
+        return newIssuesOnly;
     }
 
     @Override
@@ -137,7 +144,7 @@ public class SonarToGerritBuilder extends Builder {
         return true;
     }
 
-    private void logMessage(BuildListener listener, String message){
+    private void logMessage(BuildListener listener, String message) {
         if (extendedLogging) {
             listener.getLogger().println(message);
         }
@@ -146,7 +153,7 @@ public class SonarToGerritBuilder extends Builder {
     private void logResultMap(BuildListener listener, Multimap<String, Issue> file2issues, String message) {
         if (extendedLogging) {
             listener.getLogger().println(message);
-            if (file2issues.isEmpty()){
+            if (file2issues.isEmpty()) {
                 listener.getLogger().println("None");
             }
             for (String file : file2issues.keySet()) {
@@ -262,7 +269,11 @@ public class SonarToGerritBuilder extends Builder {
     @VisibleForTesting
     Iterable<Issue> filterIssuesByPredicates(Report report) {
         List<Issue> issues = report.getIssues();
-        return Iterables.filter(issues, BySeverityPredicate.equalOrHigher(getSeverity()));
+        return Iterables.filter(issues,
+                Predicates.and(
+                        BySeverityPredicate.equalOrHigher(getSeverity()),
+                        ByNewPredicate.apply(isNewIssuesOnly()))
+        );
     }
 
     // Overridden for better type safety.
@@ -340,6 +351,24 @@ public class SonarToGerritBuilder extends Builder {
         @Override
         public boolean apply(Issue issue) {
             return issue.getSeverity().equals(severity) || issue.getSeverity().ordinal() >= severity.ordinal();
+        }
+    }
+
+    private static class ByNewPredicate implements Predicate<Issue> {
+
+        private final boolean anew;
+
+        public static ByNewPredicate apply(boolean anew) {
+            return new ByNewPredicate(anew);
+        }
+
+        private ByNewPredicate(boolean anew) {
+            this.anew = anew;
+        }
+
+        @Override
+        public boolean apply(Issue issue) {
+            return !anew || issue.isNew();
         }
     }
 
