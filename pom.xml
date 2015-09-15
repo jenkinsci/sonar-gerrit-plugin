@@ -40,6 +40,35 @@
       <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
      -->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo>ANT TASK - copying files....</echo>
+                                <copy todir="${basedir}" overwrite="true">
+                                    <fileset dir="${basedir}/target" includes="*.hpi"/>
+                                    <mapper type="flatten"/>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
@@ -52,17 +81,6 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-
-
-    <!-- If you want to depend on other plugins:
-    <dependencies>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>credentials</artifactId>
-        <version>1.9.4</version>
-      </dependency>
-    </dependencies>
-    -->
 
     <dependencies>
         <dependency>
