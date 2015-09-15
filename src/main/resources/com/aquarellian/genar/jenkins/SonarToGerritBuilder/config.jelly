@@ -32,6 +32,11 @@
             </select>
         </f:entry>
 
+        <f:entry title="New" field="newIssuesOnly"
+                 description="Comment new issues only">
+            <f:checkbox checked="true"/>
+        </f:entry>
+
         <f:entry title="Lines" field="changedLinesOnly"
                  description="Comment only changed lines">
             <f:checkbox checked="true"/>

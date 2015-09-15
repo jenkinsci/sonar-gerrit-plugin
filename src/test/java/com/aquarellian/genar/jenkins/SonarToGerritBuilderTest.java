@@ -37,27 +37,44 @@ public class SonarToGerritBuilderTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        Iterable<Issue> issues = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true).filterIssuesByPredicates(report);
+        // severity predicate
+        Iterable<Issue> issues = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(2, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MAJOR.name(), true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", Severity.MAJOR.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(12, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.INFO.name(), true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", Severity.INFO.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(19, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MINOR.name(), true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", Severity.MINOR.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(18, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.BLOCKER.name(), true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", Severity.BLOCKER.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
+
+        // new issues only predicate
+        issues = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, true).filterIssuesByPredicates(report);
+        Assert.assertEquals(0, Sets.newHashSet(issues).size());
+
+        issues = new SonarToGerritBuilder("", Severity.MAJOR.name(), true, true).filterIssuesByPredicates(report);
+        Assert.assertEquals(1, Sets.newHashSet(issues).size());
+
+        issues = new SonarToGerritBuilder("", Severity.INFO.name(), true, true).filterIssuesByPredicates(report);
+        Assert.assertEquals(1, Sets.newHashSet(issues).size());
+
+        issues = new SonarToGerritBuilder("", Severity.MINOR.name(), true, true).filterIssuesByPredicates(report);
+        Assert.assertEquals(1, Sets.newHashSet(issues).size());
+
+        issues = new SonarToGerritBuilder("", Severity.BLOCKER.name(), true, true).filterIssuesByPredicates(report);
+        Assert.assertEquals(0, Sets.newHashSet(issues).size());
     }
 
     @Test
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
-        Multimap<String, Issue> multimap = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true).generateFilenameToIssuesMap(report, report.getIssues());
+        Multimap<String, Issue> multimap = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, false).generateFilenameToIssuesMap(report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -77,7 +94,7 @@ public class SonarToGerritBuilderTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        SonarToGerritBuilder builder = new SonarToGerritBuilder("", Severity.INFO.name(), true);
+        SonarToGerritBuilder builder = new SonarToGerritBuilder("", Severity.INFO.name(), true, false);
         Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMap(report, report.getIssues());
 
         // Map will describe which strings in each file should be marked as modified.
@@ -93,7 +110,6 @@ public class SonarToGerritBuilderTest {
         RevisionApi revApi = new DummyRevisionApi(path2changedValues);
 
 
-
         builder.filterIssuesByChangedLines(multimap, revApi);
 
         // list of lines commented by sonar : 37, 54,81, 99, 106, 108, 122, 162
@@ -101,8 +117,8 @@ public class SonarToGerritBuilderTest {
         Set<Integer> resultIssues = Sets.newHashSet(37, 99, 106, 108);
 
         Collection<Issue> issues = multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java");
-        for (Issue  issue : issues) {
-                Assert.assertTrue(resultIssues.contains(issue.getLine()));
+        for (Issue issue : issues) {
+            Assert.assertTrue(resultIssues.contains(issue.getLine()));
         }
 
         issues = multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java");
