@@ -2,10 +2,14 @@ package com.aquarellian.genar.jenkins;
 
 import com.aquarellian.genar.data.SonarReportBuilder;
 import com.aquarellian.genar.data.converter.BasicIssueFormatter;
+import com.aquarellian.genar.data.converter.CustomIssueFormatter;
+import com.aquarellian.genar.data.converter.CustomReportFormatter;
 import com.aquarellian.genar.data.entity.Component;
 import com.aquarellian.genar.data.entity.Issue;
 import com.aquarellian.genar.data.entity.Report;
 import com.aquarellian.genar.data.entity.Severity;
+import com.aquarellian.genar.data.predicates.ByMinSeverityPredicate;
+import com.aquarellian.genar.data.predicates.ByNewPredicate;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
@@ -59,15 +63,23 @@ public class SonarToGerritBuilder extends Builder {
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
     private final boolean extendedLogging = true;
+    private final String noIssuesToPostText;
+    private final String someIssuesToPostText;
+    private final String issueComment;
 
 
     @DataBoundConstructor
-    public SonarToGerritBuilder(String sonarURL, String path, String severity, boolean changedLinesOnly, boolean isNewIssuesOnly) {
+    public SonarToGerritBuilder(String sonarURL, String path,
+                                String severity, boolean changedLinesOnly, boolean isNewIssuesOnly,
+                                String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
         this.changedLinesOnly = changedLinesOnly;
         this.newIssuesOnly = isNewIssuesOnly;
+        this.noIssuesToPostText = noIssuesToPostText;
+        this.someIssuesToPostText = someIssuesToPostText;
+        this.issueComment = issueComment;
     }
 
     public String getPath() {
@@ -88,6 +100,18 @@ public class SonarToGerritBuilder extends Builder {
 
     public String getSonarURL() {
         return sonarURL;
+    }
+
+    public String getNoIssuesToPostText() {
+        return noIssuesToPostText;
+    }
+
+    public String getSomeIssuesToPostText() {
+        return someIssuesToPostText;
+    }
+
+    public String getIssueComment() {
+        return issueComment;
     }
 
     @Override
@@ -174,7 +198,7 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     private String getReviewMessage(Multimap<String, Issue> finalIssues) {
-        return finalIssues.size() > 0 ? "Sonar violations have been found." : "Sonar violations have not been found.";
+        return  new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
     }
 
     @VisibleForTesting
@@ -193,7 +217,7 @@ public class SonarToGerritBuilder extends Builder {
                                             ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
                                             commentInput.id = input.getKey();
                                             commentInput.line = input.getLine();
-                                            commentInput.message = new BasicIssueFormatter(input, getSonarURL()).getMessage();
+                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
                                             return commentInput;
                                         }
 
@@ -281,7 +305,7 @@ public class SonarToGerritBuilder extends Builder {
         List<Issue> issues = report.getIssues();
         return Iterables.filter(issues,
                 Predicates.and(
-                        BySeverityPredicate.equalOrHigher(getSeverity()),
+                        ByMinSeverityPredicate.apply(getSeverity()),
                         ByNewPredicate.apply(isNewIssuesOnly()))
         );
     }
@@ -346,6 +370,27 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value){
+            if (value.length() == 0) {
+                return FormValidation.error("Please fill up report header template");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value){
+            if (value.length() == 0) {
+                return FormValidation.error("Please fill up review title template");
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckIssueComment(@QueryParameter String value){
+            if (value.length() == 0) {
+                return FormValidation.error("Please fill up review title template");
+            }
+            return FormValidation.ok();
+        }
+
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
             return true;
@@ -356,42 +401,6 @@ public class SonarToGerritBuilder extends Builder {
          */
         public String getDisplayName() {
             return "Post Sonar issues as Gerrit comments";
-        }
-    }
-
-    private static class BySeverityPredicate implements Predicate<Issue> {
-
-        private final Severity severity;
-
-        public static BySeverityPredicate equalOrHigher(Severity severity) {
-            return new BySeverityPredicate(severity);
-        }
-
-        private BySeverityPredicate(Severity severity) {
-            this.severity = severity;
-        }
-
-        @Override
-        public boolean apply(Issue issue) {
-            return issue.getSeverity().equals(severity) || issue.getSeverity().ordinal() >= severity.ordinal();
-        }
-    }
-
-    private static class ByNewPredicate implements Predicate<Issue> {
-
-        private final boolean anew;
-
-        public static ByNewPredicate apply(boolean anew) {
-            return new ByNewPredicate(anew);
-        }
-
-        private ByNewPredicate(boolean anew) {
-            this.anew = anew;
-        }
-
-        @Override
-        public boolean apply(Issue issue) {
-            return !anew || issue.isNew();
         }
     }
 
