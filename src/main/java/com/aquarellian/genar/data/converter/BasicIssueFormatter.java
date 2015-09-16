@@ -26,8 +26,8 @@ public class BasicIssueFormatter implements IssueFormatter {
     @Override
     public String getMessage() {
         StringBuilder sb = new StringBuilder();
-        sb.append(formatMessage());
         sb.append(formatSeverity());
+        sb.append(formatMessage());
         sb.append(formatRule());
         return sb.toString();
     }
@@ -40,7 +40,7 @@ public class BasicIssueFormatter implements IssueFormatter {
             if (!message.endsWith(".")) {
                 sb.append(".");
             }
-            sb.append("\n");
+            sb.append("\n\n\n");
         }
         return sb.toString();
     }
@@ -49,8 +49,8 @@ public class BasicIssueFormatter implements IssueFormatter {
         StringBuilder sb = new StringBuilder();
         Severity severity = issue.getSeverity();
         if (severity != null) {
-            sb.append("Severity: ").append(severity.name());
-            sb.append("\n");
+            sb.append(severity.name()).append(" Sonar violation:");
+            sb.append("\n\n\n");
         }
         return sb.toString();
     }
