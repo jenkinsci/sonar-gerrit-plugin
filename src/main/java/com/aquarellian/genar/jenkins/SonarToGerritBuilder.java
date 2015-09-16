@@ -40,6 +40,9 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 
 /**
@@ -48,16 +51,20 @@ import java.util.*;
 public class SonarToGerritBuilder extends Builder {
 
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
+    private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     public static final String GERRIT_FILE_DELIMITER = "/";
 
+    private final String sonarURL;
     private final String path;
     private final Severity severity;
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
     private final boolean extendedLogging = true;
 
+
     @DataBoundConstructor
-    public SonarToGerritBuilder(String path, String severity, boolean changedLinesOnly, boolean isNewIssuesOnly) {
+    public SonarToGerritBuilder(String sonarURL, String path, String severity, boolean changedLinesOnly, boolean isNewIssuesOnly) {
+        this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
         this.changedLinesOnly = changedLinesOnly;
@@ -78,6 +85,10 @@ public class SonarToGerritBuilder extends Builder {
 
     public boolean isNewIssuesOnly() {
         return newIssuesOnly;
+    }
+
+    public String getSonarURL() {
+        return sonarURL;
     }
 
     @Override
@@ -183,7 +194,7 @@ public class SonarToGerritBuilder extends Builder {
                                             ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
                                             commentInput.id = input.getKey();
                                             commentInput.line = input.getLine();
-                                            commentInput.message = new BasicIssueFormatter(input).getMessage();
+                                            commentInput.message = new BasicIssueFormatter(input, getSonarURL()).getMessage();
                                             return commentInput;
                                         }
 
@@ -320,6 +331,23 @@ public class SonarToGerritBuilder extends Builder {
             File f = new File(value);
             if (!f.exists())
                 return FormValidation.error("No such file:" + value);
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckSonarURL(@QueryParameter String value)
+                throws IOException, ServletException {
+            if (value.length() == 0) {
+                return FormValidation.warning("Please set Sonar URL");
+            }
+            try {
+                URL url = new URL(value);
+                URLConnection conn = url.openConnection();
+                conn.connect();
+            } catch (MalformedURLException e) {
+                FormValidation.warning("Please set valid URL");
+            } catch (IOException e) {
+                FormValidation.warning("Cannot establish connection to this URL");
+            }
             return FormValidation.ok();
         }
 

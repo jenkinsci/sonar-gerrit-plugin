@@ -12,6 +12,9 @@
     -->
 
     <f:section title="Sonar settings">
+        <f:entry title="Sonar Server URL" field="sonarURL">
+            <f:textbox default="http://localhost:9000"/>
+        </f:entry>
         <f:entry title="Path" field="path">
             <f:textbox default="target/sonar/sonar-report.json"/>
         </f:entry>
@@ -32,12 +35,12 @@
             </select>
         </f:entry>
 
-        <f:entry title="New" field="newIssuesOnly"
+        <f:entry title="Issues" field="newIssuesOnly"
                  description="Comment new issues only">
             <f:checkbox checked="true"/>
         </f:entry>
 
-        <f:entry title="Lines" field="changedLinesOnly"
+        <f:entry title="Affected lines" field="changedLinesOnly"
                  description="Comment only changed lines">
             <f:checkbox checked="true"/>
         </f:entry>
