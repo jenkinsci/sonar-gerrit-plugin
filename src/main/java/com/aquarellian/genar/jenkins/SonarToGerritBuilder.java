@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 
 /**
@@ -340,13 +339,9 @@ public class SonarToGerritBuilder extends Builder {
                 return FormValidation.warning("Please set Sonar URL");
             }
             try {
-                URL url = new URL(value);
-                URLConnection conn = url.openConnection();
-                conn.connect();
+                new URL(value);
             } catch (MalformedURLException e) {
-                FormValidation.warning("Please set valid URL");
-            } catch (IOException e) {
-                FormValidation.warning("Cannot establish connection to this URL");
+                return FormValidation.warning("Please set valid URL");
             }
             return FormValidation.ok();
         }
