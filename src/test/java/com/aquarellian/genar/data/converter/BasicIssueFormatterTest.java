@@ -27,8 +27,8 @@ public class BasicIssueFormatterTest {
         String message = basicIssueConverter.formatMessage();
         String severity = basicIssueConverter.formatSeverity();
         String rule = basicIssueConverter.formatRule();
-        Assert.assertEquals("Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n", message);
-        Assert.assertEquals("Severity: MINOR\n", severity);
+        Assert.assertEquals("Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n\n\n", message);
+        Assert.assertEquals("MINOR Sonar violation:\n\n\n", severity);
         Assert.assertEquals("Read more: http://localhost:9000/coding_rules#q=squid%3AUselessImportCheck\n", rule);
     }
 
@@ -39,8 +39,8 @@ public class BasicIssueFormatterTest {
         String message = basicIssueConverter.formatMessage();
         String severity = basicIssueConverter.formatSeverity();
         String rule = basicIssueConverter.formatRule();
-        Assert.assertEquals("Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n", message);
-        Assert.assertEquals("Severity: MINOR\n", severity);
+        Assert.assertEquals("Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n\n\n", message);
+        Assert.assertEquals("MINOR Sonar violation:\n\n\n", severity);
         Assert.assertEquals("Read more: squid:UselessImportCheck\n", rule);
     }
 
