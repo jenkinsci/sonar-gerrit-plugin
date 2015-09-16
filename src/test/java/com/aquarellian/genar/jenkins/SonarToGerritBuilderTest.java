@@ -38,35 +38,35 @@ public class SonarToGerritBuilderTest {
         Assert.assertEquals(19, report.getIssues().size());
 
         // severity predicate
-        Iterable<Issue> issues = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, false).filterIssuesByPredicates(report);
+        Iterable<Issue> issues = new SonarToGerritBuilder("", "", Severity.CRITICAL.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(2, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MAJOR.name(), true, false).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.MAJOR.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(12, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.INFO.name(), true, false).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.INFO.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(19, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MINOR.name(), true, false).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.MINOR.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(18, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.BLOCKER.name(), true, false).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.BLOCKER.name(), true, false).filterIssuesByPredicates(report);
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
         // new issues only predicate
-        issues = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.CRITICAL.name(), true, true).filterIssuesByPredicates(report);
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MAJOR.name(), true, true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.MAJOR.name(), true, true).filterIssuesByPredicates(report);
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.INFO.name(), true, true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.INFO.name(), true, true).filterIssuesByPredicates(report);
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.MINOR.name(), true, true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.MINOR.name(), true, true).filterIssuesByPredicates(report);
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritBuilder("", Severity.BLOCKER.name(), true, true).filterIssuesByPredicates(report);
+        issues = new SonarToGerritBuilder("", "", Severity.BLOCKER.name(), true, true).filterIssuesByPredicates(report);
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
     }
 
@@ -74,7 +74,7 @@ public class SonarToGerritBuilderTest {
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
-        Multimap<String, Issue> multimap = new SonarToGerritBuilder("", Severity.CRITICAL.name(), true, false).generateFilenameToIssuesMap(report, report.getIssues());
+        Multimap<String, Issue> multimap = new SonarToGerritBuilder("", "", Severity.CRITICAL.name(), true, false).generateFilenameToIssuesMap(report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -94,7 +94,7 @@ public class SonarToGerritBuilderTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        SonarToGerritBuilder builder = new SonarToGerritBuilder("", Severity.INFO.name(), true, false);
+        SonarToGerritBuilder builder = new SonarToGerritBuilder("", "", Severity.INFO.name(), true, false);
         Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMap(report, report.getIssues());
 
         // Map will describe which strings in each file should be marked as modified.
