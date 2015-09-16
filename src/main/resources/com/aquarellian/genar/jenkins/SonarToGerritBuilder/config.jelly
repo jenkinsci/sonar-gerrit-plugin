@@ -22,8 +22,8 @@
 
     <f:section title="Filter settings">
         <!--<f:entry title="Choose severity level"-->
-                 <!--field="name">-->
-            <!--<f:enum>${it.name}</f:enum>-->
+        <!--field="name">-->
+        <!--<f:enum>${it.name}</f:enum>-->
         <!--</f:entry>-->
         <f:entry title="Choose severity level" field="severity">
             <select name="severity">
@@ -43,6 +43,17 @@
         <f:entry title="Affected lines" field="changedLinesOnly"
                  description="Comment only changed lines">
             <f:checkbox checked="true"/>
+        </f:entry>
+    </f:section>
+    <f:section title="Report formatting">
+        <f:entry title="Review title for no Sonar violations found case" field="noIssuesToPostText">
+            <f:textbox default="Sonar violations have not been found."/>
+        </f:entry>
+        <f:entry title="Review title for Sonar violations found case" field="someIssuesToPostText">
+            <f:textbox default="&lt;total_count&gt; Sonar violations have been found."/>
+        </f:entry>
+        <f:entry title="Review comment for issue" field="issueComment">
+            <f:textarea default="&lt;severity&gt; Sonar violation:\n\n\n&lt;message&gt;\n\n\nRead more: &lt;rule_url&gt;"/>
         </f:entry>
     </f:section>
 </j:jelly>
