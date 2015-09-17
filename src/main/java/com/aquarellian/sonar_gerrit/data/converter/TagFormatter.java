@@ -1,7 +1,7 @@
 package com.aquarellian.sonar_gerrit.data.converter;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:28
  * <p/>

@@ -8,7 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:17
  * <p/>

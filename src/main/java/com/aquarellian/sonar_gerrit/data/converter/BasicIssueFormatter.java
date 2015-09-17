@@ -8,7 +8,7 @@ import java.net.URLEncoder;
 
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 03.09.2015 19:39
  * <p/>
