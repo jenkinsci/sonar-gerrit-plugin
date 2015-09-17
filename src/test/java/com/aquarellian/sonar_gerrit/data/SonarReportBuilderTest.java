@@ -1,6 +1,5 @@
 package com.aquarellian.sonar_gerrit.data;
 
-import com.aquarellian.sonar_gerrit.data.SonarReportBuilder;
 import com.aquarellian.sonar_gerrit.data.entity.*;
 import hudson.FilePath;
 import org.junit.Assert;
@@ -43,7 +42,7 @@ public class SonarReportBuilderTest {
 
     @Test
     public void testSmallFile() throws URISyntaxException, IOException, InterruptedException {
-        URL url = getClass().getClassLoader().getResource("test.json");
+        URL url = getClass().getClassLoader().getResource("one_issue.json");
         File path = new File(url.toURI());
         FilePath filePath = new FilePath(path);
         String json = filePath.readToString();

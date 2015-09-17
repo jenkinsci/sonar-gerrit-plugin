@@ -144,8 +144,8 @@ public class SonarToGerritBuilder extends Builder {
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             EnvVars envVars = build.getEnvironment(listener);
-            int changeNumber = Integer.valueOf(envVars.get(GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
-            int patchSetNumber = Integer.valueOf(envVars.get(GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
+            int changeNumber = Integer.parseInt(envVars.get(GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
+            int patchSetNumber = Integer.parseInt(envVars.get(GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             LOGGER.log(Level.INFO, "Connected to Gerrit: server name: {0}. Change Number: {1}, PatchSetNumber: {2}", new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
@@ -173,7 +173,7 @@ public class SonarToGerritBuilder extends Builder {
             revision.review(reviewInput);
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
-            listener.error(e.getMessage());
+            LOGGER.severe(e.getMessage());
         }
 
         return true;
@@ -382,6 +382,7 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
             return true;
@@ -390,6 +391,7 @@ public class SonarToGerritBuilder extends Builder {
         /**
          * This human readable name is used in the configuration screen.
          */
+        @Override
         public String getDisplayName() {
             return "Post Sonar issues as Gerrit comments";
         }

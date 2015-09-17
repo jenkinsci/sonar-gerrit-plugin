@@ -9,6 +9,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -19,15 +21,14 @@ import java.util.Date;
  */
 //todo do something with magical date format
 public class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
-
+    private static final Logger LOGGER = Logger.getLogger(DateTypeConverter.class.getName());
     // @Override
     public JsonElement serialize(Date src, Type srcType, JsonSerializationContext context) {
         return new JsonPrimitive(DateUtil.formatDate(src));
     }
 
     //@Override
-    public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context)
-            throws JsonParseException {
+    public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
         String str = json.getAsString();
         try {
             return DateUtil.parseDate(str);
@@ -36,7 +37,7 @@ public class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssz");
                 return df.parse(str);
             } catch (ParseException e1) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "An exception occurred on DateTypeConverter: {0}", e.getStackTrace());
                 throw new JsonParseException(e);
             }
         }
