@@ -201,7 +201,7 @@
     },
     {
       "key": "81c5c4f8-08c9-4340-861e-8491c9f4666a",
-      "component": "com.aquarellian:genar:src/main/java/com/aquarellian/genar/ObjectHelper.java",
+      "component": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
       "line": 18,
       "message": "Add a private constructor to hide the implicit public one.",
       "severity": "MAJOR",
@@ -267,9 +267,9 @@
       "status": "SAME"
     },
     {
-      "key": "com.aquarellian:genar:src/main/java/com/aquarellian/genar/ObjectHelper.java",
-      "path": "src/main/java/com/aquarellian/genar/ObjectHelper.java",
-      "moduleKey": "com.aquarellian:genar",
+      "key": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "path": "src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "moduleKey": "com.aquarellian:sonar-gerrit",
       "status": "ADDED"
     }
   ],

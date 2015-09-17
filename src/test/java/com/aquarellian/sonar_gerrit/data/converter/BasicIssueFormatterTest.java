@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 15.09.2015 16:57
  * <p/>

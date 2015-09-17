@@ -14,7 +14,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 12.06.2015 13:52
  * <p/>

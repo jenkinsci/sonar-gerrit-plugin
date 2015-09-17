@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 30.08.2015 13:41
  * <p/>
@@ -86,7 +86,7 @@ public class SonarToGerritBuilderTest {
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java").size());
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
-        Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/genar/ObjectHelper.java").size());
+        Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
     }
 

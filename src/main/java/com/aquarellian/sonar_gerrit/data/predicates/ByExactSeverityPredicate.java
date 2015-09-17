@@ -5,7 +5,7 @@ import com.aquarellian.sonar_gerrit.data.entity.Severity;
 import com.google.common.base.Predicate;
 
 /**
- * Project: genar
+ * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:25
  * <p/>
