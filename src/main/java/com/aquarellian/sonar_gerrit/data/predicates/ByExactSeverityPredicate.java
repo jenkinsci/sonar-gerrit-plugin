@@ -15,10 +15,6 @@ public class ByExactSeverityPredicate implements Predicate<Issue> {
 
     private final Severity severity;
 
-    public static ByExactSeverityPredicate apply(Severity severity) {
-        return new ByExactSeverityPredicate(severity);
-    }
-
     private ByExactSeverityPredicate(Severity severity) {
         this.severity = severity;
     }
@@ -26,6 +22,10 @@ public class ByExactSeverityPredicate implements Predicate<Issue> {
     @Override
     public boolean apply(Issue issue) {
         return issue.getSeverity().equals(severity);
+    }
+
+    public static ByExactSeverityPredicate apply(Severity severity) {
+        return new ByExactSeverityPredicate(severity);
     }
 
 }

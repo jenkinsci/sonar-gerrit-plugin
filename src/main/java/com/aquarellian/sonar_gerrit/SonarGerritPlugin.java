@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 public class SonarGerritPlugin extends Plugin {
     private final static Logger LOG = Logger.getLogger(SonarGerritPlugin.class.getName());
 
+    @Override
     public void start() throws Exception {
         LOG.info("SonarGerrit: sending SonarQube results to Gerrit");
     }

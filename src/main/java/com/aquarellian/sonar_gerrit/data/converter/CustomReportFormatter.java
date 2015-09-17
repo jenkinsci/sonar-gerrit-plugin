@@ -30,9 +30,10 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
     }
 
     private static String prepareText(String text, String defaultValue) {
-        return text != null && !text.trim().isEmpty()? text.trim() : defaultValue;
+        return text != null && !text.trim().isEmpty() ? text.trim() : defaultValue;
     }
 
+    @Override
     public String getMessage() {
         String res = getSize(issues) > 0 ? failMessage : successMessage;
         for (Tag tag : Tag.values()) {
@@ -41,8 +42,9 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
         return res;
     }
 
+    @Override
     public String getValueToReplace(Tag tag) {
-        int value = 0;
+        int value;
         switch (tag) {
             case INFO_ISSUE_COUNT:
             case MINOR_ISSUE_COUNT:
@@ -50,15 +52,17 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
             case CRITICAL_ISSUE_COUNT:
             case BLOCKER_ISSUE_COUNT:
                 value = getSize(filterByExactSeverityPredicate(tag.getSeverity()));
-                break;
+                return String.valueOf(value);
             case AT_LEAST_MINOR_ISSUE_COUNT:
             case AT_LEAST_MAJOR_ISSUE_COUNT:
             case AT_LEAST_CRITICAL_ISSUE_COUNT:
             case TOTAL_COUNT:
                 value = getSize(filterByMinSeverityPredicate(tag.getSeverity()));
-                break;
+                return String.valueOf(value);
+            default:
+                return "";
         }
-        return String.valueOf(value);
+
     }
 
     private int getSize(Iterable i) {

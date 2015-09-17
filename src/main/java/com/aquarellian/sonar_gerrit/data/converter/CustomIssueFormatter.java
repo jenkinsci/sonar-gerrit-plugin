@@ -39,6 +39,7 @@ public class CustomIssueFormatter implements IssueFormatter, TagFormatter<Custom
         return res;
     }
 
+    @Override
     public String getValueToReplace(Tag tag) {
         switch (tag) {
             case KEY:
@@ -57,8 +58,9 @@ public class CustomIssueFormatter implements IssueFormatter, TagFormatter<Custom
                 return issue.getStatus();
             case CREATION_DATE:
                 return issue.getCreationDate().toString();
+            default:
+                return null;
         }
-        return null;
     }
 
     protected String getRuleLink(String rule) {

@@ -14,10 +14,6 @@ public class ByNewPredicate implements Predicate<Issue> {
 
     private final boolean anew;
 
-    public static ByNewPredicate apply(boolean anew) {
-        return new ByNewPredicate(anew);
-    }
-
     private ByNewPredicate(boolean anew) {
         this.anew = anew;
     }
@@ -25,6 +21,10 @@ public class ByNewPredicate implements Predicate<Issue> {
     @Override
     public boolean apply(Issue issue) {
         return !anew || issue.isNew();
+    }
+
+    public static ByNewPredicate apply(boolean anew) {
+        return new ByNewPredicate(anew);
     }
 
 }

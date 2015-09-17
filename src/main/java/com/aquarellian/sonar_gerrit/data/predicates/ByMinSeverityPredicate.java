@@ -15,10 +15,6 @@ public class ByMinSeverityPredicate implements Predicate<Issue> {
 
     private final Severity severity;
 
-    public static ByMinSeverityPredicate apply(Severity severity) {
-        return new ByMinSeverityPredicate(severity);
-    }
-
     private ByMinSeverityPredicate(Severity severity) {
         this.severity = severity;
     }
@@ -26,5 +22,9 @@ public class ByMinSeverityPredicate implements Predicate<Issue> {
     @Override
     public boolean apply(Issue issue) {
         return issue.getSeverity().equals(severity) || issue.getSeverity().ordinal() >= severity.ordinal();
+    }
+
+    public static ByMinSeverityPredicate apply(Severity severity) {
+        return new ByMinSeverityPredicate(severity);
     }
 }
