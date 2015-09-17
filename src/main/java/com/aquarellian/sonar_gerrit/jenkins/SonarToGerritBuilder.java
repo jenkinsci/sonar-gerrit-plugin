@@ -10,10 +10,7 @@ import com.aquarellian.sonar_gerrit.data.entity.Severity;
 import com.aquarellian.sonar_gerrit.data.predicates.ByMinSeverityPredicate;
 import com.aquarellian.sonar_gerrit.data.predicates.ByNewPredicate;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.google.common.base.*;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -46,6 +43,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tatiana Didik
@@ -56,12 +55,15 @@ public class SonarToGerritBuilder extends Builder {
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     public static final String GERRIT_FILE_DELIMITER = "/";
 
+    private static final Logger LOGGER = Logger.getLogger(SonarToGerritBuilder.class.getName());
+    public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
+    public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
+
     private final String sonarURL;
     private final String path;
     private final Severity severity;
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
-    private final boolean extendedLogging = true;
     private final String noIssuesToPostText;
     private final String someIssuesToPostText;
     private final String issueComment;
@@ -117,20 +119,20 @@ public class SonarToGerritBuilder extends Builder {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
             InterruptedException {
         FilePath reportPath = build.getWorkspace().child(getPath());
-        logMessage(listener, "[GENAR] Getting Sonar Report from: " + reportPath);
+        LOGGER.log(Level.INFO, "Getting Sonar Report from: {0}", reportPath);
 
         SonarReportBuilder builder = new SonarReportBuilder();
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
-        logMessage(listener, String.format("[GENAR] Report has loaded and contains %d issues ", report.getIssues().size()));
+        LOGGER.log(Level.INFO, "Report has loaded and contains {0} issues", report.getIssues().size());
 
         // Step 1 - Filter issues by issues only predicates
         Iterable<Issue> filtered = filterIssuesByPredicates(report);
-        logMessage(listener, String.format("[GENAR] %d issues has left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size()));
+        LOGGER.log(Level.INFO, "{0} issues left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size());
 
         // Step 2 - Calculate real file name for issues and store to multimap
         Multimap<String, Issue> file2issues = generateFilenameToIssuesMap(report, filtered);
-        logResultMap(listener, file2issues, String.format("\n[GENAR] file2issues map contains %d elements", file2issues.keySet().size()));
+        logResultMap(file2issues, "Map file2issues contains {0} elements");
 
         // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
@@ -142,10 +144,10 @@ public class SonarToGerritBuilder extends Builder {
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             EnvVars envVars = build.getEnvironment(listener);
-            int changeNumber = Integer.valueOf(envVars.get("GERRIT_CHANGE_NUMBER"));
-            int patchSetNumber = Integer.valueOf(envVars.get("GERRIT_PATCHSET_NUMBER"));
+            int changeNumber = Integer.valueOf(envVars.get(GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
+            int patchSetNumber = Integer.valueOf(envVars.get(GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
-            logMessage(listener, String.format("[GENAR] Connected to Gerrit: server name: %s. Change Number: %d, PatchSetNumber: %d", gerritServerName, changeNumber, patchSetNumber));
+            LOGGER.log(Level.INFO, "Connected to Gerrit: server name: {0}. Change Number: {1}, PatchSetNumber: {2}", new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
             // Step 4 - Filter issues by changed files
             final Map<String, FileInfo> files = revision.files();
@@ -156,12 +158,12 @@ public class SonarToGerritBuilder extends Builder {
                 }
             });
 
-            logResultMap(listener, file2issues, "\n[GENAR] Filter issues by changed files:");
+            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
 
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
                 filterIssuesByChangedLines(file2issues, revision);
-                logResultMap(listener, file2issues, "\n[GENAR] Filter issues by changed lines:");
+                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
             }
 
             // Step 6 - Send review to Gerrit
@@ -169,7 +171,7 @@ public class SonarToGerritBuilder extends Builder {
 
             // Step 7 - Post review
             revision.review(reviewInput);
-            logMessage(listener, "[GENAR] Review has been sent");
+            LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
             listener.error(e.getMessage());
         }
@@ -177,27 +179,17 @@ public class SonarToGerritBuilder extends Builder {
         return true;
     }
 
-    private void logMessage(BuildListener listener, String message) {
-        if (extendedLogging) {
-            listener.getLogger().println(message);
-        }
-    }
-
-    private void logResultMap(BuildListener listener, Multimap<String, Issue> file2issues, String message) {
-        if (extendedLogging) {
-            listener.getLogger().println(message);
-            if (file2issues.isEmpty()) {
-                listener.getLogger().println("None");
-            }
-            for (String file : file2issues.keySet()) {
-                Collection<Issue> issues = file2issues.get(file);
-                listener.getLogger().println(String.format("\n [GENAR] File %s contains %d issues: %s", file, issues.size(), issues));
-            }
+    private void logResultMap(Multimap<String, Issue> file2issues, String message) {
+        LOGGER.log(Level.INFO, message, file2issues.keySet().size());
+        for (String file : file2issues.keySet()) {
+            Collection<Issue> issues = file2issues.get(file);
+            String issuesAsString = Joiner.on(System.lineSeparator()).join(issues);
+            LOGGER.log(Level.INFO, "File {0} contains {1} issues:{2}{3}", new Object[]{file, issues.size(), System.lineSeparator(), issuesAsString});
         }
     }
 
     private String getReviewMessage(Multimap<String, Issue> finalIssues) {
-        return  new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
+        return new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
     }
 
     @VisibleForTesting
@@ -369,21 +361,21 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value){
+        public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error("Please fill up report header template");
             }
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value){
+        public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error("Please fill up review title template");
             }
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckIssueComment(@QueryParameter String value){
+        public FormValidation doCheckIssueComment(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error("Please fill up review title template");
             }
