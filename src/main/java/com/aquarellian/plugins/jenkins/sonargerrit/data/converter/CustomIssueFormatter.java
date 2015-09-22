@@ -1,6 +1,7 @@
 package com.aquarellian.plugins.jenkins.sonargerrit.data.converter;
 
 import com.aquarellian.plugins.jenkins.sonargerrit.data.entity.Issue;
+import com.aquarellian.plugins.jenkins.sonargerrit.util.Localization;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -14,7 +15,7 @@ import java.net.URLEncoder;
  */
 public class CustomIssueFormatter implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
 
-    public static final String DEFAULT_ISSUE_COMMENT_TEXT = "<severity> Sonar violation:\n\n\n<message>\n\n\nRead more: <rule_url>";
+    public static final String DEFAULT_ISSUE_COMMENT_TEXT = Localization.getLocalized("jenkins.plugin.default.review.body");
 
     private Issue issue;
     private String text;

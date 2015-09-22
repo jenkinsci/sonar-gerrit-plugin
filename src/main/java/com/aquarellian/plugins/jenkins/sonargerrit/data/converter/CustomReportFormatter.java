@@ -4,6 +4,7 @@ import com.aquarellian.plugins.jenkins.sonargerrit.data.entity.Issue;
 import com.aquarellian.plugins.jenkins.sonargerrit.data.entity.Severity;
 import com.aquarellian.plugins.jenkins.sonargerrit.data.predicates.ByExactSeverityPredicate;
 import com.aquarellian.plugins.jenkins.sonargerrit.data.predicates.ByMinSeverityPredicate;
+import com.aquarellian.plugins.jenkins.sonargerrit.util.Localization;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -15,8 +16,8 @@ import com.google.common.collect.Lists;
  * $Id$
  */
 public class CustomReportFormatter implements TagFormatter<CustomReportFormatter.Tag> {
-    public static final String DEFAULT_NO_ISSUES_TEXT = "Sonar violations have not been found.";
-    public static final String DEFAULT_SOME_ISSUES_TEXT = "<total_count> Sonar violations have been found.";
+    public static final String DEFAULT_NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
+    public static final String DEFAULT_SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");
 
     private String successMessage;
     private String failMessage;

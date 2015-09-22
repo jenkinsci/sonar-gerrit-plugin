@@ -46,6 +46,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.aquarellian.plugins.jenkins.sonargerrit.util.Localization.getLocalized;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -343,43 +345,43 @@ public class SonarToGerritBuilder extends Builder {
         public FormValidation doCheckPath(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
-                return FormValidation.warning("Please set a path");
+                return FormValidation.warning(getLocalized("jenkins.plugin.validation.path.empty"));
             File f = new File(value);
             if (!f.exists())
-                return FormValidation.error("No such file:" + value);
+                return FormValidation.error(String.format(getLocalized("jenkins.plugin.validation.path.no.such.file"), value));
             return FormValidation.ok();
         }
 
         public FormValidation doCheckSonarURL(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0) {
-                return FormValidation.warning("Please set Sonar URL");
+                return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.empty"));
             }
             try {
                 new URL(value);
             } catch (MalformedURLException e) {
-                return FormValidation.warning("Please set valid URL");
+                return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.invalid"));
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
-                return FormValidation.error("Please fill up report header template");
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
-                return FormValidation.error("Please fill up review title template");
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
             }
             return FormValidation.ok();
         }
 
         public FormValidation doCheckIssueComment(@QueryParameter String value) {
             if (value.length() == 0) {
-                return FormValidation.error("Please fill up review title template");
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.body.empty"));
             }
             return FormValidation.ok();
         }
@@ -387,6 +389,7 @@ public class SonarToGerritBuilder extends Builder {
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
+            //todo check if gerrit trigger installed
             return true;
         }
 
@@ -395,7 +398,7 @@ public class SonarToGerritBuilder extends Builder {
          */
         @Override
         public String getDisplayName() {
-            return "Post Sonar issues as Gerrit comments";
+            return getLocalized("jenkins.plugin.build.step.name");
         }
     }
 
