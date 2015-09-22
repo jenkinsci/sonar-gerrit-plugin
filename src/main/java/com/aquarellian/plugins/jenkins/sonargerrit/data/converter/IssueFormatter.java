@@ -8,5 +8,5 @@ package com.aquarellian.plugins.jenkins.sonargerrit.data.converter;
  * $Id$
  */
 public interface IssueFormatter {
-    public String getMessage();
+    String getMessage();
 }
