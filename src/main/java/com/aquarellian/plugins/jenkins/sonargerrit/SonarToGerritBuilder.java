@@ -132,11 +132,11 @@ public class SonarToGerritBuilder extends Builder {
 
         // Step 1 - Filter issues by issues only predicates
         Iterable<Issue> filtered = filterIssuesByPredicates(report);
-        LOGGER.log(Level.INFO, "{0} issues left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size());
+//        LOGGER.log(Level.INFO, "{0} issues left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size());
 
         // Step 2 - Calculate real file name for issues and store to multimap
         Multimap<String, Issue> file2issues = generateFilenameToIssuesMap(report, filtered);
-        logResultMap(file2issues, "Map file2issues contains {0} elements");
+//        logResultMap(file2issues, "Map file2issues contains {0} elements");
 
         // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
@@ -162,12 +162,12 @@ public class SonarToGerritBuilder extends Builder {
                 }
             });
 
-            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
+//            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
 
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
                 filterIssuesByChangedLines(file2issues, revision);
-                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
+//                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
             }
 
             // Step 6 - Send review to Gerrit
