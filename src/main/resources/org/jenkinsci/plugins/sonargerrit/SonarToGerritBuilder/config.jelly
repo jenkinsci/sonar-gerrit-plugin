@@ -11,53 +11,49 @@
       When submitted, it will be passed to the corresponding constructor parameter.
     -->
 
-    <f:section title="Sonar settings">
-        <f:entry title="Sonar Server URL" field="sonarURL">
+    <f:section title="${%jenkins.plugin.settings.section.sonar.name}">
+        <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
             <f:textbox default="http://localhost:9000"/>
         </f:entry>
-        <f:entry title="Path" field="path">
+        <f:entry title="${%jenkins.plugin.settings.sonar.report.path}" field="path">
             <f:textbox default="target/sonar/sonar-report.json"/>
         </f:entry>
     </f:section>
 
-    <f:section title="Filter settings">
+    <f:section title="${%jenkins.plugin.settings.section.filter.name}">
         <!--<f:entry title="Choose severity level"-->
         <!--field="name">-->
         <!--<f:enum>${it.name}</f:enum>-->
         <!--</f:entry>-->
-        <f:entry title="Report issues having severity level higher or equal to:" field="severity">
+        <f:entry title="${%jenkins.plugin.settings.filter.severity}" field="severity">
             <select name="severity">
-                <option value="INFO">INFO</option>
-                <option value="MINOR">MINOR</option>
-                <option value="MAJOR" selected="true">MAJOR</option>
-                <option value="CRITICAL">CRITICAL</option>
-                <option value="BLOCKER">BLOCKER</option>
+                <option value="INFO">${%jenkins.plugin.data.severity.info}</option>
+                <option value="MINOR">${%jenkins.plugin.data.severity.minor}</option>
+                <option value="MAJOR" selected="true">${%jenkins.plugin.data.severity.major}</option>
+                <option value="CRITICAL">${%jenkins.plugin.data.severity.critical}</option>
+                <option value="BLOCKER">${%jenkins.plugin.data.severity.blocker}</option>
             </select>
         </f:entry>
 
-        <f:entry title="Report new issues only?" field="newIssuesOnly"
-                 description="Reports new as well as existing issues when unchecked">
+        <f:entry title="${%jenkins.plugin.settings.filter.new}" field="newIssuesOnly"
+                 description="${%jenkins.plugin.settings.filter.new.description}">
             <f:checkbox checked="true"/>
         </f:entry>
 
-        <f:entry title="Add comments to changed lines only" field="changedLinesOnly"
-                 description="Reports issues for changed as well as not changed lines in files affected by patchset when unchecked">
+        <f:entry title="${%jenkins.plugin.settings.filter.lines.changed}" field="changedLinesOnly"
+                 description="${%jenkins.plugin.settings.filter.lines.changed.description}">
             <f:checkbox checked="true"/>
         </f:entry>
     </f:section>
-    <f:section title="Report formatting">
-        <f:entry title="Title of review for no Sonar violations found case" field="noIssuesToPostText">
-            <f:textbox default="Sonar violations have not been found."/>
+    <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
+        <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
+            <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
         </f:entry>
-        <f:entry title="Title of review for Sonar violations found case" field="someIssuesToPostText">
-            <f:textbox default="&lt;total_count&gt; Sonar violations have been found."/>
+        <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
+            <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
         </f:entry>
-        <f:entry title="Pattern for issue comment" field="issueComment">
-            <f:textarea default="&lt;severity&gt; Sonar violation:
-
-            &lt;message&gt;
-
-            Read more: &lt;rule_url&gt;"/>
+        <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
+            <f:textarea default="${%jenkins.plugin.default.review.body}"/>
         </f:entry>
     </f:section>
 </j:jelly>
