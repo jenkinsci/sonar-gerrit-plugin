@@ -1,9 +1,5 @@
 ## Sonar Gerrit Plugin
-This plugin triggers builds on events from the Gerrit code review system by retrieving events from the Gerrit command "stream-events", so the trigger is pushed from Gerrit instead of pulled as scm-triggers usually are.
-
-Various types of events can trigger a build, multiple builds can be triggered by one event, and one consolidated report is sent back to Gerrit.
-
-Multiple Gerrit server connections can be established per Jenkins instance. Each job can be configured with one Gerrit server.
+This plugin allows to transform [SonarQube](http://www.sonarqube.org/) issues to comments in [Gerrit](http://code.google.com/p/gerrit/) review
 
 ## Maintainers
 
