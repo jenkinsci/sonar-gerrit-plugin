@@ -141,8 +141,20 @@ public class SonarToGerritBuilder extends Builder {
         // Step 3 - Prepare Gerrit REST API client
         String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
+        if (gerritConfig == null){
+            String message = getLocalized("jenkins.plugin.error.gerrit.config.empty");
+            listener.getLogger().println(message);
+            LOGGER.severe(message);
+            return true;
+        }
 
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
+        if (gerritConfig.getGerritHttpUserName() == null){
+            String message = getLocalized("jenkins.plugin.error.gerrit.user.empty");
+            listener.getLogger().println(message);
+            LOGGER.warning(message);
+            return true;
+        }
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
@@ -178,6 +190,7 @@ public class SonarToGerritBuilder extends Builder {
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
             LOGGER.severe(e.getMessage());
+            return true;
         }
 
         return true;
