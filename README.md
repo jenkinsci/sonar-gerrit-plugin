@@ -9,7 +9,7 @@ aquarellian@gmail.com
 
 ## Wiki
 * [Wiki](https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit)
-* [Mailing Lists](http://jenkins-ci.org/content/mailing-lists)Mailing Lists
+* [Mailing Lists](http://jenkins-ci.org/content/mailing-lists)
 
 ## Build
 The plugin depends on a gerrit-trigger plugin.
