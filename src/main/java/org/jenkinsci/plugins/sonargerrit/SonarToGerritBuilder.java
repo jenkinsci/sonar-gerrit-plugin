@@ -58,11 +58,13 @@ public class SonarToGerritBuilder extends Builder {
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     public static final String GERRIT_FILE_DELIMITER = "/";
+    public static final String EMPTY_STR = "";
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritBuilder.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
+    private final String repositoryPath;
     private final String sonarURL;
     private final String path;
     private final Severity severity;
@@ -74,9 +76,10 @@ public class SonarToGerritBuilder extends Builder {
 
 
     @DataBoundConstructor
-    public SonarToGerritBuilder(String sonarURL, String path,
+    public SonarToGerritBuilder(String repositoryPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean isNewIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
+        this.repositoryPath =    MoreObjects.firstNonNull(repositoryPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
@@ -117,6 +120,10 @@ public class SonarToGerritBuilder extends Builder {
 
     public String getIssueComment() {
         return issueComment;
+    }
+
+    public String getRepositoryPath() {
+        return repositoryPath;
     }
 
     @Override
@@ -301,11 +308,16 @@ public class SonarToGerritBuilder extends Builder {
             String issueComponent = issue.getComponent();
             String moduleName = component2module.get(issueComponent);
             String componentPath = component2path.get(issueComponent);
-            String realFileName = moduleName != null ? moduleName + GERRIT_FILE_DELIMITER + componentPath : componentPath;
+
+            String realFileName = appendDelimiter(repositoryPath) + appendDelimiter(moduleName) + componentPath ;
             file2issues.put(realFileName, issue);
 
         }
         return file2issues;
+    }
+
+    private String appendDelimiter(String subPath){
+        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER)? subPath : subPath + GERRIT_FILE_DELIMITER;
     }
 
     @VisibleForTesting
