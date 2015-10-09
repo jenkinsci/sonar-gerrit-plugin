@@ -64,7 +64,7 @@ public class SonarToGerritBuilder extends Builder {
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    private final String repositoryPath;
+    private final String projectPath;
     private final String sonarURL;
     private final String path;
     private final Severity severity;
@@ -76,10 +76,10 @@ public class SonarToGerritBuilder extends Builder {
 
 
     @DataBoundConstructor
-    public SonarToGerritBuilder(String repositoryPath, String sonarURL, String path,
+    public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean isNewIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
-        this.repositoryPath =    MoreObjects.firstNonNull(repositoryPath, EMPTY_STR);
+        this.projectPath =    MoreObjects.firstNonNull(projectPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
@@ -122,8 +122,8 @@ public class SonarToGerritBuilder extends Builder {
         return issueComment;
     }
 
-    public String getRepositoryPath() {
-        return repositoryPath;
+    public String getProjectPath() {
+        return projectPath;
     }
 
     @Override
@@ -309,7 +309,7 @@ public class SonarToGerritBuilder extends Builder {
             String moduleName = component2module.get(issueComponent);
             String componentPath = component2path.get(issueComponent);
 
-            String realFileName = appendDelimiter(repositoryPath) + appendDelimiter(moduleName) + componentPath ;
+            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath ;
             file2issues.put(realFileName, issue);
 
         }

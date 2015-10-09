@@ -10,8 +10,8 @@
       Creates a text field that shows the value of the "path" property.
       When submitted, it will be passed to the corresponding constructor parameter.
     -->
-    <f:section title="${%jenkins.plugin.settings.section.repository.name}">
-        <f:entry title="${%jenkins.plugin.settings.repository.relative.path}" field="relativePath">
+    <f:section title="${%jenkins.plugin.settings.section.project.name}">
+        <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
             <f:textbox/>
         </f:entry>
     </f:section>
