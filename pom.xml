@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.2</version>
     <packaging>hpi</packaging>
 
     <name>Sonar Gerrit Plugin</name>
@@ -38,7 +38,7 @@
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>HEAD</tag>
+      <tag>sonar-gerrit-1.0.2</tag>
   </scm>
 
     <repositories>
