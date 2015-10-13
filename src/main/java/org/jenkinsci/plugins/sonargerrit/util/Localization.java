@@ -22,6 +22,11 @@ public final class Localization {
         return messages.getString(s);
     }
 
+    public static String getLocalized(String s, Object... params){
+        String string = getLocalized(s);
+        return String.format(string, params);
+    }
+
     public static String getLocalized(String s, Locale l){
         ResourceBundle messages = ResourceBundle.getBundle(MESSAGES, l);
         return messages.getString(s);
