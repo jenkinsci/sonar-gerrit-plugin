@@ -131,6 +131,10 @@ public class SonarToGerritBuilder extends Builder {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
             InterruptedException {
         FilePath reportPath = build.getWorkspace().child(getPath());
+        if (!reportPath.exists()) {
+            logError(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
+            return false;
+        }
         LOGGER.log(Level.INFO, "Getting Sonar Report from: {0}", reportPath);
 
         SonarReportBuilder builder = new SonarReportBuilder();
@@ -151,15 +155,18 @@ public class SonarToGerritBuilder extends Builder {
         String gerritNameEnvVar = getEnvVar(build, listener, GERRIT_NAME_ENV_VAR_NAME);
         GerritTrigger trigger = GerritTrigger.getTrigger(build.getProject());
         String gerritServerName = gerritNameEnvVar != null ? gerritNameEnvVar : trigger != null ? trigger.getServerName() : null;
-        if (checkAndLogIfNull(listener, gerritServerName, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE)) {
+        if (gerritServerName == null) {
+            logError(listener, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE);
             return false;
         }
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
-        if (checkAndLogIfNull(listener, gerritConfig, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE)) {
+        if (gerritConfig == null) {
+            logError(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
             return false;
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        if (checkAndLogIfNull(listener, gerritConfig.getGerritHttpUserName(), "jenkins.plugin.error.gerrit.user.empty", Level.WARNING)) {
+        if (gerritConfig.getGerritHttpUserName() == null) {
+            logError(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
             return false;
         }
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
@@ -207,13 +214,10 @@ public class SonarToGerritBuilder extends Builder {
         return envVars.get(name);
     }
 
-    private boolean checkAndLogIfNull(BuildListener listener, Object value, String message, Level l) {
-        if (value == null) {
-            listener.getLogger().println(message);
-            LOGGER.log(l, message);
-            return true;
-        }
-        return false;
+    private void logError(BuildListener listener, String message, Level l, Object... params) {
+        message = getLocalized(message, params);
+        listener.getLogger().println(message);
+        LOGGER.log(l, message);
     }
 
     private void logResultMap(Multimap<String, Issue> file2issues, String message) {
