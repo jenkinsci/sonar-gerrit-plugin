@@ -1,14 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
-import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
-import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.data.predicates.ByMinSeverityPredicate;
-import org.jenkinsci.plugins.sonargerrit.data.predicates.ByNewPredicate;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -33,6 +24,15 @@ import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
+import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
+import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
+import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
+import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
+import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.data.predicates.ByMinSeverityPredicate;
+import org.jenkinsci.plugins.sonargerrit.data.predicates.ByNewPredicate;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -62,6 +62,7 @@ public class SonarToGerritBuilder extends Builder {
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritBuilder.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
+    public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
     private final String projectPath;
@@ -79,7 +80,7 @@ public class SonarToGerritBuilder extends Builder {
     public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean isNewIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
-        this.projectPath =    MoreObjects.firstNonNull(projectPath, EMPTY_STR);
+        this.projectPath = MoreObjects.firstNonNull(projectPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
         this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
@@ -146,29 +147,27 @@ public class SonarToGerritBuilder extends Builder {
 //        logResultMap(file2issues, "Map file2issues contains {0} elements");
 
         // Step 3 - Prepare Gerrit REST API client
-        String gerritServerName = GerritTrigger.getTrigger(build.getProject()).getServerName();
-        IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
-        if (gerritConfig == null){
-            String message = getLocalized("jenkins.plugin.error.gerrit.config.empty");
-            listener.getLogger().println(message);
-            LOGGER.severe(message);
-            return true;
+        // Check Gerrit configuration is available
+        String gerritNameEnvVar = getEnvVar(build, listener, GERRIT_NAME_ENV_VAR_NAME);
+        GerritTrigger trigger = GerritTrigger.getTrigger(build.getProject());
+        String gerritServerName = gerritNameEnvVar != null ? gerritNameEnvVar : trigger != null ? trigger.getServerName() : null;
+        if (checkAndLogIfNull(listener, gerritServerName, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE)) {
+            return false;
         }
-
+        IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
+        if (checkAndLogIfNull(listener, gerritConfig, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE)) {
+            return false;
+        }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        if (gerritConfig.getGerritHttpUserName() == null){
-            String message = getLocalized("jenkins.plugin.error.gerrit.user.empty");
-            listener.getLogger().println(message);
-            LOGGER.warning(message);
-            return true;
+        if (checkAndLogIfNull(listener, gerritConfig.getGerritHttpUserName(), "jenkins.plugin.error.gerrit.user.empty", Level.WARNING)) {
+            return false;
         }
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
-            EnvVars envVars = build.getEnvironment(listener);
-            int changeNumber = Integer.parseInt(envVars.get(GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
-            int patchSetNumber = Integer.parseInt(envVars.get(GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
+            int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
+            int patchSetNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             LOGGER.log(Level.INFO, "Connected to Gerrit: server name: {0}. Change Number: {1}, PatchSetNumber: {2}", new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
@@ -201,6 +200,20 @@ public class SonarToGerritBuilder extends Builder {
         }
 
         return true;
+    }
+
+    private String getEnvVar(AbstractBuild build, BuildListener listener, String name) throws IOException, InterruptedException {
+        EnvVars envVars = build.getEnvironment(listener);
+        return envVars.get(name);
+    }
+
+    private boolean checkAndLogIfNull(BuildListener listener, Object value, String message, Level l) {
+        if (value == null) {
+            listener.getLogger().println(message);
+            LOGGER.log(l, message);
+            return true;
+        }
+        return false;
     }
 
     private void logResultMap(Multimap<String, Issue> file2issues, String message) {
@@ -309,15 +322,15 @@ public class SonarToGerritBuilder extends Builder {
             String moduleName = component2module.get(issueComponent);
             String componentPath = component2path.get(issueComponent);
 
-            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath ;
+            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath;
             file2issues.put(realFileName, issue);
 
         }
         return file2issues;
     }
 
-    private String appendDelimiter(String subPath){
-        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER)? subPath : subPath + GERRIT_FILE_DELIMITER;
+    private String appendDelimiter(String subPath) {
+        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER) ? subPath : subPath + GERRIT_FILE_DELIMITER;
     }
 
     @VisibleForTesting
