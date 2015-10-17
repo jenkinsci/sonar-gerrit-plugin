@@ -9,14 +9,31 @@ import java.util.Date;
  */
 public class Issue {
 
+    @SuppressWarnings(value = "unused")
     private String key;
+
+    @SuppressWarnings(value = "unused")
     private String component;
+
+    @SuppressWarnings(value = "unused")
     private Integer line;
+
+    @SuppressWarnings(value = "unused")
     private String message;
+
+    @SuppressWarnings(value = "unused")
     private Severity severity;
+
+    @SuppressWarnings(value = "unused")
     private String rule;
+
+    @SuppressWarnings(value = "unused")
     private String status;
+
+    @SuppressWarnings(value = "unused")
     private Boolean isNew;
+
+    @SuppressWarnings(value = "unused")
     private Date creationDate;
 
     public String getKey() {
