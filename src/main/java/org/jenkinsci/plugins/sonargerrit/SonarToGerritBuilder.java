@@ -1,7 +1,10 @@
 package org.jenkinsci.plugins.sonargerrit;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.*;
+import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -220,15 +223,6 @@ public class SonarToGerritBuilder extends Builder {
         LOGGER.log(l, message);
     }
 
-    private void logResultMap(Multimap<String, Issue> file2issues, String message) {
-        LOGGER.log(Level.INFO, message, file2issues.keySet().size());
-        for (String file : file2issues.keySet()) {
-            Collection<Issue> issues = file2issues.get(file);
-            String issuesAsString = Joiner.on(System.lineSeparator()).join(issues);
-            LOGGER.log(Level.INFO, "File {0} contains {1} issues:{2}{3}", new Object[]{file, issues.size(), System.lineSeparator(), issuesAsString});
-        }
-    }
-
     private String getReviewMessage(Multimap<String, Issue> finalIssues) {
         return new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
     }
@@ -246,6 +240,9 @@ public class SonarToGerritBuilder extends Builder {
                                         @Nullable
                                         @Override
                                         public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                            if (input == null) {
+                                                return null;
+                                            }
                                             ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
                                             commentInput.id = input.getKey();
                                             commentInput.line = input.getLine();
@@ -385,6 +382,7 @@ public class SonarToGerritBuilder extends Builder {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckPath(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0)
@@ -395,6 +393,17 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        /**
+         * Performs on-the-fly validation of the form field 'sonarURL'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckSonarURL(@QueryParameter String value)
                 throws IOException, ServletException {
             if (value.length() == 0) {
@@ -408,6 +417,17 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        /**
+         * Performs on-the-fly validation of the form field 'noIssuesToPostText'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
@@ -415,6 +435,17 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        /**
+         * Performs on-the-fly validation of the form field 'someIssuesToPostText'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
@@ -422,6 +453,17 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        /**
+         * Performs on-the-fly validation of the form field 'issueComment'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckIssueComment(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.body.empty"));
@@ -429,6 +471,17 @@ public class SonarToGerritBuilder extends Builder {
             return FormValidation.ok();
         }
 
+        /**
+         * Performs on-the-fly validation of the form field 'severity'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
         public FormValidation doCheckSeverity(@QueryParameter String value) {
             if (value == null || Severity.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.severity.unknown"));

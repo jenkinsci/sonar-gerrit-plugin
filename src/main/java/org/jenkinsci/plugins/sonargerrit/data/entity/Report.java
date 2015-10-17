@@ -9,11 +9,19 @@ import java.util.List;
  * Author:  Tatiana Didik
  */
 public class Report  {
-
+    @SuppressWarnings(value="unused")
     private String version;
+
+    @SuppressWarnings(value="unused")
     private List<Issue> issues;
+
+    @SuppressWarnings(value="unused")
     private List<Component> components;
+
+    @SuppressWarnings(value="unused")
     private List<Rule> rules;
+
+    @SuppressWarnings(value="unused")
     private List<User> users;
 
     public String getVersion() {

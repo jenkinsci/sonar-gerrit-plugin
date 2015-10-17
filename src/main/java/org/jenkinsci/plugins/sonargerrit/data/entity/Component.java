@@ -9,12 +9,16 @@ import javax.annotation.Nullable;
  */
 
 public class Component {
+    @SuppressWarnings(value="unused")
     private String key;
 
+    @SuppressWarnings(value="unused")
     private String path;
 
+    @SuppressWarnings(value="unused")
     private String moduleKey;
 
+    @SuppressWarnings(value="unused")
     private String status;
 
     public String getKey() {
