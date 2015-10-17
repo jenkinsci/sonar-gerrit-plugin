@@ -68,7 +68,7 @@ public class SonarToGerritBuilder extends Builder {
     private final String projectPath;
     private final String sonarURL;
     private final String path;
-    private final Severity severity;
+    private final String severity;
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
     private final String noIssuesToPostText;
@@ -78,14 +78,14 @@ public class SonarToGerritBuilder extends Builder {
 
     @DataBoundConstructor
     public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
-                                String severity, boolean changedLinesOnly, boolean isNewIssuesOnly,
+                                String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
         this.projectPath = MoreObjects.firstNonNull(projectPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
-        this.severity = MoreObjects.firstNonNull(Severity.valueOf(severity), Severity.MAJOR);
+        this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
         this.changedLinesOnly = changedLinesOnly;
-        this.newIssuesOnly = isNewIssuesOnly;
+        this.newIssuesOnly = newIssuesOnly;
         this.noIssuesToPostText = noIssuesToPostText;
         this.someIssuesToPostText = someIssuesToPostText;
         this.issueComment = issueComment;
@@ -95,7 +95,7 @@ public class SonarToGerritBuilder extends Builder {
         return path;
     }
 
-    public Severity getSeverity() {
+    public String getSeverity() {
         return severity;
     }
 
@@ -340,9 +340,10 @@ public class SonarToGerritBuilder extends Builder {
     @VisibleForTesting
     Iterable<Issue> filterIssuesByPredicates(Report report) {
         List<Issue> issues = report.getIssues();
+        Severity sev = Severity.valueOf(severity);
         return Iterables.filter(issues,
                 Predicates.and(
-                        ByMinSeverityPredicate.apply(getSeverity()),
+                        ByMinSeverityPredicate.apply(sev),
                         ByNewPredicate.apply(isNewIssuesOnly()))
         );
     }
@@ -424,6 +425,13 @@ public class SonarToGerritBuilder extends Builder {
         public FormValidation doCheckIssueComment(@QueryParameter String value) {
             if (value.length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.body.empty"));
+            }
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckSeverity(@QueryParameter String value) {
+            if (value == null || Severity.valueOf(value) == null) {
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.severity.unknown"));
             }
             return FormValidation.ok();
         }
