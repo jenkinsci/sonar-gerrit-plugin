@@ -25,12 +25,30 @@
         </f:entry>
     </f:section>
 
+    <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
+        <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
+                 description="${%jenkins.plugin.settings.gerrit.post.score.description}">
+            <f:checkbox default="true"/>
+        </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
+            <f:textbox default="Code-Review"/>
+        </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
+            <f:textbox default="+1" />
+        </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
+            <f:textbox default="-1" />
+        </f:entry>
+    </f:section>
+
     <f:section title="${%jenkins.plugin.settings.section.filter.name}">
         <f:entry name="severity" title="${%jenkins.plugin.settings.filter.severity}" field="severity">
             <select name="severity" field="severity">
                 <f:option value="INFO" selected="${instance.severity =='INFO'}">INFO</f:option>
                 <f:option value="MINOR" selected="${instance.severity =='MINOR'}">MINOR</f:option>
-                <f:option value="MAJOR" selected="${instance.severity =='MAJOR' || instance.severity == null}">MAJOR</f:option>
+                <f:option value="MAJOR"
+                          selected="${instance.severity =='MAJOR' || instance.severity == null}">MAJOR
+                </f:option>
                 <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">CRITICAL</f:option>
                 <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">BLOCKER</f:option>
             </select>

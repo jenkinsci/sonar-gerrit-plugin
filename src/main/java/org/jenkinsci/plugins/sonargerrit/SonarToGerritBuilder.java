@@ -13,6 +13,7 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.VerdictCategory;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
@@ -60,6 +61,9 @@ public class SonarToGerritBuilder extends Builder {
 
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
+    private static final String DEFAULT_CATEGORY = "Code-Review";
+    private static final int DEFAULT_SCORE = 0;
+
     public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
 
@@ -77,12 +81,17 @@ public class SonarToGerritBuilder extends Builder {
     private final String noIssuesToPostText;
     private final String someIssuesToPostText;
     private final String issueComment;
+    private final boolean postScore;
+    private final String category;
+    private final String noIssuesScore;
+    private final String issuesScore;
 
 
     @DataBoundConstructor
     public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean newIssuesOnly,
-                                String noIssuesToPostText, String someIssuesToPostText, String issueComment) {
+                                String noIssuesToPostText, String someIssuesToPostText, String issueComment,
+                                boolean postScore, String category, String noIssuesScore, String issuesScore) {
         this.projectPath = MoreObjects.firstNonNull(projectPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
@@ -92,6 +101,10 @@ public class SonarToGerritBuilder extends Builder {
         this.noIssuesToPostText = noIssuesToPostText;
         this.someIssuesToPostText = someIssuesToPostText;
         this.issueComment = issueComment;
+        this.postScore = postScore;
+        this.category = MoreObjects.firstNonNull(category, DEFAULT_CATEGORY);
+        this.noIssuesScore = noIssuesScore;
+        this.issuesScore = issuesScore;
     }
 
     public String getPath() {
@@ -128,6 +141,22 @@ public class SonarToGerritBuilder extends Builder {
 
     public String getProjectPath() {
         return projectPath;
+    }
+
+    public boolean isPostScore() {
+        return postScore;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getNoIssuesScore() {
+        return noIssuesScore;
+    }
+
+    public String getIssuesScore() {
+        return issuesScore;
     }
 
     @Override
@@ -199,7 +228,7 @@ public class SonarToGerritBuilder extends Builder {
             }
 
             // Step 6 - Send review to Gerrit
-            ReviewInput reviewInput = getReviewResult(file2issues);
+            ReviewInput reviewInput = getReviewResult(file2issues, gerritServerName);
 
             // Step 7 - Post review
             revision.review(reviewInput);
@@ -227,8 +256,22 @@ public class SonarToGerritBuilder extends Builder {
         return new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
     }
 
+    private int getReviewMark(Multimap<String, Issue> finalIssues) {
+        String mark = finalIssues.size() > 0 ? issuesScore : noIssuesScore;
+        return parseNumber(mark, DEFAULT_SCORE);
+    }
+
+    private int parseNumber(String number, int deflt) {
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException e) {
+            return deflt;
+        }
+
+    }
+
     @VisibleForTesting
-    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues) {
+    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues, String gerritServerName) {
         String reviewMessage = getReviewMessage(finalIssues);
         ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
 
@@ -255,7 +298,21 @@ public class SonarToGerritBuilder extends Builder {
                     )
             );
         }
+        if (postScore) {
+            String realCategory = getRealCategory(gerritServerName);
+            reviewInput.label(realCategory, getReviewMark(finalIssues));
+        }
         return reviewInput;
+    }
+
+    protected String getRealCategory(String gerritServerName) {
+        IGerritHudsonTriggerConfig config = GerritManagement.getConfig(gerritServerName);
+        Set<String> availableCategories = new HashSet<String>();
+        for (VerdictCategory verdictCategory : config.getCategories()) {
+            availableCategories.add(verdictCategory.getVerdictDescription());
+        }
+        // todo notify user about switching category
+        return availableCategories.contains(category) ? category : DEFAULT_CATEGORY;
     }
 
     @VisibleForTesting
@@ -346,7 +403,7 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     // Overridden for better type safety.
-    // If your plugin doesn't really define any property on Descriptor,
+    // If your plugin doesn't really dfine any property on Descriptor,
     // you don't have to do this.
     @Override
     public DescriptorImpl getDescriptor() {
@@ -485,6 +542,45 @@ public class SonarToGerritBuilder extends Builder {
         public FormValidation doCheckSeverity(@QueryParameter String value) {
             if (value == null || Severity.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.severity.unknown"));
+            }
+            return FormValidation.ok();
+        }
+
+        /**
+         * Performs on-the-fly validation of the form field 'noIssuesScore'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
+        public FormValidation doCheckNoIssuesScore(@QueryParameter String value) {
+            return checkScore(value);
+        }
+
+        /**
+         * Performs on-the-fly validation of the form field 'issuesScore'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
+        public FormValidation doCheckIssuesScore(@QueryParameter String value) {
+            return checkScore(value);
+        }
+
+        private FormValidation checkScore(@QueryParameter String value) {
+            try{
+                Integer.parseInt(value);
+            } catch (NumberFormatException e){
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.score.not.numeric"));
             }
             return FormValidation.ok();
         }
