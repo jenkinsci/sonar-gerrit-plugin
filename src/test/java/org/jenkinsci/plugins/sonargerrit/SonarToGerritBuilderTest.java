@@ -10,6 +10,7 @@ import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.common.MergeableInfo;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.VerdictCategory;
 import hudson.FilePath;
 import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
@@ -166,48 +167,59 @@ public class SonarToGerritBuilderTest {
     @Test
     public void getReviewResultTest() throws InterruptedException, IOException, URISyntaxException, RestApiException {
         Multimap<String, Issue> finalIssues = LinkedListMultimap.create();
+        List<String> categories = Collections.singletonList("Test");
 
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
-        SonarToGerritBuilder builder = new DummySonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+        SonarToGerritBuilder builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "+1", "-1");
-        ReviewInput reviewResult = builder.getReviewResult(finalIssues, "");
+        ReviewInput reviewResult = builder.getReviewResult(finalIssues, categories);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(-1, reviewResult.labels.get("Test").intValue());
 
-        builder = new DummySonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "Test", "1", "-1");
-        reviewResult = builder.getReviewResult(finalIssues, "");
+        reviewResult = builder.getReviewResult(finalIssues, categories);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(null, reviewResult.labels);
 
-        builder = new DummySonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "0", "0");
-        reviewResult = builder.getReviewResult(finalIssues, "");
+        reviewResult = builder.getReviewResult(finalIssues, categories);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
 
-        builder = new DummySonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1test", "-1test");
-        reviewResult = builder.getReviewResult(finalIssues, "");
+        reviewResult = builder.getReviewResult(finalIssues, categories);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
 
-        builder = new DummySonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1");
         finalIssues = LinkedListMultimap.create();
-        reviewResult = builder.getReviewResult(finalIssues, "");
+        reviewResult = builder.getReviewResult(finalIssues, categories);
         Assert.assertEquals("No Issues Header", reviewResult.message);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
+
+        categories = new ArrayList<String>();
+        builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
+                "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1");
+        finalIssues = LinkedListMultimap.create();
+        reviewResult = builder.getReviewResult(finalIssues, categories);
+        Assert.assertEquals("No Issues Header", reviewResult.message);
+        Assert.assertEquals(0, reviewResult.comments.size());
+        Assert.assertEquals(1, reviewResult.labels.size());
+        Assert.assertEquals(+1, reviewResult.labels.get("Code-Review").intValue());
 
     }
 
@@ -218,18 +230,6 @@ public class SonarToGerritBuilderTest {
         FilePath filePath = new FilePath(path);
         String json = filePath.readToString();
         return new SonarReportBuilder().fromJson(json);
-    }
-
-
-    private class DummySonarToGerritBuilder extends SonarToGerritBuilder {
-        public DummySonarToGerritBuilder(String projectPath, String sonarURL, String path, String severity, boolean changedLinesOnly, boolean newIssuesOnly, String noIssuesToPostText, String someIssuesToPostText, String issueComment, boolean postScore, String category, String noIssuesScore, String issuesScore) {
-            super(projectPath, sonarURL, path, severity, changedLinesOnly, newIssuesOnly, noIssuesToPostText, someIssuesToPostText, issueComment, postScore, category, noIssuesScore, issuesScore);
-        }
-
-        @Override
-        protected String getRealCategory(String gerritServerName) {
-            return getCategory();
-        }
     }
 
     private class DummyIssue extends Issue {
