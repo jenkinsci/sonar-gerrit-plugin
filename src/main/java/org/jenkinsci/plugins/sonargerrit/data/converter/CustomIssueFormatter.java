@@ -35,7 +35,9 @@ public class CustomIssueFormatter implements IssueFormatter, TagFormatter<Custom
     public String getMessage() {
         String res = text;
         for (Tag tag : Tag.values()) {
-            res = res.replace(tag.getName(), getValueToReplace(tag));
+            if (res.contains(tag.getName())) {
+                res = res.replace(tag.getName(), getValueToReplace(tag));
+            }
         }
         return res;
     }
