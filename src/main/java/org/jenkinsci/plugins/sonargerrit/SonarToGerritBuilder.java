@@ -407,7 +407,7 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     // Overridden for better type safety.
-    // If your plugin doesn't really dfine any property on Descriptor,
+    // If your plugin doesn't really define any property on Descriptor,
     // you don't have to do this.
     @Override
     public DescriptorImpl getDescriptor() {
