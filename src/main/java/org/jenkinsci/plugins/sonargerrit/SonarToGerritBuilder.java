@@ -236,7 +236,7 @@ public class SonarToGerritBuilder extends Builder {
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
             LOGGER.severe(e.getMessage());
-            return true;
+            return false;
         }
 
         return true;

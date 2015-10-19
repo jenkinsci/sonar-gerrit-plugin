@@ -10,12 +10,6 @@
       Creates a text field that shows the value of the "path" property.
       When submitted, it will be passed to the corresponding constructor parameter.
     -->
-    <f:section title="${%jenkins.plugin.settings.section.project.name}">
-        <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
-            <f:textbox/>
-        </f:entry>
-    </f:section>
-
     <f:section title="${%jenkins.plugin.settings.section.sonar.name}">
         <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
             <f:textbox default="http://localhost:9000"/>
@@ -26,18 +20,24 @@
     </f:section>
 
     <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
-        <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
-                 description="${%jenkins.plugin.settings.gerrit.post.score.description}">
-            <f:checkbox default="true"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-            <f:textbox default="Code-Review"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-            <f:textbox default="+1" />
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-            <f:textbox default="-1" />
+        <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">
+            <!--description="${%jenkins.plugin.settings.gerrit.post.score.description}">-->
+            <!--<f:checkbox default="true"/>-->
+            <table width="100%">
+
+            <f:optionalBlock title="" inline="true" name="postScore"
+                             checked="${it.postScore}" default="true">
+                <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
+                    <f:textbox default="Code-Review"/>
+                </f:entry>
+                <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
+                    <f:textbox default="+1"/>
+                </f:entry>
+                <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
+                    <f:textbox default="-1"/>
+                </f:entry>
+            </f:optionalBlock>
+            </table>
         </f:entry>
     </f:section>
 
@@ -64,15 +64,24 @@
             <f:checkbox default="true"/>
         </f:entry>
     </f:section>
-    <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
-        <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
-            <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
-            <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
-            <f:textarea default="${%jenkins.plugin.default.review.body}"/>
-        </f:entry>
-    </f:section>
+    <f:advanced>
+        <f:section title="${%jenkins.plugin.settings.section.project.name}">
+            <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
+                <f:textbox/>
+            </f:entry>
+        </f:section>
+
+        <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
+            <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
+                <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
+                <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
+                <f:textarea default="${%jenkins.plugin.default.review.body}"/>
+            </f:entry>
+        </f:section>
+    </f:advanced>
+
 </j:jelly>
