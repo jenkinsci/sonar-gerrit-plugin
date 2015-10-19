@@ -196,11 +196,16 @@ public class SonarToGerritBuilder extends Builder {
             logError(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
             return false;
         }
-        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
+
+        if (!gerritConfig.isUseRestApi()){
+            logError(listener, "jenkins.plugin.error.gerrit.restapi.off", Level.SEVERE);
+            return false;
+        }
         if (gerritConfig.getGerritHttpUserName() == null) {
             logError(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
             return false;
         }
+        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
@@ -236,7 +241,7 @@ public class SonarToGerritBuilder extends Builder {
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
             LOGGER.severe(e.getMessage());
-            return true;
+            return false;
         }
 
         return true;
