@@ -34,10 +34,10 @@
             <f:textbox default="Code-Review"/>
         </f:entry>
         <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-            <f:textbox default="+1" />
+            <f:textbox default="+1"/>
         </f:entry>
         <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-            <f:textbox default="-1" />
+            <f:textbox default="-1"/>
         </f:entry>
     </f:section>
 
@@ -73,6 +73,36 @@
         </f:entry>
         <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
             <f:textarea default="${%jenkins.plugin.default.review.body}"/>
+        </f:entry>
+    </f:section>
+
+    <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
+        <f:entry title="${%jenkins.plugin.settings.notification.no.issues}" field="noIssuesNotification">
+            <select name="noIssuesNotification" field="severity">
+                <f:option value="NONE"
+                          selected="${instance.noIssuesNotification =='NONE' || instance.noIssuesNotification == null}">
+                    ${%NONE}
+                </f:option>
+                <f:option value="OWNER" selected="${instance.noIssuesNotification =='OWNER'}">${%OWNER}</f:option>
+                <f:option value="OWNER_REVIEWERS"
+                          selected="${instance.noIssuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
+                </f:option>
+                <f:option value="ALL" selected="${instance.noIssuesNotification =='ALL'}">${%ALL}</f:option>
+
+            </select>
+        </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.notification.issues}" field="issuesNotification">
+            <select name="issuesNotification" field="severity">
+                <f:option value="NONE" selected="${instance.issuesNotification =='NONE'}">${%NONE}</f:option>
+                <f:option value="OWNER"
+                          selected="${instance.issuesNotification =='OWNER'  || instance.issuesNotification == null}">
+                    ${%OWNER}
+                </f:option>
+                <f:option value="OWNER_REVIEWERS"
+                          selected="${instance.issuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
+                </f:option>
+                <f:option value="ALL" selected="${instance.issuesNotification =='ALL'}">${%ALL}</f:option>
+            </select>
         </f:entry>
     </f:section>
 </j:jelly>
