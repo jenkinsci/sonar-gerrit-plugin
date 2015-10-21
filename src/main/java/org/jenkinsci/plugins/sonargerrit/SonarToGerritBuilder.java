@@ -233,14 +233,14 @@ public class SonarToGerritBuilder extends Builder {
             }
 
             // Step 6 - Send review to Gerrit
-            Collection<String> categoryNames = getCategoryNames(gerritConfig.getCategories());
-            ReviewInput reviewInput = getReviewResult(file2issues, categoryNames);
+            ReviewInput reviewInput = getReviewResult(file2issues);
 
             // Step 7 - Post review
             revision.review(reviewInput);
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
-            LOGGER.severe(e.getMessage());
+            listener.getLogger().println("Unable to post review: " + e.getMessage());
+            LOGGER.severe("Unable to post review: " + e.getMessage());
             return false;
         }
 
@@ -277,7 +277,7 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     @VisibleForTesting
-    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues, Collection<String> existingCategories) {
+    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues) {
         String reviewMessage = getReviewMessage(finalIssues);
         ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
 
@@ -305,23 +305,9 @@ public class SonarToGerritBuilder extends Builder {
             );
         }
         if (postScore) {
-            String realCategory = getRealCategory(existingCategories);
-            reviewInput.label(realCategory, getReviewMark(finalIssues));
+            reviewInput.label(category, getReviewMark(finalIssues));
         }
         return reviewInput;
-    }
-
-    private Collection<String> getCategoryNames(List<VerdictCategory> categories){
-        Set<String> availableCategories = new HashSet<String>();
-        for (VerdictCategory verdictCategory : categories) {
-            availableCategories.add(verdictCategory.getVerdictDescription());
-        }
-        return availableCategories;
-    }
-
-    protected String getRealCategory(Collection<String> categories) {
-        // todo notify user about switching category to default?
-        return categories.contains(category) ? category : DEFAULT_CATEGORY;
     }
 
     @VisibleForTesting

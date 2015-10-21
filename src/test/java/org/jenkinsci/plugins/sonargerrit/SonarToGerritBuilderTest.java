@@ -167,13 +167,11 @@ public class SonarToGerritBuilderTest {
     @Test
     public void getReviewResultTest() throws InterruptedException, IOException, URISyntaxException, RestApiException {
         Multimap<String, Issue> finalIssues = LinkedListMultimap.create();
-        List<String> categories = Collections.singletonList("Test");
-
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         SonarToGerritBuilder builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "+1", "-1");
-        ReviewInput reviewResult = builder.getReviewResult(finalIssues, categories);
+        ReviewInput reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -181,14 +179,14 @@ public class SonarToGerritBuilderTest {
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "Test", "1", "-1");
-        reviewResult = builder.getReviewResult(finalIssues, categories);
+        reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(null, reviewResult.labels);
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "0", "0");
-        reviewResult = builder.getReviewResult(finalIssues, categories);
+        reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -196,7 +194,7 @@ public class SonarToGerritBuilderTest {
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1test", "-1test");
-        reviewResult = builder.getReviewResult(finalIssues, categories);
+        reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -205,21 +203,20 @@ public class SonarToGerritBuilderTest {
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1");
         finalIssues = LinkedListMultimap.create();
-        reviewResult = builder.getReviewResult(finalIssues, categories);
+        reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("No Issues Header", reviewResult.message);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
 
-        categories = new ArrayList<String>();
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1");
         finalIssues = LinkedListMultimap.create();
-        reviewResult = builder.getReviewResult(finalIssues, categories);
+        reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("No Issues Header", reviewResult.message);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
-        Assert.assertEquals(+1, reviewResult.labels.get("Code-Review").intValue());
+        Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
 
     }
 
