@@ -44,13 +44,13 @@
     <f:section title="${%jenkins.plugin.settings.section.filter.name}">
         <f:entry name="severity" title="${%jenkins.plugin.settings.filter.severity}" field="severity">
             <select name="severity" field="severity">
-                <f:option value="INFO" selected="${instance.severity =='INFO'}">INFO</f:option>
-                <f:option value="MINOR" selected="${instance.severity =='MINOR'}">MINOR</f:option>
+                <f:option value="INFO" selected="${instance.severity =='INFO'}">${%INFO}</f:option>
+                <f:option value="MINOR" selected="${instance.severity =='MINOR'}">${%MINOR}</f:option>
                 <f:option value="MAJOR"
-                          selected="${instance.severity =='MAJOR' || instance.severity == null}">MAJOR
+                          selected="${instance.severity =='MAJOR' || instance.severity == null}">${%MAJOR}
                 </f:option>
-                <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">CRITICAL</f:option>
-                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">BLOCKER</f:option>
+                <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">${%CRITICAL}</f:option>
+                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">${%BLOCKER}</f:option>
             </select>
         </f:entry>
 
