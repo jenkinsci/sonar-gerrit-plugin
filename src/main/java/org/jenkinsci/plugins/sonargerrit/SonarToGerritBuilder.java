@@ -150,6 +150,7 @@ public class SonarToGerritBuilder extends Builder {
         return projectPath;
     }
 
+    @SuppressWarnings(value = "unused")
     public boolean isPostScore() {
         return postScore;
     }
@@ -158,18 +159,22 @@ public class SonarToGerritBuilder extends Builder {
         return category;
     }
 
+    @SuppressWarnings(value = "unused")
     public String getNoIssuesScore() {
         return noIssuesScore;
     }
 
+    @SuppressWarnings(value = "unused")
     public String getNoIssuesNotification() {
         return noIssuesNotification;
     }
 
+    @SuppressWarnings(value = "unused")
     public String getIssuesNotification() {
         return issuesNotification;
     }
 
+    @SuppressWarnings(value = "unused")
     public String getIssuesScore() {
         return issuesScore;
     }
