@@ -170,13 +170,8 @@ public class SonarToGerritBuilderTest {
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         SonarToGerritBuilder builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
-<<<<<<< HEAD
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "+1", "-1", "NONE", "OWNER");
-        ReviewInput reviewResult = builder.getReviewResult(finalIssues, categories);
-=======
-                "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "+1", "-1");
         ReviewInput reviewResult = builder.getReviewResult(finalIssues);
->>>>>>> JENKINS-31004
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -184,26 +179,16 @@ public class SonarToGerritBuilderTest {
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
-<<<<<<< HEAD
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "Test", "1", "-1", null, null);
-        reviewResult = builder.getReviewResult(finalIssues, categories);
-=======
-                "No Issues Header", "Some Issues Header", "Issue Comment", false, "Test", "1", "-1");
         reviewResult = builder.getReviewResult(finalIssues);
->>>>>>> JENKINS-31004
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(null, reviewResult.labels);
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
-<<<<<<< HEAD
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "0", "0", null, null);
-        reviewResult = builder.getReviewResult(finalIssues, categories);
-=======
-                "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "0", "0");
         reviewResult = builder.getReviewResult(finalIssues);
->>>>>>> JENKINS-31004
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -211,13 +196,8 @@ public class SonarToGerritBuilderTest {
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritBuilder("", "", "", Severity.INFO.name(), true, false,
-<<<<<<< HEAD
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1test", "-1test", "NONE", "ALL");
-        reviewResult = builder.getReviewResult(finalIssues, categories);
-=======
-                "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1test", "-1test");
         reviewResult = builder.getReviewResult(finalIssues);
->>>>>>> JENKINS-31004
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
@@ -241,12 +221,8 @@ public class SonarToGerritBuilderTest {
         Assert.assertEquals("No Issues Header", reviewResult.message);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
-<<<<<<< HEAD
-        Assert.assertEquals(+1, reviewResult.labels.get("Code-Review").intValue());
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER_REVIEWERS, reviewResult.notify);
-=======
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
->>>>>>> JENKINS-31004
 
     }
 
