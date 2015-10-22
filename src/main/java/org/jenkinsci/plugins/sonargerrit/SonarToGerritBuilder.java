@@ -13,7 +13,6 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.VerdictCategory;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
@@ -63,6 +62,8 @@ public class SonarToGerritBuilder extends Builder {
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     private static final String DEFAULT_CATEGORY = "Code-Review";
     private static final int DEFAULT_SCORE = 0;
+    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = ReviewInput.NotifyHandling.NONE;
+    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_ISSUES = ReviewInput.NotifyHandling.OWNER;
 
     public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
@@ -86,12 +87,16 @@ public class SonarToGerritBuilder extends Builder {
     private final String noIssuesScore;
     private final String issuesScore;
 
+    private final String noIssuesNotification;
+    private final String issuesNotification;
+
 
     @DataBoundConstructor
     public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment,
-                                boolean postScore, String category, String noIssuesScore, String issuesScore) {
+                                boolean postScore, String category, String noIssuesScore, String issuesScore,
+                                String noIssuesNotification, String issuesNotification) {
         this.projectPath = MoreObjects.firstNonNull(projectPath, EMPTY_STR);
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
@@ -105,6 +110,8 @@ public class SonarToGerritBuilder extends Builder {
         this.category = MoreObjects.firstNonNull(category, DEFAULT_CATEGORY);
         this.noIssuesScore = noIssuesScore;
         this.issuesScore = issuesScore;
+        this.noIssuesNotification = noIssuesNotification;
+        this.issuesNotification = issuesNotification;
     }
 
     public String getPath() {
@@ -143,6 +150,7 @@ public class SonarToGerritBuilder extends Builder {
         return projectPath;
     }
 
+    @SuppressWarnings(value = "unused")
     public boolean isPostScore() {
         return postScore;
     }
@@ -151,10 +159,22 @@ public class SonarToGerritBuilder extends Builder {
         return category;
     }
 
+    @SuppressWarnings(value = "unused")
     public String getNoIssuesScore() {
         return noIssuesScore;
     }
 
+    @SuppressWarnings(value = "unused")
+    public String getNoIssuesNotification() {
+        return noIssuesNotification;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public String getIssuesNotification() {
+        return issuesNotification;
+    }
+
+    @SuppressWarnings(value = "unused")
     public String getIssuesScore() {
         return issuesScore;
     }
@@ -196,11 +216,16 @@ public class SonarToGerritBuilder extends Builder {
             logError(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
             return false;
         }
-        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
+
+        if (!gerritConfig.isUseRestApi()) {
+            logError(listener, "jenkins.plugin.error.gerrit.restapi.off", Level.SEVERE);
+            return false;
+        }
         if (gerritConfig.getGerritHttpUserName() == null) {
             logError(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
             return false;
         }
+        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
@@ -228,15 +253,15 @@ public class SonarToGerritBuilder extends Builder {
             }
 
             // Step 6 - Send review to Gerrit
-            Collection<String> categoryNames = getCategoryNames(gerritConfig.getCategories());
-            ReviewInput reviewInput = getReviewResult(file2issues, categoryNames);
+            ReviewInput reviewInput = getReviewResult(file2issues);
 
             // Step 7 - Post review
             revision.review(reviewInput);
             LOGGER.log(Level.INFO, "Review has been sent");
         } catch (RestApiException e) {
-            LOGGER.severe(e.getMessage());
-            return true;
+            listener.getLogger().println("Unable to post review: " + e.getMessage());
+            LOGGER.severe("Unable to post review: " + e.getMessage());
+            return false;
         }
 
         return true;
@@ -257,9 +282,19 @@ public class SonarToGerritBuilder extends Builder {
         return new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
     }
 
-    private int getReviewMark(Multimap<String, Issue> finalIssues) {
-        String mark = finalIssues.size() > 0 ? issuesScore : noIssuesScore;
+    private int getReviewMark(int finalIssuesCount) {
+        String mark = finalIssuesCount > 0 ? issuesScore : noIssuesScore;
         return parseNumber(mark, DEFAULT_SCORE);
+    }
+
+    private ReviewInput.NotifyHandling getNotificationSettings(int finalIssuesCount) {
+        if (finalIssuesCount > 0) {
+            ReviewInput.NotifyHandling value = (issuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(issuesNotification));
+            return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_ISSUES);
+        } else {
+            ReviewInput.NotifyHandling value = (noIssuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(noIssuesNotification));
+            return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
+        }
     }
 
     private int parseNumber(String number, int deflt) {
@@ -272,9 +307,17 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     @VisibleForTesting
-    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues, Collection<String> existingCategories) {
+    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues) {
         String reviewMessage = getReviewMessage(finalIssues);
         ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
+
+        int finalIssuesCount = finalIssues.size();
+
+        reviewInput.notify = getNotificationSettings(finalIssuesCount);
+
+        if (postScore) {
+            reviewInput.label(category, getReviewMark(finalIssuesCount));
+        }
 
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
@@ -299,24 +342,7 @@ public class SonarToGerritBuilder extends Builder {
                     )
             );
         }
-        if (postScore) {
-            String realCategory = getRealCategory(existingCategories);
-            reviewInput.label(realCategory, getReviewMark(finalIssues));
-        }
         return reviewInput;
-    }
-
-    private Collection<String> getCategoryNames(List<VerdictCategory> categories){
-        Set<String> availableCategories = new HashSet<String>();
-        for (VerdictCategory verdictCategory : categories) {
-            availableCategories.add(verdictCategory.getVerdictDescription());
-        }
-        return availableCategories;
-    }
-
-    protected String getRealCategory(Collection<String> categories) {
-        // todo notify user about switching category to default?
-        return categories.contains(category) ? category : DEFAULT_CATEGORY;
     }
 
     @VisibleForTesting
@@ -581,10 +607,47 @@ public class SonarToGerritBuilder extends Builder {
         }
 
         private FormValidation checkScore(@QueryParameter String value) {
-            try{
+            try {
                 Integer.parseInt(value);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.score.not.numeric"));
+            }
+            return FormValidation.ok();
+        }
+
+        /**
+         * Performs on-the-fly validation of the form field 'noIssuesNotification'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
+        public FormValidation doCheckNoIssuesNotification(@QueryParameter String value) {
+            return checkNotificationType(value);
+        }
+
+        /**
+         * Performs on-the-fly validation of the form field 'issuesNotification'.
+         *
+         * @param value This parameter receives the value that the user has typed.
+         * @return Indicates the outcome of the validation. This is sent to the browser.
+         * <p/>
+         * Note that returning {@link FormValidation#error(String)} does not
+         * prevent the form from being saved. It just means that a message
+         * will be displayed to the user.
+         */
+        @SuppressWarnings(value = "unused")
+        public FormValidation doCheckIssuesNotification(@QueryParameter String value) {
+            return checkNotificationType(value);
+        }
+
+        private FormValidation checkNotificationType(@QueryParameter String value) {
+            if (value == null || ReviewInput.NotifyHandling.valueOf(value) == null) {
+                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.notification.recipient.unknown"));
             }
             return FormValidation.ok();
         }
@@ -592,7 +655,6 @@ public class SonarToGerritBuilder extends Builder {
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
-            //todo check if gerrit trigger installed
             return true;
         }
 

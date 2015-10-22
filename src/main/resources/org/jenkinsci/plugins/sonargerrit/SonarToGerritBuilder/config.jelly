@@ -10,12 +10,6 @@
       Creates a text field that shows the value of the "path" property.
       When submitted, it will be passed to the corresponding constructor parameter.
     -->
-    <f:section title="${%jenkins.plugin.settings.section.project.name}">
-        <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
-            <f:textbox/>
-        </f:entry>
-    </f:section>
-
     <f:section title="${%jenkins.plugin.settings.section.sonar.name}">
         <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
             <f:textbox default="http://localhost:9000"/>
@@ -25,32 +19,16 @@
         </f:entry>
     </f:section>
 
-    <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
-        <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
-                 description="${%jenkins.plugin.settings.gerrit.post.score.description}">
-            <f:checkbox default="true"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-            <f:textbox default="Code-Review"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-            <f:textbox default="+1" />
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-            <f:textbox default="-1" />
-        </f:entry>
-    </f:section>
-
     <f:section title="${%jenkins.plugin.settings.section.filter.name}">
         <f:entry name="severity" title="${%jenkins.plugin.settings.filter.severity}" field="severity">
             <select name="severity" field="severity">
-                <f:option value="INFO" selected="${instance.severity =='INFO'}">INFO</f:option>
-                <f:option value="MINOR" selected="${instance.severity =='MINOR'}">MINOR</f:option>
+                <f:option value="INFO" selected="${instance.severity =='INFO'}">${%INFO}</f:option>
+                <f:option value="MINOR" selected="${instance.severity =='MINOR'}">${%MINOR}</f:option>
                 <f:option value="MAJOR"
-                          selected="${instance.severity =='MAJOR' || instance.severity == null}">MAJOR
+                          selected="${instance.severity =='MAJOR' || instance.severity == null}">${%MAJOR}
                 </f:option>
-                <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">CRITICAL</f:option>
-                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">BLOCKER</f:option>
+                <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">${%CRITICAL}</f:option>
+                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">${%BLOCKER}</f:option>
             </select>
         </f:entry>
 
@@ -64,15 +42,80 @@
             <f:checkbox default="true"/>
         </f:entry>
     </f:section>
-    <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
-        <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
-            <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
-            <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
-            <f:textarea default="${%jenkins.plugin.default.review.body}"/>
-        </f:entry>
-    </f:section>
+    <f:advanced>
+        <f:section title="${%jenkins.plugin.settings.section.project.name}">
+            <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
+                <f:textbox/>
+            </f:entry>
+        </f:section>
+
+        <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
+            <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
+                <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
+                <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
+                <f:textarea default="${%jenkins.plugin.default.review.body}"/>
+            </f:entry>
+        </f:section>
+
+        <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
+            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
+                     description="${%jenkins.plugin.settings.gerrit.post.score.description}">
+                <f:checkbox default="true"/>
+            </f:entry>
+
+            <!--<f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">-->
+            <!--&lt;!&ndash;description="${%jenkins.plugin.settings.gerrit.post.score.description}">&ndash;&gt;-->
+            <!--&lt;!&ndash;<f:checkbox default="true"/>&ndash;&gt;-->
+            <!--<table width="100%">-->
+
+            <!--<f:optionalBlock title="" name="postScore"-->
+            <!--checked="${it.postScore}" default="true">-->
+            <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
+                <f:textbox default="Code-Review"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
+                <f:textbox default="+1"/>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
+                <f:textbox default="-1"/>
+            </f:entry>
+            <!--</f:optionalBlock>-->
+            <!--</table>-->
+            <!--</f:entry>-->
+        </f:section>
+
+        <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
+            <f:entry title="${%jenkins.plugin.settings.notification.no.issues}" field="noIssuesNotification">
+                <select name="noIssuesNotification" field="severity">
+                    <f:option value="NONE"
+                              selected="${instance.noIssuesNotification =='NONE' || instance.noIssuesNotification == null}">
+                        ${%NONE}
+                    </f:option>
+                    <f:option value="OWNER" selected="${instance.noIssuesNotification =='OWNER'}">${%OWNER}</f:option>
+                    <f:option value="OWNER_REVIEWERS"
+                              selected="${instance.noIssuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
+                    </f:option>
+                    <f:option value="ALL" selected="${instance.noIssuesNotification =='ALL'}">${%ALL}</f:option>
+
+                </select>
+            </f:entry>
+            <f:entry title="${%jenkins.plugin.settings.notification.issues}" field="issuesNotification">
+                <select name="issuesNotification" field="severity">
+                    <f:option value="NONE" selected="${instance.issuesNotification =='NONE'}">${%NONE}</f:option>
+                    <f:option value="OWNER"
+                              selected="${instance.issuesNotification =='OWNER'  || instance.issuesNotification == null}">
+                        ${%OWNER}
+                    </f:option>
+                    <f:option value="OWNER_REVIEWERS"
+                              selected="${instance.issuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
+                    </f:option>
+                    <f:option value="ALL" selected="${instance.issuesNotification =='ALL'}">${%ALL}</f:option>
+                </select>
+            </f:entry>
+        </f:section>
+    </f:advanced>
 </j:jelly>
