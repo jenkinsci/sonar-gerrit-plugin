@@ -17,6 +17,7 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
+
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -25,8 +26,10 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
@@ -41,6 +44,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -56,7 +60,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Author:  Tatiana Didik
  */
 
-public class SonarToGerritBuilder extends Builder {
+public class SonarToGerritPublisher extends Publisher {
 
     private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
@@ -68,7 +72,7 @@ public class SonarToGerritBuilder extends Builder {
     public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
 
-    private static final Logger LOGGER = Logger.getLogger(SonarToGerritBuilder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
@@ -92,7 +96,7 @@ public class SonarToGerritBuilder extends Builder {
 
 
     @DataBoundConstructor
-    public SonarToGerritBuilder(String projectPath, String sonarURL, String path,
+    public SonarToGerritPublisher(String projectPath, String sonarURL, String path,
                                 String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                 String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                 boolean postScore, String category, String noIssuesScore, String issuesScore,
@@ -184,15 +188,15 @@ public class SonarToGerritBuilder extends Builder {
             InterruptedException {
         FilePath reportPath = build.getWorkspace().child(getPath());
         if (!reportPath.exists()) {
-            logError(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
+            logMessage(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
             return false;
         }
-        LOGGER.log(Level.INFO, "Getting Sonar Report from: {0}", reportPath);
+        logMessage(listener, "jenkins.plugin.getting.report", Level.INFO, reportPath);
 
         SonarReportBuilder builder = new SonarReportBuilder();
         String reportJson = reportPath.readToString();
         Report report = builder.fromJson(reportJson);
-        LOGGER.log(Level.INFO, "Report has loaded and contains {0} issues", report.getIssues().size());
+        logMessage(listener, "jenkins.plugin.report.loaded", Level.INFO, report.getIssues().size());
 
         // Step 1 - Filter issues by issues only predicates
         Iterable<Issue> filtered = filterIssuesByPredicates(report);
@@ -208,21 +212,21 @@ public class SonarToGerritBuilder extends Builder {
         GerritTrigger trigger = GerritTrigger.getTrigger(build.getProject());
         String gerritServerName = gerritNameEnvVar != null ? gerritNameEnvVar : trigger != null ? trigger.getServerName() : null;
         if (gerritServerName == null) {
-            logError(listener, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE);
+            logMessage(listener, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE);
             return false;
         }
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
         if (gerritConfig == null) {
-            logError(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
+            logMessage(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
             return false;
         }
 
         if (!gerritConfig.isUseRestApi()) {
-            logError(listener, "jenkins.plugin.error.gerrit.restapi.off", Level.SEVERE);
+            logMessage(listener, "jenkins.plugin.error.gerrit.restapi.off", Level.SEVERE);
             return false;
         }
         if (gerritConfig.getGerritHttpUserName() == null) {
-            logError(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
+            logMessage(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
             return false;
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
@@ -233,7 +237,7 @@ public class SonarToGerritBuilder extends Builder {
             int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
             int patchSetNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
-            LOGGER.log(Level.INFO, "Connected to Gerrit: server name: {0}. Change Number: {1}, PatchSetNumber: {2}", new Object[]{gerritServerName, changeNumber, patchSetNumber});
+            logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
             // Step 4 - Filter issues by changed files
             final Map<String, FileInfo> files = revision.files();
@@ -257,7 +261,7 @@ public class SonarToGerritBuilder extends Builder {
 
             // Step 7 - Post review
             revision.review(reviewInput);
-            LOGGER.log(Level.INFO, "Review has been sent");
+            logMessage(listener, "jenkins.plugin.review.sent", Level.INFO);
         } catch (RestApiException e) {
             listener.getLogger().println("Unable to post review: " + e.getMessage());
             LOGGER.severe("Unable to post review: " + e.getMessage());
@@ -272,7 +276,7 @@ public class SonarToGerritBuilder extends Builder {
         return envVars.get(name);
     }
 
-    private void logError(BuildListener listener, String message, Level l, Object... params) {
+    private void logMessage(BuildListener listener, String message, Level l, Object... params) {
         message = getLocalized(message, params);
         listener.getLogger().println(message);
         LOGGER.log(l, message);
@@ -441,7 +445,7 @@ public class SonarToGerritBuilder extends Builder {
     }
 
     /**
-     * Descriptor for {@link SonarToGerritBuilder}. Used as a singleton.
+     * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
      * <p/>
      * <p/>
@@ -449,7 +453,7 @@ public class SonarToGerritBuilder extends Builder {
      * for the actual HTML fragment for the configuration screen.
      */
     @Extension // This indicates to Jenkins that this is an implementation of an extension point.
-    public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
+    public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
         /**
          * In order to load the persisted global configuration, you have to
@@ -667,5 +671,9 @@ public class SonarToGerritBuilder extends Builder {
         }
     }
 
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
 }
 
