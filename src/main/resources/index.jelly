@@ -1,7 +1,6 @@
-<?jelly escape-by-default='true'?>
 <!--
   This view is used to render the installed plugins page.
 -->
 <div>
-  This plugin allows to submit issues from Sonar to Gerrit as comments directly.
+    This plugin allows to submit issues from <a href="http://www.sonarqube.org/">SonarQube</a> to <a href="https://www.gerritcodereview.com">Gerrit</a> as comments directly.
 </div>
