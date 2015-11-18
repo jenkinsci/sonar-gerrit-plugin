@@ -22,8 +22,8 @@ import java.util.List;
  * $Id$
  */
 public class CustomReportFormatterTest {
-    private static String SUCCESS_TEXT = "Sonar violations have not been found.";
-    private static String FAIL_TEXT = "<total_count> Sonar violations have been found.\n" +
+    private static String SUCCESS_TEXT = "SonarQube violations have not been found.";
+    private static String FAIL_TEXT = "<total_count> SonarQube violations have been found.\n" +
             "Info: <info_count>\n" +
             "Minor: <minor_count>\n" +
             "Major: <major_count>\n" +
@@ -36,7 +36,7 @@ public class CustomReportFormatterTest {
     @Test
     public void testSuccess() throws IOException, InterruptedException, URISyntaxException {
         List<Issue> i = new ArrayList<Issue>();
-        String expectedResult = "Sonar violations have not been found.";
+        String expectedResult = "SonarQube violations have not been found.";
         CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, FAIL_TEXT, SUCCESS_TEXT);
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
     }
@@ -44,7 +44,7 @@ public class CustomReportFormatterTest {
     @Test
     public void testFail() throws IOException, InterruptedException, URISyntaxException {
         List<Issue> i = getIssues();
-        String expectedResult = "19 Sonar violations have been found.\n" +
+        String expectedResult = "19 SonarQube violations have been found.\n" +
                 "Info: 1\n" +
                 "Minor: 6\n" +
                 "Major: 10\n" +
@@ -60,7 +60,7 @@ public class CustomReportFormatterTest {
     @Test
     public void testSuccessEmpty() throws IOException, InterruptedException, URISyntaxException {
         List<Issue> i = new ArrayList<Issue>();
-        String expectedResult = "Sonar violations have not been found.";
+        String expectedResult = "SonarQube violations have not been found.";
         CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
         basicIssueConverter = new CustomReportFormatter(i, null, null);
@@ -70,7 +70,7 @@ public class CustomReportFormatterTest {
     @Test
     public void testFailEmpty() throws IOException, InterruptedException, URISyntaxException {
         List<Issue> i = getIssues();
-        String expectedResult = "19 Sonar violations have been found.";
+        String expectedResult = "19 SonarQube violations have been found.";
         CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
         basicIssueConverter = new CustomReportFormatter(i, null, null);

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>1.580.1</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
@@ -24,22 +25,23 @@
     </licenses>
 
     <developers>
-      <developer>
-        <id>aquarellian</id>
-        <name>Tatiana Didik (Goretskaya)</name>
-        <email>aquarellian@gmail.com</email>
-      </developer>
-      <developer>
-        <id>adidik</id>
-        <name>Aleksey Didik</name>
-      </developer>
+        <developer>
+            <id>aquarellian</id>
+            <name>Tatiana Didik (Goretskaya)</name>
+            <email>aquarellian@gmail.com</email>
+        </developer>
+        <developer>
+            <id>adidik</id>
+            <name>Aleksey Didik</name>
+        </developer>
     </developers>
     <scm>
         <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
+        </developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>sonar-gerrit-1.0.2</tag>
-  </scm>
+        <tag>sonar-gerrit-1.0.2</tag>
+    </scm>
 
     <repositories>
         <repository>
@@ -53,6 +55,19 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <compatibleSinceVersion>1.0</compatibleSinceVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
