@@ -1,0 +1,190 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "8a76d6a3-a382-47e9-be3d-7be054f5f2a0",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 99,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "b5af69bd-3829-4410-9b21-47c0548cfdee",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 108,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "e74fb5cd-e8f3-4fe5-a794-6b41f9b0e362",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 162,
+      "message": "Move this constructor to comply with Java Code Conventions.",
+      "severity": "MINOR",
+      "rule": "squid:S1213",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "32b8200d-cdd7-4c87-8384-b1237e04afec",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "line": 115,
+      "message": "Make the \"logger\" logger private static final and rename it to comply with the format \"LOG(?:GER)?\".",
+      "severity": "MINOR",
+      "rule": "squid:S1312",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "3e547333-18fe-4244-8956-70566948b8b2",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "line": 59,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "50ad11c3-bf19-43e8-8fcc-56d2095dd384",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "line": 167,
+      "message": "The Cyclomatic Complexity of this method \"bindComponent\" is 14 which is greater than 10 authorized.",
+      "severity": "MAJOR",
+      "rule": "squid:MethodCyclomaticComplexity",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "7a0b9339-a8da-4710-8921-ee7ee5ba8d31",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "line": 108,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "83ba417c-542a-45e1-b9d2-0f718657065a",
+      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "line": 22,
+      "message": "Rename the \"log\" logger to comply with the format \"LOG(?:GER)?\".",
+      "severity": "MINOR",
+      "rule": "squid:S1312",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "245054a4-e7e9-4b9c-9ab2-4184cfc8c901",
+      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "line": 14,
+      "message": "The type of the \"enums\" object should be an interface such as \"Set\" rather than the implementation \"EnumSet\".",
+      "severity": "MAJOR",
+      "rule": "squid:S1319",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "93b7d08d-8114-444d-9ba2-6124acdb67d3",
+      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "line": 14,
+      "message": "Remove usage of generic wildcard type.",
+      "severity": "CRITICAL",
+      "rule": "squid:S1452",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "81c5c4f8-08c9-4340-861e-8491c9f4666a",
+      "component": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "line": 18,
+      "message": "Add a private constructor to hide the implicit public one.",
+      "severity": "MAJOR",
+      "rule": "squid:S1118",
+      "status": "OPEN",
+      "isNew": true,
+      "creationDate": "2015-08-29T23:00:23-0400"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.maxifier.guice:guice-jpa",
+      "path": "guice-jpa"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events",
+      "path": "guice-events"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap",
+      "path": "guice-bootstrap"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "path": "src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "path": "src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "path": "src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "path": "src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "path": "src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "moduleKey": "com.aquarellian:sonar-gerrit",
+      "status": "ADDED"
+    }
+  ],
+  "rules": [],
+  "users": []
+}

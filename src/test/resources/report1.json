@@ -1,0 +1,157 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "c48d7f88-64bb-45ec-b64d-b5a536384183",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "line": 5,
+      "message": "Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.",
+      "severity": "MINOR",
+      "rule": "squid:UselessImportCheck",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "6b8a2d04-e126-481d-83ef-5719e3c470ea",
+      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "line": 228,
+      "message": "Do not forget to remove this deprecated code someday.",
+      "severity": "INFO",
+      "rule": "squid:S1133",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "993137c8-42b4-4774-ad54-7c902a8d4054",
+      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "line": 282,
+      "message": "\"@\" is not available at runtime and cannot be seen with reflection.",
+      "severity": "BLOCKER",
+      "rule": "squid:S2109",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-06-11T04:37:59+0300"
+    },
+    {
+      "key": "43bd8fdd-e5d2-46e6-add1-e3b27e9d8d26",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 106,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "4b0ca769-7ff4-4e2f-9440-86e504ec7785",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 54,
+      "message": "Introduce a new variable instead of reusing the parameter \"injector\".",
+      "severity": "MAJOR",
+      "rule": "squid:S1226",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "50bcd645-f888-4813-9d1d-3d72403e2057",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 122,
+      "message": "Define and throw a dedicated exception instead of using a generic one.",
+      "severity": "MAJOR",
+      "rule": "squid:S00112",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "60eec0ad-0b69-4b4c-89f8-8624abc9f42c",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 81,
+      "message": "Define a constant instead of duplicating this literal \" of plugin \" 3 times.",
+      "severity": "MINOR",
+      "rule": "squid:S1192",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    },
+    {
+      "key": "78f1504b-040d-496a-bb35-be7afbd802e8",
+      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "line": 37,
+      "message": "Rename the \"logger\" logger to comply with the format \"LOG(?:GER)?\".",
+      "severity": "MINOR",
+      "rule": "squid:S1312",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.maxifier.guice:guice-jpa",
+      "path": "guice-jpa"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events",
+      "path": "guice-events"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap",
+      "path": "guice-bootstrap"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "path": "src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "path": "src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "path": "src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "path": "src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "path": "src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "moduleKey": "com.maxifier.guice:guice-events",
+      "status": "SAME"
+    },
+    {
+      "key": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "path": "src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "moduleKey": "com.aquarellian:sonar-gerrit",
+      "status": "ADDED"
+    }
+  ],
+  "rules": [],
+  "users": []
+}

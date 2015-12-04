@@ -14,13 +14,33 @@
         <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
             <f:textbox default="http://localhost:9000"/>
         </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.sonar.report.path}" field="path">
-            <f:textbox default="target/sonar/sonar-report.json"/>
+    </f:section>
+
+    <f:section title="${%jenkins.plugin.settings.section.project.name}">
+        <f:entry title="" field="subJobConfigs">
+            <f:repeatable var="subJobConfigs" items="${instance.subJobConfigs}" noAddButton="false" minimum="0">
+                <table width="100%">
+                    <f:entry title="${%jenkins.plugin.settings.sonar.report.path}">
+                        <f:textbox field="sonarReportPath" value="${subJobConfigs.sonarReportPath}"
+                                   default="target/sonar/sonar-report.json"/>
+                    </f:entry>
+
+                    <f:entry title="${%jenkins.plugin.settings.project.base.path}">
+                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default=""/>
+                    </f:entry>
+                    <f:entry title="">
+                        <div align="right">
+                            <f:repeatableDeleteButton/>
+                        </div>
+                    </f:entry>
+                </table>
+            </f:repeatable>
         </f:entry>
+
     </f:section>
 
     <f:section title="${%jenkins.plugin.settings.section.filter.name}">
-        <f:entry name="severity" title="${%jenkins.plugin.settings.filter.severity}" field="severity">
+        <f:entry title="${%jenkins.plugin.settings.filter.severity}" field="severity">
             <select name="severity" field="severity">
                 <f:option value="INFO" selected="${instance.severity =='INFO'}">${%INFO}</f:option>
                 <f:option value="MINOR" selected="${instance.severity =='MINOR'}">${%MINOR}</f:option>
@@ -43,11 +63,6 @@
         </f:entry>
     </f:section>
     <f:advanced>
-        <f:section title="${%jenkins.plugin.settings.section.project.name}">
-            <f:entry title="${%jenkins.plugin.settings.project.base.path}" field="projectPath">
-                <f:textbox/>
-            </f:entry>
-        </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
             <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
