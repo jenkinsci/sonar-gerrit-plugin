@@ -74,7 +74,7 @@ public class SonarToGerritPublisher extends Publisher {
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    // back
+    // left here for compatibility with previous version. will be removed in further releases
     private final String path;
     private final String projectPath;
 
@@ -96,7 +96,7 @@ public class SonarToGerritPublisher extends Publisher {
 
 
     @DataBoundConstructor
-    public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,     //todo
+    public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
@@ -526,26 +526,6 @@ public class SonarToGerritPublisher extends Publisher {
          */
         public DescriptorImpl() {
             load();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'path'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckSubJobConfigs(@QueryParameter List<SubJobConfig> value)
-                throws IOException, ServletException {
-            if (value == null || value.isEmpty()) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.path.no.project.config"));
-            }
-
-            return FormValidation.ok();
         }
 
         /**
