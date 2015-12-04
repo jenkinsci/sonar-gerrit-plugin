@@ -10,7 +10,6 @@ import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.common.MergeableInfo;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.VerdictCategory;
 import hudson.FilePath;
 import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
@@ -40,35 +39,35 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(19, report.getIssues().size());
 
         // severity predicate
-        Iterable<Issue> issues = new SonarToGerritPublisher("", "", "", Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        Iterable<Issue> issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(2, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.MAJOR.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(12, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(19, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.MINOR.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(18, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.BLOCKER.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), true, false, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
         // new issues only predicate
-        issues = new SonarToGerritPublisher("", "", "", Severity.CRITICAL.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.MAJOR.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.MINOR.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", "", "", Severity.BLOCKER.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report);
+        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), true, true, "", "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
     }
 
@@ -76,7 +75,7 @@ public class SonarToGerritPublisherTest {
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
-        Multimap<String, Issue> multimap = new SonarToGerritPublisher("", "", "", Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMap(report, report.getIssues());
+        Multimap<String, Issue> multimap = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -89,7 +88,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        multimap = new SonarToGerritPublisher(null, "", "", Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMap(report, report.getIssues());
+        multimap = new SonarToGerritPublisher(null, null, Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -102,7 +101,8 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        multimap = new SonarToGerritPublisher("testfolder", "", "", Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMap(report, report.getIssues());
+        SubJobConfig config = new SubJobConfig("testfolder", "");
+        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -114,7 +114,8 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        multimap = new SonarToGerritPublisher("testfolder/", "", "", Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMap(report, report.getIssues());
+        config = new SubJobConfig("testfolder/", "");
+        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -126,6 +127,24 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
+        SubJobConfig config1  =   new SubJobConfig("testfolder1/", "report1.json");
+        SubJobConfig config2  =   new SubJobConfig("testfolder2/", "report2.json");
+        SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
+        String resourcePath = getClass().getClassLoader().getResource("filter.json").getPath();
+        FilePath resourceFolder = new FilePath(new File(resourcePath).getParentFile());
+        List<SonarToGerritPublisher.ReportInfo> reportInfos = sonarToGerritPublisher.readSonarReports(null, resourceFolder);//todo assert
+        multimap = sonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(reportInfos);
+        Assert.assertEquals(19, multimap.size());
+        Assert.assertEquals(9, multimap.keySet().size());
+        Assert.assertEquals(1, multimap.get("testfolder1/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
+        Assert.assertEquals(2, multimap.get("testfolder1/guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
+        Assert.assertEquals(5, multimap.get("testfolder1/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(3, multimap.get("testfolder2/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(4, multimap.get("testfolder2/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
     }
 
     @Test
@@ -133,8 +152,8 @@ public class SonarToGerritPublisherTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
-        Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMap(report, report.getIssues());
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
+        Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         // Map will describe which strings in each file should be marked as modified.
         // integer values are count of strings that affected by ContentEntry.
@@ -169,7 +188,7 @@ public class SonarToGerritPublisherTest {
         Multimap<String, Issue> finalIssues = LinkedListMultimap.create();
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "+1", "-1", "NONE", "OWNER");
         ReviewInput reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -178,7 +197,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(-1, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "Test", "1", "-1", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -186,7 +205,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(null, reviewResult.labels);
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "0", "0", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -195,7 +214,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1test", "-1test", "NONE", "ALL");
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -204,7 +223,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(ReviewInput.NotifyHandling.ALL, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1", null, null);
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);
@@ -214,7 +233,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(ReviewInput.NotifyHandling.NONE, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", "", "", Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", true, "Test", "1", "-1", "OWNER_REVIEWERS", "ALL");
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);
@@ -227,7 +246,10 @@ public class SonarToGerritPublisherTest {
     }
 
     private Report readreport() throws IOException, InterruptedException, URISyntaxException {
-        URL url = getClass().getClassLoader().getResource("filter.json");
+        return readreport("filter.json");
+    }
+    private Report readreport(String file) throws IOException, InterruptedException, URISyntaxException {
+        URL url = getClass().getClassLoader().getResource(file);
 
         File path = new File(url.toURI());
         FilePath filePath = new FilePath(path);

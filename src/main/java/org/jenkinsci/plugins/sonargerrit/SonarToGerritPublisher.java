@@ -17,7 +17,6 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
-
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -29,7 +28,6 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
-
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
@@ -44,8 +42,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,7 +58,8 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 public class SonarToGerritPublisher extends Publisher {
 
-    private static final String DEFAULT_PATH = "target/sonar/sonar-report.json";
+    private static final String DEFAULT_SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
+    private static final String DEFAULT_PROJECT_PATH = "";
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     private static final String DEFAULT_CATEGORY = "Code-Review";
     private static final int DEFAULT_SCORE = 0;
@@ -77,9 +74,12 @@ public class SonarToGerritPublisher extends Publisher {
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    private final String projectPath;
-    private final String sonarURL;
+    // left here for compatibility with previous version. will be removed in further releases
     private final String path;
+    private final String projectPath;
+
+    private final String sonarURL;
+    private List<SubJobConfig> subJobConfigs;
     private final String severity;
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
@@ -96,14 +96,13 @@ public class SonarToGerritPublisher extends Publisher {
 
 
     @DataBoundConstructor
-    public SonarToGerritPublisher(String projectPath, String sonarURL, String path,
-                                String severity, boolean changedLinesOnly, boolean newIssuesOnly,
-                                String noIssuesToPostText, String someIssuesToPostText, String issueComment,
-                                boolean postScore, String category, String noIssuesScore, String issuesScore,
-                                String noIssuesNotification, String issuesNotification) {
-        this.projectPath = MoreObjects.firstNonNull(projectPath, EMPTY_STR);
+    public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
+                                  String severity, boolean changedLinesOnly, boolean newIssuesOnly,
+                                  String noIssuesToPostText, String someIssuesToPostText, String issueComment,
+                                  boolean postScore, String category, String noIssuesScore, String issuesScore,
+                                  String noIssuesNotification, String issuesNotification) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
-        this.path = MoreObjects.firstNonNull(path, DEFAULT_PATH);
+        this.subJobConfigs = subJobConfigs;
         this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
         this.changedLinesOnly = changedLinesOnly;
         this.newIssuesOnly = newIssuesOnly;
@@ -116,11 +115,12 @@ public class SonarToGerritPublisher extends Publisher {
         this.issuesScore = issuesScore;
         this.noIssuesNotification = noIssuesNotification;
         this.issuesNotification = issuesNotification;
+
+        // old values - not used anymore. will be deleted in further releases
+        this.path = null;
+        this.projectPath = null;
     }
 
-    public String getPath() {
-        return path;
-    }
 
     public String getSeverity() {
         return severity;
@@ -148,10 +148,6 @@ public class SonarToGerritPublisher extends Publisher {
 
     public String getIssueComment() {
         return issueComment;
-    }
-
-    public String getProjectPath() {
-        return projectPath;
     }
 
     @SuppressWarnings(value = "unused")
@@ -186,25 +182,14 @@ public class SonarToGerritPublisher extends Publisher {
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
             InterruptedException {
-        FilePath reportPath = build.getWorkspace().child(getPath());
-        if (!reportPath.exists()) {
-            logMessage(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
+
+        List<ReportInfo> issueInfos = readSonarReports(listener, build.getWorkspace());
+        if (issueInfos == null) {
+            logMessage(listener, "jenkins.plugin.validation.path.no.project.config.available", Level.SEVERE);
             return false;
         }
-        logMessage(listener, "jenkins.plugin.getting.report", Level.INFO, reportPath);
 
-        SonarReportBuilder builder = new SonarReportBuilder();
-        String reportJson = reportPath.readToString();
-        Report report = builder.fromJson(reportJson);
-        logMessage(listener, "jenkins.plugin.report.loaded", Level.INFO, report.getIssues().size());
-
-        // Step 1 - Filter issues by issues only predicates
-        Iterable<Issue> filtered = filterIssuesByPredicates(report);
-//        LOGGER.log(Level.INFO, "{0} issues left after filtration by predicates (severity, ... etc)", Lists.newArrayList(filtered).size());
-
-        // Step 2 - Calculate real file name for issues and store to multimap
-        Multimap<String, Issue> file2issues = generateFilenameToIssuesMap(report, filtered);
-//        logResultMap(file2issues, "Map file2issues contains {0} elements");
+        Multimap<String, Issue> file2issues = generateFilenameToIssuesMapFilteredByPredicates(issueInfos);
 
         // Step 3 - Prepare Gerrit REST API client
         // Check Gerrit configuration is available
@@ -271,6 +256,52 @@ public class SonarToGerritPublisher extends Publisher {
         return true;
     }
 
+    @VisibleForTesting
+    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(List<ReportInfo> issueInfos) {
+        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+        for (ReportInfo info : issueInfos) {
+
+            Report report = info.report;
+
+            // Step 1 - Filter issues by issues only predicates
+            Iterable<Issue> filtered = filterIssuesByPredicates(report.getIssues());
+
+            // Step 2 - Calculate real file name for issues and store to multimap
+            file2issues.putAll(generateFilenameToIssuesMapFilteredByPredicates(info.directoryPath, report, filtered));
+        }
+        return file2issues;
+    }
+
+    private Report readSonarReport(BuildListener listener, FilePath workspace, SubJobConfig config) throws IOException,
+            InterruptedException {
+        FilePath reportPath = workspace.child(config.getSonarReportPath());
+        if (!reportPath.exists()) {
+            logMessage(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
+            return null;
+        }
+        logMessage(listener, "jenkins.plugin.getting.report", Level.INFO, reportPath);
+
+        SonarReportBuilder builder = new SonarReportBuilder();
+        String reportJson = reportPath.readToString();
+        Report report = builder.fromJson(reportJson);
+        logMessage(listener, "jenkins.plugin.report.loaded", Level.INFO, report.getIssues().size());
+        return report;
+    }
+
+    @VisibleForTesting
+    List<ReportInfo> readSonarReports(BuildListener listener, FilePath workspace) throws IOException,
+            InterruptedException {
+        List<ReportInfo> reports = new ArrayList<ReportInfo>();
+        for (SubJobConfig subJobConfig : getSubJobConfigs(false)) { // to be replaced by this.subJobConfigs in further releases - this code is to support older versions
+            Report report = readSonarReport(listener, workspace, subJobConfig);
+            if (report == null) {
+                return null;
+            }
+            reports.add(new ReportInfo(subJobConfig.getProjectPath(), report));
+        }
+        return reports;
+    }
+
     private String getEnvVar(AbstractBuild build, BuildListener listener, String name) throws IOException, InterruptedException {
         EnvVars envVars = build.getEnvironment(listener);
         return envVars.get(name);
@@ -278,7 +309,9 @@ public class SonarToGerritPublisher extends Publisher {
 
     private void logMessage(BuildListener listener, String message, Level l, Object... params) {
         message = getLocalized(message, params);
-        listener.getLogger().println(message);
+        if (listener != null) {     // it can be it tests
+            listener.getLogger().println(message);
+        }
         LOGGER.log(l, message);
     }
 
@@ -289,6 +322,23 @@ public class SonarToGerritPublisher extends Publisher {
     private int getReviewMark(int finalIssuesCount) {
         String mark = finalIssuesCount > 0 ? issuesScore : noIssuesScore;
         return parseNumber(mark, DEFAULT_SCORE);
+    }
+
+    public List<SubJobConfig> getSubJobConfigs() {
+        return getSubJobConfigs(true);
+    }
+
+    public List<SubJobConfig> getSubJobConfigs(boolean addDefault) {
+        if (subJobConfigs == null) {
+            subJobConfigs = new ArrayList<SubJobConfig>();
+            // add configuration from previous plugin version
+            if (path != null || projectPath != null) {
+                subJobConfigs.add(new SubJobConfig(projectPath, path));
+            } else if (addDefault) {
+                subJobConfigs.add(new SubJobConfig(DEFAULT_PROJECT_PATH, DEFAULT_SONAR_REPORT_PATH));
+            }
+        }
+        return subJobConfigs;
     }
 
     private ReviewInput.NotifyHandling getNotificationSettings(int finalIssuesCount) {
@@ -380,7 +430,7 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMap(Report report, Iterable<Issue> filtered) {
+    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
         Multimap<String, Issue> file2issues = LinkedListMultimap.create();
 
 /*       The next code prepares data to process situations like this one:
@@ -426,8 +476,7 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    Iterable<Issue> filterIssuesByPredicates(Report report) {
-        List<Issue> issues = report.getIssues();
+    Iterable<Issue> filterIssuesByPredicates(List<Issue> issues) {
         Severity sev = Severity.valueOf(severity);
         return Iterables.filter(issues,
                 Predicates.and(
@@ -442,6 +491,22 @@ public class SonarToGerritPublisher extends Publisher {
     @Override
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl) super.getDescriptor();
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
+    @VisibleForTesting
+    class ReportInfo {
+        private String directoryPath;
+        private Report report;
+
+        public ReportInfo(String directoryPath, Report report) {
+            this.directoryPath = directoryPath;
+            this.report = report;
+        }
     }
 
     /**
@@ -461,27 +526,6 @@ public class SonarToGerritPublisher extends Publisher {
          */
         public DescriptorImpl() {
             load();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'path'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckPath(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.length() == 0)
-                return FormValidation.warning(getLocalized("jenkins.plugin.validation.path.empty"));
-            File f = new File(value);
-            if (!f.exists())
-                return FormValidation.error(String.format(getLocalized("jenkins.plugin.validation.path.no.such.file"), value));
-            return FormValidation.ok();
         }
 
         /**
@@ -669,11 +713,7 @@ public class SonarToGerritPublisher extends Publisher {
         public String getDisplayName() {
             return getLocalized("jenkins.plugin.build.step.name");
         }
-    }
 
-    @Override
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.NONE;
     }
 }
 
