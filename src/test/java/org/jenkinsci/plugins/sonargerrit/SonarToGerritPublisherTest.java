@@ -75,10 +75,11 @@ public class SonarToGerritPublisherTest {
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
-        Multimap<String, Issue> multimap = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        Multimap<String, Issue> multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
+        System.out.println(multimap.keySet());
         Assert.assertEquals(1, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
         Assert.assertEquals(2, multimap.get("guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
         Assert.assertEquals(8, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
@@ -88,7 +89,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        multimap = new SonarToGerritPublisher(null, null, Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -102,7 +103,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
         SubJobConfig config = new SubJobConfig("testfolder", "");
-        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -115,7 +116,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
         config = new SubJobConfig("testfolder/", "");
-        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -145,6 +146,15 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder2/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
+
+        report = readreport("report3_with-nested-subprojects.json");
+        config = new SubJobConfig("testfolder/", "");
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        Assert.assertEquals(6, multimap.size());
+        Assert.assertEquals(3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/src/main/java/com/proj2/Proj2.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/com.acme.util/src/main/java/com/acme/util/Util.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/com.acme.app/src/main/java/com/acme/app/App.java").size());
     }
 
     @Test
@@ -152,8 +162,7 @@ public class SonarToGerritPublisherTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
-        Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        Multimap<String, Issue> multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         // Map will describe which strings in each file should be marked as modified.
         // integer values are count of strings that affected by ContentEntry.
@@ -168,6 +177,7 @@ public class SonarToGerritPublisherTest {
         RevisionApi revApi = new DummyRevisionApi(path2changedValues);
 
 
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
         builder.filterIssuesByChangedLines(multimap, revApi);
 
         // list of lines commented by sonar : 37, 54,81, 99, 106, 108, 122, 162
