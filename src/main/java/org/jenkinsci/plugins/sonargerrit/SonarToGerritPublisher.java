@@ -86,6 +86,9 @@ public class SonarToGerritPublisher extends Publisher {
     private final String noIssuesToPostText;
     private final String someIssuesToPostText;
     private final String issueComment;
+    private final boolean overrideCredentials;
+    private final String httpUsername;
+    private final String httpPassword;
     private final boolean postScore;
     private final String category;
     private final String noIssuesScore;
@@ -99,6 +102,7 @@ public class SonarToGerritPublisher extends Publisher {
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
+                                  boolean overrideCredentials, String httpUsername, String httpPassword,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
                                   String noIssuesNotification, String issuesNotification) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
@@ -109,6 +113,9 @@ public class SonarToGerritPublisher extends Publisher {
         this.noIssuesToPostText = noIssuesToPostText;
         this.someIssuesToPostText = someIssuesToPostText;
         this.issueComment = issueComment;
+        this.overrideCredentials = overrideCredentials;
+        this.httpUsername = httpUsername;
+        this.httpPassword = httpPassword;
         this.postScore = postScore;
         this.category = MoreObjects.firstNonNull(category, DEFAULT_CATEGORY);
         this.noIssuesScore = noIssuesScore;
@@ -149,6 +156,12 @@ public class SonarToGerritPublisher extends Publisher {
     public String getIssueComment() {
         return issueComment;
     }
+
+    public boolean isOverrideCredentials() { return overrideCredentials; }
+
+    public String getHttpUsername() { return httpUsername; }
+
+    public String getHttpPassword() { return httpPassword; }
 
     @SuppressWarnings(value = "unused")
     public boolean isPostScore() {
@@ -216,7 +229,8 @@ public class SonarToGerritPublisher extends Publisher {
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
         GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
-                gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
+                isOverrideCredentials()? httpUsername : gerritConfig.getGerritHttpUserName(),
+                isOverrideCredentials()? httpPassword : gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));

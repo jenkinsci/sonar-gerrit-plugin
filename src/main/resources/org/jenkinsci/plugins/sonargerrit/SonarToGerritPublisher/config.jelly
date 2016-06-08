@@ -77,6 +77,19 @@
         </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
+            <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials">
+                <table width="100%">
+                    <f:optionalBlock title="" inline="true" checked="${it.overrideCredentials}">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}" field="httpUsername">
+                            <f:textbox/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.password}" field="httpPassword">
+                            <f:password/>
+                        </f:entry>
+                    </f:optionalBlock>
+                </table>
+            </f:entry>
+
             <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
                      description="${%jenkins.plugin.settings.gerrit.post.score.description}">
                 <f:checkbox default="true"/>
