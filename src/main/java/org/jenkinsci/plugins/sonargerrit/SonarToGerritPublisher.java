@@ -249,7 +249,7 @@ public class SonarToGerritPublisher extends Publisher {
             logMessage(listener, "jenkins.plugin.review.sent", Level.INFO);
         } catch (RestApiException e) {
             listener.getLogger().println("Unable to post review: " + e.getMessage());
-            LOGGER.severe("Unable to post review: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
             return false;
         }
 
