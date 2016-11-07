@@ -4,4 +4,4 @@ target/**
 .DS_Store
 /work/**
 **/*.localized
-
+commands.rtf
