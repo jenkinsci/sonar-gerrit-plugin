@@ -16,8 +16,7 @@ import java.util.TimeZone;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 12.06.2015 13:52
- * <p/>
- * $Id$
+ *
  */
 public class SonarReportBuilderTest {
 

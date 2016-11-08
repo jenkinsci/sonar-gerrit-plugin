@@ -12,8 +12,7 @@ import com.google.common.collect.Lists;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:17
- * <p/>
- * $Id$
+ *
  */
 public class CustomReportFormatter implements TagFormatter<CustomReportFormatter.Tag> {
     public static final String DEFAULT_NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");

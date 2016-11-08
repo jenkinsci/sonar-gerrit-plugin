@@ -7,8 +7,7 @@ import com.google.common.base.Predicate;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:24
- * <p/>
- * $Id$
+ *
  */
 public class ByNewPredicate implements Predicate<Issue> {
 

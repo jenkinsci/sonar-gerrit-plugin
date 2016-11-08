@@ -8,8 +8,7 @@ import com.google.common.base.Predicate;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:25
- * <p/>
- * $Id$
+ *
  */
 public class ByExactSeverityPredicate implements Predicate<Issue> {
 

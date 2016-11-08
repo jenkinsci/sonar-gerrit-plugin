@@ -18,8 +18,7 @@ import java.util.List;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 14:13
- * <p/>
- * $Id$
+ *
  */
 public class CustomReportFormatterTest {
     private static String SUCCESS_TEXT = "SonarQube violations have not been found.";
