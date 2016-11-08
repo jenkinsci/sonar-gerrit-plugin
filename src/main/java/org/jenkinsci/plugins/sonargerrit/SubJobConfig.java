@@ -9,8 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 02.12.2015 12:11
- * <p/>
- * $Id$
+ *
  */
 
 public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
