@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>1.580.1</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
@@ -55,6 +56,18 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -63,6 +76,38 @@
                 <extensions>true</extensions>
                 <configuration>
                     <compatibleSinceVersion>1.0</compatibleSinceVersion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>${javadoc.opts}</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <configuration>
+                                <additionalparam>${javadoc.opts}</additionalparam>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
                 </configuration>
             </plugin>
         </plugins>
