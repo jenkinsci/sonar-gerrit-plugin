@@ -499,7 +499,7 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    class ReportInfo {
+    static class ReportInfo {
         private String directoryPath;
         private Report report;
 
