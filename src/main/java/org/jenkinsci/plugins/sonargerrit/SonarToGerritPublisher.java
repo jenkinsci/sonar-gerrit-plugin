@@ -20,17 +20,19 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
@@ -43,6 +45,7 @@ import org.jenkinsci.plugins.sonargerrit.data.predicates.ByNewPredicate;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -59,7 +62,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Author:  Tatiana Didik
  */
 
-public class SonarToGerritPublisher extends Publisher {
+public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep{
 
     private static final String DEFAULT_SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
     private static final String DEFAULT_PROJECT_PATH = "";
@@ -217,39 +220,32 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException,
-            InterruptedException {
-
-        List<ReportInfo> issueInfos = readSonarReports(listener, build.getWorkspace());
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        List<ReportInfo> issueInfos = readSonarReports(listener, filePath);
         if (issueInfos == null) {
-            logMessage(listener, "jenkins.plugin.validation.path.no.project.config.available", Level.SEVERE);
-            return false;
+            throw new AbortException(getLocalized("jenkins.plugin.validation.path.no.project.config.available"));
         }
 
         Multimap<String, Issue> file2issues = generateFilenameToIssuesMapFilteredByPredicates(issueInfos);
 
         // Step 3 - Prepare Gerrit REST API client
         // Check Gerrit configuration is available
-        String gerritNameEnvVar = getEnvVar(build, listener, GERRIT_NAME_ENV_VAR_NAME);
-        GerritTrigger trigger = GerritTrigger.getTrigger(build.getProject());
+        String gerritNameEnvVar = getEnvVar(run, listener, GERRIT_NAME_ENV_VAR_NAME);
+        GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
         String gerritServerName = gerritNameEnvVar != null ? gerritNameEnvVar : trigger != null ? trigger.getServerName() : null;
         if (gerritServerName == null) {
-            logMessage(listener, "jenkins.plugin.error.gerrit.server.empty", Level.SEVERE);
-            return false;
+            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.server.empty"));
         }
         IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
         if (gerritConfig == null) {
-            logMessage(listener, "jenkins.plugin.error.gerrit.config.empty", Level.SEVERE);
-            return false;
+            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.config.empty"));
         }
 
         if (!gerritConfig.isUseRestApi()) {
-            logMessage(listener, "jenkins.plugin.error.gerrit.restapi.off", Level.SEVERE);
-            return false;
+            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.restapi.off"));
         }
         if (gerritConfig.getGerritHttpUserName() == null) {
-            logMessage(listener, "jenkins.plugin.error.gerrit.user.empty", Level.SEVERE);
-            return false;
+            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.user.empty"));
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
         GerritAuthData.Basic authData = new GerritAuthData.Basic(
@@ -259,18 +255,16 @@ public class SonarToGerritPublisher extends Publisher {
                 gerritConfig.isUseRestApi());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
-            String changeNStr = getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
+            String changeNStr = getEnvVar(run, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
             if (changeNStr == null) {
-                logMessage(listener, "jenkins.plugin.error.gerrit.change.number.empty", Level.SEVERE);
-                return false;
-            }
+                throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.change.number.empty"));
+             }
             int changeNumber = Integer.parseInt(changeNStr);
 
-            String patchsetNStr = getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
+            String patchsetNStr = getEnvVar(run, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
             if (patchsetNStr == null) {
-                logMessage(listener, "jenkins.plugin.error.gerrit.patchset.number.empty", Level.SEVERE);
-                return false;
-            }
+                throw new AbortException(getLocalized( "jenkins.plugin.error.gerrit.patchset.number.empty"));
+             }
             int patchSetNumber = Integer.parseInt(patchsetNStr);
 
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
@@ -302,10 +296,8 @@ public class SonarToGerritPublisher extends Publisher {
         } catch (RestApiException e) {
             listener.getLogger().println("Unable to post review: " + e.getMessage());
             LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
-            return false;
+            throw new AbortException("Unable to post review: " + e.getMessage());
         }
-
-        return true;
     }
 
     @VisibleForTesting
@@ -324,7 +316,7 @@ public class SonarToGerritPublisher extends Publisher {
         return file2issues;
     }
 
-    private Report readSonarReport(BuildListener listener, FilePath workspace, SubJobConfig config) throws IOException,
+    private Report readSonarReport(TaskListener listener, FilePath workspace, SubJobConfig config) throws IOException,
             InterruptedException {
         FilePath reportPath = workspace.child(config.getSonarReportPath());
         if (!reportPath.exists()) {
@@ -341,7 +333,7 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    List<ReportInfo> readSonarReports(BuildListener listener, FilePath workspace) throws IOException,
+    List<ReportInfo> readSonarReports(TaskListener listener, FilePath workspace) throws IOException,
             InterruptedException {
         List<ReportInfo> reports = new ArrayList<ReportInfo>();
         for (SubJobConfig subJobConfig : getSubJobConfigs(false)) { // to be replaced by this.subJobConfigs in further releases - this code is to support older versions
@@ -354,12 +346,12 @@ public class SonarToGerritPublisher extends Publisher {
         return reports;
     }
 
-    private String getEnvVar(AbstractBuild build, BuildListener listener, String name) throws IOException, InterruptedException {
+    private String getEnvVar(Run<?,?> build, TaskListener listener, String name) throws IOException, InterruptedException {
         EnvVars envVars = build.getEnvironment(listener);
         return envVars.get(name);
     }
 
-    private void logMessage(BuildListener listener, String message, Level l, Object... params) {
+    private void logMessage(TaskListener listener, String message, Level l, Object... params) {
         message = getLocalized(message, params);
         if (listener != null) {     // it can be it tests
             listener.getLogger().println(message);
