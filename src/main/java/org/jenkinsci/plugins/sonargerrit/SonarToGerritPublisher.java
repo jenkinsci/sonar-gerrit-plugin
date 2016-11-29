@@ -40,6 +40,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
@@ -75,7 +76,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  */
-
+@Symbol("sonarToGerrit")
 public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep{
 
     private static final String DEFAULT_SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
