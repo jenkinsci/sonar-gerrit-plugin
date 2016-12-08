@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.data.entity;
 
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.Date;
 
 /**
@@ -9,31 +11,40 @@ import java.util.Date;
  */
 public class Issue {
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
     private String key;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String component;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Integer line;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String message;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Severity severity;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String rule;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String status;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Boolean isNew;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Date creationDate;
 
     public String getKey() {
@@ -69,7 +80,7 @@ public class Issue {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return new Date(creationDate.getTime());
     }
 
     @Override

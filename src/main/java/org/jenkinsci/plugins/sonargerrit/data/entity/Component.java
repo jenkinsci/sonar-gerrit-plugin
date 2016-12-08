@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.data.entity;
 
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.annotation.Nullable;
 
 /**
@@ -9,16 +11,21 @@ import javax.annotation.Nullable;
  */
 
 public class Component {
-    @SuppressWarnings(value="unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
+
     private String key;
 
-    @SuppressWarnings(value="unused")
-    private String path;
-
-    @SuppressWarnings(value="unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String moduleKey;
 
-    @SuppressWarnings(value="unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
+    private String path;
+
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String status;
 
     public String getKey() {
