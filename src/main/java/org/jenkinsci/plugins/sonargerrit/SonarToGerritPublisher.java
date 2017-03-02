@@ -7,6 +7,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
@@ -63,8 +64,8 @@ public class SonarToGerritPublisher extends Publisher {
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     private static final String DEFAULT_CATEGORY = "Code-Review";
     private static final int DEFAULT_SCORE = 0;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = ReviewInput.NotifyHandling.NONE;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_ISSUES = ReviewInput.NotifyHandling.OWNER;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = NotifyHandling.NONE;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
 
     public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
@@ -215,8 +216,11 @@ public class SonarToGerritPublisher extends Publisher {
             return false;
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
-                gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(
+                gerritConfig.getGerritFrontEndUrl(),
+                gerritConfig.getGerritHttpUserName(), 
+                gerritConfig.getGerritHttpPassword(),
+                gerritConfig.isUseRestApi());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
@@ -341,12 +345,12 @@ public class SonarToGerritPublisher extends Publisher {
         return subJobConfigs;
     }
 
-    private ReviewInput.NotifyHandling getNotificationSettings(int finalIssuesCount) {
+    private NotifyHandling getNotificationSettings(int finalIssuesCount) {
         if (finalIssuesCount > 0) {
-            ReviewInput.NotifyHandling value = (issuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(issuesNotification));
+            NotifyHandling value = (issuesNotification == null ? null : NotifyHandling.valueOf(issuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_ISSUES);
         } else {
-            ReviewInput.NotifyHandling value = (noIssuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(noIssuesNotification));
+            NotifyHandling value = (noIssuesNotification == null ? null : NotifyHandling.valueOf(noIssuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
         }
     }
@@ -694,7 +698,7 @@ public class SonarToGerritPublisher extends Publisher {
         }
 
         private FormValidation checkNotificationType(@QueryParameter String value) {
-            if (value == null || ReviewInput.NotifyHandling.valueOf(value) == null) {
+            if (value == null || NotifyHandling.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.notification.recipient.unknown"));
             }
             return FormValidation.ok();
