@@ -219,8 +219,20 @@ public class SonarToGerritPublisher extends Publisher {
                 gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
-            int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
-            int patchSetNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
+            String changeNStr = getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
+            if (changeNStr == null) {
+                logMessage(listener, "jenkins.plugin.error.gerrit.change.number.empty", Level.SEVERE);
+                return false;
+            }
+            int changeNumber = Integer.parseInt(changeNStr);
+
+            String patchsetNStr = getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
+            if (patchsetNStr == null) {
+                logMessage(listener, "jenkins.plugin.error.gerrit.patchset.number.empty", Level.SEVERE);
+                return false;
+            }
+            int patchSetNumber = Integer.parseInt(patchsetNStr);
+
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
@@ -287,6 +299,8 @@ public class SonarToGerritPublisher extends Publisher {
         logMessage(listener, "jenkins.plugin.report.loaded", Level.INFO, report.getIssues().size());
         return report;
     }
+
+    private
 
     @VisibleForTesting
     List<ReportInfo> readSonarReports(BuildListener listener, FilePath workspace) throws IOException,
@@ -376,23 +390,23 @@ public class SonarToGerritPublisher extends Publisher {
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssues.get(file),
-                                    new Function<Issue, ReviewInput.CommentInput>() {
-                                        @Nullable
-                                        @Override
-                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                            if (input == null) {
-                                                return null;
-                                            }
-                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                            commentInput.id = input.getKey();
-                                            commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                            return commentInput;
-                                        }
-
+                    Collections2.transform(finalIssues.get(file),
+                            new Function<Issue, ReviewInput.CommentInput>() {
+                                @Nullable
+                                @Override
+                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                    if (input == null) {
+                                        return null;
                                     }
-                            )
+                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                    commentInput.id = input.getKey();
+                                    commentInput.line = input.getLine();
+                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                    return commentInput;
+                                }
+
+                            }
+                    )
                     )
             );
         }
@@ -512,8 +526,8 @@ public class SonarToGerritPublisher extends Publisher {
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
-     *
-     *
+     * <p>
+     * <p>
      * See <tt>src/main/resources/hudson/plugins/hello_world/SonarToGerritBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
@@ -533,7 +547,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -557,7 +571,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -575,7 +589,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -593,7 +607,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -611,7 +625,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -629,7 +643,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -644,7 +658,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -668,7 +682,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -683,7 +697,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
