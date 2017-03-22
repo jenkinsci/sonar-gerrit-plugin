@@ -300,8 +300,6 @@ public class SonarToGerritPublisher extends Publisher {
         return report;
     }
 
-    private
-
     @VisibleForTesting
     List<ReportInfo> readSonarReports(BuildListener listener, FilePath workspace) throws IOException,
             InterruptedException {
