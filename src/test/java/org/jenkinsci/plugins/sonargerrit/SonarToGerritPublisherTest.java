@@ -79,7 +79,6 @@ public class SonarToGerritPublisherTest {
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
-        System.out.println(multimap.keySet());
         Assert.assertEquals(1, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
         Assert.assertEquals(2, multimap.get("guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
         Assert.assertEquals(8, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
@@ -128,8 +127,8 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        SubJobConfig config1  =   new SubJobConfig("testfolder1/", "report1.json");
-        SubJobConfig config2  =   new SubJobConfig("testfolder2/", "report2.json");
+        SubJobConfig config1 = new SubJobConfig("testfolder1/", "report1.json");
+        SubJobConfig config2 = new SubJobConfig("testfolder2/", "report2.json");
         SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.INFO.name(), true, false, "", "", "", true, "", "0", "0", "", "");
         String resourcePath = getClass().getClassLoader().getResource("filter.json").getPath();
         FilePath resourceFolder = new FilePath(new File(resourcePath).getParentFile());
@@ -150,8 +149,10 @@ public class SonarToGerritPublisherTest {
         report = readreport("report3_with-nested-subprojects.json");
         config = new SubJobConfig("testfolder/", "");
         multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
-        Assert.assertEquals(6, multimap.size());
+        Assert.assertEquals(8, multimap.size());
         Assert.assertEquals(3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/sub2/src/main/java/com/proj2/sub2/SubProj2.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/sub2/sub22/sub2222/sub22222/src/main/java/com/proj2/sub2/SubProj22222.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/src/main/java/com/proj2/Proj2.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/base/com.acme.util/src/main/java/com/acme/util/Util.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/com.acme.app/src/main/java/com/acme/app/App.java").size());
@@ -258,6 +259,7 @@ public class SonarToGerritPublisherTest {
     private Report readreport() throws IOException, InterruptedException, URISyntaxException {
         return readreport("filter.json");
     }
+
     private Report readreport(String file) throws IOException, InterruptedException, URISyntaxException {
         URL url = getClass().getClassLoader().getResource(file);
 

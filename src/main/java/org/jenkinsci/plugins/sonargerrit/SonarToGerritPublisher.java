@@ -123,17 +123,17 @@ public class SonarToGerritPublisher extends Publisher {
 
     @VisibleForTesting
     static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
-	final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-	// generating map consisting of real file names to corresponding issues
-	// collections.
-	final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
-	for (Issue issue : filtered) {
-	    String issueComponent = issue.getComponent();
-	    String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
-		    .or(issueComponent);
-	    file2issues.put(realFileName, issue);
-	}
-	return file2issues;
+        final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+        // generating map consisting of real file names to corresponding issues
+        // collections.
+        final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
+        for (Issue issue : filtered) {
+            String issueComponent = issue.getComponent();
+            String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
+                    .or(issueComponent);
+            file2issues.put(realFileName, issue);
+        }
+        return file2issues;
     }
 
 
@@ -391,23 +391,23 @@ public class SonarToGerritPublisher extends Publisher {
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssues.get(file),
-                                    new Function<Issue, ReviewInput.CommentInput>() {
-                                        @Nullable
-                                        @Override
-                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                            if (input == null) {
-                                                return null;
-                                            }
-                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                            commentInput.id = input.getKey();
-                                            commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                            return commentInput;
-                                        }
-
+                    Collections2.transform(finalIssues.get(file),
+                            new Function<Issue, ReviewInput.CommentInput>() {
+                                @Nullable
+                                @Override
+                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                    if (input == null) {
+                                        return null;
                                     }
-                            )
+                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                    commentInput.id = input.getKey();
+                                    commentInput.line = input.getLine();
+                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                    return commentInput;
+                                }
+
+                            }
+                    )
                     )
             );
         }
