@@ -28,10 +28,10 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
@@ -66,7 +66,6 @@ public class SonarToGerritPublisher extends Publisher {
     private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = ReviewInput.NotifyHandling.NONE;
     private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_ISSUES = ReviewInput.NotifyHandling.OWNER;
 
-    public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
@@ -119,6 +118,22 @@ public class SonarToGerritPublisher extends Publisher {
         // old values - not used anymore. will be deleted in further releases
         this.path = null;
         this.projectPath = null;
+    }
+
+
+    @VisibleForTesting
+    static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
+        final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+        // generating map consisting of real file names to corresponding issues
+        // collections.
+        final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
+        for (Issue issue : filtered) {
+            String issueComponent = issue.getComponent();
+            String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
+                    .or(issueComponent);
+            file2issues.put(realFileName, issue);
+        }
+        return file2issues;
     }
 
 
@@ -439,52 +454,6 @@ public class SonarToGerritPublisher extends Publisher {
                 }
             }
         }
-    }
-
-    @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
-        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-
-/*       The next code prepares data to process situations like this one:
-        {
-            "key": "com.maxifier.guice:guice-bootstrap",
-            "path": "guice-bootstrap"
-        },
-        {
-            "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "moduleKey": "com.maxifier.guice:guice-bootstrap",
-            "status": "SAME"
-        }
-        */
-        Map<String, String> component2module = Maps.newHashMap();
-        Map<String, String> component2path = Maps.newHashMap();
-
-        for (Component component : report.getComponents()) {
-            component2path.put(component.getKey(), component.getPath());
-        }
-        for (Component component : report.getComponents()) {
-            if (component.getModuleKey() != null) {
-                component2module.put(component.getKey(), component2path.get(component.getModuleKey()));
-            }
-        }
-
-
-        // generating map consisting of real file names to corresponding issues collections.
-        for (Issue issue : filtered) {
-            String issueComponent = issue.getComponent();
-            String moduleName = component2module.get(issueComponent);
-            String componentPath = component2path.get(issueComponent);
-
-            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath;
-            file2issues.put(realFileName, issue);
-
-        }
-        return file2issues;
-    }
-
-    private String appendDelimiter(String subPath) {
-        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER) ? subPath : subPath + GERRIT_FILE_DELIMITER;
     }
 
     @VisibleForTesting
