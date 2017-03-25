@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.data.entity;
 
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -8,16 +10,20 @@ package org.jenkinsci.plugins.sonargerrit.data.entity;
 
 public class Rule {
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String key;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String rule;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String repository;
 
-    @SuppressWarnings(value = "unused")
+    @SuppressWarnings("unused")
+    @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String name;
 
     public String getKey() {

@@ -7,6 +7,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
@@ -28,10 +29,10 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
@@ -63,10 +64,9 @@ public class SonarToGerritPublisher extends Publisher {
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     private static final String DEFAULT_CATEGORY = "Code-Review";
     private static final int DEFAULT_SCORE = 0;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = ReviewInput.NotifyHandling.NONE;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_ISSUES = ReviewInput.NotifyHandling.OWNER;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = NotifyHandling.NONE;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
 
-    public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
@@ -129,6 +129,22 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
 
+    @VisibleForTesting
+    static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
+        final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+        // generating map consisting of real file names to corresponding issues
+        // collections.
+        final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
+        for (Issue issue : filtered) {
+            String issueComponent = issue.getComponent();
+            String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
+                    .or(issueComponent);
+            file2issues.put(realFileName, issue);
+        }
+        return file2issues;
+    }
+
+
     public String getSeverity() {
         return severity;
     }
@@ -157,11 +173,17 @@ public class SonarToGerritPublisher extends Publisher {
         return issueComment;
     }
 
-    public boolean isOverrideCredentials() { return overrideCredentials; }
+    public boolean isOverrideCredentials() {
+        return overrideCredentials;
+    }
 
-    public String getHttpUsername() { return httpUsername; }
+    public String getHttpUsername() {
+        return httpUsername;
+    }
 
-    public String getHttpPassword() { return httpPassword; }
+    public String getHttpPassword() {
+        return httpPassword;
+    }
 
     @SuppressWarnings(value = "unused")
     public boolean isPostScore() {
@@ -228,13 +250,26 @@ public class SonarToGerritPublisher extends Publisher {
             return false;
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
-                isOverrideCredentials()? httpUsername : gerritConfig.getGerritHttpUserName(),
-                isOverrideCredentials()? httpPassword : gerritConfig.getGerritHttpPassword());
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(
+                gerritConfig.getGerritFrontEndUrl(),
+                isOverrideCredentials() ? httpUsername : gerritConfig.getGerritHttpUserName(),
+                isOverrideCredentials() ? httpPassword : gerritConfig.getGerritHttpPassword());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
-            int changeNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
-            int patchSetNumber = Integer.parseInt(getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
+            String changeNStr = getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
+            if (changeNStr == null) {
+                logMessage(listener, "jenkins.plugin.error.gerrit.change.number.empty", Level.SEVERE);
+                return false;
+            }
+            int changeNumber = Integer.parseInt(changeNStr);
+
+            String patchsetNStr = getEnvVar(build, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
+            if (patchsetNStr == null) {
+                logMessage(listener, "jenkins.plugin.error.gerrit.patchset.number.empty", Level.SEVERE);
+                return false;
+            }
+            int patchSetNumber = Integer.parseInt(patchsetNStr);
+
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
@@ -263,7 +298,7 @@ public class SonarToGerritPublisher extends Publisher {
             logMessage(listener, "jenkins.plugin.review.sent", Level.INFO);
         } catch (RestApiException e) {
             listener.getLogger().println("Unable to post review: " + e.getMessage());
-            LOGGER.severe("Unable to post review: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
             return false;
         }
 
@@ -355,12 +390,12 @@ public class SonarToGerritPublisher extends Publisher {
         return subJobConfigs;
     }
 
-    private ReviewInput.NotifyHandling getNotificationSettings(int finalIssuesCount) {
+    private NotifyHandling getNotificationSettings(int finalIssuesCount) {
         if (finalIssuesCount > 0) {
-            ReviewInput.NotifyHandling value = (issuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(issuesNotification));
+            NotifyHandling value = (issuesNotification == null ? null : NotifyHandling.valueOf(issuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_ISSUES);
         } else {
-            ReviewInput.NotifyHandling value = (noIssuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(noIssuesNotification));
+            NotifyHandling value = (noIssuesNotification == null ? null : NotifyHandling.valueOf(noIssuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
         }
     }
@@ -390,23 +425,23 @@ public class SonarToGerritPublisher extends Publisher {
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssues.get(file),
-                                    new Function<Issue, ReviewInput.CommentInput>() {
-                                        @Nullable
-                                        @Override
-                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                            if (input == null) {
-                                                return null;
-                                            }
-                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                            commentInput.id = input.getKey();
-                                            commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                            return commentInput;
-                                        }
-
+                    Collections2.transform(finalIssues.get(file),
+                            new Function<Issue, ReviewInput.CommentInput>() {
+                                @Nullable
+                                @Override
+                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                    if (input == null) {
+                                        return null;
                                     }
-                            )
+                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                    commentInput.id = input.getKey();
+                                    commentInput.line = input.getLine();
+                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                    return commentInput;
+                                }
+
+                            }
+                    )
                     )
             );
         }
@@ -444,52 +479,6 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
-        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-
-/*       The next code prepares data to process situations like this one:
-        {
-            "key": "com.maxifier.guice:guice-bootstrap",
-            "path": "guice-bootstrap"
-        },
-        {
-            "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "moduleKey": "com.maxifier.guice:guice-bootstrap",
-            "status": "SAME"
-        }
-        */
-        Map<String, String> component2module = Maps.newHashMap();
-        Map<String, String> component2path = Maps.newHashMap();
-
-        for (Component component : report.getComponents()) {
-            component2path.put(component.getKey(), component.getPath());
-        }
-        for (Component component : report.getComponents()) {
-            if (component.getModuleKey() != null) {
-                component2module.put(component.getKey(), component2path.get(component.getModuleKey()));
-            }
-        }
-
-
-        // generating map consisting of real file names to corresponding issues collections.
-        for (Issue issue : filtered) {
-            String issueComponent = issue.getComponent();
-            String moduleName = component2module.get(issueComponent);
-            String componentPath = component2path.get(issueComponent);
-
-            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath;
-            file2issues.put(realFileName, issue);
-
-        }
-        return file2issues;
-    }
-
-    private String appendDelimiter(String subPath) {
-        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER) ? subPath : subPath + GERRIT_FILE_DELIMITER;
-    }
-
-    @VisibleForTesting
     Iterable<Issue> filterIssuesByPredicates(List<Issue> issues) {
         Severity sev = Severity.valueOf(severity);
         return Iterables.filter(issues,
@@ -513,7 +502,7 @@ public class SonarToGerritPublisher extends Publisher {
     }
 
     @VisibleForTesting
-    class ReportInfo {
+    static class ReportInfo {
         private String directoryPath;
         private Report report;
 
@@ -526,8 +515,8 @@ public class SonarToGerritPublisher extends Publisher {
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * See <tt>src/main/resources/hudson/plugins/hello_world/SonarToGerritBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
@@ -547,7 +536,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -571,7 +560,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -589,7 +578,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -607,7 +596,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -625,7 +614,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -643,7 +632,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -658,7 +647,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -682,7 +671,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -697,7 +686,7 @@ public class SonarToGerritPublisher extends Publisher {
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -708,7 +697,7 @@ public class SonarToGerritPublisher extends Publisher {
         }
 
         private FormValidation checkNotificationType(@QueryParameter String value) {
-            if (value == null || ReviewInput.NotifyHandling.valueOf(value) == null) {
+            if (value == null || NotifyHandling.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.notification.recipient.unknown"));
             }
             return FormValidation.ok();

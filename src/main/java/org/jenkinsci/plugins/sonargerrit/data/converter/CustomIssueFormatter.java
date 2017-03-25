@@ -10,8 +10,7 @@ import java.net.URLEncoder;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 12:51
- * <p/>
- * $Id$
+ *
  */
 public class CustomIssueFormatter implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
 

@@ -5,13 +5,27 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.580.1</version>
+        <version>2.11</version>
         <relativePath />
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <packaging>hpi</packaging>
+
+    <properties>
+        <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
+        <jenkins.version>1.625.3</jenkins.version>
+        <!-- Java Level to use. Java 7 required when using core >= 1.612 -->
+        <java.level>7</java.level>
+        <!-- Jenkins Test Harness version you use to test the plugin. -->
+        <!-- For Jenkins version >= 1.580.1 use JTH 2.x or higher. -->
+        <jenkins-test-harness.version>2.13</jenkins-test-harness.version>
+        <!-- Other properties you may want to use:
+             ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
+             ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
+        -->
+    </properties>
 
     <name>Sonar Gerrit Plugin</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit</url>
@@ -45,15 +59,27 @@
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -63,6 +89,49 @@
                 <extensions>true</extensions>
                 <configuration>
                     <compatibleSinceVersion>1.0</compatibleSinceVersion>
+                </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-release-plugin</artifactId>-->
+                <!--<version>2.5.3</version>-->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>org.apache.maven.scm</groupId>-->
+                        <!--<artifactId>maven-scm-provider-gitexe</artifactId>-->
+                        <!--<version>2.5</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>${javadoc.opts}</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <configuration>
+                                <additionalparam>${javadoc.opts}</additionalparam>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
                 </configuration>
             </plugin>
         </plugins>
@@ -87,7 +156,7 @@
         <dependency>
             <groupId>com.urswolfer.gerrit.client.rest</groupId>
             <artifactId>gerrit-rest-java-client</artifactId>
-            <version>0.8.5</version>
+            <version>0.8.11</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

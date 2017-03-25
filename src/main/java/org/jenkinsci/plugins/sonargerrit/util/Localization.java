@@ -7,8 +7,7 @@ import java.util.ResourceBundle;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 22.09.2015 11:55
- * <p/>
- * $Id$
+ *
  */
 public final class Localization {
 

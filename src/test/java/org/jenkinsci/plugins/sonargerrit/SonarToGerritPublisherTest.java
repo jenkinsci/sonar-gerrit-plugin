@@ -4,10 +4,14 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.api.changes.*;
+import com.google.gerrit.extensions.client.SubmitType;
+import com.google.gerrit.extensions.common.ActionInfo;
 import com.google.gerrit.extensions.common.CommentInfo;
 import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.common.MergeableInfo;
+import com.google.gerrit.extensions.common.RobotCommentInfo;
+import com.google.gerrit.extensions.common.TestSubmitRuleInput;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import hudson.FilePath;
@@ -28,8 +32,7 @@ import java.util.*;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 30.08.2015 13:41
- * <p/>
- * $Id$
+ *
  */
 public class SonarToGerritPublisherTest {
 
@@ -75,7 +78,7 @@ public class SonarToGerritPublisherTest {
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
-        Multimap<String, Issue> multimap = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        Multimap<String, Issue> multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -88,7 +91,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        multimap = new SonarToGerritPublisher(null, null, Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
@@ -102,7 +105,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
         SubJobConfig config = new SubJobConfig("testfolder", "");
-        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -115,7 +118,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
         config = new SubJobConfig("testfolder/", "");
-        multimap = new SonarToGerritPublisher("", Arrays.asList(config), Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
@@ -127,9 +130,9 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
-        SubJobConfig config1  =   new SubJobConfig("testfolder1/", "report1.json");
-        SubJobConfig config2  =   new SubJobConfig("testfolder2/", "report2.json");
-        SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "");
+        SubJobConfig config1 = new SubJobConfig("testfolder1/", "report1.json");
+        SubJobConfig config2 = new SubJobConfig("testfolder2/", "report2.json");
+        SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.INFO.name(), true, false, "", "", "",  false, "", "",true, "", "0", "0", "", "");
         String resourcePath = getClass().getClassLoader().getResource("filter.json").getPath();
         FilePath resourceFolder = new FilePath(new File(resourcePath).getParentFile());
         List<SonarToGerritPublisher.ReportInfo> reportInfos = sonarToGerritPublisher.readSonarReports(null, resourceFolder);//todo assert
@@ -145,6 +148,17 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder2/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
+
+        report = readreport("report3_with-nested-subprojects.json");
+        config = new SubJobConfig("testfolder/", "");
+        multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates(config.getProjectPath(), report, report.getIssues());
+        Assert.assertEquals(8, multimap.size());
+        Assert.assertEquals(3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/sub2/src/main/java/com/proj2/sub2/SubProj2.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/sub2/sub22/sub2222/sub22222/src/main/java/com/proj2/sub2/SubProj22222.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/src/main/java/com/proj2/Proj2.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/base/com.acme.util/src/main/java/com/acme/util/Util.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/com.acme.app/src/main/java/com/acme/app/App.java").size());
     }
 
     @Test
@@ -152,8 +166,7 @@ public class SonarToGerritPublisherTest {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());
 
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "");
-        Multimap<String, Issue> multimap = builder.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        Multimap<String, Issue> multimap = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
 
         // Map will describe which strings in each file should be marked as modified.
         // integer values are count of strings that affected by ContentEntry.
@@ -168,6 +181,7 @@ public class SonarToGerritPublisherTest {
         RevisionApi revApi = new DummyRevisionApi(path2changedValues);
 
 
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "");
         builder.filterIssuesByChangedLines(multimap, revApi);
 
         // list of lines commented by sonar : 37, 54,81, 99, 106, 108, 122, 162
@@ -195,7 +209,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(-1, reviewResult.labels.get("Test").intValue());
-        Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", false, "Test", "1", "-1", null, null);
@@ -203,7 +217,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals("Some Issues Header", reviewResult.message);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(null, reviewResult.labels);
-        Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "0", "0", null, null);
@@ -212,7 +226,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
-        Assert.assertEquals(ReviewInput.NotifyHandling.OWNER, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
         builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1test", "-1test", "NONE", "ALL");
@@ -221,7 +235,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
-        Assert.assertEquals(ReviewInput.NotifyHandling.ALL, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.ALL, reviewResult.notify);
 
         builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1", "-1", null, null);
@@ -231,7 +245,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
-        Assert.assertEquals(ReviewInput.NotifyHandling.NONE, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.NONE, reviewResult.notify);
 
         builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1", "-1", "OWNER_REVIEWERS", "ALL");
@@ -240,7 +254,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals("No Issues Header", reviewResult.message);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
-        Assert.assertEquals(ReviewInput.NotifyHandling.OWNER_REVIEWERS, reviewResult.notify);
+        Assert.assertEquals(NotifyHandling.OWNER_REVIEWERS, reviewResult.notify);
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
 
     }
@@ -248,6 +262,7 @@ public class SonarToGerritPublisherTest {
     private Report readreport() throws IOException, InterruptedException, URISyntaxException {
         return readreport("filter.json");
     }
+
     private Report readreport(String file) throws IOException, InterruptedException, URISyntaxException {
         URL url = getClass().getClassLoader().getResource(file);
 
@@ -292,7 +307,19 @@ public class SonarToGerritPublisherTest {
                 public DiffInfo diff(String base) throws RestApiException {
                     throw new UnsupportedOperationException("This is a dummy test class");
                 }
+
+                @Override
+                public DiffInfo diff(int parent) throws RestApiException {
+                    throw new UnsupportedOperationException("This is a dummy test class");
+                }
+
+                @Override
+                public DiffRequest diffRequest() throws RestApiException {
+                    throw new UnsupportedOperationException("This is a dummy test class");
+                }
+
             };
+
         }
 
         private DiffInfo generateDiffInfoByPath(String path) {
@@ -328,7 +355,6 @@ public class SonarToGerritPublisherTest {
             }
             return entry;
         }
-
 
         @Override
         public void delete() throws RestApiException {
@@ -429,6 +455,72 @@ public class SonarToGerritPublisherTest {
         public CommentApi comment(String id) throws RestApiException {
             throw new UnsupportedOperationException("This is a dummy test class");
         }
+
+        @Override
+        public Map<String, ActionInfo> actions() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public List<CommentInfo> commentsAsList() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public List<CommentInfo> draftsAsList() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public Map<String, FileInfo> files(int parentNum) throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public RevisionApi.MergeListRequest getMergeList() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public BinaryResult patch() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public BinaryResult patch(String path) throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public RobotCommentApi robotComment(String id) throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public Map<String, List<RobotCommentInfo>> robotComments() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public List<RobotCommentInfo> robotCommentsAsList() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public BinaryResult submitPreview() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public SubmitType submitType() throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
+        @Override
+        public SubmitType testSubmitType(TestSubmitRuleInput in) throws RestApiException {
+            throw new UnsupportedOperationException("This is a dummy test class");
+        }
+
     }
 
 }

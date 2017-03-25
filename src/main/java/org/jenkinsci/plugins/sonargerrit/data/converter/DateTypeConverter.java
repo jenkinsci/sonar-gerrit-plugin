@@ -16,8 +16,7 @@ import java.util.logging.Logger;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 11.06.2015 16:54
- * <p/>
- * $Id$
+ *
  */
 //todo do something with magical date format
 public class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
