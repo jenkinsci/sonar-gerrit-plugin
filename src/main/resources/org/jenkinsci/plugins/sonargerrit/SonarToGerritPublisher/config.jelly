@@ -80,12 +80,26 @@
             <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials">
                 <table width="100%">
                     <f:optionalBlock title="" inline="true" checked="${it.overrideCredentials}">
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}" field="httpUsername">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}"
+                                 field="httpUsername">
                             <f:textbox/>
                         </f:entry>
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.password}" field="httpPassword">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.password}"
+                                 field="httpPassword">
                             <f:password/>
                         </f:entry>
+
+                        <j:set var="servers" value="${descriptor.getGerritServerNames()}" />
+                        <f:entry  title="${%jenkins.plugin.settings.gerrit.http.credentials.gerritserver}" >
+                            <select  name="gerritServerName">
+                                <j:forEach var="inst" items="${servers}">
+                                    <f:option>${inst}</f:option>
+                                </j:forEach>
+                            </select>
+                        </f:entry>
+                        <f:validateButton
+                                title="${%Test Connection}" progress="${%Testing...}"
+                                method="testConnection" with="httpUsername,httpPassword,gerritServerName"/>
                     </f:optionalBlock>
                 </table>
             </f:entry>

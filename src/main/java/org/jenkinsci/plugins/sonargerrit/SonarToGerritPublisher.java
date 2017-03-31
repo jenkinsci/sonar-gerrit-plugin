@@ -14,6 +14,8 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
@@ -553,6 +555,33 @@ public class SonarToGerritPublisher extends Publisher {
                 return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.invalid"));
             }
             return FormValidation.ok();
+        }
+
+        public FormValidation doTestConnection(@QueryParameter("httpUsername") final String httpUsername,
+                                               @QueryParameter("httpPassword") final String httpPassword,
+                                               @QueryParameter("gerritServerName") final String gerritServerName) throws IOException, ServletException {
+            if (httpUsername == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.user.empty");
+            }
+            if (gerritServerName == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.server.empty");
+            }
+            IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
+            if (gerritConfig == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.config.empty");
+            }
+
+            if (!gerritConfig.isUseRestApi()) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.restapi.off");
+            }
+
+            GerritServer server = PluginImpl.getServer_(gerritServerName);
+            return server.getDescriptor().doTestRestConnection(gerritConfig.getGerritFrontEndUrl(), httpUsername, httpPassword/*, gerritConfig.isUseRestApi()*/);
+
+        }
+
+        public List<String> getGerritServerNames(){
+           return PluginImpl.getServerNames_();
         }
 
         /**
