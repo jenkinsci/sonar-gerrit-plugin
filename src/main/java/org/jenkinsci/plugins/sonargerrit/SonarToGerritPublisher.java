@@ -255,7 +255,8 @@ public class SonarToGerritPublisher extends Publisher {
         GerritAuthData.Basic authData = new GerritAuthData.Basic(
                 gerritConfig.getGerritFrontEndUrl(),
                 isOverrideCredentials() ? httpUsername : gerritConfig.getGerritHttpUserName(),
-                isOverrideCredentials() ? httpPassword : gerritConfig.getGerritHttpPassword());
+                isOverrideCredentials() ? httpPassword : gerritConfig.getGerritHttpPassword(),
+                gerritConfig.isUseRestApi());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             String changeNStr = getEnvVar(build, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
