@@ -104,30 +104,21 @@
                 </table>
             </f:entry>
 
-            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
-                     description="${%jenkins.plugin.settings.gerrit.post.score.description}">
-                <f:checkbox default="true"/>
+            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">
+                <table width="100%">
+                    <f:optionalBlock title="" inline="true" checked="${it.postScore}"  default="true">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
+                            <f:textbox default="Code-Review"/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
+                            <f:textbox default="+1"/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
+                            <f:textbox default="-1"/>
+                        </f:entry>
+                    </f:optionalBlock>
+                </table>
             </f:entry>
-
-            <!--<f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">-->
-            <!--&lt;!&ndash;description="${%jenkins.plugin.settings.gerrit.post.score.description}">&ndash;&gt;-->
-            <!--&lt;!&ndash;<f:checkbox default="true"/>&ndash;&gt;-->
-            <!--<table width="100%">-->
-
-            <!--<f:optionalBlock title="" name="postScore"-->
-            <!--checked="${it.postScore}" default="true">-->
-            <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-                <f:textbox default="Code-Review"/>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-                <f:textbox default="+1"/>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-                <f:textbox default="-1"/>
-            </f:entry>
-            <!--</f:optionalBlock>-->
-            <!--</table>-->
-            <!--</f:entry>-->
         </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
