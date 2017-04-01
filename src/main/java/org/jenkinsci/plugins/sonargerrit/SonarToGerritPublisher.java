@@ -577,6 +577,9 @@ public class SonarToGerritPublisher extends Publisher {
             }
 
             GerritServer server = PluginImpl.getServer_(gerritServerName);
+            if (server == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.server.null");
+            }
             return server.getDescriptor().doTestRestConnection(gerritConfig.getGerritFrontEndUrl(), httpUsername, httpPassword/*, gerritConfig.isUseRestApi()*/);
 
         }
