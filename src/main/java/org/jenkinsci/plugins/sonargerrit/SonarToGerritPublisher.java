@@ -14,12 +14,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritApiImpl;
@@ -41,10 +44,11 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
+
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
@@ -84,10 +88,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
     private static final String DEFAULT_CATEGORY = "Code-Review";
     private static final int DEFAULT_SCORE = 0;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = ReviewInput.NotifyHandling.NONE;
-    private static final ReviewInput.NotifyHandling DEFAULT_NOTIFICATION_ISSUES = ReviewInput.NotifyHandling.OWNER;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = NotifyHandling.NONE;
+    private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
 
-    public static final String GERRIT_FILE_DELIMITER = "/";
     public static final String EMPTY_STR = "";
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
@@ -107,6 +110,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private final String noIssuesToPostText;
     private final String someIssuesToPostText;
     private final String issueComment;
+    private final boolean overrideCredentials;
+    private final String httpUsername;
+    private final String httpPassword;
     private final boolean postScore;
     private final String category;
     private final String noIssuesScore;
@@ -120,6 +126,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
+                                  boolean overrideCredentials, String httpUsername, String httpPassword,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
                                   String noIssuesNotification, String issuesNotification) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
@@ -130,6 +137,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.noIssuesToPostText = noIssuesToPostText;
         this.someIssuesToPostText = someIssuesToPostText;
         this.issueComment = issueComment;
+        this.overrideCredentials = overrideCredentials;
+        this.httpUsername = httpUsername;
+        this.httpPassword = httpPassword;
         this.postScore = postScore;
         this.category = MoreObjects.firstNonNull(category, DEFAULT_CATEGORY);
         this.noIssuesScore = noIssuesScore;
@@ -140,6 +150,22 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         // old values - not used anymore. will be deleted in further releases
         this.path = null;
         this.projectPath = null;
+    }
+
+
+    @VisibleForTesting
+    static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
+        final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
+        // generating map consisting of real file names to corresponding issues
+        // collections.
+        final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
+        for (Issue issue : filtered) {
+            String issueComponent = issue.getComponent();
+            String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
+                    .or(issueComponent);
+            file2issues.put(realFileName, issue);
+        }
+        return file2issues;
     }
 
 
@@ -171,6 +197,18 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return issueComment;
     }
 
+    public boolean isOverrideCredentials() {
+        return overrideCredentials;
+    }
+
+    public String getHttpUsername() {
+        return httpUsername;
+    }
+
+    public String getHttpPassword() {
+        return httpPassword;
+    }
+
     @SuppressWarnings(value = "unused")
     public boolean isPostScore() {
         return postScore;
@@ -199,7 +237,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     public String getIssuesScore() {
         return issuesScore;
     }
-
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
@@ -230,12 +267,25 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.user.empty"));
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
-                gerritConfig.getGerritHttpUserName(), gerritConfig.getGerritHttpPassword());
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(
+                gerritConfig.getGerritFrontEndUrl(),
+                isOverrideCredentials() ? httpUsername : gerritConfig.getGerritHttpUserName(),
+                isOverrideCredentials() ? httpPassword : gerritConfig.getGerritHttpPassword(),
+                gerritConfig.isUseRestApi());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
-            int changeNumber = Integer.parseInt(getEnvVar(run, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME));
-            int patchSetNumber = Integer.parseInt(getEnvVar(run, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
+            String changeNStr = getEnvVar(run, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
+            if (changeNStr == null) {
+                throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.change.number.empty"));
+            }
+            int changeNumber = Integer.parseInt(changeNStr);
+
+            String patchsetNStr = getEnvVar(run, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
+            if (patchsetNStr == null) {
+                throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.patchset.number.empty"));
+            }
+            int patchSetNumber = Integer.parseInt(patchsetNStr);
+
             RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
             logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
@@ -353,12 +403,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return subJobConfigs;
     }
 
-    private ReviewInput.NotifyHandling getNotificationSettings(int finalIssuesCount) {
+    private NotifyHandling getNotificationSettings(int finalIssuesCount) {
         if (finalIssuesCount > 0) {
-            ReviewInput.NotifyHandling value = (issuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(issuesNotification));
+            NotifyHandling value = (issuesNotification == null ? null : NotifyHandling.valueOf(issuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_ISSUES);
         } else {
-            ReviewInput.NotifyHandling value = (noIssuesNotification == null ? null : ReviewInput.NotifyHandling.valueOf(noIssuesNotification));
+            NotifyHandling value = (noIssuesNotification == null ? null : NotifyHandling.valueOf(noIssuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
         }
     }
@@ -388,23 +438,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssues.get(file),
-                                    new Function<Issue, ReviewInput.CommentInput>() {
-                                        @Nullable
-                                        @Override
-                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                            if (input == null) {
-                                                return null;
-                                            }
-                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                            commentInput.id = input.getKey();
-                                            commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                            return commentInput;
-                                        }
-
+                    Collections2.transform(finalIssues.get(file),
+                            new Function<Issue, ReviewInput.CommentInput>() {
+                                @Nullable
+                                @Override
+                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                    if (input == null) {
+                                        return null;
                                     }
-                            )
+                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                    commentInput.id = input.getKey();
+                                    commentInput.line = input.getLine();
+                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                    return commentInput;
+                                }
+
+                            }
+                    )
                     )
             );
         }
@@ -439,52 +489,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 }
             }
         }
-    }
-
-    @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
-        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-
-/*       The next code prepares data to process situations like this one:
-        {
-            "key": "com.maxifier.guice:guice-bootstrap",
-            "path": "guice-bootstrap"
-        },
-        {
-            "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-            "moduleKey": "com.maxifier.guice:guice-bootstrap",
-            "status": "SAME"
-        }
-        */
-        Map<String, String> component2module = Maps.newHashMap();
-        Map<String, String> component2path = Maps.newHashMap();
-
-        for (Component component : report.getComponents()) {
-            component2path.put(component.getKey(), component.getPath());
-        }
-        for (Component component : report.getComponents()) {
-            if (component.getModuleKey() != null) {
-                component2module.put(component.getKey(), component2path.get(component.getModuleKey()));
-            }
-        }
-
-
-        // generating map consisting of real file names to corresponding issues collections.
-        for (Issue issue : filtered) {
-            String issueComponent = issue.getComponent();
-            String moduleName = component2module.get(issueComponent);
-            String componentPath = component2path.get(issueComponent);
-
-            String realFileName = appendDelimiter(projectPath) + appendDelimiter(moduleName) + componentPath;
-            file2issues.put(realFileName, issue);
-
-        }
-        return file2issues;
-    }
-
-    private String appendDelimiter(String subPath) {
-        return subPath == null || subPath.trim().isEmpty() ? EMPTY_STR : subPath.endsWith(GERRIT_FILE_DELIMITER) ? subPath : subPath + GERRIT_FILE_DELIMITER;
     }
 
     @VisibleForTesting
@@ -562,6 +566,36 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.invalid"));
             }
             return FormValidation.ok();
+        }
+
+        public FormValidation doTestConnection(@QueryParameter("httpUsername") final String httpUsername,
+                                               @QueryParameter("httpPassword") final String httpPassword,
+                                               @QueryParameter("gerritServerName") final String gerritServerName) throws IOException, ServletException {
+            if (httpUsername == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.user.empty");
+            }
+            if (gerritServerName == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.server.empty");
+            }
+            IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
+            if (gerritConfig == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.config.empty");
+            }
+
+            if (!gerritConfig.isUseRestApi()) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.restapi.off");
+            }
+
+            GerritServer server = PluginImpl.getServer_(gerritServerName);
+            if (server == null) {
+                return FormValidation.error("jenkins.plugin.error.gerrit.server.null");
+            }
+            return server.getDescriptor().doTestRestConnection(gerritConfig.getGerritFrontEndUrl(), httpUsername, httpPassword/*, gerritConfig.isUseRestApi()*/);
+
+        }
+
+        public List<String> getGerritServerNames(){
+           return PluginImpl.getServerNames_();
         }
 
         /**
@@ -706,7 +740,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         }
 
         private FormValidation checkNotificationType(@QueryParameter String value) {
-            if (value == null || ReviewInput.NotifyHandling.valueOf(value) == null) {
+            if (value == null || NotifyHandling.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.notification.recipient.unknown"));
             }
             return FormValidation.ok();
@@ -726,35 +760,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             return getLocalized("jenkins.plugin.build.step.name");
         }
 
-    }
-
-    static class MyLoginCache extends LoginCache {
-        private LoginCache delegate;
-
-        public MyLoginCache(LoginCache delegate) {
-            super(null, null);
-            this.delegate = delegate;
-        }
-
-        @Override
-        public void setGerritAuthOptional(Optional<String> gerritAuthOptional) {
-            delegate.setGerritAuthOptional(gerritAuthOptional);
-        }
-
-        @Override
-        public Optional<String> getGerritAuthOptional() {
-            return delegate.getGerritAuthOptional();
-        }
-
-        @Override
-        public boolean getHostSupportsGerritAuth() {
-            return false;
-        }
-
-        @Override
-        public void invalidate() {
-            delegate.invalidate();
-        }
     }
 }
 

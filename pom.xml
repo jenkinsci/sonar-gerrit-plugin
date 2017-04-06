@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
-    <version>1.0.8-SNAPSHOT</version>
+    <version>1.0.9-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <properties>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>com.urswolfer.gerrit.client.rest</groupId>
             <artifactId>gerrit-rest-java-client</artifactId>
-            <version>0.8.5</version>
+            <version>0.8.11</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
