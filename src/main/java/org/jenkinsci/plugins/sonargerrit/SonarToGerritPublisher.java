@@ -3,16 +3,9 @@ package org.jenkinsci.plugins.sonargerrit;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.*;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -25,19 +18,10 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
-import com.urswolfer.gerrit.client.rest.GerritApiImpl;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
-import com.urswolfer.gerrit.client.rest.http.GerritRestClient;
-import com.urswolfer.gerrit.client.rest.http.LoginCache;
-import hudson.AbortException;
-import hudson.EnvVars;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.model.AbstractProject;
-import hudson.model.Run;
-import hudson.model.TaskListener;
+import hudson.*;
+import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
@@ -45,7 +29,6 @@ import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
-
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomReportFormatter;
@@ -61,16 +44,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,8 +56,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  */
-@Symbol("sonarToGerrit")
-public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep{
+public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep {
 
     private static final String DEFAULT_SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
     private static final String DEFAULT_PROJECT_PATH = "";
@@ -364,9 +339,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return reports;
     }
 
-    private String getEnvVar(Run<?,?> build, TaskListener listener, String name) throws IOException, InterruptedException {
+    private String getEnvVar(Run<?, ?> build, TaskListener listener, String name) throws IOException, InterruptedException {
         EnvVars envVars = build.getEnvironment(listener);
-        return envVars.get(name);
+        String value = envVars.get(name);
+        // due to JENKINS-30910 old versions of workflow-job-plugin do not have code copying ParameterAction values to Environment Variables in pipeline jobs.
+        if (value == null) {
+            ParametersAction action = build.getAction(ParametersAction.class);
+            if (action != null) {
+                ParameterValue parameter = action.getParameter(name);
+                if (parameter != null) {
+                    Object parameterValue = parameter.getValue();
+                    if (parameterValue != null) {
+                        value = parameterValue.toString();
+                    }
+                }
+            }
+        }
+        return value;
     }
 
     private void logMessage(TaskListener listener, String message, Level l, Object... params) {
@@ -528,11 +517,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
-     *
-     *
+     * <p>
+     * <p>
      * See <tt>src/main/resources/hudson/plugins/hello_world/SonarToGerritBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
+    @Symbol("sonarToGerrit")
     @Extension // This indicates to Jenkins that this is an implementation of an extension point.
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
@@ -549,7 +539,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -594,8 +584,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
         }
 
-        public List<String> getGerritServerNames(){
-           return PluginImpl.getServerNames_();
+        public List<String> getGerritServerNames() {
+            return PluginImpl.getServerNames_();
         }
 
         /**
@@ -603,7 +593,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -621,7 +611,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -639,7 +629,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -657,7 +647,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -675,7 +665,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -690,7 +680,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -714,7 +704,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -729,7 +719,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         *
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
