@@ -77,30 +77,48 @@
         </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
-            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore"
-                     description="${%jenkins.plugin.settings.gerrit.post.score.description}">
-                <f:checkbox default="true"/>
+            <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials">
+                <table width="100%">
+                    <f:optionalBlock title="" inline="true" checked="${it.overrideCredentials}">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}"
+                                 field="httpUsername">
+                            <f:textbox/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.password}"
+                                 field="httpPassword">
+                            <f:password/>
+                        </f:entry>
+
+                        <j:set var="servers" value="${descriptor.getGerritServerNames()}" />
+                        <f:entry  title="${%jenkins.plugin.settings.gerrit.http.credentials.gerritserver}" >
+                            <select  name="gerritServerName">
+                                <j:forEach var="inst" items="${servers}">
+                                    <f:option>${inst}</f:option>
+                                </j:forEach>
+                            </select>
+                        </f:entry>
+                        <f:validateButton
+                                title="${%Test Connection}" progress="${%Testing...}"
+                                method="testConnection" with="httpUsername,httpPassword,gerritServerName"/>
+                    </f:optionalBlock>
+                </table>
             </f:entry>
 
-            <!--<f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">-->
-            <!--&lt;!&ndash;description="${%jenkins.plugin.settings.gerrit.post.score.description}">&ndash;&gt;-->
-            <!--&lt;!&ndash;<f:checkbox default="true"/>&ndash;&gt;-->
-            <!--<table width="100%">-->
-
-            <!--<f:optionalBlock title="" name="postScore"-->
-            <!--checked="${it.postScore}" default="true">-->
-            <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-                <f:textbox default="Code-Review"/>
+            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">
+                <table width="100%">
+                    <f:optionalBlock title="" inline="true" checked="${it.postScore}"  default="true">
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
+                            <f:textbox default="Code-Review"/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
+                            <f:textbox default="+1"/>
+                        </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
+                            <f:textbox default="-1"/>
+                        </f:entry>
+                    </f:optionalBlock>
+                </table>
             </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-                <f:textbox default="+1"/>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-                <f:textbox default="-1"/>
-            </f:entry>
-            <!--</f:optionalBlock>-->
-            <!--</table>-->
-            <!--</f:entry>-->
         </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
