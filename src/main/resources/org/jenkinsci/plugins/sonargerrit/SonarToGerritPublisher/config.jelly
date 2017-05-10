@@ -110,6 +110,9 @@
                         <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
                             <f:textbox default="Code-Review"/>
                         </f:entry>
+                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.severityForNegativeScoreLevel}" field="severityForNegativeScore">
+                            <f:select />
+                        </f:entry>
                         <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
                             <f:textbox default="+1"/>
                         </f:entry>

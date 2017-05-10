@@ -26,6 +26,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
@@ -37,6 +38,7 @@ import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.data.predicates.ByMinSeverityPredicate;
 import org.jenkinsci.plugins.sonargerrit.data.predicates.ByNewPredicate;
+import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -65,6 +67,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private static final int DEFAULT_SCORE = 0;
     private static final NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = NotifyHandling.NONE;
     private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
+    private static final String DEFAULT_LOW_SEVERITY_LEVEL = Severity.MAJOR.name();
 
     public static final String EMPTY_STR = "";
 
@@ -93,6 +96,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private final String noIssuesScore;
     private final String issuesScore;
 
+    private final String severityForNegativeScore;
+
     private final String noIssuesNotification;
     private final String issuesNotification;
 
@@ -102,8 +107,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                   boolean overrideCredentials, String httpUsername, String httpPassword,
-                                  boolean postScore, String category, String noIssuesScore, String issuesScore,
-                                  String noIssuesNotification, String issuesNotification) {
+                                  boolean postScore, String severityForNegativeScore, String category, String noIssuesScore,
+                                  String issuesScore, String noIssuesNotification, String issuesNotification) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.subJobConfigs = subJobConfigs;
         this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
@@ -121,6 +126,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.issuesScore = issuesScore;
         this.noIssuesNotification = noIssuesNotification;
         this.issuesNotification = issuesNotification;
+        this.severityForNegativeScore = MoreObjects.firstNonNull(severityForNegativeScore, DEFAULT_LOW_SEVERITY_LEVEL);
 
         // old values - not used anymore. will be deleted in further releases
         this.path = null;
@@ -211,6 +217,11 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @SuppressWarnings(value = "unused")
     public String getIssuesScore() {
         return issuesScore;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public String getSeverityForNegativeScore() {
+        return severityForNegativeScore;
     }
 
     @Override
@@ -416,12 +427,14 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         String reviewMessage = getReviewMessage(finalIssues);
         ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
 
-        int finalIssuesCount = finalIssues.size();
+        Severity sev = Severity.valueOf(MoreObjects.firstNonNull(severityForNegativeScore, DEFAULT_LOW_SEVERITY_LEVEL));
+        int finalIssuesForNegativeScoreCount = Multimaps.filterValues(finalIssues, ByMinSeverityPredicate.apply(sev))
+                .size();
 
-        reviewInput.notify = getNotificationSettings(finalIssuesCount);
+        reviewInput.notify = getNotificationSettings(finalIssuesForNegativeScoreCount);
 
         if (postScore) {
-            reviewInput.label(category, getReviewMark(finalIssuesCount));
+            reviewInput.label(category, getReviewMark(finalIssuesForNegativeScoreCount));
         }
 
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
@@ -688,6 +701,20 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckIssuesScore(@QueryParameter String value) {
             return checkScore(value);
+        }
+
+        @SuppressWarnings(value = "unused")
+        public ListBoxModel doFillSeverityForNegativeScoreItems(@QueryParameter("severity") String reportSeverity) {
+            ListBoxModel items = new ListBoxModel();
+            Severity sev = Severity.valueOf(reportSeverity);
+            for (Severity severity : Severity.values()) {
+                if (severity.ordinal() >= sev.ordinal()) {
+                    items.add(Localization.getLocalizedFromBundle(severity.toString(), Localization.CONFIG),
+                            severity.toString());
+                }
+            }
+
+            return items;
         }
 
         private FormValidation checkScore(@QueryParameter String value) {
