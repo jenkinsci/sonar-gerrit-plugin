@@ -49,6 +49,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
@@ -67,11 +68,13 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
 
     public static final String EMPTY_STR = "";
+    public static final String MAVEN_DELIMITER = ":";
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
+    public static final String GERRIT_FILE_DELIMITER = "/";
 
     // left here for compatibility with previous version. will be removed in further releases
     private final String path;
@@ -266,6 +269,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
             // Step 4 - Filter issues by changed files
             final Map<String, FileInfo> files = revision.files();
+            
+            if(needsAlignment(file2issues)){
+                file2issues = alignKeys(file2issues, files);
+                listener.getLogger().println("alignment needed.");
+            }
+            
             file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
                 @Override
                 public boolean apply(@Nullable String input) {
@@ -409,6 +418,38 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             return deflt;
         }
 
+    }
+    
+    private boolean needsAlignment(Multimap<String, Issue> files2issues){
+        boolean result = false;
+        Iterator<Map.Entry<String,Issue>> entriesIterator = files2issues.entries().iterator();
+        String module = EMPTY_STR;
+        if(entriesIterator.hasNext()){
+            Map.Entry<String, Issue> entry = files2issues.entries().iterator().next();
+            Issue it = entry.getValue();
+            module = getArtifactString(it.getComponent());
+            result = !entry.getKey().contains(module);
+        }
+        return result;
+    }
+    
+    private Multimap<String, Issue> alignKeys(Multimap<String, Issue> files2issues, Map<String, FileInfo> changes) {
+        Multimap<String, Issue> alignKeysMap = LinkedListMultimap.create();
+        String module = EMPTY_STR;
+        for (Map.Entry<String, Issue> eachEntry : files2issues.entries()) {
+            module = getArtifactString(eachEntry.getValue().getComponent());
+            module = module == null || module.equals(EMPTY_STR) ? EMPTY_STR : module + GERRIT_FILE_DELIMITER;
+            if(eachEntry.getValue().toString().contains(module)){
+               return files2issues;
+            }
+            alignKeysMap.put(module + eachEntry.getKey(), eachEntry.getValue());
+        }
+        return alignKeysMap;
+    }
+
+    private String getArtifactString(String component){
+        Pattern p = Pattern.compile(MAVEN_DELIMITER);
+        return p.split(component)[1];
     }
 
     @VisibleForTesting
