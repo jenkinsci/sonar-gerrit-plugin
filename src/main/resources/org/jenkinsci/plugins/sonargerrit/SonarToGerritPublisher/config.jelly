@@ -52,6 +52,18 @@
             </select>
         </f:entry>
 
+        <f:entry title="${%jenkins.plugin.settings.filter.reportIssueLevel}" field="reportIssueLevel">
+            <select name="reportIssueLevel" field="reportIssueLevel">
+                <f:option value="INFO" selected="${instance.reportIssueLevel =='INFO'}">${%INFO}</f:option>
+                <f:option value="MINOR"
+                          selected="${instance.reportIssueLevel =='MINOR' || instance.reportIssueLevel == null}">${%MINOR}
+                </f:option>
+                <f:option value="MAJOR" selected="${instance.reportIssueLevel =='MAJOR'}">${%MAJOR} </f:option>
+                <f:option value="CRITICAL" selected="${instance.reportIssueLevel =='CRITICAL'}">${%CRITICAL}</f:option>
+                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">${%BLOCKER}</f:option>
+            </select>
+        </f:entry>
+
         <f:entry title="${%jenkins.plugin.settings.filter.new}" field="newIssuesOnly"
                  description="${%jenkins.plugin.settings.filter.new.description}">
             <f:checkbox default="true"/>
