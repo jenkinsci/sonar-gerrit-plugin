@@ -49,10 +49,10 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
+        <connection>scm:git:git://github.com/SoftwareBuildService/${project.artifactId}-plugin.git</connection>
+        <developerConnection>scm:git:git://git@github.com/SoftwareBuildService/${project.artifactId}-plugin.git
         </developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+        <url>https://github.com/SoftwareBuildService/${project.artifactId}-plugin</url>
         <tag>sonar-gerrit-1.0.2</tag>
     </scm>
 
