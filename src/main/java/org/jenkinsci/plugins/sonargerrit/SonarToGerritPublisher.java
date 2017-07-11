@@ -419,6 +419,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         int finalIssuesCount = finalIssues.size();
 
         reviewInput.notify = getNotificationSettings(finalIssuesCount);
+        reviewInput.tag = "sonarqube";
 
         if (postScore) {
             reviewInput.label(category, getReviewMark(finalIssuesCount));

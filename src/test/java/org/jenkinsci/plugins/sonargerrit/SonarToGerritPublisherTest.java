@@ -206,6 +206,7 @@ public class SonarToGerritPublisherTest {
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "+1", "-1", "NONE", "OWNER");
         ReviewInput reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
+        Assert.assertEquals("sonarqube", reviewResult.tag);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(-1, reviewResult.labels.get("Test").intValue());
@@ -215,6 +216,7 @@ public class SonarToGerritPublisherTest {
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", false, "Test", "1", "-1", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
+        Assert.assertEquals("sonarqube", reviewResult.tag);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(null, reviewResult.labels);
         Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
@@ -223,6 +225,7 @@ public class SonarToGerritPublisherTest {
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "0", "0", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
+        Assert.assertEquals("sonarqube", reviewResult.tag);
         Assert.assertEquals(1, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
@@ -242,6 +245,7 @@ public class SonarToGerritPublisherTest {
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("No Issues Header", reviewResult.message);
+        Assert.assertEquals("sonarqube", reviewResult.tag);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
@@ -252,6 +256,7 @@ public class SonarToGerritPublisherTest {
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("No Issues Header", reviewResult.message);
+        Assert.assertEquals("sonarqube", reviewResult.tag);
         Assert.assertEquals(0, reviewResult.comments.size());
         Assert.assertEquals(1, reviewResult.labels.size());
         Assert.assertEquals(NotifyHandling.OWNER_REVIEWERS, reviewResult.notify);
