@@ -115,7 +115,6 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckNoIssuesNotificationRecipient(@QueryParameter String value) {
             return checkNotificationType(value);
         }
@@ -130,7 +129,6 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckCommentedIssuesNotificationRecipient(@QueryParameter String value) {
             return checkNotificationType(value);
         }
@@ -145,7 +143,6 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckNegativeScoreNotificationRecipient(@QueryParameter String value) {
             return checkNotificationType(value);
         }

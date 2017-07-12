@@ -11,20 +11,16 @@ import javax.annotation.Nullable;
  */
 
 public class Component {
-    @SuppressWarnings("unused")
     @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
 
     private String key;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String moduleKey;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String path;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String status;
 

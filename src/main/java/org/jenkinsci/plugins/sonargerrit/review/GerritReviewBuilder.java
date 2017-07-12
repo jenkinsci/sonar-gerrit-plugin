@@ -10,7 +10,6 @@ import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;

@@ -10,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  * Project: Sonar-Gerrit Plugin

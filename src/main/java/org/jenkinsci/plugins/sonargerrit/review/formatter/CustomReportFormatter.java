@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByExactSeverityPredicate;
@@ -65,7 +64,7 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
 
     }
 
-    private int getSize(Iterable i) {
+    private int getSize(Iterable<IssueAdapter> i) {
         return Lists.newArrayList(i).size();
     }
 

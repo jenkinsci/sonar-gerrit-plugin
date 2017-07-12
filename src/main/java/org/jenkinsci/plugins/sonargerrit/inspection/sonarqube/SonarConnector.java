@@ -10,8 +10,6 @@ import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.util.Localization;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

@@ -5,7 +5,7 @@ import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;

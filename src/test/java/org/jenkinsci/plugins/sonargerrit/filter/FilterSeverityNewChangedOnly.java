@@ -4,7 +4,6 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.util.Triple;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.junit.Assert;
 import org.junit.Test;

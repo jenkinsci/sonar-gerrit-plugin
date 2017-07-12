@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -250,7 +249,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNotSame(invokeGetter(c, "projectPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
         Assert.assertNotSame(invokeGetter(c, "sonarReportPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
 
-        List value = new LinkedList<>();
+        LinkedList<Object> value = new LinkedList<>();
         value.add(c);
         invokeSetter(p, "subJobConfigs", value);
         Assert.assertEquals(invokeGetter(c, "projectPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));

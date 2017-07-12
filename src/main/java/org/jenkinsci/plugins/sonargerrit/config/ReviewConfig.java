@@ -7,14 +7,11 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-
-import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -119,7 +116,6 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckNoIssuesTitleTemplate(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }
@@ -134,7 +130,6 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckSomeIssuesTitleTemplate(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }
@@ -149,7 +144,6 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckIssueCommentTemplate(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }

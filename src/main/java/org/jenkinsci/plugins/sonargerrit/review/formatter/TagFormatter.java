@@ -6,7 +6,7 @@ package org.jenkinsci.plugins.sonargerrit.review.formatter;
  * Created: 16.09.2015 13:28
  *
  */
-public interface TagFormatter<E extends Enum> {
+public interface TagFormatter<E extends Enum<E>> {
     String getValueToReplace(E tag);
 
     String getMessage();

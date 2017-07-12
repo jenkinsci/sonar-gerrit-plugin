@@ -47,7 +47,7 @@ public class ConfigurationUpdateTest {
             wm.setAccessible(true);
             res = wm.get(object);
             if (res instanceof Collection) {
-                res = ((Collection) res).toArray()[0];
+                res = ((Collection<?>) res).toArray()[0];
             }
             object = res;
         }
@@ -88,7 +88,7 @@ public class ConfigurationUpdateTest {
     }
 
     protected Object invokeConstructor(String className, String[] paramClasses, Object[] params) throws ReflectiveOperationException {
-        Class[] classes = new Class[paramClasses.length];
+        Class<?>[] classes = new Class[paramClasses.length];
         for (int i = 0; i < paramClasses.length; i++) {
             String paramClass = paramClasses[i];
             if (paramClass.contains(".")) {
@@ -100,7 +100,7 @@ public class ConfigurationUpdateTest {
             }
         }
 
-        Constructor c = Class.forName(className).getConstructor(classes);
+        Constructor<?> c = Class.forName(className).getConstructor(classes);
         //Assert.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
         return c.newInstance(params);
     }

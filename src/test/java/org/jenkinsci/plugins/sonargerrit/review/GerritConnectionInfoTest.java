@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class GerritConnectionInfoTest {
     @Test(expected = NullPointerException.class)
     public void testNullServerName() {
         Map<String, String> envVars = createEnvVarsMap(null, "1", "1");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GerritConnectionInfoTest {
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyServerName() {
         Map<String, String> envVars = createEnvVarsMap("", "1", "1");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test
@@ -45,19 +45,19 @@ public class GerritConnectionInfoTest {
     @Test(expected = IllegalArgumentException.class)
     public void testNullChangeNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", null, "1");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyChangeNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", "", "1");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongChangeNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", "test", "1");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test
@@ -70,19 +70,19 @@ public class GerritConnectionInfoTest {
     @Test(expected = IllegalArgumentException.class)
     public void testNullPatchsetNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", "1", null);
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testEmptyPatchsetNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", "1", "");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongPatchsetNum() {
         Map<String, String> envVars = createEnvVarsMap("Test", "1", "test");
-        GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+        new GerritConnectionInfo(envVars, null, null);
     }
 
     @Test

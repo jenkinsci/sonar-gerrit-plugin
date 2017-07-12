@@ -38,7 +38,7 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
         Object config1 = invokeConstructor(configClassName, configParamClasses, config1Params);
         Object config2 = invokeConstructor(configClassName, configParamClasses, config2Params);
         Object config3 = invokeConstructor(configClassName, configParamClasses, config3Params);
-        Collection configs = Arrays.asList(config2, config3);
+        Collection<Object> configs = Arrays.asList(config2, config3);
 
         String className = "org.jenkinsci.plugins.sonargerrit.config.InspectionConfig";
         String[] paramClasses = {};

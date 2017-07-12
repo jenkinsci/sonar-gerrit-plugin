@@ -10,19 +10,15 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class Rule {
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String key;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String rule;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String repository;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String name;
 

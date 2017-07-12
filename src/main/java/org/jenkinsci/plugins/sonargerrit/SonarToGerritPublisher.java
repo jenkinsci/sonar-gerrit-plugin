@@ -10,6 +10,7 @@ import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
@@ -39,7 +40,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  */
-public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep {
+public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep {
 
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";

@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.sonargerrit.review.notification;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.junit.Assert;
 
 /**

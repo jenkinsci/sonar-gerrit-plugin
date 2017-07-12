@@ -2,10 +2,9 @@ package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import com.google.common.collect.Multimap;
 import hudson.FilePath;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.junit.Test;

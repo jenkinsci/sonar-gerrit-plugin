@@ -86,7 +86,6 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckSeverity(@QueryParameter String value) {
             if (value == null || Severity.valueOf(value) == null) {
                 return FormValidation.error(getLocalized("jenkins.plugin.error.review.filter.severity.unknown"));

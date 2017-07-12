@@ -74,7 +74,6 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckUsername(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }
@@ -89,7 +88,6 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckPassword(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }

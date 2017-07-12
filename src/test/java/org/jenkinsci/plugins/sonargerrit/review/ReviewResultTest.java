@@ -10,7 +10,6 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
 import org.junit.Assert;
 import org.junit.Before;

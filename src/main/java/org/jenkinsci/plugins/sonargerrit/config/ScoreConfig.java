@@ -7,7 +7,6 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -120,7 +119,6 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckNoIssuesScore(@QueryParameter String value) {
             return checkScore(value);
         }
@@ -135,7 +133,6 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckIssuesScore(@QueryParameter String value) {
             return checkScore(value);
         }
@@ -159,7 +156,6 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
          */
-        @SuppressWarnings(value = "unused")
         public FormValidation doCheckCategory(@QueryParameter String value) {
             return FormValidation.validateRequired(value);
         }

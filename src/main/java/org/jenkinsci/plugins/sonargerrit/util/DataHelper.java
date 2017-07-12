@@ -5,8 +5,6 @@ import hudson.Util;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
-
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -18,7 +16,7 @@ public final class DataHelper {
     private DataHelper() {
     }
 
-    public static <T extends Enum> String checkEnumValueCorrect(Class<T> clazz, String value) {
+    public static <T extends Enum<T>> String checkEnumValueCorrect(Class<T> clazz, String value) {
         if (Util.fixEmptyAndTrim(value) == null) {
             return null;
         }

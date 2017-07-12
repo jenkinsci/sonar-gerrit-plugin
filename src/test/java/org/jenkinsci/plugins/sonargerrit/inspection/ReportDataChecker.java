@@ -1,12 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.inspection;
 
-import hudson.FilePath;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.*;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 import org.junit.Assert;
 
-import java.io.File;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -117,56 +113,56 @@ public class ReportDataChecker {
         Assert.assertEquals("juice-events", c2.getPath());
 
         Component c3 = rep.getComponents().get(2);
-        Assert.assertEquals("com.megaproject.juice:juice-bootstrap", c2.getKey());
-        Assert.assertEquals("juice-bootstrap", c2.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-bootstrap", c3.getKey());
+        Assert.assertEquals("juice-bootstrap", c3.getPath());
 
         Component c4 = rep.getComponents().get(3);
         Assert.assertEquals("com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-bootstrap", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", c4.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-bootstrap", c4.getModuleKey());
+        Assert.assertEquals("SAME", c4.getStatus());
 
         Component c5 = rep.getComponents().get(4);
         Assert.assertEquals("com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/jpa/DBInterceptor.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-jpa", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/jpa/DBInterceptor.java", c5.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-jpa", c5.getModuleKey());
+        Assert.assertEquals("SAME", c5.getStatus());
 
         Component c6 = rep.getComponents().get(5);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c6.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c6.getModuleKey());
+        Assert.assertEquals("SAME", c6.getStatus());
 
         Component c7 = rep.getComponents().get(6);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c7.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c7.getModuleKey());
+        Assert.assertEquals("SAME", c7.getStatus());
 
         Component c8 = rep.getComponents().get(7);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c8.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c8.getModuleKey());
+        Assert.assertEquals("SAME", c8.getStatus());
 
         Component c9 = rep.getComponents().get(8);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c9.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c9.getModuleKey());
+        Assert.assertEquals("SAME", c9.getStatus());
 
         Component c10 = rep.getComponents().get(9);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c10.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c10.getModuleKey());
+        Assert.assertEquals("SAME", c10.getStatus());
 
         Component c11 = rep.getComponents().get(10);
         Assert.assertEquals("com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getKey());
-        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c2.getPath());
-        Assert.assertEquals("com.megaproject.juice:juice-mbean", c2.getModuleKey());
-        Assert.assertEquals("SAME", c2.getStatus());
+        Assert.assertEquals("src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java", c11.getPath());
+        Assert.assertEquals("com.megaproject.juice:juice-mbean", c11.getModuleKey());
+        Assert.assertEquals("SAME", c11.getStatus());
     }
 
     private static void checkOneIssueFile(Report rep) {

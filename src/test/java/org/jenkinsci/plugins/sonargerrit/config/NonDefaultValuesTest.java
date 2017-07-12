@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
-import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
