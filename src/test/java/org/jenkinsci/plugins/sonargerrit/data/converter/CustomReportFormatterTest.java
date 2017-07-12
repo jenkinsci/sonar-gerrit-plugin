@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.data.converter;
 
 import hudson.FilePath;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;

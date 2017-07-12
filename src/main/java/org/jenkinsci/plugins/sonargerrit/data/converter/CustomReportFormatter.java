@@ -65,7 +65,7 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
 
     }
 
-    private int getSize(Iterable i) {
+    private int getSize(Iterable<Issue> i) {
         return Lists.newArrayList(i).size();
     }
 

@@ -15,7 +15,7 @@ import com.google.gerrit.extensions.common.TestSubmitRuleInput;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import hudson.FilePath;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;

@@ -11,39 +11,30 @@ import java.util.Date;
  */
 public class Issue {
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
     private String key;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String component;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Integer line;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String message;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Severity severity;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String rule;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private String status;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Boolean isNew;
 
-    @SuppressWarnings("unused")
     @SuppressFBWarnings ("UWF_UNWRITTEN_FIELD")
     private Date creationDate;
 
