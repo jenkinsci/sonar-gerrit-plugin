@@ -15,8 +15,6 @@ import com.google.common.collect.Lists;
  *
  */
 public class CustomReportFormatter implements TagFormatter<CustomReportFormatter.Tag> {
-    public static final String DEFAULT_NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
-    public static final String DEFAULT_SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");
 
     private String successMessage;
     private String failMessage;
@@ -25,8 +23,10 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
 
     public CustomReportFormatter(Iterable<Issue> issues, String failMessage, String successMessage) {
         this.issues = issues;
-        this.failMessage = prepareText(failMessage, DEFAULT_SOME_ISSUES_TEXT);
-        this.successMessage = prepareText(successMessage, DEFAULT_NO_ISSUES_TEXT);
+        this.failMessage = failMessage;
+        this.successMessage = successMessage;
+//        this.failMessage = prepareText(failMessage, DefaultPluginSettings.SOME_ISSUES_TEXT);
+//        this.successMessage = prepareText(successMessage, DefaultPluginSettings.NO_ISSUES_TEXT);
     }
 
     private static String prepareText(String text, String defaultValue) {
