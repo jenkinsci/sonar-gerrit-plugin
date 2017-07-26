@@ -42,35 +42,35 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(19, report.getIssues().size());
 
         // severity predicate
-        Iterable<Issue> issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        Iterable<Issue> issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(),Severity.CRITICAL.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(2, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.MAJOR.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(12, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(19, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), Severity.MINOR.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(18, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), Severity.BLOCKER.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
         // new issues only predicate
-        issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.CRITICAL.name(), Severity.CRITICAL.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.MAJOR.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.INFO.name(), Severity.INFO.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.MINOR.name(), Severity.MINOR.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(1, Sets.newHashSet(issues).size());
 
-        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesByPredicates(report.getIssues());
+        issues = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), Severity.BLOCKER.name(), true, true, "", "", "", false, "", "", true, "", "0", "0", "", "").filterIssuesToFailByPredicates(report.getIssues());
         Assert.assertEquals(0, Sets.newHashSet(issues).size());
     }
 
@@ -132,7 +132,7 @@ public class SonarToGerritPublisherTest {
 
         SubJobConfig config1 = new SubJobConfig("testfolder1/", "report1.json");
         SubJobConfig config2 = new SubJobConfig("testfolder2/", "report2.json");
-        SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.INFO.name(), true, false, "", "", "",  false, "", "",true, "", "0", "0", "", "");
+        SonarToGerritPublisher sonarToGerritPublisher = new SonarToGerritPublisher("", Arrays.asList(config1, config2), Severity.MAJOR.name(), Severity.INFO.name(), true, false, "", "", "",  false, "", "",true, "", "0", "0", "", "");
         String resourcePath = getClass().getClassLoader().getResource("filter.json").getPath();
         FilePath resourceFolder = new FilePath(new File(resourcePath).getParentFile());
         List<SonarToGerritPublisher.ReportInfo> reportInfos = sonarToGerritPublisher.readSonarReports(null, resourceFolder);//todo assert
@@ -181,7 +181,7 @@ public class SonarToGerritPublisherTest {
         RevisionApi revApi = new DummyRevisionApi(path2changedValues);
 
 
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "");
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.INFO.name(), true, false, "", "", "", false, "", "", true, "", "0", "0", "", "");
         builder.filterIssuesByChangedLines(multimap, revApi);
 
         // list of lines commented by sonar : 37, 54,81, 99, 106, 108, 122, 162
@@ -202,7 +202,7 @@ public class SonarToGerritPublisherTest {
         Multimap<String, Issue> finalIssues = LinkedListMultimap.create();
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
         finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
-        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        SonarToGerritPublisher builder = new SonarToGerritPublisher("", null,  Severity.MAJOR.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "+1", "-1", "NONE", "OWNER");
         ReviewInput reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -211,7 +211,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(-1, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.BLOCKER.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", false, "Test", "1", "-1", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -219,7 +219,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(null, reviewResult.labels);
         Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "0", "0", null, null);
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -228,7 +228,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(NotifyHandling.OWNER, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1test", "-1test", "NONE", "ALL");
         reviewResult = builder.getReviewResult(finalIssues);
         Assert.assertEquals("Some Issues Header", reviewResult.message);
@@ -237,7 +237,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(0, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(NotifyHandling.ALL, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1", "-1", null, null);
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);
@@ -247,7 +247,7 @@ public class SonarToGerritPublisherTest {
         Assert.assertEquals(+1, reviewResult.labels.get("Test").intValue());
         Assert.assertEquals(NotifyHandling.NONE, reviewResult.notify);
 
-        builder = new SonarToGerritPublisher("", null, Severity.INFO.name(), true, false,
+        builder = new SonarToGerritPublisher("", null, Severity.MAJOR.name(), Severity.INFO.name(), true, false,
                 "No Issues Header", "Some Issues Header", "Issue Comment", false, "", "", true, "Test", "1", "-1", "OWNER_REVIEWERS", "ALL");
         finalIssues = LinkedListMultimap.create();
         reviewResult = builder.getReviewResult(finalIssues);

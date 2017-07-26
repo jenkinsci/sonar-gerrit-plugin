@@ -80,6 +80,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private final String sonarURL;
     private List<SubJobConfig> subJobConfigs;
     private final String severity;
+    private final String reportIssueLevel;
     private final boolean changedLinesOnly;
     private final boolean newIssuesOnly;
     private final String noIssuesToPostText;
@@ -99,7 +100,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @DataBoundConstructor
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
-                                  String severity, boolean changedLinesOnly, boolean newIssuesOnly,
+                                  String severity,String reportIssueLevel, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                   boolean overrideCredentials, String httpUsername, String httpPassword,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
@@ -107,6 +108,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.subJobConfigs = subJobConfigs;
         this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
+        this.reportIssueLevel = MoreObjects.firstNonNull(reportIssueLevel, Severity.INFO.name());
         this.changedLinesOnly = changedLinesOnly;
         this.newIssuesOnly = newIssuesOnly;
         this.noIssuesToPostText = noIssuesToPostText;
@@ -267,18 +269,19 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             // Step 4 - Filter issues by changed files
             final Map<String, FileInfo> files = revision.files();
             file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
+
                 @Override
                 public boolean apply(@Nullable String input) {
                     return input != null && files.keySet().contains(input);
                 }
             });
 
-//            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
+            // logResultMap(file2issues, "Filter issues by changed files: {0} elements");
 
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
                 filterIssuesByChangedLines(file2issues, revision);
-//                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
+                // logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
             }
 
             // Step 6 - Send review to Gerrit
@@ -301,7 +304,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             Report report = info.report;
 
             // Step 1 - Filter issues by issues only predicates
-            Iterable<Issue> filtered = filterIssuesByPredicates(report.getIssues());
+            Iterable<Issue> filtered = filterIssuesToReportByPredicates(report.getIssues());
 
             // Step 2 - Calculate real file name for issues and store to multimap
             file2issues.putAll(generateFilenameToIssuesMapFilteredByPredicates(info.directoryPath, report, filtered));
@@ -421,10 +424,11 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         reviewInput.notify = getNotificationSettings(finalIssuesCount);
 
         if (postScore) {
-            reviewInput.label(category, getReviewMark(finalIssuesCount));
+            final Iterable<Issue> failingIssues = filterIssuesToFailByPredicates(finalIssues.values());
+            reviewInput.label(category, getReviewMark(Iterables.size(failingIssues)));
         }
 
-        reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
+        reviewInput.comments = new HashMap<>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
                     Collections2.transform(finalIssues.get(file),
@@ -455,7 +459,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         for (String filename : new HashSet<String>(finalIssues.keySet())) {
             List<DiffInfo.ContentEntry> content = revision.file(filename).diff().content;
             int processed = 0;
-//            final RangeSet<Integer> rangeSet = TreeRangeSet.create();
+            // final RangeSet<Integer> rangeSet = TreeRangeSet.create();
             Set<Integer> rangeSet = new HashSet<Integer>();
             for (DiffInfo.ContentEntry contentEntry : content) {
                 if (contentEntry.ab != null) {
@@ -466,12 +470,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                     for (int i = start; i <= end; i++) {    // todo use guava Range for this purpose
                         rangeSet.add(i);
                     }
-//                    rangeSet.add(Range.closed(start, end));
+                    // rangeSet.add(Range.closed(start, end));
                     processed += contentEntry.b.size();
                 }
             }
 
-            Collection<Issue> issues = new ArrayList<Issue>(finalIssues.get(filename));
+            Collection<Issue> issues = new ArrayList<>(finalIssues.get(filename));
             for (Issue i : issues) {
                 if (!rangeSet.contains(i.getLine())) {
                     finalIssues.get(filename).remove(i);
@@ -481,13 +485,15 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @VisibleForTesting
-    Iterable<Issue> filterIssuesByPredicates(List<Issue> issues) {
+    Iterable<Issue> filterIssuesToReportByPredicates(List<Issue> issues) {
+        Severity sev = Severity.valueOf(reportIssueLevel);
+        return Iterables.filter(issues, Predicates.and(ByMinSeverityPredicate.apply(sev), ByNewPredicate.apply(isNewIssuesOnly())));
+    }
+
+    @VisibleForTesting
+    Iterable<Issue> filterIssuesToFailByPredicates(Collection<Issue> issues) {
         Severity sev = Severity.valueOf(severity);
-        return Iterables.filter(issues,
-                Predicates.and(
-                        ByMinSeverityPredicate.apply(sev),
-                        ByNewPredicate.apply(isNewIssuesOnly()))
-        );
+        return Iterables.filter(issues, Predicates.and(ByMinSeverityPredicate.apply(sev), ByNewPredicate.apply(isNewIssuesOnly())));
     }
 
     // Overridden for better type safety.
@@ -752,4 +758,3 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     }
 }
-
