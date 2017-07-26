@@ -77,24 +77,24 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private final String path;
     private final String projectPath;
 
-    private final String sonarURL;
+    private String sonarURL;
     private List<SubJobConfig> subJobConfigs;
-    private final String severity;
-    private final boolean changedLinesOnly;
-    private final boolean newIssuesOnly;
-    private final String noIssuesToPostText;
-    private final String someIssuesToPostText;
-    private final String issueComment;
-    private final boolean overrideCredentials;
-    private final String httpUsername;
-    private final String httpPassword;
-    private final boolean postScore;
-    private final String category;
-    private final String noIssuesScore;
-    private final String issuesScore;
+    private String severity;
+    private boolean changedLinesOnly;
+    private boolean newIssuesOnly;
+    private String noIssuesToPostText;
+    private String someIssuesToPostText;
+    private String issueComment;
+    private boolean overrideCredentials;
+    private String httpUsername;
+    private String httpPassword;
+    private boolean postScore;
+    private String category;
+    private String noIssuesScore;
+    private String issuesScore;
 
-    private final String noIssuesNotification;
-    private final String issuesNotification;
+    private String noIssuesNotification;
+    private String issuesNotification;
 
 
     @DataBoundConstructor
@@ -127,6 +127,28 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.projectPath = null;
     }
 
+    SonarToGerritPublisher(Severity severity) {
+        this.sonarURL = "";
+        this.subJobConfigs = null;
+        this.severity = severity.name();
+        this.changedLinesOnly = true;
+        this.newIssuesOnly = false;
+        this.noIssuesToPostText = "";
+        this.someIssuesToPostText = "";
+        this.issueComment = "";
+        this.overrideCredentials = false;
+        this.httpUsername = "";
+        this.httpPassword = "";
+        this.postScore = true;
+        this.category = "";
+        this.noIssuesScore = "0";
+        this.issuesScore = "0";
+        this.noIssuesNotification = null;
+        this.issuesNotification = null;
+
+        this.path = null;
+        this.projectPath = null;
+    }
 
     @VisibleForTesting
     static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
@@ -211,6 +233,46 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @SuppressWarnings(value = "unused")
     public String getIssuesScore() {
         return issuesScore;
+    }
+
+    // Setters are internal for tests
+    SonarToGerritPublisher setNewIssuesOnly() {
+        newIssuesOnly = true;
+        return this;
+    }
+
+    SonarToGerritPublisher setConfigs(List<SubJobConfig> configs) {
+        subJobConfigs = configs;
+        return this;
+    }
+
+    SonarToGerritPublisher setPostScore(boolean value) {
+        postScore = value;
+        return this;
+    }
+
+    SonarToGerritPublisher setComments(String noIssues, String someIssues, String issue) {
+        noIssuesToPostText = noIssues;
+        someIssuesToPostText = someIssues;
+        issueComment = issue;
+        return this;
+    }
+
+    SonarToGerritPublisher setCategory(String cat) {
+        category = cat;
+        return this;
+    }
+
+    SonarToGerritPublisher setScores(String noIssues, String issues) {
+        noIssuesScore = noIssues;
+        issuesScore = issues;
+        return this;
+    }
+
+    SonarToGerritPublisher setNotify(String noIssues, String issues) {
+        noIssuesNotification = noIssues;
+        issuesNotification = issues;
+        return this;
     }
 
     @Override
