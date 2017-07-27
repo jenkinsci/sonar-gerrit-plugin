@@ -109,7 +109,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
 //    @DataBoundConstructor
-    @Deprecated //left here for Jenkins version < 1.625.3
+    @Deprecated //since 2.0. Left here for Jenkins version < 1.625.3
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
