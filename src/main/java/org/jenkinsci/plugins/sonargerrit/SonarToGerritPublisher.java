@@ -108,8 +108,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.projectPath = null;
     }
 
-    @DataBoundConstructor
-    @Deprecated
+//    @DataBoundConstructor
+    @Deprecated //left here for Jenkins version < 1.625.3
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
@@ -871,8 +871,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @DataBoundSetter
-    public void setIssuesNotification(@Nonnull String issuesNotification) {
-        this.issuesNotification = issuesNotification;
+    public void setIssuesNotification(String issuesNotification) {
+        this.issuesNotification = MoreObjects.firstNonNull(issuesNotification, DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR);
     }
 }
 

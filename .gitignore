@@ -1,3 +1,4 @@
+/pom.xml
 .idea/**
 **/*.iml
 target/**
@@ -5,3 +6,4 @@ target/**
 /work/**
 **/*.localized
 commands.rtf
+/.gitignore
