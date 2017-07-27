@@ -65,76 +65,79 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    private @Nonnull
-    String sonarURL = DescriptorImpl.SONAR_URL;
-    private @Nonnull
-    List<SubJobConfig> subJobConfigs = new ArrayList<>(DescriptorImpl.JOB_CONFIGS);
-    private @Nonnull
-    String severity = DescriptorImpl.SEVERITY;
+    @Nonnull
+    private String sonarURL = DescriptorImpl.SONAR_URL;
+    @Nonnull
+    private List<SubJobConfig> subJobConfigs = new ArrayList<>(DescriptorImpl.JOB_CONFIGS);
+    @Nonnull
+    private String severity = DescriptorImpl.SEVERITY;
     private boolean changedLinesOnly = DescriptorImpl.CHANGED_LINES_ONLY;
     private boolean newIssuesOnly = DescriptorImpl.NEW_ISSUES_ONLY;
-    private @Nonnull
-    String noIssuesToPostText = DescriptorImpl.NO_ISSUES_TEXT;
-    private @Nonnull
-    String someIssuesToPostText = DescriptorImpl.SOME_ISSUES_TEXT;
-    private @Nonnull
-    String issueComment = DescriptorImpl.ISSUE_COMMENT_TEXT;
+    @Nonnull
+    private String noIssuesToPostText = DescriptorImpl.NO_ISSUES_TEXT;
+    @Nonnull
+    private String someIssuesToPostText = DescriptorImpl.SOME_ISSUES_TEXT;
+    @Nonnull
+    private String issueComment = DescriptorImpl.ISSUE_COMMENT_TEXT;
     private boolean overrideCredentials = DescriptorImpl.OVERRIDE_CREDENTIALS;
-    private @Nonnull
-    String httpUsername;
-    private @Nonnull
-    String httpPassword;
+    @Nonnull
+    private String httpUsername;
+    @Nonnull
+    private String httpPassword;
     private boolean postScore = DescriptorImpl.POST_SCORE;
-    private @Nonnull
-    String category = DescriptorImpl.CATEGORY;
-    private @Nonnull
-    String noIssuesScore = DescriptorImpl.NO_ISSUES_SCORE;
-    private @Nonnull
-    String issuesScore = DescriptorImpl.SOME_ISSUES_SCORE;
+    @Nonnull
+    private String category = DescriptorImpl.CATEGORY;
+    @Nonnull
+    private String noIssuesScore = DescriptorImpl.NO_ISSUES_SCORE;
+    @Nonnull
+    private String issuesScore = DescriptorImpl.SOME_ISSUES_SCORE;
 
-    private @Nonnull
-    String noIssuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR;
-    private @Nonnull
-    String issuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR;
+    @Nonnull
+    private String noIssuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR;
+    @Nonnull
+    private String issuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR;
 
-//    // to be removed
-//    private final String path = null;
-//    private final String projectPath = null;
+    // to be removed
+    private final String path;
+    private final String projectPath;
 
     @DataBoundConstructor
     public SonarToGerritPublisher() {
+        // old values - not used anymore. will be deleted in further releases
+        this.path = null;
+        this.projectPath = null;
     }
 
-//    @DataBoundConstructor
-//    @Deprecated
-//    public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
-//                                  String severity, boolean changedLinesOnly, boolean newIssuesOnly,
-//                                  String noIssuesToPostText, String someIssuesToPostText, String issueComment,
-//                                  boolean overrideCredentials, String httpUsername, String httpPassword,
-//                                  boolean postScore, String category, String noIssuesScore, String issuesScore,
-//                                  String noIssuesNotification, String issuesNotification) {
-//        setSonarURL(sonarURL);
-//        setSubJobConfigs(subJobConfigs);
-//        setSeverity(severity);
-//        setChangedLinesOnly(changedLinesOnly);
-//        setNewIssuesOnly(newIssuesOnly);
-//        setNoIssuesToPostText(noIssuesToPostText);
-//        setSomeIssuesToPostText(someIssuesToPostText);
-//        setIssueComment(issueComment);
-//        setOverrideCredentials(overrideCredentials);
-//        setHttpUsername(httpUsername);
-//        setHttpPassword(httpPassword);
-//        setPostScore(postScore);
-//        setCategory(category);
-//        setNoIssuesScore(noIssuesScore);
-//        setIssuesScore(issuesScore);
-//        setNoIssuesNotification(noIssuesNotification);
-//        setIssuesNotification(issuesNotification);
-//
-////        // old values - not used anymore. will be deleted in further releases
-////        this.path = null;
-////        this.projectPath = null;
-//    }
+    @DataBoundConstructor
+    @Deprecated
+    public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
+                                  String severity, boolean changedLinesOnly, boolean newIssuesOnly,
+                                  String noIssuesToPostText, String someIssuesToPostText, String issueComment,
+                                  boolean overrideCredentials, String httpUsername, String httpPassword,
+                                  boolean postScore, String category, String noIssuesScore, String issuesScore,
+                                  String noIssuesNotification, String issuesNotification) {
+        setSonarURL(sonarURL);
+        setSubJobConfigs(subJobConfigs);
+        setSeverity(severity);
+        setChangedLinesOnly(changedLinesOnly);
+        setNewIssuesOnly(newIssuesOnly);
+        setNoIssuesToPostText(noIssuesToPostText);
+        setSomeIssuesToPostText(someIssuesToPostText);
+        setIssueComment(issueComment);
+        setOverrideCredentials(overrideCredentials);
+        setHttpUsername(httpUsername);
+        setHttpPassword(httpPassword);
+        setPostScore(postScore);
+        setCategory(category);
+        setNoIssuesScore(noIssuesScore);
+        setIssuesScore(issuesScore);
+        setNoIssuesNotification(noIssuesNotification);
+        setIssuesNotification(issuesNotification);
+
+        // old values - not used anymore. will be deleted in further releases
+        this.path = null;
+        this.projectPath = null;
+    }
 
 
     @VisibleForTesting
@@ -364,23 +367,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                    Collections2.transform(finalIssues.get(file),
-                            new Function<Issue, ReviewInput.CommentInput>() {
-                                @Nullable
-                                @Override
-                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                    if (input == null) {
-                                        return null;
-                                    }
-                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                    commentInput.id = input.getKey();
-                                    commentInput.line = input.getLine();
-                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                    return commentInput;
-                                }
+                            Collections2.transform(finalIssues.get(file),
+                                    new Function<Issue, ReviewInput.CommentInput>() {
+                                        @Nullable
+                                        @Override
+                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                            if (input == null) {
+                                                return null;
+                                            }
+                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                            commentInput.id = input.getKey();
+                                            commentInput.line = input.getLine();
+                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                            return commentInput;
+                                        }
 
-                            }
-                    )
+                                    }
+                            )
                     )
             );
         }
@@ -777,7 +780,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @SuppressWarnings(value = "unused")
-    public @Nonnull String getIssuesNotification() {
+    @Nonnull
+    public String getIssuesNotification() {
         return issuesNotification;
     }
 
