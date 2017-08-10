@@ -221,7 +221,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         }
 
         Multimap<String, Issue> file2issues = generateFilenameToIssuesMapFilteredByPredicates(issueInfos);
-
+        logMessage(listener, "jenkins.plugin.report.filtered.new", Level.INFO, file2issues.size());
         // Step 3 - Prepare Gerrit REST API client
         // Check Gerrit configuration is available
         String gerritNameEnvVar = getEnvVar(run, listener, GERRIT_NAME_ENV_VAR_NAME);
@@ -269,9 +269,20 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
                 @Override
                 public boolean apply(@Nullable String input) {
-                    return input != null && files.keySet().contains(input);
+                    boolean match = false;
+                    if (input != null){
+                        for (String str : files.keySet()) {
+                            match = str.indexOf(input) != -1 ? true: false;
+                            if (match) break;
+                        }
+                    }
+                    return match;
                 }
             });
+
+            logMessage(listener, "jenkins.plugin.report.filtered.files", Level.INFO, file2issues.size());
+
+            file2issues = replaceFilenameToIssuesMapByRevisionFilename(file2issues, files);
 
 //            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
 
@@ -279,6 +290,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 // Step 4a - Filter issues by changed lines in file only
                 filterIssuesByChangedLines(file2issues, revision);
 //                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
+                logMessage(listener, "jenkins.plugin.report.filtered.lines", Level.INFO, file2issues.size());
             }
 
             // Step 6 - Send review to Gerrit
@@ -448,6 +460,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             );
         }
         return reviewInput;
+    }
+
+    Multimap<String, Issue> replaceFilenameToIssuesMapByRevisionFilename(Multimap<String, Issue> file2issues, Map<String, FileInfo> files) {
+        Multimap<String, Issue> revisionFile2issues = LinkedListMultimap.create();
+        Map<String, Collection<Issue>> file2issuesMap = file2issues.asMap();
+
+        for (String key : file2issuesMap.keySet()) {
+            for (String filename : files.keySet()) {
+                if (filename.indexOf(key) != -1) {
+                    for (Issue issue : file2issuesMap.get(key)) {
+                        revisionFile2issues.put(filename, issue);
+                    }
+                    break;
+                }
+            }
+        }
+        return revisionFile2issues;
     }
 
     @VisibleForTesting
