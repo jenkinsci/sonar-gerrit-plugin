@@ -150,5 +150,12 @@
                 </select>
             </f:entry>
         </f:section>
+
+        <f:section title="${%jenkins.plugin.settings.section.publish.build.result.name}">
+            <f:entry title="${%jenkins.plugin.settings.mark.failure}" field="markFailure"
+                     description="${%jenkins.plugin.settings.mark.failure.description}">
+                <f:checkbox default="true"/>
+            </f:entry>
+        </f:section>
     </f:advanced>
 </j:jelly>

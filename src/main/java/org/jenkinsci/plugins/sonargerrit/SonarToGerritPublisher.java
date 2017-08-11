@@ -96,6 +96,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private final String noIssuesNotification;
     private final String issuesNotification;
 
+    private final boolean markFailure;
+
 
     @DataBoundConstructor
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
@@ -103,7 +105,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                   boolean overrideCredentials, String httpUsername, String httpPassword,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
-                                  String noIssuesNotification, String issuesNotification) {
+                                  String noIssuesNotification, String issuesNotification,
+                                  boolean markFailure) {
         this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
         this.subJobConfigs = subJobConfigs;
         this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
@@ -121,6 +124,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.issuesScore = issuesScore;
         this.noIssuesNotification = noIssuesNotification;
         this.issuesNotification = issuesNotification;
+        this.markFailure = markFailure;
 
         // old values - not used anymore. will be deleted in further releases
         this.path = null;
@@ -206,6 +210,10 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @SuppressWarnings(value = "unused")
     public String getIssuesNotification() {
         return issuesNotification;
+    }
+
+    public boolean isMarkFailure() {
+        return markFailure;
     }
 
     @SuppressWarnings(value = "unused")
@@ -303,6 +311,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
             throw new AbortException("Unable to post review: " + e.getMessage());
         }
+
+        Result buildResult = getBuildResult(file2issues.size());
+        run.setResult(buildResult);
     }
 
     @VisibleForTesting
@@ -411,6 +422,14 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         } else {
             NotifyHandling value = (noIssuesNotification == null ? null : NotifyHandling.valueOf(noIssuesNotification));
             return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
+        }
+    }
+
+    private Result getBuildResult(int finalIssuesCount) {
+        if (finalIssuesCount > 0 && isMarkFailure()) {
+            return Result.FAILURE;
+        } else {
+            return Result.SUCCESS;
         }
     }
 
