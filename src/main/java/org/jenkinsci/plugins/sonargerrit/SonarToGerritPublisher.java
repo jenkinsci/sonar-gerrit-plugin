@@ -108,7 +108,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.projectPath = null;
     }
 
-//    @DataBoundConstructor
+    //    @DataBoundConstructor
     @Deprecated //since 2.0. Left here for Jenkins version < 1.625.3
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
@@ -259,6 +259,11 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             logMessage(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
             return null;
         }
+
+        if (reportPath.isDirectory()) {
+            logMessage(listener, "jenkins.plugin.error.sonar.report.path.directory", Level.SEVERE, reportPath);
+            return null;
+        }
         logMessage(listener, "jenkins.plugin.getting.report", Level.INFO, reportPath);
 
         SonarReportBuilder builder = new SonarReportBuilder();
@@ -326,9 +331,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         if (subJobConfigs == null) {
             subJobConfigs = new ArrayList<SubJobConfig>();
             // add configuration from previous plugin version
-          /*  if (path != null || projectPath != null) {
+            if (path != null || projectPath != null) {
                 subJobConfigs.add(new SubJobConfig(projectPath, path));
-            } else */
+            }
             if (addDefault) {
                 subJobConfigs.add(DescriptorImpl.JOB_CONFIG);
             }
@@ -744,7 +749,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return someIssuesToPostText;
     }
 
-    public @Nonnull String getIssueComment() {
+    public
+    @Nonnull
+    String getIssueComment() {
         return issueComment;
     }
 
@@ -796,7 +803,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @DataBoundSetter
-    public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
+    public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) { // todo check sjc pats != null
         this.subJobConfigs = MoreObjects.firstNonNull(subJobConfigs, DescriptorImpl.JOB_CONFIGS);
     }
 

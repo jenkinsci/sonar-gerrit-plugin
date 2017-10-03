@@ -26,7 +26,7 @@
                     </f:entry>
 
                     <f:entry title="${%jenkins.plugin.settings.project.base.path}">
-                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default="${descriptor.JOB_CONFIGS}"/>
+                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default="${descriptor.PROJECT_PATH}"/>
                     </f:entry>
                     <f:entry title="">
                         <div align="right">
