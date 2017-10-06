@@ -75,6 +75,33 @@ public class SonarToGerritPublisherTest {
     }
 
     @Test
+    public void testfilterIssuesByChangedFiles() throws URISyntaxException, IOException, InterruptedException {
+        URL url = getClass().getClassLoader().getResource("report4_maven_multimodule.json");
+
+        File path = new File(url.toURI());
+        FilePath filePath = new FilePath(path);
+        String json = filePath.readToString();
+        Report report = new SonarReportBuilder().fromJson(json);
+        Assert.assertEquals(12, report.getComponents().size());
+        Multimap<String, Issue> file2issues = SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
+        Assert.assertEquals(3, file2issues.size());
+
+        final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
+        FileInfo info = new FileInfo();
+        info.status = 'A';
+        info.linesInserted = 9;
+        files.put("/COMMIT_MSG", info);
+        info = new FileInfo();
+        info.linesInserted = 4;
+        files.put("testcontext-viewstore/testcontext-viewstore-persistence/src/main/java/com/example/testcontext/persistence/entity/User.java", info);
+
+        file2issues = SonarToGerritPublisher.filterIssuesByChangedFiles(file2issues, files);
+        // Shows full path to file rather than restricted path visible in report
+        Assert.assertTrue(file2issues.containsKey("testcontext-viewstore/testcontext-viewstore-persistence/src/main/java/com/example/testcontext/persistence/entity/User.java"));
+    }
+
+
+    @Test
     public void testGenerateRealNameMap() throws InterruptedException, IOException, URISyntaxException {
         Report report = readreport();
         Assert.assertEquals(19, report.getIssues().size());

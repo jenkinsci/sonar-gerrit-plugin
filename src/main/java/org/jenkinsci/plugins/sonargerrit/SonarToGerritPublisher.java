@@ -143,6 +143,44 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return file2issues;
     }
 
+    @VisibleForTesting
+    static Multimap<String, Issue> filterIssuesByChangedFiles(Multimap<String, Issue> multimap, final Map<String, FileInfo> files) {
+        final SortedSet<String> filekeys = new TreeSet<String>(files.keySet());
+        multimap = Multimaps.filterKeys(multimap, new Predicate<String>() {
+            @Override
+            public boolean apply(@Nullable String input) {
+                if (input == null) return false;
+
+                /** JSON version of report when using Maven does not _completely_ map the components to the file system when multi-module builds are in play.
+                 *  Components are mapped to paths but you need to know the Maven hierarchy in order to *truly* map these correctly
+                 *
+                 *  Below we simply look for the entire filename map, as much as can be reliably determined without inspecting maven poms. This should work 99% of the time.
+                 */
+                boolean found = false;
+                for (String item: filekeys) {
+                    if (item.endsWith(input)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                return found;
+            }
+        });
+
+        Multimap<String, Issue> copy = LinkedListMultimap.create();
+
+        // Now iterate again and replace the primary key with the real filename if its different
+        for (String filename: multimap.keySet()) {
+            for (String item: filekeys) {
+                if (item.endsWith(filename)) {
+                    copy.putAll(item, multimap.get(filename));
+                    break;
+                }
+            }
+        }
+        return copy;
+    }
 
     public String getSeverity() {
         return severity;
@@ -265,15 +303,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
             // Step 4 - Filter issues by changed files
-            final Map<String, FileInfo> files = revision.files();
-            file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
-                @Override
-                public boolean apply(@Nullable String input) {
-                    return input != null && files.keySet().contains(input);
-                }
-            });
+            file2issues = filterIssuesByChangedFiles(file2issues, revision.files());
 
-//            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
+//          logResultMap(file2issues, "Filter issues by changed files: {0} elements");
 
             if (isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only

@@ -1,0 +1,130 @@
+{
+    "components": [
+        {
+            "key": "com.example.testcontext:testcontext-parent:master"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore:master",
+            "path": "testcontext-viewstore"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "testcontext-viewstore-persistence"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity/Group.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/entity/Group.java",
+            "status": "SAME"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity/User.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/entity/User.java",
+            "status": "CHANGED"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/repository/GroupRepository.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/repository/GroupRepository.java",
+            "status": "SAME"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/repository/UserRepository.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/repository/UserRepository.java",
+            "status": "SAME"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/test/java/com/example/testcontext/persistence/repository/GroupRepositoryTest.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/test/java/com/example/testcontext/persistence/repository/GroupRepositoryTest.java",
+            "status": "SAME"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/test/java/com/example/testcontext/persistence/repository/UserRepositoryTest.java",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/test/java/com/example/testcontext/persistence/repository/UserRepositoryTest.java",
+            "status": "SAME"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/entity"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/repository",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/main/java/com/example/testcontext/persistence/repository"
+        },
+        {
+            "key": "com.example.testcontext:testcontext-viewstore-persistence:master:src/test/java/com/example/testcontext/persistence/repository",
+            "moduleKey": "com.example.testcontext:testcontext-viewstore-persistence:master",
+            "path": "src/test/java/com/example/testcontext/persistence/repository"
+        }
+    ],
+    "issues": [
+        {
+            "component": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity/Group.java",
+            "creationDate": "2017-10-02T15:47:15+0000",
+            "isNew": false,
+            "key": "AV7dxUEI72K51TB8FqWG",
+            "message": "4 more branches need to be covered by unit tests to reach the minimum threshold of 65.0% branch coverage.",
+            "rule": "common-java:InsufficientBranchCoverage",
+            "severity": "MAJOR",
+            "status": "OPEN"
+        },
+        {
+            "component": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity/User.java",
+            "creationDate": "2017-10-02T17:31:24+0000",
+            "endLine": 129,
+            "endOffset": 16,
+            "isNew": true,
+            "key": "015EDE2488336EAF39",
+            "line": 129,
+            "message": "Remove this unused \"n\" local variable.",
+            "rule": "squid:S1481",
+            "severity": "MAJOR",
+            "startLine": 129,
+            "startOffset": 15,
+            "status": "OPEN"
+        },
+        {
+            "component": "com.example.testcontext:testcontext-viewstore-persistence:master:src/main/java/com/example/testcontext/persistence/entity/User.java",
+            "creationDate": "2017-10-02T15:47:15+0000",
+            "endLine": 41,
+            "endOffset": 56,
+            "isNew": false,
+            "key": "AV7dxUHi72K51TB8FqWI",
+            "line": 41,
+            "message": "Complete the task associated to this TODO comment.",
+            "rule": "squid:S1135",
+            "severity": "INFO",
+            "startLine": 41,
+            "startOffset": 0,
+            "status": "OPEN"
+        }
+    ],
+    "rules": [
+        {
+            "key": "common-java:InsufficientBranchCoverage",
+            "name": "Branches should have sufficient coverage by unit tests",
+            "repository": "common-java",
+            "rule": "InsufficientBranchCoverage"
+        },
+        {
+            "key": "squid:S1481",
+            "name": "Unused local variables should be removed",
+            "repository": "squid",
+            "rule": "S1481"
+        },
+        {
+            "key": "squid:S1135",
+            "name": "Track uses of \"TODO\" tags",
+            "repository": "squid",
+            "rule": "S1135"
+        }
+    ],
+    "users": [],
+    "version": "5.6.6"
+}
