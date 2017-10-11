@@ -12,7 +12,7 @@
     -->
     <f:section title="${%jenkins.plugin.settings.section.sonar.name}">
         <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
-            <f:textbox default="http://localhost:9000"/>
+            <f:textbox default="${descriptor.SONAR_URL}"/>
         </f:entry>
     </f:section>
 
@@ -22,11 +22,11 @@
                 <table width="100%">
                     <f:entry title="${%jenkins.plugin.settings.sonar.report.path}">
                         <f:textbox field="sonarReportPath" value="${subJobConfigs.sonarReportPath}"
-                                   default="target/sonar/sonar-report.json"/>
+                                   default="${descriptor.SONAR_REPORT_PATH}"/>
                     </f:entry>
 
                     <f:entry title="${%jenkins.plugin.settings.project.base.path}">
-                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default=""/>
+                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default="${descriptor.JOB_CONFIGS}"/>
                     </f:entry>
                     <f:entry title="">
                         <div align="right">
@@ -66,18 +66,19 @@
 
         <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
             <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
-                <f:textbox default="${%jenkins.plugin.default.review.title.no.issues}"/>
+                <f:textbox default="${descriptor.NO_ISSUES_TEXT}"/>
             </f:entry>
             <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
-                <f:textbox default="${%jenkins.plugin.default.review.title.issues}"/>
+                <f:textbox default="${descriptor.SOME_ISSUES_TEXT}"/>
             </f:entry>
             <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
-                <f:textarea default="${%jenkins.plugin.default.review.body}"/>
+                <f:textarea default="${descriptor.ISSUE_COMMENT_TEXT}"/>
             </f:entry>
         </f:section>
 
         <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
-            <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials">
+            <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials"
+                     default="${descriptor.OVERRIDE_CREDENTIALS}">
                 <table width="100%">
                     <f:optionalBlock title="" inline="true" checked="${it.overrideCredentials}">
                         <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}"
@@ -106,15 +107,15 @@
 
             <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">
                 <table width="100%">
-                    <f:optionalBlock title="" inline="true" checked="${it.postScore}"  default="true">
+                    <f:optionalBlock title="" inline="true" checked="${it.postScore}"  default="${descriptor.POST_SCORE}">
                         <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-                            <f:textbox default="Code-Review"/>
+                            <f:textbox default="${descriptor.CATEGORY}"/>
                         </f:entry>
                         <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-                            <f:textbox default="+1"/>
+                            <f:textbox default="${descriptor.NO_ISSUES_SCORE}"/>
                         </f:entry>
                         <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-                            <f:textbox default="-1"/>
+                            <f:textbox default="${descriptor.SOME_ISSUES_SCORE}"/>
                         </f:entry>
                     </f:optionalBlock>
                 </table>
@@ -123,7 +124,7 @@
 
         <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
             <f:entry title="${%jenkins.plugin.settings.notification.no.issues}" field="noIssuesNotification">
-                <select name="noIssuesNotification" field="severity">
+                <select name="noIssuesNotification" field="noIssuesNotification" default="${descriptor.NOTIFICATION_RECIPIENT_NO_ISSUES_STR}">
                     <f:option value="NONE"
                               selected="${instance.noIssuesNotification =='NONE' || instance.noIssuesNotification == null}">
                         ${%NONE}
@@ -136,8 +137,8 @@
 
                 </select>
             </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.notification.issues}" field="issuesNotification">
-                <select name="issuesNotification" field="severity">
+            <f:entry title="${%jenkins.plugin.settings.notification.issues}" field="issuesNotification" >
+                <select name="issuesNotification" field="issuesNotification" default="${descriptor.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR}">
                     <f:option value="NONE" selected="${instance.issuesNotification =='NONE'}">${%NONE}</f:option>
                     <f:option value="OWNER"
                               selected="${instance.issuesNotification =='OWNER'  || instance.issuesNotification == null}">

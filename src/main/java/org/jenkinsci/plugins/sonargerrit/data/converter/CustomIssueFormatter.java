@@ -14,21 +14,20 @@ import java.net.URLEncoder;
  */
 public class CustomIssueFormatter implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
 
-    public static final String DEFAULT_ISSUE_COMMENT_TEXT = Localization.getLocalized("jenkins.plugin.default.review.body");
-
     private Issue issue;
     private String text;
     private String host;
 
     public CustomIssueFormatter(Issue issue, String text, String host) {
         this.issue = issue;
-        this.text = prepareText(text, DEFAULT_ISSUE_COMMENT_TEXT);
+//        this.text = prepareText(text, DefaultPluginSettings.ISSUE_COMMENT_TEXT);
         this.host = host;
+        this.text = text;
     }
 
-    private static String prepareText(String text, String defaultValue) {
-        return text != null && !text.trim().isEmpty() ? text.trim() : defaultValue;
-    }
+//    private static String prepareText(String text, String defaultValue) {
+//        return text != null && !text.trim().isEmpty() ? text.trim() : defaultValue;
+//    }
 
     @Override
     public String getMessage() {

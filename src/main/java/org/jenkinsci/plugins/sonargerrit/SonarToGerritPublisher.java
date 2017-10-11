@@ -37,7 +37,9 @@ import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.data.predicates.ByMinSeverityPredicate;
 import org.jenkinsci.plugins.sonargerrit.data.predicates.ByNewPredicate;
+import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -58,69 +60,79 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  */
 public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep {
 
-    private static final String DEFAULT_SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
-    private static final String DEFAULT_PROJECT_PATH = "";
-    private static final String DEFAULT_SONAR_URL = "http://localhost:9000";
-    private static final String DEFAULT_CATEGORY = "Code-Review";
-    private static final int DEFAULT_SCORE = 0;
-    private static final NotifyHandling DEFAULT_NOTIFICATION_NO_ISSUES = NotifyHandling.NONE;
-    private static final NotifyHandling DEFAULT_NOTIFICATION_ISSUES = NotifyHandling.OWNER;
-
-    public static final String EMPTY_STR = "";
-
     private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    // left here for compatibility with previous version. will be removed in further releases
+    @Nonnull
+    private String sonarURL = DescriptorImpl.SONAR_URL;
+    @Nonnull
+    private List<SubJobConfig> subJobConfigs = new ArrayList<>(DescriptorImpl.JOB_CONFIGS);
+    @Nonnull
+    private String severity = DescriptorImpl.SEVERITY;
+    private boolean changedLinesOnly = DescriptorImpl.CHANGED_LINES_ONLY;
+    private boolean newIssuesOnly = DescriptorImpl.NEW_ISSUES_ONLY;
+    @Nonnull
+    private String noIssuesToPostText = DescriptorImpl.NO_ISSUES_TEXT;
+    @Nonnull
+    private String someIssuesToPostText = DescriptorImpl.SOME_ISSUES_TEXT;
+    @Nonnull
+    private String issueComment = DescriptorImpl.ISSUE_COMMENT_TEXT;
+    private boolean overrideCredentials = DescriptorImpl.OVERRIDE_CREDENTIALS;
+    @Nonnull
+    private String httpUsername;
+    @Nonnull
+    private String httpPassword;
+    private boolean postScore = DescriptorImpl.POST_SCORE;
+    @Nonnull
+    private String category = DescriptorImpl.CATEGORY;
+    @Nonnull
+    private String noIssuesScore = DescriptorImpl.NO_ISSUES_SCORE;
+    @Nonnull
+    private String issuesScore = DescriptorImpl.SOME_ISSUES_SCORE;
+
+    @Nonnull
+    private String noIssuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR;
+    @Nonnull
+    private String issuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR;
+
+    // to be removed
     private final String path;
     private final String projectPath;
 
-    private final String sonarURL;
-    private List<SubJobConfig> subJobConfigs;
-    private final String severity;
-    private final boolean changedLinesOnly;
-    private final boolean newIssuesOnly;
-    private final String noIssuesToPostText;
-    private final String someIssuesToPostText;
-    private final String issueComment;
-    private final boolean overrideCredentials;
-    private final String httpUsername;
-    private final String httpPassword;
-    private final boolean postScore;
-    private final String category;
-    private final String noIssuesScore;
-    private final String issuesScore;
-
-    private final String noIssuesNotification;
-    private final String issuesNotification;
-
-
     @DataBoundConstructor
+    public SonarToGerritPublisher() {
+        // old values - not used anymore. will be deleted in further releases
+        this.path = null;
+        this.projectPath = null;
+    }
+
+//    @DataBoundConstructor
+    @Deprecated //since 2.0. Left here for Jenkins version < 1.625.3
     public SonarToGerritPublisher(String sonarURL, List<SubJobConfig> subJobConfigs,
                                   String severity, boolean changedLinesOnly, boolean newIssuesOnly,
                                   String noIssuesToPostText, String someIssuesToPostText, String issueComment,
                                   boolean overrideCredentials, String httpUsername, String httpPassword,
                                   boolean postScore, String category, String noIssuesScore, String issuesScore,
                                   String noIssuesNotification, String issuesNotification) {
-        this.sonarURL = MoreObjects.firstNonNull(sonarURL, DEFAULT_SONAR_URL);
-        this.subJobConfigs = subJobConfigs;
-        this.severity = MoreObjects.firstNonNull(severity, Severity.MAJOR.name());
-        this.changedLinesOnly = changedLinesOnly;
-        this.newIssuesOnly = newIssuesOnly;
-        this.noIssuesToPostText = noIssuesToPostText;
-        this.someIssuesToPostText = someIssuesToPostText;
-        this.issueComment = issueComment;
-        this.overrideCredentials = overrideCredentials;
-        this.httpUsername = httpUsername;
-        this.httpPassword = httpPassword;
-        this.postScore = postScore;
-        this.category = MoreObjects.firstNonNull(category, DEFAULT_CATEGORY);
-        this.noIssuesScore = noIssuesScore;
-        this.issuesScore = issuesScore;
-        this.noIssuesNotification = noIssuesNotification;
-        this.issuesNotification = issuesNotification;
+        setSonarURL(sonarURL);
+        setSubJobConfigs(subJobConfigs);
+        setSeverity(severity);
+        setChangedLinesOnly(changedLinesOnly);
+        setNewIssuesOnly(newIssuesOnly);
+        setNoIssuesToPostText(noIssuesToPostText);
+        setSomeIssuesToPostText(someIssuesToPostText);
+        setIssueComment(issueComment);
+        setOverrideCredentials(overrideCredentials);
+        setHttpUsername(httpUsername);
+        setHttpPassword(httpPassword);
+        setPostScore(postScore);
+        setCategory(category);
+        setNoIssuesScore(noIssuesScore);
+        setIssuesScore(issuesScore);
+        setNoIssuesNotification(noIssuesNotification);
+        setIssuesNotification(issuesNotification);
 
         // old values - not used anymore. will be deleted in further releases
         this.path = null;
@@ -143,75 +155,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return file2issues;
     }
 
-
-    public String getSeverity() {
-        return severity;
-    }
-
-    public boolean isChangedLinesOnly() {
-        return changedLinesOnly;
-    }
-
-    public boolean isNewIssuesOnly() {
-        return newIssuesOnly;
-    }
-
-    public String getSonarURL() {
-        return sonarURL;
-    }
-
-    public String getNoIssuesToPostText() {
-        return noIssuesToPostText;
-    }
-
-    public String getSomeIssuesToPostText() {
-        return someIssuesToPostText;
-    }
-
-    public String getIssueComment() {
-        return issueComment;
-    }
-
-    public boolean isOverrideCredentials() {
-        return overrideCredentials;
-    }
-
-    public String getHttpUsername() {
-        return httpUsername;
-    }
-
-    public String getHttpPassword() {
-        return httpPassword;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public boolean isPostScore() {
-        return postScore;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getNoIssuesScore() {
-        return noIssuesScore;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getNoIssuesNotification() {
-        return noIssuesNotification;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getIssuesNotification() {
-        return issuesNotification;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getIssuesScore() {
-        return issuesScore;
-    }
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
@@ -372,7 +315,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     private int getReviewMark(int finalIssuesCount) {
         String mark = finalIssuesCount > 0 ? issuesScore : noIssuesScore;
-        return parseNumber(mark, DEFAULT_SCORE);
+        return parseNumber(mark, DescriptorImpl.DEFAULT_SCORE);
     }
 
     public List<SubJobConfig> getSubJobConfigs() {
@@ -383,23 +326,20 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         if (subJobConfigs == null) {
             subJobConfigs = new ArrayList<SubJobConfig>();
             // add configuration from previous plugin version
-            if (path != null || projectPath != null) {
+          /*  if (path != null || projectPath != null) {
                 subJobConfigs.add(new SubJobConfig(projectPath, path));
-            } else if (addDefault) {
-                subJobConfigs.add(new SubJobConfig(DEFAULT_PROJECT_PATH, DEFAULT_SONAR_REPORT_PATH));
+            } else */
+            if (addDefault) {
+                subJobConfigs.add(DescriptorImpl.JOB_CONFIG);
             }
         }
         return subJobConfigs;
     }
 
     private NotifyHandling getNotificationSettings(int finalIssuesCount) {
-        if (finalIssuesCount > 0) {
-            NotifyHandling value = (issuesNotification == null ? null : NotifyHandling.valueOf(issuesNotification));
-            return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_ISSUES);
-        } else {
-            NotifyHandling value = (noIssuesNotification == null ? null : NotifyHandling.valueOf(noIssuesNotification));
-            return MoreObjects.firstNonNull(value, DEFAULT_NOTIFICATION_NO_ISSUES);
-        }
+        return finalIssuesCount > 0 ?
+                NotifyHandling.valueOf(issuesNotification) :
+                NotifyHandling.valueOf(noIssuesNotification);
     }
 
     private int parseNumber(String number, int deflt) {
@@ -427,23 +367,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssues.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                    Collections2.transform(finalIssues.get(file),
-                            new Function<Issue, ReviewInput.CommentInput>() {
-                                @Nullable
-                                @Override
-                                public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                    if (input == null) {
-                                        return null;
-                                    }
-                                    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                    commentInput.id = input.getKey();
-                                    commentInput.line = input.getLine();
-                                    commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
-                                    return commentInput;
-                                }
+                            Collections2.transform(finalIssues.get(file),
+                                    new Function<Issue, ReviewInput.CommentInput>() {
+                                        @Nullable
+                                        @Override
+                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
+                                            if (input == null) {
+                                                return null;
+                                            }
+                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+                                            commentInput.id = input.getKey();
+                                            commentInput.line = input.getLine();
+                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                            return commentInput;
+                                        }
 
-                            }
-                    )
+                                    }
+                            )
                     )
             );
         }
@@ -505,6 +445,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @VisibleForTesting
     static class ReportInfo {
+
         private String directoryPath;
         private Report report;
 
@@ -512,6 +453,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             this.directoryPath = directoryPath;
             this.report = report;
         }
+
     }
 
     /**
@@ -525,6 +467,30 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @Symbol("sonarToGerrit")
     @Extension // This indicates to Jenkins that this is an implementation of an extension point.
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+        public static final NotifyHandling NOTIFICATION_RECIPIENT_NO_ISSUES = NotifyHandling.NONE;
+        public static final NotifyHandling NOTIFICATION_RECIPIENT_SOME_ISSUES = NotifyHandling.OWNER;
+
+        public static final String PROJECT_PATH = "";
+        public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
+        public static final String SONAR_URL = "http://localhost:9000";
+        public static final String SEVERITY = Severity.MAJOR.name();
+        public static final String NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
+        public static final String SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");
+        public static final String ISSUE_COMMENT_TEXT = Localization.getLocalized("jenkins.plugin.default.review.body");
+        public static final String NOTIFICATION_RECIPIENT_NO_ISSUES_STR = NOTIFICATION_RECIPIENT_NO_ISSUES.toString();
+        public static final String NOTIFICATION_RECIPIENT_SOME_ISSUES_STR = NOTIFICATION_RECIPIENT_SOME_ISSUES.toString();
+        public static final String CATEGORY = "Code-Review";
+        public static final String NO_ISSUES_SCORE = "1";
+        public static final String SOME_ISSUES_SCORE = "-1";
+        public static final boolean POST_SCORE = true;
+        public static final boolean OVERRIDE_CREDENTIALS = false;
+        public static final boolean NEW_ISSUES_ONLY = false;
+        public static final boolean CHANGED_LINES_ONLY = false;
+
+        public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
+        public static final List<SubJobConfig> JOB_CONFIGS = Arrays.<SubJobConfig>asList(JOB_CONFIG);
+        public static final int DEFAULT_SCORE = 0;
 
         /**
          * In order to load the persisted global configuration, you have to
@@ -547,7 +513,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckSonarURL(@QueryParameter String value)
                 throws IOException, ServletException {
-            if (value.length() == 0) {
+            if (value.trim().length() == 0) {
                 return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.empty"));
             }
             try {
@@ -600,7 +566,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          */
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value) {
-            if (value.length() == 0) {
+            if (value.trim().length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
             }
             return FormValidation.ok();
@@ -618,7 +584,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          */
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value) {
-            if (value.length() == 0) {
+            if (value.trim().length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
             }
             return FormValidation.ok();
@@ -636,11 +602,13 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          */
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckIssueComment(@QueryParameter String value) {
-            if (value.length() == 0) {
+            if (value.trim().length() == 0) {
                 return FormValidation.error(getLocalized("jenkins.plugin.validation.review.body.empty"));
             }
             return FormValidation.ok();
         }
+
+        //todo validate subconfigs?
 
         /**
          * Performs on-the-fly validation of the form field 'severity'.
@@ -750,6 +718,161 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             return getLocalized("jenkins.plugin.build.step.name");
         }
 
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public boolean isChangedLinesOnly() {
+        return changedLinesOnly;
+    }
+
+    public boolean isNewIssuesOnly() {
+        return newIssuesOnly;
+    }
+
+    public String getSonarURL() {
+        return sonarURL;
+    }
+
+    public String getNoIssuesToPostText() {
+        return noIssuesToPostText;
+    }
+
+    public String getSomeIssuesToPostText() {
+        return someIssuesToPostText;
+    }
+
+    public @Nonnull String getIssueComment() {
+        return issueComment;
+    }
+
+    public boolean isOverrideCredentials() {
+        return overrideCredentials;
+    }
+
+    public String getHttpUsername() {
+        return httpUsername;
+    }
+
+    public String getHttpPassword() {
+        return httpPassword;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public boolean isPostScore() {
+        return postScore;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public String getNoIssuesScore() {
+        return noIssuesScore;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public String getNoIssuesNotification() {
+        return noIssuesNotification;
+    }
+
+    @SuppressWarnings(value = "unused")
+    @Nonnull
+    public String getIssuesNotification() {
+        return issuesNotification;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public String getIssuesScore() {
+        return issuesScore;
+    }
+
+    @DataBoundSetter
+    public void setSonarURL(String sonarURL) {
+        this.sonarURL = MoreObjects.firstNonNull(sonarURL, DescriptorImpl.SONAR_URL);
+    }
+
+    @DataBoundSetter
+    public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
+        this.subJobConfigs = MoreObjects.firstNonNull(subJobConfigs, DescriptorImpl.JOB_CONFIGS);
+    }
+
+    @DataBoundSetter
+    public void setSeverity(String severity) {
+        this.severity = MoreObjects.firstNonNull(severity, DescriptorImpl.SEVERITY);
+    }
+
+    @DataBoundSetter
+    public void setChangedLinesOnly(boolean changedLinesOnly) {
+        this.changedLinesOnly = changedLinesOnly;
+    }
+
+    @DataBoundSetter
+    public void setNewIssuesOnly(boolean newIssuesOnly) {
+        this.newIssuesOnly = newIssuesOnly;
+    }
+
+    @DataBoundSetter
+    public void setNoIssuesToPostText(String noIssuesToPostText) {
+        this.noIssuesToPostText = MoreObjects.firstNonNull(noIssuesToPostText, DescriptorImpl.NO_ISSUES_TEXT);
+    }
+
+    @DataBoundSetter
+    public void setSomeIssuesToPostText(String someIssuesToPostText) {
+        this.someIssuesToPostText = MoreObjects.firstNonNull(someIssuesToPostText, DescriptorImpl.SOME_ISSUES_TEXT);
+    }
+
+    @DataBoundSetter
+    public void setIssueComment(@Nonnull String issueComment) {
+        this.issueComment = issueComment;//MoreObjects.firstNonNull(issueComment, DescriptorImpl.ISSUE_COMMENT_TEXT);
+    }
+
+    @DataBoundSetter
+    public void setOverrideCredentials(boolean overrideCredentials) {
+        this.overrideCredentials = overrideCredentials;
+    }
+
+    @DataBoundSetter
+    public void setHttpUsername(String httpUsername) {
+        this.httpUsername = httpUsername;
+    }
+
+    @DataBoundSetter
+    public void setHttpPassword(String httpPassword) {
+        this.httpPassword = httpPassword;
+    }
+
+    @DataBoundSetter
+    public void setPostScore(boolean postScore) {
+        this.postScore = postScore;
+    }
+
+    @DataBoundSetter
+    public void setCategory(String category) {
+        this.category = MoreObjects.firstNonNull(category, DescriptorImpl.CATEGORY);
+    }
+
+    @DataBoundSetter
+    public void setNoIssuesScore(String noIssuesScore) {
+        this.noIssuesScore = MoreObjects.firstNonNull(noIssuesScore, DescriptorImpl.NO_ISSUES_SCORE);
+    }
+
+    @DataBoundSetter
+    public void setIssuesScore(String issuesScore) {
+        this.issuesScore = MoreObjects.firstNonNull(issuesScore, DescriptorImpl.SOME_ISSUES_SCORE);
+    }
+
+    @DataBoundSetter
+    public void setNoIssuesNotification(String noIssuesNotification) {
+        this.noIssuesNotification = MoreObjects.firstNonNull(noIssuesNotification, DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR);
+    }
+
+    @DataBoundSetter
+    public void setIssuesNotification(String issuesNotification) {
+        this.issuesNotification = MoreObjects.firstNonNull(issuesNotification, DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR);
     }
 }
 
