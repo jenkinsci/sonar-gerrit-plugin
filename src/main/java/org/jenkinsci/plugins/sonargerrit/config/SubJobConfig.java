@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit;
+package org.jenkinsci.plugins.sonargerrit.config;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;

@@ -1,32 +1,26 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <!--
-      This jelly script is used for per-project configuration.
 
-      See global.jelly for a general discussion about jelly script.
-    -->
-
-    <!--
-      Creates a text field that shows the value of the "path" property.
-      When submitted, it will be passed to the corresponding constructor parameter.
-    -->
-    <f:section title="${%jenkins.plugin.settings.section.sonar.name}">
-        <f:entry title="${%jenkins.plugin.settings.sonar.url}" field="sonarURL">
-            <f:textbox default="${descriptor.SONAR_URL}"/>
+    <f:section title="${%jenkins.plugin.settings.sonarqube}">
+        <f:entry title="${%jenkins.plugin.settings.sonarqube.url}" field="sonarURL">
+            <f:textbox default="${descriptor.SONAR_URL}" placeholder="${descriptor.SONAR_URL}"/>
         </f:entry>
     </f:section>
 
-    <f:section title="${%jenkins.plugin.settings.section.project.name}">
+    <f:section title="${%jenkins.plugin.settings.project}">
         <f:entry title="" field="subJobConfigs">
             <f:repeatable var="subJobConfigs" items="${instance.subJobConfigs}" noAddButton="false" minimum="0">
                 <table width="100%">
-                    <f:entry title="${%jenkins.plugin.settings.sonar.report.path}">
+                    <f:entry title="${%jenkins.plugin.settings.project.report.path}">
                         <f:textbox field="sonarReportPath" value="${subJobConfigs.sonarReportPath}"
-                                   default="${descriptor.SONAR_REPORT_PATH}"/>
+                                   default="${descriptor.SONAR_REPORT_PATH}"
+                                   placeholder="${descriptor.SONAR_REPORT_PATH}"/>
                     </f:entry>
 
                     <f:entry title="${%jenkins.plugin.settings.project.base.path}">
-                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}" default="${descriptor.PROJECT_PATH}"/>
+                        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}"
+                                   default="${descriptor.PROJECT_PATH}"
+                                   placeholder="${descriptor.PROJECT_PATH}"/>
                     </f:entry>
                     <f:entry title="">
                         <div align="right">
@@ -39,117 +33,26 @@
 
     </f:section>
 
-    <f:section title="${%jenkins.plugin.settings.section.filter.name}">
-        <f:entry title="${%jenkins.plugin.settings.filter.severity}" field="severity">
-            <select name="severity" field="severity">
-                <f:option value="INFO" selected="${instance.severity =='INFO'}">${%INFO}</f:option>
-                <f:option value="MINOR" selected="${instance.severity =='MINOR'}">${%MINOR}</f:option>
-                <f:option value="MAJOR"
-                          selected="${instance.severity =='MAJOR' || instance.severity == null}">${%MAJOR}
-                </f:option>
-                <f:option value="CRITICAL" selected="${instance.severity =='CRITICAL'}">${%CRITICAL}</f:option>
-                <f:option value="BLOCKER" selected="${instance.severity =='BLOCKER'}">${%BLOCKER}</f:option>
-            </select>
-        </f:entry>
-
-        <f:entry title="${%jenkins.plugin.settings.filter.new}" field="newIssuesOnly"
-                 description="${%jenkins.plugin.settings.filter.new.description}">
-            <f:checkbox default="true"/>
-        </f:entry>
-
-        <f:entry title="${%jenkins.plugin.settings.filter.lines.changed}" field="changedLinesOnly"
-                 description="${%jenkins.plugin.settings.filter.lines.changed.description}">
-            <f:checkbox default="true"/>
-        </f:entry>
-    </f:section>
     <f:advanced>
 
-        <f:section title="${%jenkins.plugin.settings.section.review.format.name}">
-            <f:entry title="${%jenkins.plugin.settings.review.format.title.no.issues}" field="noIssuesToPostText">
-                <f:textbox default="${descriptor.NO_ISSUES_TEXT}"/>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.review.format.title.issues}" field="someIssuesToPostText">
-                <f:textbox default="${descriptor.SOME_ISSUES_TEXT}"/>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.review.format.body}" field="issueComment">
-                <f:textarea default="${descriptor.ISSUE_COMMENT_TEXT}"/>
-            </f:entry>
-        </f:section>
+        <f:section title="${%jenkins.plugin.settings.gerrit}">
 
-        <f:section title="${%jenkins.plugin.settings.section.gerrit.name}">
-            <f:entry title="${%jenkins.plugin.settings.gerrit.override.credentials}" field="overrideCredentials"
-                     default="${descriptor.OVERRIDE_CREDENTIALS}">
-                <table width="100%">
-                    <f:optionalBlock title="" inline="true" checked="${it.overrideCredentials}">
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.username}"
-                                 field="httpUsername">
-                            <f:textbox/>
-                        </f:entry>
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.http.credentials.password}"
-                                 field="httpPassword">
-                            <f:password/>
-                        </f:entry>
+            <f:section title="${%jenkins.plugin.settings.gerrit.credentials}">
+                <f:optionalProperty title="${%jenkins.plugin.settings.gerrit.credentials}" field="authConfig"/>
+            </f:section>
 
-                        <j:set var="servers" value="${descriptor.getGerritServerNames()}" />
-                        <f:entry  title="${%jenkins.plugin.settings.gerrit.http.credentials.gerritserver}" >
-                            <select  name="gerritServerName">
-                                <j:forEach var="inst" items="${servers}">
-                                    <f:option>${inst}</f:option>
-                                </j:forEach>
-                            </select>
-                        </f:entry>
-                        <f:validateButton
-                                title="${%Test Connection}" progress="${%Testing...}"
-                                method="testConnection" with="httpUsername,httpPassword,gerritServerName"/>
-                    </f:optionalBlock>
-                </table>
-            </f:entry>
+            <f:section title="${%jenkins.plugin.settings.gerrit.review.settings}">
+                <f:property title="${%jenkins.plugin.settings.gerrit.review}" field="reviewConfig"/>
+            </f:section>
 
-            <f:entry title="${%jenkins.plugin.settings.gerrit.post.score}" field="postScore" help="help-postScore">
-                <table width="100%">
-                    <f:optionalBlock title="" inline="true" checked="${it.postScore}"  default="${descriptor.POST_SCORE}">
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.category}" field="category">
-                            <f:textbox default="${descriptor.CATEGORY}"/>
-                        </f:entry>
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}" field="noIssuesScore">
-                            <f:textbox default="${descriptor.NO_ISSUES_SCORE}"/>
-                        </f:entry>
-                        <f:entry title="${%jenkins.plugin.settings.gerrit.score.issues}" field="issuesScore">
-                            <f:textbox default="${descriptor.SOME_ISSUES_SCORE}"/>
-                        </f:entry>
-                    </f:optionalBlock>
-                </table>
-            </f:entry>
-        </f:section>
+            <f:section title="${%jenkins.plugin.settings.gerrit.score.settings}">
+                <f:optionalProperty title="${%jenkins.plugin.settings.gerrit.score.post}" field="scoreConfig"/>
+            </f:section>
 
-        <f:section title="${%jenkins.plugin.settings.section.notification.settings.name}">
-            <f:entry title="${%jenkins.plugin.settings.notification.no.issues}" field="noIssuesNotification">
-                <select name="noIssuesNotification" field="noIssuesNotification" default="${descriptor.NOTIFICATION_RECIPIENT_NO_ISSUES_STR}">
-                    <f:option value="NONE"
-                              selected="${instance.noIssuesNotification =='NONE' || instance.noIssuesNotification == null}">
-                        ${%NONE}
-                    </f:option>
-                    <f:option value="OWNER" selected="${instance.noIssuesNotification =='OWNER'}">${%OWNER}</f:option>
-                    <f:option value="OWNER_REVIEWERS"
-                              selected="${instance.noIssuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
-                    </f:option>
-                    <f:option value="ALL" selected="${instance.noIssuesNotification =='ALL'}">${%ALL}</f:option>
-
-                </select>
-            </f:entry>
-            <f:entry title="${%jenkins.plugin.settings.notification.issues}" field="issuesNotification" >
-                <select name="issuesNotification" field="issuesNotification" default="${descriptor.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR}">
-                    <f:option value="NONE" selected="${instance.issuesNotification =='NONE'}">${%NONE}</f:option>
-                    <f:option value="OWNER"
-                              selected="${instance.issuesNotification =='OWNER'  || instance.issuesNotification == null}">
-                        ${%OWNER}
-                    </f:option>
-                    <f:option value="OWNER_REVIEWERS"
-                              selected="${instance.issuesNotification =='OWNER_REVIEWERS'}">${%OWNER_REVIEWERS}
-                    </f:option>
-                    <f:option value="ALL" selected="${instance.issuesNotification =='ALL'}">${%ALL}</f:option>
-                </select>
-            </f:entry>
+            <f:section title="${%jenkins.plugin.settings.gerrit.notification.settings}">
+                <f:property title="${%jenkins.plugin.settings.gerrit.notification.settings}"
+                            field="notificationConfig"/>
+            </f:section>
         </f:section>
     </f:advanced>
 </j:jelly>

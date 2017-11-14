@@ -14,8 +14,6 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
@@ -28,6 +26,7 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.sonargerrit.config.*;
 import org.jenkinsci.plugins.sonargerrit.data.ComponentPathBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.data.converter.CustomIssueFormatter;
@@ -65,47 +64,28 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
+    // ------------------ configuration settings
+    /*
+    * The URL of SonarQube server to be used for comments
+    * */
     @Nonnull
     private String sonarURL = DescriptorImpl.SONAR_URL;
+
     @Nonnull
     private List<SubJobConfig> subJobConfigs = new ArrayList<>(DescriptorImpl.JOB_CONFIGS);
-    @Nonnull
-    private String severity = DescriptorImpl.SEVERITY;
-    private boolean changedLinesOnly = DescriptorImpl.CHANGED_LINES_ONLY;
-    private boolean newIssuesOnly = DescriptorImpl.NEW_ISSUES_ONLY;
-    @Nonnull
-    private String noIssuesToPostText = DescriptorImpl.NO_ISSUES_TEXT;
-    @Nonnull
-    private String someIssuesToPostText = DescriptorImpl.SOME_ISSUES_TEXT;
-    @Nonnull
-    private String issueComment = DescriptorImpl.ISSUE_COMMENT_TEXT;
-    private boolean overrideCredentials = DescriptorImpl.OVERRIDE_CREDENTIALS;
-    @Nonnull
-    private String httpUsername;
-    @Nonnull
-    private String httpPassword;
-    private boolean postScore = DescriptorImpl.POST_SCORE;
-    @Nonnull
-    private String category = DescriptorImpl.CATEGORY;
-    @Nonnull
-    private String noIssuesScore = DescriptorImpl.NO_ISSUES_SCORE;
-    @Nonnull
-    private String issuesScore = DescriptorImpl.SOME_ISSUES_SCORE;
 
     @Nonnull
-    private String noIssuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR;
-    @Nonnull
-    private String issuesNotification = DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR;
+    private NotificationConfig notificationConfig = DescriptorImpl.NOTIFICATION_CONFIG;
 
-    // to be removed
-    private final String path;
-    private final String projectPath;
+    @Nonnull
+    private ReviewConfig reviewConfig = DescriptorImpl.REVIEW_CONFIG;
+
+    private ScoreConfig scoreConfig = null;
+
+    private GerritAuthenticationConfig authConfig = null;
 
     @DataBoundConstructor
     public SonarToGerritPublisher() {
-        // old values - not used anymore. will be deleted in further releases
-        this.path = null;
-        this.projectPath = null;
     }
 
     //    @DataBoundConstructor
@@ -118,25 +98,25 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                                   String noIssuesNotification, String issuesNotification) {
         setSonarURL(sonarURL);
         setSubJobConfigs(subJobConfigs);
-        setSeverity(severity);
-        setChangedLinesOnly(changedLinesOnly);
-        setNewIssuesOnly(newIssuesOnly);
-        setNoIssuesToPostText(noIssuesToPostText);
-        setSomeIssuesToPostText(someIssuesToPostText);
-        setIssueComment(issueComment);
-        setOverrideCredentials(overrideCredentials);
-        setHttpUsername(httpUsername);
-        setHttpPassword(httpPassword);
-        setPostScore(postScore);
-        setCategory(category);
-        setNoIssuesScore(noIssuesScore);
-        setIssuesScore(issuesScore);
-        setNoIssuesNotification(noIssuesNotification);
-        setIssuesNotification(issuesNotification);
 
-        // old values - not used anymore. will be deleted in further releases
-        this.path = null;
-        this.projectPath = null;
+        if (overrideCredentials) {
+            setAuthConfig(new GerritAuthenticationConfig(httpUsername, httpPassword));
+        }
+
+        IssueFilterConfig issueFilterConfig = new IssueFilterConfig(severity, newIssuesOnly, changedLinesOnly);
+
+        ReviewConfig reviewConfig = new ReviewConfig(issueFilterConfig, noIssuesToPostText, someIssuesToPostText, issueComment);
+        setReviewConfig(reviewConfig);
+
+        if (postScore) {
+            ScoreConfig scoreConfig = new ScoreConfig(issueFilterConfig, category, Integer.parseInt(noIssuesScore), Integer.parseInt(issuesScore));
+            setScoreConfig(scoreConfig);
+        } else {
+            setScoreConfig(null);
+        }
+
+        NotificationConfig notificationConfig = new NotificationConfig(noIssuesNotification, issuesNotification, issuesNotification);
+        setNotificationConfig(notificationConfig);
     }
 
 
@@ -155,15 +135,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return file2issues;
     }
 
+    private boolean postScore() {
+        return this.scoreConfig != null;
+    }
+
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
         List<ReportInfo> issueInfos = readSonarReports(listener, filePath);
-        if (issueInfos == null) {
-            throw new AbortException(getLocalized("jenkins.plugin.validation.path.no.project.config.available"));
+        if (issueInfos == null) {        //todo make more readable
+            throw new AbortException(getLocalized("jenkins.plugin.error.path.no.project.config.available"));
         }
 
-        Multimap<String, Issue> file2issues = generateFilenameToIssuesMapFilteredByPredicates(issueInfos);
+        IssueFilterConfig reviewIssueFilterConfig = reviewConfig.getIssueFilterConfig();
+        Multimap<String, Issue> file2issuesToComment = generateFilenameToIssuesMapFilteredByPredicates(issueInfos, reviewIssueFilterConfig);
+
+        IssueFilterConfig scoreIssueFilterConfig = scoreConfig.getIssueFilterConfig();
+        Multimap<String, Issue> file2issuesToScore = postScore() ? generateFilenameToIssuesMapFilteredByPredicates(issueInfos, scoreIssueFilterConfig) : null;
 
         // Step 3 - Prepare Gerrit REST API client
         // Check Gerrit configuration is available
@@ -185,11 +173,10 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.user.empty"));
         }
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(
-                gerritConfig.getGerritFrontEndUrl(),
-                isOverrideCredentials() ? httpUsername : gerritConfig.getGerritHttpUserName(),
-                isOverrideCredentials() ? httpPassword : gerritConfig.getGerritHttpPassword(),
-                gerritConfig.isUseRestApi());
+        String username = authConfig == null ? gerritConfig.getGerritHttpUserName() : authConfig.getUsername();
+        String password = authConfig == null ? gerritConfig.getGerritHttpPassword() : authConfig.getPassword();
+        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
+                username, password, gerritConfig.isUseRestApi());
         GerritApi gerritApi = gerritRestApiFactory.create(authData);
         try {
             String changeNStr = getEnvVar(run, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
@@ -208,24 +195,24 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
 
             // Step 4 - Filter issues by changed files
-            final Map<String, FileInfo> files = revision.files();
-            file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
-                @Override
-                public boolean apply(@Nullable String input) {
-                    return input != null && files.keySet().contains(input);
-                }
-            });
+            file2issuesToComment = filterIssuesByChangedFiles(file2issuesToComment, revision);
 
-//            logResultMap(file2issues, "Filter issues by changed files: {0} elements");
+//            logResultMap(file2issuesToComment, "Filter issues by changed files: {0} elements");
 
-            if (isChangedLinesOnly()) {
+            if (reviewIssueFilterConfig.isChangedLinesOnly()) {
                 // Step 4a - Filter issues by changed lines in file only
-                filterIssuesByChangedLines(file2issues, revision);
-//                logResultMap(file2issues, "Filter issues by changed lines: {0} elements");
+                filterIssuesByChangedLines(file2issuesToComment, revision);
+//                logResultMap(file2issuesToComment, "Filter issues by changed lines: {0} elements");
+            }
+
+            if (postScore() && scoreIssueFilterConfig.isChangedLinesOnly()) {
+                // Step 4a - Filter issues by changed lines in file only
+                filterIssuesByChangedLines(file2issuesToScore, revision);
+//                logResultMap(file2issuesToComment, "Filter issues by changed lines: {0} elements");
             }
 
             // Step 6 - Send review to Gerrit
-            ReviewInput reviewInput = getReviewResult(file2issues);
+            ReviewInput reviewInput = getReviewResult(file2issuesToComment, file2issuesToScore);
 
             // Step 7 - Post review
             revision.review(reviewInput);
@@ -236,15 +223,26 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         }
     }
 
+    private Multimap<String, Issue> filterIssuesByChangedFiles(Multimap<String, Issue> file2issues, RevisionApi revision) throws RestApiException {
+        final Map<String, FileInfo> files = revision.files();
+        file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
+            @Override
+            public boolean apply(@Nullable String input) {
+                return input != null && files.keySet().contains(input);
+            }
+        });
+        return file2issues;
+    }
+
     @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(List<ReportInfo> issueInfos) {
+    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(List<ReportInfo> issueInfos, IssueFilterConfig filter) {
         Multimap<String, Issue> file2issues = LinkedListMultimap.create();
         for (ReportInfo info : issueInfos) {
 
             Report report = info.report;
 
             // Step 1 - Filter issues by issues only predicates
-            Iterable<Issue> filtered = filterIssuesByPredicates(report.getIssues());
+            Iterable<Issue> filtered = filterIssuesByPredicates(report.getIssues(), filter);
 
             // Step 2 - Calculate real file name for issues and store to multimap
             file2issues.putAll(generateFilenameToIssuesMapFilteredByPredicates(info.directoryPath, report, filtered));
@@ -315,12 +313,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     private String getReviewMessage(Multimap<String, Issue> finalIssues) {
-        return new CustomReportFormatter(finalIssues.values(), someIssuesToPostText, noIssuesToPostText).getMessage();
+        return new CustomReportFormatter(finalIssues.values(), reviewConfig.getSomeIssuesTitleTemplate(), reviewConfig.getNoIssuesTitleTemplate()).getMessage();
     }
 
     private int getReviewMark(int finalIssuesCount) {
-        String mark = finalIssuesCount > 0 ? issuesScore : noIssuesScore;
-        return parseNumber(mark, DescriptorImpl.DEFAULT_SCORE);
+        Integer mark = finalIssuesCount > 0 ? scoreConfig.getIssuesScore() : scoreConfig.getNoIssuesScore();
+        return mark.intValue();
     }
 
     public List<SubJobConfig> getSubJobConfigs() {
@@ -331,9 +329,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         if (subJobConfigs == null) {
             subJobConfigs = new ArrayList<SubJobConfig>();
             // add configuration from previous plugin version
-            if (path != null || projectPath != null) {
-                subJobConfigs.add(new SubJobConfig(projectPath, path));
-            }
             if (addDefault) {
                 subJobConfigs.add(DescriptorImpl.JOB_CONFIG);
             }
@@ -341,38 +336,40 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return subJobConfigs;
     }
 
-    private NotifyHandling getNotificationSettings(int finalIssuesCount) {
-        return finalIssuesCount > 0 ?
-                NotifyHandling.valueOf(issuesNotification) :
-                NotifyHandling.valueOf(noIssuesNotification);
+    //todo replace by enum
+    private NotifyHandling getNotificationSettings(int finalIssuesToCommentCount, int score) {
+        return score < 0 ?
+                NotifyHandling.valueOf(notificationConfig.getNegativeScoreNotificationRecipient()) :
+                finalIssuesToCommentCount > 0 ?
+                        NotifyHandling.valueOf(notificationConfig.getCommentedIssuesNotificationRecipient()) :
+                        NotifyHandling.valueOf(notificationConfig.getNoIssuesNotificationRecipient());
     }
 
-    private int parseNumber(String number, int deflt) {
-        try {
-            return Integer.parseInt(number);
-        } catch (NumberFormatException e) {
-            return deflt;
-        }
-
-    }
+//    private int parseNumber(String number, int deflt) {
+//        try {
+//            return Integer.parseInt(number);
+//        } catch (NumberFormatException e) {
+//            return deflt;
+//        }
+//
+//    }
 
     @VisibleForTesting
-    ReviewInput getReviewResult(Multimap<String, Issue> finalIssues) {
-        String reviewMessage = getReviewMessage(finalIssues);
+    ReviewInput getReviewResult(Multimap<String, Issue> finalIssuesToComment, Multimap<String, Issue> finalIssuesToScore) {
+        String reviewMessage = getReviewMessage(finalIssuesToComment);
         ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
 
-        int finalIssuesCount = finalIssues.size();
 
-        reviewInput.notify = getNotificationSettings(finalIssuesCount);
-
-        if (postScore) {
-            reviewInput.label(category, getReviewMark(finalIssuesCount));
+        int score = postScore() ? getReviewMark(finalIssuesToScore.size()) : 0;
+        if (postScore()) {
+            reviewInput.label(scoreConfig.getCategory(), score);
         }
+        reviewInput.notify = getNotificationSettings(finalIssuesToComment.size(), score);
 
         reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-        for (String file : finalIssues.keySet()) {
+        for (String file : finalIssuesToComment.keySet()) {
             reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssues.get(file),
+                            Collections2.transform(finalIssuesToComment.get(file),
                                     new Function<Issue, ReviewInput.CommentInput>() {
                                         @Nullable
                                         @Override
@@ -383,7 +380,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                                             ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
                                             commentInput.id = input.getKey();
                                             commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, issueComment, getSonarURL()).getMessage();
+                                            commentInput.message = new CustomIssueFormatter(input, reviewConfig.getIssueCommentTemplate(), getSonarURL()).getMessage();
                                             return commentInput;
                                         }
 
@@ -426,12 +423,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @VisibleForTesting
-    Iterable<Issue> filterIssuesByPredicates(List<Issue> issues) {
-        Severity sev = Severity.valueOf(severity);
+    Iterable<Issue> filterIssuesByPredicates(List<Issue> issues, IssueFilterConfig filter) {
+        Severity sev = Severity.valueOf(filter.getSeverity());
         return Iterables.filter(issues,
                 Predicates.and(
-                        ByMinSeverityPredicate.apply(sev),
-                        ByNewPredicate.apply(isNewIssuesOnly()))
+                        ByMinSeverityPredicate.apply(sev),   // if Info - extra work
+                        ByNewPredicate.apply(filter.isNewIssuesOnly()))  // if false - extra work
         );
     }
 
@@ -475,27 +472,38 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
         public static final NotifyHandling NOTIFICATION_RECIPIENT_NO_ISSUES = NotifyHandling.NONE;
         public static final NotifyHandling NOTIFICATION_RECIPIENT_SOME_ISSUES = NotifyHandling.OWNER;
+        public static final NotifyHandling NOTIFICATION_RECIPIENT_NEGATIVE_SCORE = NotifyHandling.OWNER;
 
         public static final String PROJECT_PATH = "";
         public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
         public static final String SONAR_URL = "http://localhost:9000";
-        public static final String SEVERITY = Severity.MAJOR.name();
+
         public static final String NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
         public static final String SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");
         public static final String ISSUE_COMMENT_TEXT = Localization.getLocalized("jenkins.plugin.default.review.body");
-        public static final String NOTIFICATION_RECIPIENT_NO_ISSUES_STR = NOTIFICATION_RECIPIENT_NO_ISSUES.toString();
-        public static final String NOTIFICATION_RECIPIENT_SOME_ISSUES_STR = NOTIFICATION_RECIPIENT_SOME_ISSUES.toString();
+
         public static final String CATEGORY = "Code-Review";
-        public static final String NO_ISSUES_SCORE = "1";
-        public static final String SOME_ISSUES_SCORE = "-1";
-        public static final boolean POST_SCORE = true;
+        public static final Integer NO_ISSUES_SCORE = 1;
+        public static final Integer SOME_ISSUES_SCORE = -1;
+
         public static final boolean OVERRIDE_CREDENTIALS = false;
+
+        public static final String SEVERITY = Severity.INFO.name();
         public static final boolean NEW_ISSUES_ONLY = false;
         public static final boolean CHANGED_LINES_ONLY = false;
 
         public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
         public static final List<SubJobConfig> JOB_CONFIGS = Arrays.<SubJobConfig>asList(JOB_CONFIG);
+
+        public static final IssueFilterConfig COMMENT_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
+
+        public static final IssueFilterConfig SCORE_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
+
         public static final int DEFAULT_SCORE = 0;
+
+        public static final ReviewConfig REVIEW_CONFIG = new ReviewConfig(COMMENT_ISSUE_FILTER, NO_ISSUES_TEXT, SOME_ISSUES_TEXT, ISSUE_COMMENT_TEXT);
+
+        public static final NotificationConfig NOTIFICATION_CONFIG = new NotificationConfig(NOTIFICATION_RECIPIENT_NO_ISSUES, NOTIFICATION_RECIPIENT_SOME_ISSUES, NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
 
         /**
          * In order to load the persisted global configuration, you have to
@@ -516,198 +524,19 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          * will be displayed to the user.
          */
         @SuppressWarnings(value = "unused")
-        public FormValidation doCheckSonarURL(@QueryParameter String value)
-                throws IOException, ServletException {
-            if (value.trim().length() == 0) {
-                return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.empty"));
+        public FormValidation doCheckSonarURL(@QueryParameter String value) throws ServletException, IOException {
+            if (Util.fixEmptyAndTrim(value) == null) {
+                return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.empty"));
             }
             try {
                 new URL(value);
             } catch (MalformedURLException e) {
-                return FormValidation.warning(getLocalized("jenkins.plugin.validation.sonar.url.invalid"));
-            }
-            return FormValidation.ok();
-        }
-
-        public FormValidation doTestConnection(@QueryParameter("httpUsername") final String httpUsername,
-                                               @QueryParameter("httpPassword") final String httpPassword,
-                                               @QueryParameter("gerritServerName") final String gerritServerName) throws IOException, ServletException {
-            if (httpUsername == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.user.empty");
-            }
-            if (gerritServerName == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.server.empty");
-            }
-            IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
-            if (gerritConfig == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.config.empty");
-            }
-
-            if (!gerritConfig.isUseRestApi()) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.restapi.off");
-            }
-
-            GerritServer server = PluginImpl.getServer_(gerritServerName);
-            if (server == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.server.null");
-            }
-            return server.getDescriptor().doTestRestConnection(gerritConfig.getGerritFrontEndUrl(), httpUsername, httpPassword/*, gerritConfig.isUseRestApi()*/);
-
-        }
-
-        public List<String> getGerritServerNames() {
-            return PluginImpl.getServerNames_();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'noIssuesToPostText'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckNoIssuesToPostText(@QueryParameter String value) {
-            if (value.trim().length() == 0) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
-            }
-            return FormValidation.ok();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'someIssuesToPostText'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckSomeIssuesToPostText(@QueryParameter String value) {
-            if (value.trim().length() == 0) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.title.empty"));
-            }
-            return FormValidation.ok();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'issueComment'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckIssueComment(@QueryParameter String value) {
-            if (value.trim().length() == 0) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.body.empty"));
+                return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.invalid"));
             }
             return FormValidation.ok();
         }
 
         //todo validate subconfigs?
-
-        /**
-         * Performs on-the-fly validation of the form field 'severity'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckSeverity(@QueryParameter String value) {
-            if (value == null || Severity.valueOf(value) == null) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.severity.unknown"));
-            }
-            return FormValidation.ok();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'noIssuesScore'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckNoIssuesScore(@QueryParameter String value) {
-            return checkScore(value);
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'issuesScore'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckIssuesScore(@QueryParameter String value) {
-            return checkScore(value);
-        }
-
-        private FormValidation checkScore(@QueryParameter String value) {
-            try {
-                Integer.parseInt(value);
-            } catch (NumberFormatException e) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.score.not.numeric"));
-            }
-            return FormValidation.ok();
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'noIssuesNotification'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckNoIssuesNotification(@QueryParameter String value) {
-            return checkNotificationType(value);
-        }
-
-        /**
-         * Performs on-the-fly validation of the form field 'issuesNotification'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckIssuesNotification(@QueryParameter String value) {
-            return checkNotificationType(value);
-        }
-
-        private FormValidation checkNotificationType(@QueryParameter String value) {
-            if (value == null || NotifyHandling.valueOf(value) == null) {
-                return FormValidation.error(getLocalized("jenkins.plugin.validation.review.notification.recipient.unknown"));
-            }
-            return FormValidation.ok();
-        }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
@@ -725,76 +554,26 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     }
 
-    public String getSeverity() {
-        return severity;
-    }
-
-    public boolean isChangedLinesOnly() {
-        return changedLinesOnly;
-    }
-
-    public boolean isNewIssuesOnly() {
-        return newIssuesOnly;
-    }
-
     public String getSonarURL() {
         return sonarURL;
     }
 
-    public String getNoIssuesToPostText() {
-        return noIssuesToPostText;
-    }
-
-    public String getSomeIssuesToPostText() {
-        return someIssuesToPostText;
-    }
-
-    public
     @Nonnull
-    String getIssueComment() {
-        return issueComment;
+    public NotificationConfig getNotificationConfig() {
+        return notificationConfig;
     }
 
-    public boolean isOverrideCredentials() {
-        return overrideCredentials;
-    }
-
-    public String getHttpUsername() {
-        return httpUsername;
-    }
-
-    public String getHttpPassword() {
-        return httpPassword;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public boolean isPostScore() {
-        return postScore;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getNoIssuesScore() {
-        return noIssuesScore;
-    }
-
-    @SuppressWarnings(value = "unused")
-    public String getNoIssuesNotification() {
-        return noIssuesNotification;
-    }
-
-    @SuppressWarnings(value = "unused")
     @Nonnull
-    public String getIssuesNotification() {
-        return issuesNotification;
+    public ReviewConfig getReviewConfig() {
+        return reviewConfig;
     }
 
-    @SuppressWarnings(value = "unused")
-    public String getIssuesScore() {
-        return issuesScore;
+    public ScoreConfig getScoreConfig() {
+        return scoreConfig;
+    }
+
+    public GerritAuthenticationConfig getAuthConfig() {
+        return authConfig;
     }
 
     @DataBoundSetter
@@ -808,78 +587,25 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @DataBoundSetter
-    public void setSeverity(String severity) {
-        this.severity = MoreObjects.firstNonNull(severity, DescriptorImpl.SEVERITY);
+    public void setNotificationConfig(@Nonnull NotificationConfig notificationConfig) {
+        this.notificationConfig = notificationConfig;
     }
 
     @DataBoundSetter
-    public void setChangedLinesOnly(boolean changedLinesOnly) {
-        this.changedLinesOnly = changedLinesOnly;
+    public void setReviewConfig(@Nonnull ReviewConfig reviewConfig) {
+        this.reviewConfig = reviewConfig;
     }
 
     @DataBoundSetter
-    public void setNewIssuesOnly(boolean newIssuesOnly) {
-        this.newIssuesOnly = newIssuesOnly;
+    public void setScoreConfig(ScoreConfig scoreConfig) {
+        this.scoreConfig = scoreConfig;
     }
 
     @DataBoundSetter
-    public void setNoIssuesToPostText(String noIssuesToPostText) {
-        this.noIssuesToPostText = MoreObjects.firstNonNull(noIssuesToPostText, DescriptorImpl.NO_ISSUES_TEXT);
+    public void setAuthConfig(GerritAuthenticationConfig authConfig) {
+        this.authConfig = authConfig;
     }
 
-    @DataBoundSetter
-    public void setSomeIssuesToPostText(String someIssuesToPostText) {
-        this.someIssuesToPostText = MoreObjects.firstNonNull(someIssuesToPostText, DescriptorImpl.SOME_ISSUES_TEXT);
-    }
-
-    @DataBoundSetter
-    public void setIssueComment(@Nonnull String issueComment) {
-        this.issueComment = issueComment;//MoreObjects.firstNonNull(issueComment, DescriptorImpl.ISSUE_COMMENT_TEXT);
-    }
-
-    @DataBoundSetter
-    public void setOverrideCredentials(boolean overrideCredentials) {
-        this.overrideCredentials = overrideCredentials;
-    }
-
-    @DataBoundSetter
-    public void setHttpUsername(String httpUsername) {
-        this.httpUsername = httpUsername;
-    }
-
-    @DataBoundSetter
-    public void setHttpPassword(String httpPassword) {
-        this.httpPassword = httpPassword;
-    }
-
-    @DataBoundSetter
-    public void setPostScore(boolean postScore) {
-        this.postScore = postScore;
-    }
-
-    @DataBoundSetter
-    public void setCategory(String category) {
-        this.category = MoreObjects.firstNonNull(category, DescriptorImpl.CATEGORY);
-    }
-
-    @DataBoundSetter
-    public void setNoIssuesScore(String noIssuesScore) {
-        this.noIssuesScore = MoreObjects.firstNonNull(noIssuesScore, DescriptorImpl.NO_ISSUES_SCORE);
-    }
-
-    @DataBoundSetter
-    public void setIssuesScore(String issuesScore) {
-        this.issuesScore = MoreObjects.firstNonNull(issuesScore, DescriptorImpl.SOME_ISSUES_SCORE);
-    }
-
-    @DataBoundSetter
-    public void setNoIssuesNotification(String noIssuesNotification) {
-        this.noIssuesNotification = MoreObjects.firstNonNull(noIssuesNotification, DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR);
-    }
-
-    @DataBoundSetter
-    public void setIssuesNotification(String issuesNotification) {
-        this.issuesNotification = MoreObjects.firstNonNull(issuesNotification, DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES_STR);
-    }
+    //todo support old setters / getters?
 }
 
