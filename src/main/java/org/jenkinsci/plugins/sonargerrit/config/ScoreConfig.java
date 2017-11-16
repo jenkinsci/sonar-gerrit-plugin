@@ -43,7 +43,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
     @Nonnull
     private String category = DescriptorImpl.CATEGORY;
 
-    public ScoreConfig(IssueFilterConfig issueFilterConfig, String category, Integer issuesScore, Integer noIssuesScore) {
+    public ScoreConfig(IssueFilterConfig issueFilterConfig, String category, Integer noIssuesScore, Integer issuesScore) {
         this.issueFilterConfig = issueFilterConfig;
         this.category = category;
         this.noIssuesScore = noIssuesScore;
