@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.sonargerrit;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
@@ -11,8 +10,6 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.filter.util.DummyRevision;
-import org.jenkinsci.plugins.sonargerrit.filter.util.FileDiff;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -77,41 +74,8 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         publisher.setAuthConfig(null);
 
         publisher.setReviewConfig(new ReviewConfig());
-        Assert.assertEquals(ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE, publisher.getReviewConfig().getIssueCommentTemplate());
-        Assert.assertEquals("<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>", publisher.getReviewConfig().getIssueCommentTemplate());
-        Assert.assertEquals(ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE, publisher.getReviewConfig().getNoIssuesTitleTemplate());
-        Assert.assertEquals("SonarQube violations have not been found.", publisher.getReviewConfig().getNoIssuesTitleTemplate());
-        Assert.assertEquals(ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE, publisher.getReviewConfig().getSomeIssuesTitleTemplate());
-        Assert.assertEquals("<total_count> SonarQube violations have been found.", publisher.getReviewConfig().getSomeIssuesTitleTemplate());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.SEVERITY, publisher.getReviewConfig().getIssueFilterConfig().getSeverity());
-        Assert.assertEquals(Severity.INFO.toString(), publisher.getReviewConfig().getIssueFilterConfig().getSeverity());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY, publisher.getReviewConfig().getIssueFilterConfig().isNewIssuesOnly());
-        Assert.assertFalse(publisher.getReviewConfig().getIssueFilterConfig().isNewIssuesOnly());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY, publisher.getReviewConfig().getIssueFilterConfig().isChangedLinesOnly());
-        Assert.assertFalse(publisher.getReviewConfig().getIssueFilterConfig().isChangedLinesOnly());
-
         publisher.setNotificationConfig(new NotificationConfig());
-        Assert.assertEquals(NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR, publisher.getNotificationConfig().getNoIssuesNotificationRecipient());
-        Assert.assertEquals(NotifyHandling.NONE.toString(), publisher.getNotificationConfig().getNoIssuesNotificationRecipient());
-        Assert.assertEquals(NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES_STR, publisher.getNotificationConfig().getCommentedIssuesNotificationRecipient());
-        Assert.assertEquals(NotifyHandling.OWNER.toString(), publisher.getNotificationConfig().getCommentedIssuesNotificationRecipient());
-        Assert.assertEquals(NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE_STR, publisher.getNotificationConfig().getNegativeScoreNotificationRecipient());
-        Assert.assertEquals(NotifyHandling.OWNER.toString(), publisher.getNotificationConfig().getNegativeScoreNotificationRecipient());
-
         publisher.setScoreConfig(new ScoreConfig());
-        Assert.assertEquals(ScoreConfig.DescriptorImpl.CATEGORY, publisher.getScoreConfig().getCategory());
-        Assert.assertEquals("Code-Review", publisher.getScoreConfig().getCategory());
-        Assert.assertEquals(ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE, publisher.getScoreConfig().getNoIssuesScore());
-        Assert.assertEquals(1, publisher.getScoreConfig().getNoIssuesScore().intValue());
-        Assert.assertEquals(ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE, publisher.getScoreConfig().getIssuesScore());
-        Assert.assertEquals(-1, publisher.getScoreConfig().getIssuesScore().intValue());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.SEVERITY, publisher.getScoreConfig().getIssueFilterConfig().getSeverity());
-        Assert.assertEquals(Severity.INFO.toString(), publisher.getScoreConfig().getIssueFilterConfig().getSeverity());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY, publisher.getScoreConfig().getIssueFilterConfig().isNewIssuesOnly());
-        Assert.assertFalse(publisher.getScoreConfig().getIssueFilterConfig().isNewIssuesOnly());
-        Assert.assertEquals(IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY, publisher.getScoreConfig().getIssueFilterConfig().isChangedLinesOnly());
-        Assert.assertFalse(publisher.getScoreConfig().getIssueFilterConfig().isChangedLinesOnly());
-
     }
 
     protected Multimap<String, Issue> getMultimap() {
