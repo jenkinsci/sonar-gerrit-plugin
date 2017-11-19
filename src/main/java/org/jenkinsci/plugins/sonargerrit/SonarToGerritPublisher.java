@@ -72,13 +72,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private String sonarURL = DescriptorImpl.SONAR_URL;
 
     @Nonnull
-    private List<SubJobConfig> subJobConfigs = new ArrayList<>(DescriptorImpl.JOB_CONFIGS);
+    private List<SubJobConfig> subJobConfigs = DescriptorImpl.JOB_CONFIGS;
 
     @Nonnull
-    private NotificationConfig notificationConfig = DescriptorImpl.NOTIFICATION_CONFIG;
+    private NotificationConfig notificationConfig = new NotificationConfig(
+            DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES,
+            DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES,
+            DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
 
     @Nonnull
-    private ReviewConfig reviewConfig = DescriptorImpl.REVIEW_CONFIG;
+    private ReviewConfig reviewConfig = new ReviewConfig(
+            new IssueFilterConfig(
+                    DescriptorImpl.SEVERITY,
+                    DescriptorImpl.NEW_ISSUES_ONLY,
+                    DescriptorImpl.CHANGED_LINES_ONLY),
+            DescriptorImpl.NO_ISSUES_TEXT,
+            DescriptorImpl.SOME_ISSUES_TEXT,
+            DescriptorImpl.ISSUE_COMMENT_TEXT);
 
     private ScoreConfig scoreConfig = null;
 
@@ -461,8 +471,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
-     * <p>
-     * <p>
+     * <p/>
+     * <p/>
      * See <tt>src/main/resources/hudson/plugins/hello_world/SonarToGerritBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
@@ -493,17 +503,17 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final boolean CHANGED_LINES_ONLY = false;
 
         public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
-        public static final List<SubJobConfig> JOB_CONFIGS = Arrays.<SubJobConfig>asList(JOB_CONFIG);
+        public static final List<SubJobConfig> JOB_CONFIGS = new LinkedList<>(Arrays.asList(JOB_CONFIG));
 
-        public static final IssueFilterConfig COMMENT_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
+//        public static final IssueFilterConfig COMMENT_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
 
-        public static final IssueFilterConfig SCORE_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
+//        public static final IssueFilterConfig SCORE_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
 
         public static final int DEFAULT_SCORE = 0;
 
-        public static final ReviewConfig REVIEW_CONFIG = new ReviewConfig(COMMENT_ISSUE_FILTER, NO_ISSUES_TEXT, SOME_ISSUES_TEXT, ISSUE_COMMENT_TEXT);
+//        public static final ReviewConfig REVIEW_CONFIG = new ReviewConfig(COMMENT_ISSUE_FILTER, NO_ISSUES_TEXT, SOME_ISSUES_TEXT, ISSUE_COMMENT_TEXT);
 
-        public static final NotificationConfig NOTIFICATION_CONFIG = new NotificationConfig(NOTIFICATION_RECIPIENT_NO_ISSUES, NOTIFICATION_RECIPIENT_SOME_ISSUES, NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
+//        public static final NotificationConfig NOTIFICATION_CONFIG = new NotificationConfig(NOTIFICATION_RECIPIENT_NO_ISSUES, NOTIFICATION_RECIPIENT_SOME_ISSUES, NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
 
         /**
          * In order to load the persisted global configuration, you have to
@@ -518,7 +528,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
+         * <p/>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -563,6 +573,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return notificationConfig;
     }
 
+    //@SuppressWarnings(value = "unused")
     @Nonnull
     public ReviewConfig getReviewConfig() {
         return reviewConfig;
@@ -606,6 +617,180 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         this.authConfig = authConfig;
     }
 
-    //todo support old setters / getters?
+    // --------------deprecated methods to support back compatibility
+
+    @Deprecated
+    @DataBoundSetter
+    public void setSeverity(String severity) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
+        reviewFilterConfig.setSeverity(severity);
+
+        ScoreConfig scoreConfig = getScoreConfig();
+        if (scoreConfig != null) {
+            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
+            scoreFilterConfig.setSeverity(severity);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setNewIssuesOnly(Boolean changedLinesOnly) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
+        reviewFilterConfig.setNewIssuesOnly(changedLinesOnly);
+
+        ScoreConfig scoreConfig = getScoreConfig();
+        if (scoreConfig != null) {
+            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
+            scoreFilterConfig.setNewIssuesOnly(changedLinesOnly);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setChangedLinesOnly(Boolean changedLinesOnly) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
+        reviewFilterConfig.setChangedLinesOnly(changedLinesOnly);
+
+        ScoreConfig scoreConfig = getScoreConfig();
+        if (scoreConfig != null) {
+            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
+            scoreFilterConfig.setChangedLinesOnly(changedLinesOnly);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setNoIssuesToPostText(String noIssuesToPost) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        reviewConfig.setNoIssuesTitleTemplate(noIssuesToPost);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setSomeIssuesToPostText(String someIssuesToPost) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        reviewConfig.setSomeIssuesTitleTemplate(someIssuesToPost);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setIssueComment(String issueComment) {
+        ReviewConfig reviewConfig = getReviewConfig();
+        reviewConfig.setIssueCommentTemplate(issueComment);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setOverrideCredentials(Boolean overrideCredentials) {
+        if (overrideCredentials) {
+            if (authConfig == null) {
+                authConfig = new GerritAuthenticationConfig();
+            }
+        } else {
+            authConfig = null;
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setHttpUsername(String overrideHttpUsername) {
+        if (authConfig != null) {
+            authConfig.setUsername(overrideHttpUsername);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setHttpPassword(String overrideHttpPassword) {
+        if (authConfig != null) {
+            authConfig.setPassword(overrideHttpPassword);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setPostScore(Boolean postScore) {
+        if (postScore) {
+            if (scoreConfig == null) {
+                scoreConfig = new ScoreConfig();
+            }
+        } else {
+            scoreConfig = null;
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setCategory(String category) {
+        if (scoreConfig != null) {
+            scoreConfig.setCategory(category);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setNoIssuesScore(String score) {
+        if (scoreConfig != null) {
+            try {
+                scoreConfig.setNoIssuesScore(Integer.parseInt(score));
+            } catch (NumberFormatException nfe) {
+                // keep default
+            }
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setIssuesScore(String score) {
+        if (scoreConfig != null) {
+            try {
+                scoreConfig.setIssuesScore(Integer.parseInt(score));
+            } catch (NumberFormatException nfe) {
+                // keep default
+            }
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setNoIssuesNotification(String notification) {
+        notificationConfig.setNoIssuesNotificationRecipient(notification);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setIssuesNotification(String notification) {
+        notificationConfig.setCommentedIssuesNotificationRecipient(notification);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setProjectPath(String path) {
+        if (subJobConfigs == null || subJobConfigs.isEmpty() || subJobConfigs == DescriptorImpl.JOB_CONFIGS) {
+            subJobConfigs = new LinkedList<>();
+            SubJobConfig config = new SubJobConfig(path, null);
+            subJobConfigs.add(config);
+        } else if (subJobConfigs.size() == 1 && subJobConfigs.get(0).getProjectPath() == null) {
+            SubJobConfig config = subJobConfigs.get(0);
+            config.setProjectPath(path);
+        }
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setPath(String path) {
+        if (subJobConfigs == null || subJobConfigs.isEmpty() || subJobConfigs == DescriptorImpl.JOB_CONFIGS) {
+            subJobConfigs = new LinkedList<>();
+            SubJobConfig config = new SubJobConfig(null, path);
+            subJobConfigs.add(config);
+        } else if (subJobConfigs.size() == 1 && subJobConfigs.get(0).getProjectPath() == null) {
+            SubJobConfig config = subJobConfigs.get(0);
+            config.setSonarReportPath(path);
+        }
+    }
+
 }
 

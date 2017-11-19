@@ -23,7 +23,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
     /*
     * Filter to be used to extract issues that need to be commented in Gerrit
     * */
-    private IssueFilterConfig issueFilterConfig = DescriptorImpl.FILTER;
+    private IssueFilterConfig issueFilterConfig = new IssueFilterConfig();
 
     /*
     * A score to be applied to the category in case if there are no issues matching score issue filter found
@@ -52,7 +52,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @DataBoundConstructor
     public ScoreConfig() {
-        this(DescriptorImpl.FILTER, DescriptorImpl.CATEGORY, DescriptorImpl.NO_ISSUES_SCORE, DescriptorImpl.SOME_ISSUES_SCORE);
+        this(new IssueFilterConfig(), DescriptorImpl.CATEGORY, DescriptorImpl.NO_ISSUES_SCORE, DescriptorImpl.SOME_ISSUES_SCORE);
     }
 
     public IssueFilterConfig getIssueFilterConfig() {
@@ -101,7 +101,6 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @Extension
     public static class DescriptorImpl extends Descriptor<ScoreConfig> {
-        public static final IssueFilterConfig FILTER = SonarToGerritPublisher.DescriptorImpl.SCORE_ISSUE_FILTER;
         public static final String CATEGORY = SonarToGerritPublisher.DescriptorImpl.CATEGORY;
         public static final Integer NO_ISSUES_SCORE = SonarToGerritPublisher.DescriptorImpl.NO_ISSUES_SCORE;
         public static final Integer SOME_ISSUES_SCORE = SonarToGerritPublisher.DescriptorImpl.SOME_ISSUES_SCORE;

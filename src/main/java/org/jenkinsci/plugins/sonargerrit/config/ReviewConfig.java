@@ -24,7 +24,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
    * Filter to be used to extract issues that need to be commented in Gerrit
    * */
     @Nonnull
-    private IssueFilterConfig issueFilterConfig = DescriptorImpl.FILTER;
+    private IssueFilterConfig issueFilterConfig = new IssueFilterConfig();
 
     /*
     *  Gerrit review title when matching the review filter issues are found and commented
@@ -53,7 +53,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     @DataBoundConstructor
     public ReviewConfig() {
-        this(DescriptorImpl.FILTER, DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE, DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE, DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
+        this(new IssueFilterConfig(), DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE, DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE, DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
     }
 
     public IssueFilterConfig getIssueFilterConfig() {
@@ -105,7 +105,6 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         public static final String NO_ISSUES_TITLE_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.NO_ISSUES_TEXT;
         public static final String SOME_ISSUES_TITLE_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.SOME_ISSUES_TEXT;
         public static final String ISSUE_COMMENT_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.ISSUE_COMMENT_TEXT;
-        public static final IssueFilterConfig FILTER = SonarToGerritPublisher.DescriptorImpl.COMMENT_ISSUE_FILTER;
 
         /**
          * Performs on-the-fly validation of the form field 'noIssuesTitleTemplate'.

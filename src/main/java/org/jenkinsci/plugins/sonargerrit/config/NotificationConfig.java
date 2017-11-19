@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -64,7 +66,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setNoIssuesNotificationRecipient(@Nonnull String noIssuesNotificationRecipient) {
-        this.noIssuesNotificationRecipient = noIssuesNotificationRecipient;
+        this.noIssuesNotificationRecipient = MoreObjects.firstNonNull(noIssuesNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR);
     }
 
     @Nonnull
@@ -74,7 +76,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setCommentedIssuesNotificationRecipient(@Nonnull String commentedIssuesNotificationRecipient) {
-        this.commentedIssuesNotificationRecipient = commentedIssuesNotificationRecipient;
+        this.commentedIssuesNotificationRecipient = MoreObjects.firstNonNull(commentedIssuesNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES_STR);
     }
 
     @Nonnull
@@ -84,7 +86,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setNegativeScoreNotificationRecipient(@Nonnull String negativeScoreNotificationRecipient) {
-        this.negativeScoreNotificationRecipient = negativeScoreNotificationRecipient;
+        this.negativeScoreNotificationRecipient = MoreObjects.firstNonNull(negativeScoreNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE_STR);
     }
 
     @Override

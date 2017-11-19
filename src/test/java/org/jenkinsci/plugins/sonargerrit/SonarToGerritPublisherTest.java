@@ -157,13 +157,13 @@
 //    @Test
 //    public void getReviewResultTest() throws InterruptedException, IOException, URISyntaxException, RestApiException {
 //        Multimap<String, Issue> emptyIssues = LinkedListMultimap.create();
-//        Multimap<String, Issue> finalIssues = LinkedListMultimap.create();
-//        finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
-//        finalIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
+//        Multimap<String, Issue> scoreIssues = LinkedListMultimap.create();
+//        scoreIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
+//        scoreIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
 //
 //        // Test 1. Several comments, negative score for custom label "Test", negative score notification
 //        SonarToGerritPublisher publisher = buildPublisher(Severity.INFO);
-//        ReviewInput reviewResult = publisher.getReviewResult(finalIssues, finalIssues);
+//        ReviewInput reviewResult = publisher.getReviewResult(scoreIssues, scoreIssues);
 //        Assert.assertEquals("Some Issues Header", reviewResult.message);
 //        Assert.assertEquals(1, reviewResult.comments.size());
 //        Assert.assertEquals(1, reviewResult.labels.size());
@@ -175,7 +175,7 @@
 //        publisher.setPostScore(false);
 //        publisher.setNoIssuesNotification(null);
 //        publisher.setIssuesNotification(null);
-//        reviewResult = publisher.getReviewResult(finalIssues, finalIssues);
+//        reviewResult = publisher.getReviewResult(scoreIssues, scoreIssues);
 //        Assert.assertEquals("Some Issues Header", reviewResult.message);
 //        Assert.assertEquals(1, reviewResult.comments.size());
 //        Assert.assertEquals(null, reviewResult.labels);
@@ -187,7 +187,7 @@
 //        publisher.setIssuesScore("0");
 //        publisher.setNoIssuesNotification(null);
 //        publisher.setIssuesNotification(null);
-//        reviewResult = publisher.getReviewResult(finalIssues, finalIssues);
+//        reviewResult = publisher.getReviewResult(scoreIssues, scoreIssues);
 //        Assert.assertEquals("Some Issues Header", reviewResult.message);
 //        Assert.assertEquals(1, reviewResult.comments.size());
 //        Assert.assertEquals(1, reviewResult.labels.size());
@@ -200,7 +200,7 @@
 //        publisher.setNoIssuesNotification("NONE");
 //        publisher.setIssuesNotification("ALL");
 //
-//        reviewResult = publisher.getReviewResult(finalIssues, emptyIssues);
+//        reviewResult = publisher.getReviewResult(scoreIssues, emptyIssues);
 //        Assert.assertEquals("Some Issues Header", reviewResult.message);
 //        Assert.assertEquals(1, reviewResult.comments.size());
 //        Assert.assertEquals(1, reviewResult.labels.size());
@@ -211,8 +211,8 @@
 //        publisher.setNoIssuesNotification(null);
 //        publisher.setIssuesNotification(null);
 //
-//        finalIssues = LinkedListMultimap.create();
-//        reviewResult = publisher.getReviewResult(finalIssues, finalIssues);
+//        scoreIssues = LinkedListMultimap.create();
+//        reviewResult = publisher.getReviewResult(scoreIssues, scoreIssues);
 //        Assert.assertEquals("No Issues Header", reviewResult.message);
 //        Assert.assertEquals(0, reviewResult.comments.size());
 //        Assert.assertEquals(1, reviewResult.labels.size());
@@ -222,8 +222,8 @@
 //        publisher = buildPublisher(Severity.INFO);
 //        publisher.setNoIssuesNotification("OWNER_REVIEWERS");
 //        publisher.setIssuesNotification("ALL");
-//        finalIssues = LinkedListMultimap.create();
-//        reviewResult = publisher.getReviewResult(finalIssues, finalIssues);
+//        scoreIssues = LinkedListMultimap.create();
+//        reviewResult = publisher.getReviewResult(scoreIssues, scoreIssues);
 //        Assert.assertEquals("No Issues Header", reviewResult.message);
 //        Assert.assertEquals(0, reviewResult.comments.size());
 //        Assert.assertEquals(1, reviewResult.labels.size());

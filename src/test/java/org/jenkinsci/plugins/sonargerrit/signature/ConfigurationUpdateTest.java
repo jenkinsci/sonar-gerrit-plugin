@@ -19,16 +19,33 @@ import java.util.Collection;
  * $Id$
  */
 
+/*
+* Reflection methods for tests to be triggered on plugin signature changes
+* */
+
 public class ConfigurationUpdateTest {
 
     protected Object readFieldValue(Object obj, String... field) throws ReflectiveOperationException {
         Object res = null;
         Object object = obj;
         for (String f : field) {
-            Field wm = object.getClass().getDeclaredField(f);
+            Field wm = null;
+            Class<?> aClass = object.getClass();
+            do {
+                try {
+                    wm = aClass.getDeclaredField(f);
+                } catch (NoSuchFieldException e) {
+                    Class<?> superclass = aClass.getSuperclass();
+                    if (superclass != null && superclass.getPackage().toString().contains("sonargerrit")) {
+                        aClass = superclass;
+                    } else {
+                        throw e;
+                    }
+                }
+            } while (wm == null);
             wm.setAccessible(true);
             res = wm.get(object);
-            if (res instanceof Collection){
+            if (res instanceof Collection) {
                 res = ((Collection) res).toArray()[0];
             }
             object = res;
@@ -42,11 +59,13 @@ public class ConfigurationUpdateTest {
 
     protected void invokeSetter(SonarToGerritPublisher obj, String field, Object value, boolean deprecated) throws ReflectiveOperationException {
         PropertyDescriptor e1 = PropertyUtils.getPropertyDescriptor(obj, field);
-        Assert.assertNotNull(e1); // check setter method exists
+        Assert.assertNotNull(String.format("There is no public setter for field %s", field), e1); // check setter method exists
         Method wm1 = e1.getWriteMethod();
-        Assert.assertNotNull(wm1.getAnnotation(DataBoundSetter.class));  // check setter method annotated
+        Assert.assertNotNull(String.format("There is no annotation @DataBoundSetter for setter for field %s", field),
+                wm1.getAnnotation(DataBoundSetter.class));  // check setter method annotated
         if (deprecated) {
-            Assert.assertNotNull(wm1.getAnnotation(Deprecated.class));  // check setter method deprecated
+            Assert.assertNotNull(String.format("Setter for field %s should be marked as @deprecated", field),
+                    wm1.getAnnotation(Deprecated.class));  // check setter method deprecated
         }
         wm1.setAccessible(true);
         wm1.invoke(obj, value);

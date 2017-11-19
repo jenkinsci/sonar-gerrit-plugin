@@ -30,6 +30,14 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
         return sonarReportPath;
     }
 
+    public void setProjectPath(String projectPath) {
+        this.projectPath = projectPath;
+    }
+
+    public void setSonarReportPath(String sonarReportPath) {
+        this.sonarReportPath = sonarReportPath;
+    }
+
     @Extension
     public static class DescriptorImpl extends Descriptor<SubJobConfig> {
         public String getDisplayName() {

@@ -12,7 +12,9 @@ import java.util.List;
  * Author:  Tatiana Didik
  * Created: 17.11.2017 20:56
  * $Id$
- * <p/>
+ * */
+
+/*
  * If this test fails then probably SonarToGerritPublisher's signature has changed.
  * In order to save plugin configuration that was set up with old configuration, it
  * is necessary to keep old setter methods, mark them as @Deprecated and move test to
@@ -20,6 +22,15 @@ import java.util.List;
  */
 
 public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest {
+
+    @Test
+    public void testSetSonarURL() throws ReflectiveOperationException {
+        SonarToGerritPublisher p = invokeConstructor();
+        String sonarURL = "test";
+        Assert.assertNotSame(sonarURL, readFieldValue(p, "sonarURL"));
+        invokeSetter(p, "sonarURL", "test");
+        Assert.assertEquals("test", readFieldValue(p, "sonarURL"));
+    }
 
     @Test
     public void testSubJobConfig() throws ReflectiveOperationException {
