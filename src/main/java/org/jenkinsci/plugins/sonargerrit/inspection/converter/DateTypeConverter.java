@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.data.converter;
+package org.jenkinsci.plugins.sonargerrit.inspection.converter;
 
 import com.google.gson.*;
 import org.apache.commons.httpclient.util.DateParseException;

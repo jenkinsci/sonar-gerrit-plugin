@@ -1,10 +1,9 @@
-package org.jenkinsci.plugins.sonargerrit.data.converter;
+package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.data.predicates.ByExactSeverityPredicate;
-import org.jenkinsci.plugins.sonargerrit.data.predicates.ByMinSeverityPredicate;
-import org.jenkinsci.plugins.sonargerrit.util.Localization;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByExactSeverityPredicate;
+import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByMinSeverityPredicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 

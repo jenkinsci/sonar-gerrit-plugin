@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.sonargerrit;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.data.entity;
+package org.jenkinsci.plugins.sonargerrit.inspection.entity;
 
 /**
  * Project: Sonar-Gerrit Plugin

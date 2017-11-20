@@ -6,7 +6,7 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;

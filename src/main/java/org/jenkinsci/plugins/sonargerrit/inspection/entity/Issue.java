@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.data.entity;
+package org.jenkinsci.plugins.sonargerrit.inspection.entity;
 
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

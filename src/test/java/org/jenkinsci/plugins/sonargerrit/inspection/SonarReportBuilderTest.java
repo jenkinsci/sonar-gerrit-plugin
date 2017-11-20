@@ -1,7 +1,7 @@
-package org.jenkinsci.plugins.sonargerrit.data;
+package org.jenkinsci.plugins.sonargerrit.inspection;
 
 import hudson.FilePath;
-import org.jenkinsci.plugins.sonargerrit.data.entity.*;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.*;
 import org.junit.Assert;
 import org.junit.Test;
 

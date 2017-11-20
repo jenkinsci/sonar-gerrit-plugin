@@ -1,7 +1,7 @@
-package org.jenkinsci.plugins.sonargerrit.data.predicates;
+package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import com.google.common.base.Predicate;
 
 /**

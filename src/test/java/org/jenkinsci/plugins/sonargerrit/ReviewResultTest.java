@@ -2,20 +2,14 @@ package org.jenkinsci.plugins.sonargerrit;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import com.google.gerrit.extensions.restapi.RestApiException;
-import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * Project: Sonar-Gerrit Plugin

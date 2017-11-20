@@ -9,10 +9,10 @@
 //import junit.framework.Assert;
 //import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 //import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
-//import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
-//import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-//import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
-//import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+//import org.jenkinsci.plugins.sonargerrit.inspection.SonarReportBuilder;
+//import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+//import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
+//import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 //import org.junit.Test;
 //
 //import java.io.File;

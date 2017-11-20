@@ -1,6 +1,6 @@
-package org.jenkinsci.plugins.sonargerrit.data.predicates;
+package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import com.google.common.base.Predicate;
 
 /**

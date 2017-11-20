@@ -1,7 +1,6 @@
-package org.jenkinsci.plugins.sonargerrit.data.converter;
+package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.util.Localization;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

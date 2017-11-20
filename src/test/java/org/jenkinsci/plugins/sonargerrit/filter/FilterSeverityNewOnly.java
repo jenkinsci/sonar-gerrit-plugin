@@ -2,8 +2,8 @@ package org.jenkinsci.plugins.sonargerrit.filter;
 
 import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.filter.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;

@@ -2,13 +2,12 @@ package org.jenkinsci.plugins.sonargerrit.filter;
 
 import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 
 /**
  * Project: Sonar-Gerrit Plugin

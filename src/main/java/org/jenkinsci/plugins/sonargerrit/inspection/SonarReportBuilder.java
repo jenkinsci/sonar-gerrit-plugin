@@ -1,7 +1,7 @@
-package org.jenkinsci.plugins.sonargerrit.data;
+package org.jenkinsci.plugins.sonargerrit.inspection;
 
-import org.jenkinsci.plugins.sonargerrit.data.converter.DateTypeConverter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
+import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import com.google.gson.*;
 
 import java.util.Date;

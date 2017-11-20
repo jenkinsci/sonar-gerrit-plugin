@@ -4,9 +4,9 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import hudson.FilePath;
-import org.jenkinsci.plugins.sonargerrit.data.SonarReportBuilder;
-import org.jenkinsci.plugins.sonargerrit.data.converter.DateTypeConverter;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Report;
+import org.jenkinsci.plugins.sonargerrit.inspection.SonarReportBuilder;
+import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.filter.util.DummyRevision;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.data.converter;
+package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
 /**
  * Project: Sonar-Gerrit Plugin

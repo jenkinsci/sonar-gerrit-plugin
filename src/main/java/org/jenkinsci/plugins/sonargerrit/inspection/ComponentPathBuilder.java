@@ -1,9 +1,9 @@
-package org.jenkinsci.plugins.sonargerrit.data;
+package org.jenkinsci.plugins.sonargerrit.inspection;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
-import org.jenkinsci.plugins.sonargerrit.data.entity.Component;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Component;
 
 import java.util.List;
 import java.util.Map;
