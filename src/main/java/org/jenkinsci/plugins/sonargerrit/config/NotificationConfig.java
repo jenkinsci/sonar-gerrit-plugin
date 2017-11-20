@@ -1,13 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -43,15 +43,13 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
     private String negativeScoreNotificationRecipient = DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE.name();
 
     public NotificationConfig(@Nonnull String noIssuesNotificationRecipient, @Nonnull String commentedIssuesNotificationRecipient, @Nonnull String negativeScoreNotificationRecipient) {
-        this.noIssuesNotificationRecipient = noIssuesNotificationRecipient;
-        this.commentedIssuesNotificationRecipient = commentedIssuesNotificationRecipient;
-        this.negativeScoreNotificationRecipient = negativeScoreNotificationRecipient;
+        setNoIssuesNotificationRecipient(noIssuesNotificationRecipient);
+        setCommentedIssuesNotificationRecipient(commentedIssuesNotificationRecipient);
+        setNegativeScoreNotificationRecipient(negativeScoreNotificationRecipient);
     }
 
     public NotificationConfig(@Nonnull NotifyHandling noIssuesNotificationRecipient, @Nonnull NotifyHandling commentedIssuesNotificationRecipient, @Nonnull NotifyHandling negativeScoreNotificationRecipient) {
-        this.noIssuesNotificationRecipient = noIssuesNotificationRecipient.name();
-        this.commentedIssuesNotificationRecipient = commentedIssuesNotificationRecipient.name();
-        this.negativeScoreNotificationRecipient = negativeScoreNotificationRecipient.name();
+        this(noIssuesNotificationRecipient.name(), commentedIssuesNotificationRecipient.name(), negativeScoreNotificationRecipient.name());
     }
 
     @DataBoundConstructor
@@ -66,6 +64,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setNoIssuesNotificationRecipient(@Nonnull String noIssuesNotificationRecipient) {
+        noIssuesNotificationRecipient = DataHelper.checkEnumValueCorrect(NotifyHandling.class, noIssuesNotificationRecipient);
         this.noIssuesNotificationRecipient = MoreObjects.firstNonNull(noIssuesNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES_STR);
     }
 
@@ -76,6 +75,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setCommentedIssuesNotificationRecipient(@Nonnull String commentedIssuesNotificationRecipient) {
+        commentedIssuesNotificationRecipient = DataHelper.checkEnumValueCorrect(NotifyHandling.class, commentedIssuesNotificationRecipient);
         this.commentedIssuesNotificationRecipient = MoreObjects.firstNonNull(commentedIssuesNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES_STR);
     }
 
@@ -86,6 +86,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
 
     @DataBoundSetter
     public void setNegativeScoreNotificationRecipient(@Nonnull String negativeScoreNotificationRecipient) {
+        negativeScoreNotificationRecipient = DataHelper.checkEnumValueCorrect(NotifyHandling.class, negativeScoreNotificationRecipient);
         this.negativeScoreNotificationRecipient = MoreObjects.firstNonNull(negativeScoreNotificationRecipient, DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE_STR);
     }
 
@@ -109,7 +110,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
+         * <p/>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -124,7 +125,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
+         * <p/>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -139,7 +140,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
+         * <p/>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.

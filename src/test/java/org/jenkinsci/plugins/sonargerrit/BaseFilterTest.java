@@ -68,7 +68,8 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
         publisher.setSonarURL(SonarToGerritPublisher.DescriptorImpl.SONAR_URL);
 
-        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
+
+//        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
         Assert.assertEquals(1, publisher.getSubJobConfigs().size());
 
         publisher.setAuthConfig(null);

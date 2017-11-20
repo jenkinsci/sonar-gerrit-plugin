@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import com.google.common.base.MoreObjects;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -18,8 +21,8 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
 
     @DataBoundConstructor
     public SubJobConfig(String projectPath, String sonarReportPath) {
-        this.projectPath = projectPath;
-        this.sonarReportPath = sonarReportPath;
+        setProjectPath(projectPath);
+        setSonarReportPath(sonarReportPath);
     }
 
     public String getProjectPath() {
@@ -31,11 +34,11 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
     }
 
     public void setProjectPath(String projectPath) {
-        this.projectPath = projectPath;
+        this.projectPath = MoreObjects.firstNonNull(projectPath, SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH);
     }
 
     public void setSonarReportPath(String sonarReportPath) {
-        this.sonarReportPath = sonarReportPath;
+        this.sonarReportPath = MoreObjects.firstNonNull(sonarReportPath, SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
     }
 
     @Extension

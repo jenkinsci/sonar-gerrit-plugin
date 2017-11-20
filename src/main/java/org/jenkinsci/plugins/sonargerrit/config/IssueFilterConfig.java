@@ -1,11 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import com.google.common.base.MoreObjects;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.data.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -25,9 +27,9 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
     private boolean changedLinesOnly;
 
     public IssueFilterConfig(String severity, boolean newIssuesOnly, boolean changedLinesOnly) {
-        this.severity = severity;
-        this.newIssuesOnly = newIssuesOnly;
-        this.changedLinesOnly = changedLinesOnly;
+        setSeverity(severity);
+        setNewIssuesOnly(newIssuesOnly);
+        setChangedLinesOnly(changedLinesOnly);
     }
 
     @DataBoundConstructor
@@ -49,7 +51,8 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
 
     @DataBoundSetter
     public void setSeverity(String severity) {
-        this.severity = severity;
+        severity = DataHelper.checkEnumValueCorrect(Severity.class, severity);
+        this.severity = MoreObjects.firstNonNull(severity, DescriptorImpl.SEVERITY);
     }
 
     @DataBoundSetter
@@ -78,7 +81,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
+         * <p/>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.

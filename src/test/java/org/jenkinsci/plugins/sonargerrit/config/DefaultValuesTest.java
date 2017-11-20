@@ -1,7 +1,7 @@
-package org.jenkinsci.plugins.sonargerrit;
+package org.jenkinsci.plugins.sonargerrit.config;
 
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.config.*;
+import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Test;
 
 /**
@@ -11,7 +11,7 @@ import org.junit.Test;
  * <p/>
  * $Id$
  */
-public class DefaultValuesTest {
+public class DefaultValuesTest implements BaseConfigTest {
 
     public static final String SEVERITY = "INFO";
     public static final boolean NEW_ONLY = false;

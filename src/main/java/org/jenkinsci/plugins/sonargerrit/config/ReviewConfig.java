@@ -1,10 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import com.google.common.base.MoreObjects;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -45,10 +48,10 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
     private String issueCommentTemplate = DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
 
     public ReviewConfig(@Nonnull IssueFilterConfig issueFilterConfig, @Nonnull String noIssuesTitleTemplate, @Nonnull String someIssuesTitleTemplate, @Nonnull String issueCommentTemplate) {
-        this.issueFilterConfig = issueFilterConfig;
-        this.noIssuesTitleTemplate = noIssuesTitleTemplate;
-        this.someIssuesTitleTemplate = someIssuesTitleTemplate;
-        this.issueCommentTemplate = issueCommentTemplate;
+        setIssueFilterConfig(issueFilterConfig);
+        setNoIssuesTitleTemplate(noIssuesTitleTemplate);
+        setSomeIssuesTitleTemplate(someIssuesTitleTemplate);
+        setIssueCommentTemplate(issueCommentTemplate);
     }
 
     @DataBoundConstructor
@@ -62,7 +65,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     @DataBoundSetter
     public void setIssueFilterConfig(IssueFilterConfig issueFilterConfig) {
-        this.issueFilterConfig = issueFilterConfig;
+        this.issueFilterConfig = MoreObjects.firstNonNull(issueFilterConfig, new IssueFilterConfig());
     }
 
     @Nonnull
@@ -72,7 +75,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     @DataBoundSetter
     public void setSomeIssuesTitleTemplate(@Nonnull String someIssuesTitleTemplate) {
-        this.someIssuesTitleTemplate = someIssuesTitleTemplate;
+        this.someIssuesTitleTemplate = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(someIssuesTitleTemplate), DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE);
     }
 
     @Nonnull
@@ -82,7 +85,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     @DataBoundSetter
     public void setNoIssuesTitleTemplate(@Nonnull String noIssuesTitleTemplate) {
-        this.noIssuesTitleTemplate = noIssuesTitleTemplate;
+        this.noIssuesTitleTemplate = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(noIssuesTitleTemplate), DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE);
     }
 
     @Nonnull
@@ -92,7 +95,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     @DataBoundSetter
     public void setIssueCommentTemplate(@Nonnull String issueCommentTemplate) {
-        this.issueCommentTemplate = issueCommentTemplate;
+        this.issueCommentTemplate = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(issueCommentTemplate), DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
     }
 
     @Override

@@ -72,23 +72,14 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private String sonarURL = DescriptorImpl.SONAR_URL;
 
     @Nonnull
-    private List<SubJobConfig> subJobConfigs = DescriptorImpl.JOB_CONFIGS;
+    private List<SubJobConfig> subJobConfigs = new LinkedList<>(Arrays.asList(
+            new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH)));
 
     @Nonnull
-    private NotificationConfig notificationConfig = new NotificationConfig(
-            DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES,
-            DescriptorImpl.NOTIFICATION_RECIPIENT_SOME_ISSUES,
-            DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
+    private NotificationConfig notificationConfig = new NotificationConfig();
 
     @Nonnull
-    private ReviewConfig reviewConfig = new ReviewConfig(
-            new IssueFilterConfig(
-                    DescriptorImpl.SEVERITY,
-                    DescriptorImpl.NEW_ISSUES_ONLY,
-                    DescriptorImpl.CHANGED_LINES_ONLY),
-            DescriptorImpl.NO_ISSUES_TEXT,
-            DescriptorImpl.SOME_ISSUES_TEXT,
-            DescriptorImpl.ISSUE_COMMENT_TEXT);
+    private ReviewConfig reviewConfig = new ReviewConfig();
 
     private ScoreConfig scoreConfig = null;
 
@@ -340,7 +331,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             subJobConfigs = new ArrayList<SubJobConfig>();
             // add configuration from previous plugin version
             if (addDefault) {
-                subJobConfigs.add(DescriptorImpl.JOB_CONFIG);
+                subJobConfigs.add(new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH));
             }
         }
         return subJobConfigs;
@@ -502,8 +493,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final boolean NEW_ISSUES_ONLY = false;
         public static final boolean CHANGED_LINES_ONLY = false;
 
-        public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
-        public static final List<SubJobConfig> JOB_CONFIGS = new LinkedList<>(Arrays.asList(JOB_CONFIG));
+//        public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
+//        public static final List<SubJobConfig> JOB_CONFIGS = new LinkedList<>(Arrays.asList(JOB_CONFIG));
 
 //        public static final IssueFilterConfig COMMENT_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
 
@@ -589,22 +580,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @DataBoundSetter
     public void setSonarURL(String sonarURL) {
-        this.sonarURL = MoreObjects.firstNonNull(sonarURL, DescriptorImpl.SONAR_URL);
+        this.sonarURL = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(sonarURL), DescriptorImpl.SONAR_URL);
     }
 
     @DataBoundSetter
     public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) { // todo check sjc pats != null
-        this.subJobConfigs = MoreObjects.firstNonNull(subJobConfigs, DescriptorImpl.JOB_CONFIGS);
+        this.subJobConfigs = MoreObjects.firstNonNull(subJobConfigs, new LinkedList<SubJobConfig>(Arrays.asList(
+                new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH))));
     }
 
     @DataBoundSetter
     public void setNotificationConfig(@Nonnull NotificationConfig notificationConfig) {
-        this.notificationConfig = notificationConfig;
+        this.notificationConfig = MoreObjects.firstNonNull(notificationConfig, new NotificationConfig());
     }
 
     @DataBoundSetter
     public void setReviewConfig(@Nonnull ReviewConfig reviewConfig) {
-        this.reviewConfig = reviewConfig;
+        this.reviewConfig = MoreObjects.firstNonNull(reviewConfig, new ReviewConfig());
     }
 
     @DataBoundSetter
@@ -769,7 +761,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @Deprecated
     @DataBoundSetter
     public void setProjectPath(String path) {
-        if (subJobConfigs == null || subJobConfigs.isEmpty() || subJobConfigs == DescriptorImpl.JOB_CONFIGS) {
+        //todo
+        if (subJobConfigs == null || subJobConfigs.isEmpty() || isDefaultConfig()) {
             subJobConfigs = new LinkedList<>();
             SubJobConfig config = new SubJobConfig(path, null);
             subJobConfigs.add(config);
@@ -782,7 +775,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @Deprecated
     @DataBoundSetter
     public void setPath(String path) {
-        if (subJobConfigs == null || subJobConfigs.isEmpty() || subJobConfigs == DescriptorImpl.JOB_CONFIGS) {
+        //todo
+        if (subJobConfigs == null || subJobConfigs.isEmpty() || isDefaultConfig()) {
             subJobConfigs = new LinkedList<>();
             SubJobConfig config = new SubJobConfig(null, path);
             subJobConfigs.add(config);
@@ -790,6 +784,12 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             SubJobConfig config = subJobConfigs.get(0);
             config.setSonarReportPath(path);
         }
+    }
+
+    protected boolean isDefaultConfig() {
+        return subJobConfigs.size() == 1
+                && subJobConfigs.get(0).getSonarReportPath() == DescriptorImpl.SONAR_REPORT_PATH
+                && subJobConfigs.get(0).getProjectPath() == DescriptorImpl.PROJECT_PATH;
     }
 
 }

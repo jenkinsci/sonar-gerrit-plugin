@@ -1,10 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import com.google.common.base.MoreObjects;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -44,10 +47,10 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
     private String category = DescriptorImpl.CATEGORY;
 
     public ScoreConfig(IssueFilterConfig issueFilterConfig, String category, Integer noIssuesScore, Integer issuesScore) {
-        this.issueFilterConfig = issueFilterConfig;
-        this.category = category;
-        this.noIssuesScore = noIssuesScore;
-        this.issuesScore = issuesScore;
+        setIssueFilterConfig(issueFilterConfig);
+        setCategory(category);
+        setNoIssuesScore(noIssuesScore);
+        setIssuesScore(issuesScore);
     }
 
     @DataBoundConstructor
@@ -61,7 +64,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @DataBoundSetter
     public void setIssueFilterConfig(IssueFilterConfig scoreIssueFilterConfig) {
-        this.issueFilterConfig = scoreIssueFilterConfig;
+        this.issueFilterConfig = MoreObjects.firstNonNull(scoreIssueFilterConfig, new IssueFilterConfig());
     }
 
     @Nonnull
@@ -71,7 +74,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @DataBoundSetter
     public void setNoIssuesScore(@Nonnull Integer noIssuesScore) {
-        this.noIssuesScore = noIssuesScore;
+        this.noIssuesScore = MoreObjects.firstNonNull(noIssuesScore, DescriptorImpl.NO_ISSUES_SCORE);
     }
 
     @Nonnull
@@ -81,7 +84,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @DataBoundSetter
     public void setIssuesScore(@Nonnull Integer issuesScore) {
-        this.issuesScore = issuesScore;
+        this.issuesScore = MoreObjects.firstNonNull(issuesScore, DescriptorImpl.SOME_ISSUES_SCORE);
     }
 
     @Nonnull
@@ -91,7 +94,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
 
     @DataBoundSetter
     public void setCategory(@Nonnull String category) {
-        this.category = category;
+        this.category = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(category), DescriptorImpl.CATEGORY);
     }
 
     @Override
