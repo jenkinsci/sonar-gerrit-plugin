@@ -18,25 +18,25 @@ public abstract class FilterSeverityNewOnly extends BaseFilterTest<Pair<String, 
 
     @Test
     public void testInfoSeverity() {
-        doCheckSeverityNew(Severity.INFO, true, 1);
+        doCheckSeverityNew(Severity.INFO, true, 2);
         doCheckSeverityNew(Severity.INFO, false, 19);
     }
 
     @Test
     public void testMinorSeverity() {
-        doCheckSeverityNew(Severity.MINOR, true, 1);
+        doCheckSeverityNew(Severity.MINOR, true, 2);
         doCheckSeverityNew(Severity.MINOR, false, 18);
     }
 
     @Test
     public void testMajorSeverity() {
-        doCheckSeverityNew(Severity.MAJOR, true, 1);
+        doCheckSeverityNew(Severity.MAJOR, true, 2);
         doCheckSeverityNew(Severity.MAJOR, false, 12);
     }
 
     @Test
     public void testCriticalSeverity() {
-        doCheckSeverityNew(Severity.CRITICAL, true, 0);
+        doCheckSeverityNew(Severity.CRITICAL, true, 1);
         doCheckSeverityNew(Severity.CRITICAL, false, 2);
     }
 

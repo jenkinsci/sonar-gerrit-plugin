@@ -196,7 +196,7 @@
       "severity": "CRITICAL",
       "rule": "squid:S1452",
       "status": "OPEN",
-      "isNew": false,
+      "isNew": true,
       "creationDate": "2015-05-10T00:46:09+0300"
     },
     {

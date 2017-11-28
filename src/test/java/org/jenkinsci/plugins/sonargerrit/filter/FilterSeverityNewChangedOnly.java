@@ -21,42 +21,42 @@ public abstract class FilterSeverityNewChangedOnly extends BaseFilterTest<Triple
 
         @Test
         public void testInfoSeverity() {
-            doCheckSeverityAndChanged(Severity.INFO, true, true, 19);
-            doCheckSeverityAndChanged(Severity.INFO, false, true, 19);
-            doCheckSeverityAndChanged(Severity.INFO, true, false, 19);
-            doCheckSeverityAndChanged(Severity.INFO, false, false, 19);
+            doCheckSeverityNewAndChanged(Severity.INFO, true, true, 1); // one new AND changed
+            doCheckSeverityNewAndChanged(Severity.INFO, false, true, 2); // two changed AND mentioned in the report
+            doCheckSeverityNewAndChanged(Severity.INFO, true, false, 2);  // two new
+            doCheckSeverityNewAndChanged(Severity.INFO, false, false, 19); // all
         }
 
         @Test
         public void testMinorSeverity() {
-            doCheckSeverityAndChanged(Severity.MINOR, true, true, 19);
-            doCheckSeverityAndChanged(Severity.MINOR, false, true, 19);
-            doCheckSeverityAndChanged(Severity.MINOR, true, false, 19);
-            doCheckSeverityAndChanged(Severity.MINOR, false, false, 19);
+            doCheckSeverityNewAndChanged(Severity.MINOR, true, true, 1);
+            doCheckSeverityNewAndChanged(Severity.MINOR, false, true, 2);
+            doCheckSeverityNewAndChanged(Severity.MINOR, true, false, 2);
+            doCheckSeverityNewAndChanged(Severity.MINOR, false, false, 18);
         }
 
         @Test
         public void testMajorSeverity() {
-            doCheckSeverityAndChanged(Severity.MAJOR, true, true, 19);
-            doCheckSeverityAndChanged(Severity.MAJOR, false, true, 19);
-            doCheckSeverityAndChanged(Severity.MAJOR, true, false, 19);
-            doCheckSeverityAndChanged(Severity.MAJOR, false, false, 19);
+            doCheckSeverityNewAndChanged(Severity.MAJOR, true, true, 1);
+            doCheckSeverityNewAndChanged(Severity.MAJOR, false, true, 1);
+            doCheckSeverityNewAndChanged(Severity.MAJOR, true, false, 2);
+            doCheckSeverityNewAndChanged(Severity.MAJOR, false, false, 12);
         }
 
         @Test
         public void testCriticalSeverity() {
-            doCheckSeverityAndChanged(Severity.CRITICAL, true, true, 19);
-            doCheckSeverityAndChanged(Severity.CRITICAL, false, true, 19);
-            doCheckSeverityAndChanged(Severity.CRITICAL, true, false, 19);
-            doCheckSeverityAndChanged(Severity.CRITICAL, false, false, 19);
+            doCheckSeverityNewAndChanged(Severity.CRITICAL, true, true, 0);
+            doCheckSeverityNewAndChanged(Severity.CRITICAL, false, true, 0);
+            doCheckSeverityNewAndChanged(Severity.CRITICAL, true, false, 1);
+            doCheckSeverityNewAndChanged(Severity.CRITICAL, false, false, 2);
         }
 
         @Test
         public void testBlockerSeverity() {
-            doCheckSeverityAndChanged(Severity.BLOCKER, true, true, 19);
-            doCheckSeverityAndChanged(Severity.BLOCKER, false, true, 19);
-            doCheckSeverityAndChanged(Severity.BLOCKER, true, false, 19);
-            doCheckSeverityAndChanged(Severity.BLOCKER, false, false, 19);
+            doCheckSeverityNewAndChanged(Severity.BLOCKER, true, true, 0);
+            doCheckSeverityNewAndChanged(Severity.BLOCKER, false, true, 0);
+            doCheckSeverityNewAndChanged(Severity.BLOCKER, true, false, 0);
+            doCheckSeverityNewAndChanged(Severity.BLOCKER, false, false, 1);
         }
 
     @Override
@@ -109,17 +109,10 @@ public abstract class FilterSeverityNewChangedOnly extends BaseFilterTest<Triple
             }
         }
 
-    private void doCheckSeverityAndChanged(Severity severity, boolean newOnly, boolean changedLinesOnly, int expectedCount) {
+    private void doCheckSeverityNewAndChanged(Severity severity, boolean newOnly, boolean changedLinesOnly, int expectedCount) {
         Triple<String, Boolean, Boolean> severityNewChanged = new Triple<String, Boolean, Boolean>(severity.name(), newOnly, changedLinesOnly);
         setFilter(severityNewChanged);
         doFilterIssues(getFilterConfig());
-
-        // todo dummy
-//        this.filteredIssues = new HashSet<>();
-//        for (Issue issue : report.getIssues()) {
-//            if (issue.getComponent().equals("com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java") && isSeverityCriteriaSatisfied(severity, issue) && isNewOnlyCriteriaSatisfied(newOnly, issue))
-//                this.filteredIssues.add(issue);
-//        }
 
         doCheckCount(expectedCount);
         doCheckSeverity(severity);

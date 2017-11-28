@@ -24,7 +24,7 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
 
     @Test
     public void testChangedLinesOnly() {
-        doCheckChangedLinesOnly(true, 1);
+        doCheckChangedLinesOnly(true, 2);
     }
 
     @Test
@@ -61,13 +61,6 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
     private void doCheckChangedLinesOnly(Boolean changedOnly, int expectedCount) {
         setFilter(changedOnly);
         doFilterIssues(getFilterConfig());
-
-        //dummy
-//        this.filteredIssues = new HashSet<>();
-//        for (Issue issue : report.getIssues()) {
-//            if (issue.getComponent().equals("com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java"))
-//                this.filteredIssues.add(issue);
-//        }
 
         doCheckCount(expectedCount);
         doCheckChangedLinesOnly(changedOnly);

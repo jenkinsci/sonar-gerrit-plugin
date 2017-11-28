@@ -21,14 +21,14 @@ public abstract class FilterSeverityAndChangedLinesOnly  extends BaseFilterTest<
 
     @Test
     public void testInfoSeverity() {
-        doCheckSeverityAndChanged(Severity.INFO, true, 1);
+        doCheckSeverityAndChanged(Severity.INFO, true, 2);
         doCheckSeverityAndChanged(Severity.INFO, false, 19);
     }
 
     @Test
     public void testMinorSeverity() {
-        doCheckSeverityAndChanged(Severity.MINOR, true, 1);
-        doCheckSeverityAndChanged(Severity.MINOR, false, 19);
+        doCheckSeverityAndChanged(Severity.MINOR, true, 2);
+        doCheckSeverityAndChanged(Severity.MINOR, false, 18);
     }
 
     @Test
@@ -95,14 +95,6 @@ public abstract class FilterSeverityAndChangedLinesOnly  extends BaseFilterTest<
         Pair<String, Boolean> severityAndChanged = new Pair<String, Boolean>(severity.name(), changedLinesOnly);
         setFilter(severityAndChanged);
         doFilterIssues(getFilterConfig());
-
-//        // todo dummy
-//        this.filteredIssues = new HashSet<>();
-//        for (Issue issue : report.getIssues()) {
-//            if (issue.getComponent().equals("com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java") && isSeverityCriteriaSatisfied(severity, issue))
-//                this.filteredIssues.add(issue);
-//        }
-
 
         doCheckCount(expectedCount);
         doCheckSeverity(severity);

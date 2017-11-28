@@ -1,12 +1,12 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.filter.predicates.BySpecifiedComponentListPredicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
@@ -16,10 +16,7 @@ import org.junit.Before;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -58,8 +55,8 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         filteredOutIssues = null;
     }
 
-//    @Before
-    public void setFilter(A a){
+    //    @Before
+    public void setFilter(A a) {
 
     }
 
@@ -83,10 +80,36 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         return SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
     }
 
-    protected void doFilterIssues(IssueFilterConfig config){
+    protected void doFilterIssues(IssueFilterConfig config) {
         // filter issues
         List<Issue> allIssues = report.getIssues();
-        filteredIssues = Sets.newHashSet(publisher.filterIssuesByPredicates(allIssues, config));
+        //todo temporary - should be realized in publisher
+        List<Issue> step2 = allIssues;
+        if (diffInfo != null && config.isChangedLinesOnly()) {
+            Map<String, List<Range<Integer>>> changed = new HashMap<>();
+            for (String s : diffInfo.keySet()) {
+                List<Range<Integer>> rangeList = new ArrayList<>();
+                DiffInfo diffInfo = this.diffInfo.get(s);
+                int processed = 0;
+                for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
+                    if (contentEntry.ab != null) {
+                        processed += contentEntry.ab.size();
+                    } else if (contentEntry.b != null) {
+                        int start = processed + 1;
+                        int end = processed + contentEntry.b.size();
+                        rangeList.add(Range.closed(start, end));
+                        processed += contentEntry.b.size();
+                    }
+                }
+                changed.put(s, rangeList);
+            }
+            Iterable<Issue> filtered = Iterables.filter(allIssues, BySpecifiedComponentListPredicate.apply(changed));
+            step2 = new ArrayList<Issue>();
+            for (Issue i : filtered) {
+                step2.add(i);
+            }
+        }
+        filteredIssues = Sets.newHashSet(publisher.filterIssuesByPredicates(step2, config));
 
         // get issues that were filtered out
         filteredOutIssues = new HashSet<>(allIssues);
@@ -126,21 +149,21 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         return !isChangesLinesOnly || isChanged(issue.getComponent(), issue.getLine());
     }
 
-    protected boolean isChanged(String filename, int line){
+    protected boolean isChanged(String filename, int line) {
         DiffInfo diffInfo = this.diffInfo.get(filename);
-        if (diffInfo == null){
+        if (diffInfo == null) {
             return false;
         }
         int processed = 0;
         for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
             if (contentEntry.ab != null) {
                 processed += contentEntry.ab.size();
-                if (processed >= line){
+                if (processed >= line) {
                     return false;
                 }
             } else if (contentEntry.b != null) {
                 processed += contentEntry.b.size();
-                if (processed >= line){
+                if (processed >= line) {
                     return true;
                 }
             }
@@ -150,7 +173,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
     protected abstract void doCheckFilteredOutByCriteria(A a);
 
-    protected void doCheckCount(int expectedFilteredIssuesCount){
+    protected void doCheckCount(int expectedFilteredIssuesCount) {
         // check that amount of filtered issues is equal to expected amount
         Assert.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
 

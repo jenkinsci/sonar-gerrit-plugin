@@ -61,6 +61,125 @@
           }
         ]
       }
+    },
+
+    {
+      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "diffInfo": {
+        "content": [
+          {
+            "ab": [
+              "1 unchanged string of the file",
+              "2 unchanged string of the file",
+              "3unchanged string of the file",
+              "4 unchanged string of the file",
+              "5 unchanged string of the file",
+              "6 unchanged string of the file",
+              "7 unchanged string of the file",
+              "8 unchanged string of the file",
+              "9 unchanged string of the file",
+              "10 unchanged string of the file",
+              "11 unchanged string of the file",
+              "12 unchanged string of the file",
+              "13 unchanged string of the file",
+              "14 unchanged string of the file",
+              "15 unchanged string of the file",
+              "16 unchanged string of the file",
+              "17 unchanged string of the file"
+            ]
+          },
+          {
+            "a": [
+              "18 unchanged string of the file"
+            ],
+            "b": [
+              "18 changed string of the file"
+            ]
+          },
+          {
+            "ab": [
+              "19 unchanged string of the file",
+              "20 unchanged string of the file",
+              "21 unchanged string of the file"
+            ]
+          },
+          {
+            "a": [
+            ],
+            "b": [
+              "22 changed string of the file with MINOR issue",
+              "23 changed string of the file"
+            ]
+          },
+          {
+
+            "ab": [
+              "24 unchanged string of the file",
+              "25 and so on"
+            ]
+          }
+        ]
+      }
+    },
+
+    {
+      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "diffInfo": {
+        "content": [
+          {
+            "ab": [
+              "1 unchanged string of the file",
+              "2 unchanged string of the file",
+              "3unchanged string of the file",
+              "4 unchanged string of the file",
+              "5 unchanged string of the file",
+              "6 unchanged string of the file",
+              "7 unchanged string of the file",
+              "8 unchanged string of the file",
+              "9 unchanged string of the file",
+              "10 unchanged string of the file",
+              "11 unchanged string of the file",
+              "12 unchanged string of the file",
+              "13 unchanged string of the file",
+              "14 unchanged string of the file mentioned in Sonar Report",
+              "15 unchanged string of the file",
+              "16 unchanged string of the file",
+              "17 unchanged string of the file"
+            ]
+          },
+          {
+            "a": [
+              "18 unchanged string of the file"
+            ],
+            "b": [
+              "18 changed string of the file"
+            ]
+          },
+          {
+            "ab": [
+              "19 unchanged string of the file",
+              "20 unchanged string of the file"
+            ]
+          },
+          {
+            "a": [
+              "21 unchanged string of the file"
+            ],
+            "b": [
+              "21 changed string of the file",
+              "22 changed string of the file",
+              "23 changed string of the file"
+            ]
+          },
+          {
+
+            "ab": [
+              "24 unchanged string of the file",
+              "25 and so on"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

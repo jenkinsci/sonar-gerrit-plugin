@@ -15,7 +15,7 @@ import org.junit.Test;
 public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     @Test
     public void testNewOnly() {
-        doCheckNewOnly(true, 1);
+        doCheckNewOnly(true, 2);
     }
 
     @Test
