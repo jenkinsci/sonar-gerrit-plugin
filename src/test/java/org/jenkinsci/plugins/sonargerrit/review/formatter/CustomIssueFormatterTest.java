@@ -23,7 +23,7 @@ public class CustomIssueFormatterTest {
     public void testKnownUrl() throws IOException, InterruptedException, URISyntaxException {
         Issue i = getIssue();
         String text = "<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>";
-        String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n\n\nRead more: http://localhost:9000/coding_rules#rule_key=squid%3AUselessImportCheck";
+        String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: http://localhost:9000/coding_rules#rule_key=squid%3AUselessImportCheck";
         CustomIssueFormatter basicIssueConverter = new CustomIssueFormatter(i, text, "http://localhost:9000");
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
     }
@@ -32,7 +32,7 @@ public class CustomIssueFormatterTest {
     public void testUnknownUrl() throws IOException, InterruptedException, URISyntaxException {
         Issue i = getIssue();
         String text = "<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>";
-        String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.magenta.guice.property.PropertiesHandler'.\n\n\nRead more: squid:UselessImportCheck";
+        String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: squid:UselessImportCheck";
         CustomIssueFormatter basicIssueConverter = new CustomIssueFormatter(i, text, null);
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
     }

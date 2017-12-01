@@ -3,9 +3,9 @@
   "issues": [
     {
       "key": "c48d7f88-64bb-45ec-b64d-b5a536384183",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
       "line": 5,
-      "message": "Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.",
+      "message": "Remove this unused import 'com.turquoise.juice.property.PropertiesHandler'.",
       "severity": "MINOR",
       "rule": "squid:UselessImportCheck",
       "status": "OPEN",
@@ -14,7 +14,7 @@
     },
     {
       "key": "43bd8fdd-e5d2-46e6-add1-e3b27e9d8d26",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 106,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -25,7 +25,7 @@
     },
     {
       "key": "4b0ca769-7ff4-4e2f-9440-86e504ec7785",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 54,
       "message": "Introduce a new variable instead of reusing the parameter \"injector\".",
       "severity": "MAJOR",
@@ -36,7 +36,7 @@
     },
     {
       "key": "50bcd645-f888-4813-9d1d-3d72403e2057",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 122,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -47,7 +47,7 @@
     },
     {
       "key": "60eec0ad-0b69-4b4c-89f8-8624abc9f42c",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 81,
       "message": "Define a constant instead of duplicating this literal \" of plugin \" 3 times.",
       "severity": "MINOR",
@@ -58,7 +58,7 @@
     },
     {
       "key": "78f1504b-040d-496a-bb35-be7afbd802e8",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 37,
       "message": "Rename the \"logger\" logger to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -69,7 +69,7 @@
     },
     {
       "key": "8a76d6a3-a382-47e9-be3d-7be054f5f2a0",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 99,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -80,7 +80,7 @@
     },
     {
       "key": "b5af69bd-3829-4410-9b21-47c0548cfdee",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 108,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -91,7 +91,7 @@
     },
     {
       "key": "e74fb5cd-e8f3-4fe5-a794-6b41f9b0e362",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
       "line": 162,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -102,7 +102,7 @@
     },
     {
       "key": "32b8200d-cdd7-4c87-8384-b1237e04afec",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
       "line": 115,
       "message": "Make the \"logger\" logger private static final and rename it to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -113,7 +113,7 @@
     },
     {
       "key": "3e547333-18fe-4244-8956-70566948b8b2",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
       "line": 59,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -124,7 +124,7 @@
     },
     {
       "key": "50ad11c3-bf19-43e8-8fcc-56d2095dd384",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
       "line": 167,
       "message": "The Cyclomatic Complexity of this method \"bindComponent\" is 14 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -135,7 +135,7 @@
     },
     {
       "key": "7a0b9339-a8da-4710-8921-ee7ee5ba8d31",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
       "line": 108,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -146,7 +146,7 @@
     },
     {
       "key": "83ba417c-542a-45e1-b9d2-0f718657065a",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java",
       "line": 22,
       "message": "Rename the \"log\" logger to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -157,7 +157,7 @@
     },
     {
       "key": "245054a4-e7e9-4b9c-9ab2-4184cfc8c901",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EnumMatcher.java",
       "line": 14,
       "message": "The type of the \"enums\" object should be an interface such as \"Set\" rather than the implementation \"EnumSet\".",
       "severity": "MAJOR",
@@ -168,7 +168,7 @@
     },
     {
       "key": "93b7d08d-8114-444d-9ba2-6124acdb67d3",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcher.java",
       "line": 14,
       "message": "Remove usage of generic wildcard type.",
       "severity": "MAJOR",
@@ -179,7 +179,7 @@
     },
     {
       "key": "bb60d250-527f-48c8-ba3c-bcf3d884da42",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcher.java",
       "line": 16,
       "message": "Remove usage of generic wildcard type.",
       "severity": "MAJOR",
@@ -190,7 +190,7 @@
     },
     {
       "key": "2de9ad6b-7b81-45a6-85a7-481c7a5150d7",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherControl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherControl.java",
       "line": 31,
       "message": "The Cyclomatic Complexity of this method \"extractFromMap\" is 12 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -201,7 +201,7 @@
     },
     {
       "key": "83735ec9-2cd9-486e-8c6a-e5ccaa0f5784",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherControl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherControl.java",
       "line": 40,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -212,7 +212,7 @@
     },
     {
       "key": "c53e7e76-524b-47e7-994c-1e86404bf18f",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherControl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherControl.java",
       "line": 64,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -223,7 +223,7 @@
     },
     {
       "key": "0102e399-fa61-4c3d-8740-8e74c3066dd7",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
       "line": 57,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -234,7 +234,7 @@
     },
     {
       "key": "28d44f31-41e5-4494-892f-ad117bca1b06",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
       "line": 205,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -245,7 +245,7 @@
     },
     {
       "key": "8f27d6e4-c898-4adc-acf1-8ce3734b1231",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
       "line": 129,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -256,7 +256,7 @@
     },
     {
       "key": "983dc299-d443-4bdd-ab5a-31a607d88619",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
       "line": 56,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -267,7 +267,7 @@
     },
     {
       "key": "d51979ed-f412-4e9d-afbd-517a4ec7045c",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
       "line": 200,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -278,7 +278,7 @@
     },
     {
       "key": "a658bcdd-aa0b-4114-a12c-b81cbe3128f0",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventReflectionParser.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventReflectionParser.java",
       "line": 105,
       "message": "\"@\" is not available at runtime and cannot be seen with reflection.",
       "severity": "BLOCKER",
@@ -289,7 +289,7 @@
     },
     {
       "key": "b407acad-ddc7-4160-b130-0e81e84f0f54",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventReflectionParser.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventReflectionParser.java",
       "line": 127,
       "message": "This block of commented-out lines of code should be removed.",
       "severity": "MAJOR",
@@ -300,7 +300,7 @@
     },
     {
       "key": "81db70f4-6d7d-433a-81b5-df09a3cdddb4",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandleAnnotated.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandleAnnotated.java",
       "line": 19,
       "message": "\"@\" is not available at runtime and cannot be seen with reflection.",
       "severity": "BLOCKER",
@@ -311,7 +311,7 @@
     },
     {
       "key": "cdcd31b4-2f10-4245-971f-7aeb8a5015a8",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandleAnnotated.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandleAnnotated.java",
       "line": 20,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -322,7 +322,7 @@
     },
     {
       "key": "07b2aa0b-61e1-4db8-bee7-43f47b57fc71",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
       "line": 34,
       "message": "The Cyclomatic Complexity of this method \"createMatcher\" is 14 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -333,7 +333,7 @@
     },
     {
       "key": "08e13826-9993-4b9b-9620-942781d58bbe",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
       "line": 40,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -344,7 +344,7 @@
     },
     {
       "key": "11f95a4e-b922-4508-9050-b4c7708de675",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
       "line": 51,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -355,7 +355,7 @@
     },
     {
       "key": "3c3c2819-c2e4-445d-a563-06274880b428",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
       "line": 61,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -366,7 +366,7 @@
     },
     {
       "key": "a7c464b1-1dd7-445d-b44e-d477e69ceafe",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
       "line": 47,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -377,7 +377,7 @@
     },
     {
       "key": "6f79009f-1969-461b-bce1-f5e2e1fb0078",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerInvocator.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerInvocator.java",
       "line": 21,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -388,7 +388,7 @@
     },
     {
       "key": "ba53e9a3-1cf9-4943-9f51-4b74bc421672",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerInvocator.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerInvocator.java",
       "line": 35,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -399,7 +399,7 @@
     },
     {
       "key": "1b3cb011-5a53-4776-b188-dcd78d47a378",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerMethod.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerMethod.java",
       "line": 20,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -410,7 +410,7 @@
     },
     {
       "key": "5625c354-ee80-4177-8e6a-127008e48099",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerMethod.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerMethod.java",
       "line": 36,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -421,7 +421,7 @@
     },
     {
       "key": "06fb21ce-3535-4654-b184-cce3a10cc9a8",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerReference.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerReference.java",
       "line": 26,
       "message": "At most one statement is allowed per line, but 2 statements were found on this line.",
       "severity": "MINOR",
@@ -432,7 +432,7 @@
     },
     {
       "key": "ff8ad3d4-8cf8-4edd-99f0-0031d8390503",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerReference.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerReference.java",
       "line": 25,
       "message": "At most one statement is allowed per line, but 2 statements were found on this line.",
       "severity": "MINOR",
@@ -443,7 +443,7 @@
     },
     {
       "key": "b1a0e5ae-d4b7-40fa-9574-6d3be3bb7876",
-      "component": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerRegistrationQueue.java",
+      "component": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerRegistrationQueue.java",
       "line": 30,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -454,7 +454,7 @@
     },
     {
       "key": "1111c64c-9578-4a37-acd2-5c5223b2c52f",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 240,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -465,7 +465,7 @@
     },
     {
       "key": "442d26b9-52e0-4640-a12a-371b373e042b",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 283,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -476,7 +476,7 @@
     },
     {
       "key": "4488eb56-b7c3-48b4-b3be-deae621442e0",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 228,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -487,7 +487,7 @@
     },
     {
       "key": "47cec5f6-28e7-47d4-a4cc-7daedf9b9819",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 228,
       "message": "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.",
       "severity": "MINOR",
@@ -498,7 +498,7 @@
     },
     {
       "key": "6b8a2d04-e126-481d-83ef-5719e3c470ea",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 228,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -509,7 +509,7 @@
     },
     {
       "key": "724dd393-d103-4a21-84e3-eb0a122c5cdf",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 114,
       "message": "Move the \"close\" string literal on the left side of this string comparison.",
       "severity": "MAJOR",
@@ -520,7 +520,7 @@
     },
     {
       "key": "7668e614-faf9-4d75-be27-ffb4b859f36a",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 240,
       "message": "Rename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.",
       "severity": "MINOR",
@@ -531,7 +531,7 @@
     },
     {
       "key": "8184096b-99ed-4fe5-9874-c091ad7c40b1",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 48,
       "message": "Reorder the modifiers to comply with the Java Language Specification.",
       "severity": "MINOR",
@@ -542,7 +542,7 @@
     },
     {
       "key": "993137c8-42b4-4774-ad54-7c902a8d4054",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 282,
       "message": "\"@\" is not available at runtime and cannot be seen with reflection.",
       "severity": "BLOCKER",
@@ -553,7 +553,7 @@
     },
     {
       "key": "a8153c74-df7d-43e9-b1a9-48ce8b59d928",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 240,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -564,7 +564,7 @@
     },
     {
       "key": "c3c83d17-5b09-48cc-a882-ef9befe00a2f",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 129,
       "message": "The Cyclomatic Complexity of this method \"invoke\" is 14 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -575,7 +575,7 @@
     },
     {
       "key": "74e7e3b0-77ee-41a5-b1e1-c14e2a4b79a6",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/JPAModule.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/JPAModule.java",
       "line": 66,
       "message": "Introduce a new variable instead of reusing the parameter \"type\".",
       "severity": "MAJOR",
@@ -586,7 +586,7 @@
     },
     {
       "key": "e7c3e7e6-29f9-4a5d-87a6-75f53fef1d38",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/JPAModule.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/JPAModule.java",
       "line": 61,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -597,7 +597,7 @@
     },
     {
       "key": "204bc1fd-1f17-4a69-8469-dc241ca8df92",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/AnnotatedMethodCache.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/AnnotatedMethodCache.java",
       "line": 52,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -608,7 +608,7 @@
     },
     {
       "key": "32512616-f27e-4236-a318-c91294cd584c",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/AnnotatedMethodCache.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/AnnotatedMethodCache.java",
       "line": 120,
       "message": "The Cyclomatic Complexity of this method \"isArrayContentsEq\" is 11 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -619,7 +619,7 @@
     },
     {
       "key": "05b6d3fb-baf7-4f8e-9161-3161ca59c1e6",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 148,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -630,7 +630,7 @@
     },
     {
       "key": "2cfbc5e7-08c9-4ae4-abe9-cd1b72985984",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 161,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -641,7 +641,7 @@
     },
     {
       "key": "3092174d-d07b-4eda-b7f1-248c4633ca31",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 175,
       "message": "Introduce a new variable instead of reusing the parameter \"binding\".",
       "severity": "MAJOR",
@@ -652,7 +652,7 @@
     },
     {
       "key": "58060c52-43c2-4579-a8c1-054965ab58f0",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 48,
       "message": "Rename the \"logger\" logger to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -663,7 +663,7 @@
     },
     {
       "key": "5cef0e4c-fa5e-4f46-ae93-0927aa77a7c9",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 157,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -674,7 +674,7 @@
     },
     {
       "key": "743f027f-7141-48d4-8cc4-600546c9f5b1",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 7,
       "message": "Remove this unused import 'com.google.inject.internal.BindingImpl'.",
       "severity": "MINOR",
@@ -685,7 +685,7 @@
     },
     {
       "key": "74ef61a3-b5fa-46b7-bc53-cad35371a8f9",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 152,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -696,7 +696,7 @@
     },
     {
       "key": "8e58fb76-734f-4041-b17f-b2a35ac9f607",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 186,
       "message": "Rename field \"errors\"",
       "severity": "MAJOR",
@@ -707,7 +707,7 @@
     },
     {
       "key": "cb0e0c0c-ef07-484c-92be-15a92824e42c",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
       "line": 145,
       "message": "The Cyclomatic Complexity of this method \"getLinkedScope\" is 12 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -718,7 +718,7 @@
     },
     {
       "key": "61be9a0a-12d3-476c-aaa6-3b51158f3b12",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/LifecycleModule.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/LifecycleModule.java",
       "line": 69,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -729,7 +729,7 @@
     },
     {
       "key": "c2176caa-c457-403d-899d-a41009cb805e",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/LifecycleModule.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/LifecycleModule.java",
       "line": 74,
       "message": "Introduce a new variable instead of reusing the parameter \"type\".",
       "severity": "MAJOR",
@@ -740,7 +740,7 @@
     },
     {
       "key": "2f04a3f8-82df-47d9-a734-cbd7f0eb4425",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/SafeShutdownInterceptor.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/SafeShutdownInterceptor.java",
       "line": 36,
       "message": "Either remove or fill this block of code.",
       "severity": "MAJOR",
@@ -751,7 +751,7 @@
     },
     {
       "key": "e4c2900a-5a7c-40ed-baee-07bb039c9a03",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/SafeShutdownInterceptor.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/SafeShutdownInterceptor.java",
       "line": 23,
       "message": "Rename the \"logger\" logger to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -762,7 +762,7 @@
     },
     {
       "key": "e05e1865-7c34-48c1-89f1-fcc7d3bb5958",
-      "component": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/ShutdownSafe.java",
+      "component": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/ShutdownSafe.java",
       "line": 22,
       "message": "This block of commented-out lines of code should be removed.",
       "severity": "MAJOR",
@@ -773,7 +773,7 @@
     },
     {
       "key": "20eedc94-32bd-40be-858c-e79708550105",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBean.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBean.java",
       "line": 18,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -784,7 +784,7 @@
     },
     {
       "key": "3a564c6e-2724-4001-b051-a2b66833b539",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManager.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManager.java",
       "line": 20,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -795,7 +795,7 @@
     },
     {
       "key": "5436cc1b-2579-42fd-b23d-556ac312feed",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManager.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManager.java",
       "line": 33,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -806,7 +806,7 @@
     },
     {
       "key": "6f96e46d-4233-4514-9099-c02d89c0d27a",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManager.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManager.java",
       "line": 20,
       "message": "Move constants to a class or enum.",
       "severity": "MINOR",
@@ -817,7 +817,7 @@
     },
     {
       "key": "0f3f6adb-791c-4d75-ac7d-e46d33ab2c37",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 32,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -828,7 +828,7 @@
     },
     {
       "key": "1ff1254c-65b2-411c-b513-bff86d32a0cd",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 23,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -839,7 +839,7 @@
     },
     {
       "key": "4a51207a-88ca-41e3-9da3-0334d5ccae44",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 13,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -850,7 +850,7 @@
     },
     {
       "key": "647deda8-e128-431c-9677-7003d4f72eeb",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 28,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -861,7 +861,7 @@
     },
     {
       "key": "b4da5f3b-ab7a-4d2f-931f-ea9b19c9cd08",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 18,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -872,7 +872,7 @@
     },
     {
       "key": "cb597b46-3d9b-4592-a41b-4e868d5a4532",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
       "line": 13,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -883,7 +883,7 @@
     },
     {
       "key": "7f153908-7819-4743-9f2a-c5d905099ece",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/AnnotatedMethodCache.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/AnnotatedMethodCache.java",
       "line": 52,
       "message": "Refactor this code to not nest more than 3 if/for/while/switch/try statements.",
       "severity": "MAJOR",
@@ -894,7 +894,7 @@
     },
     {
       "key": "ea76edd5-227f-4c33-b0e3-9a60ef9009dc",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/AnnotatedMethodCache.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/AnnotatedMethodCache.java",
       "line": 120,
       "message": "The Cyclomatic Complexity of this method \"isArrayContentsEq\" is 11 which is greater than 10 authorized.",
       "severity": "MAJOR",
@@ -905,7 +905,7 @@
     },
     {
       "key": "d23a1504-bc5f-426f-a6ed-f47edff38839",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/CGLIBMBeanGenerator.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/CGLIBMBeanGenerator.java",
       "line": 50,
       "message": "This block of commented-out lines of code should be removed.",
       "severity": "MAJOR",
@@ -916,7 +916,7 @@
     },
     {
       "key": "737d6b5c-1290-4af4-b333-0a5ee13653fb",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManager.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManager.java",
       "line": 17,
       "message": "Move constants to a class or enum.",
       "severity": "MINOR",
@@ -927,7 +927,7 @@
     },
     {
       "key": "fc252c4a-e770-4fdd-90a2-01b7d47f8883",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManager.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManager.java",
       "line": 30,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -938,7 +938,7 @@
     },
     {
       "key": "1f34ab97-cf60-4b35-9c7a-5a6e052e5f74",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 188,
       "message": "At most one statement is allowed per line, but 2 statements were found on this line.",
       "severity": "MINOR",
@@ -949,7 +949,7 @@
     },
     {
       "key": "380872f4-4c79-4b2c-9034-5e94371056ed",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 174,
       "message": "At most one statement is allowed per line, but 2 statements were found on this line.",
       "severity": "MINOR",
@@ -960,7 +960,7 @@
     },
     {
       "key": "8f1c6832-75f9-493b-ad27-755dea4fa168",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 62,
       "message": "Extract this nested try block into a separate method.",
       "severity": "MAJOR",
@@ -971,7 +971,7 @@
     },
     {
       "key": "94fac2cd-709b-4025-95f9-ac7811d9a8c2",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 58,
       "message": "Extract this nested try block into a separate method.",
       "severity": "MAJOR",
@@ -982,7 +982,7 @@
     },
     {
       "key": "952a9bd6-cd91-4304-91d3-dd4b13f0bf17",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 16,
       "message": "Make the \"logger\" logger private static final and rename it to comply with the format \"LOG(?:GER)?\".",
       "severity": "MINOR",
@@ -993,7 +993,7 @@
     },
     {
       "key": "f9515899-4390-4353-8ec2-5f719c536dd9",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
       "line": 4,
       "message": "Remove this unused import 'com.sun.jmx.mbeanserver.Introspector'.",
       "severity": "MINOR",
@@ -1004,7 +1004,7 @@
     },
     {
       "key": "addec7f4-2ee1-4cad-90c2-1afcb1999361",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanModule.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanModule.java",
       "line": 52,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1015,7 +1015,7 @@
     },
     {
       "key": "d013bef7-9589-48dc-9ee1-1c95156a7802",
-      "component": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanTypeListener.java",
+      "component": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanTypeListener.java",
       "line": 43,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1026,7 +1026,7 @@
     },
     {
       "key": "0083d9cf-2d9d-42cf-93cb-08e7997b1213",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 191,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1037,7 +1037,7 @@
     },
     {
       "key": "01c4a00f-9297-421c-ac1f-fbb217b578e7",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 255,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1048,7 +1048,7 @@
     },
     {
       "key": "03ebcb12-b22c-42b7-8a1e-cae3521fd440",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 284,
       "message": "Move this closing curly brace to the next line.",
       "severity": "MINOR",
@@ -1059,7 +1059,7 @@
     },
     {
       "key": "047cb793-79e9-47e5-9beb-eb7c42ecacdf",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 251,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1070,7 +1070,7 @@
     },
     {
       "key": "0702161d-0b0c-4a9f-afd2-24ced0f9e705",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 285,
       "message": "Move this closing curly brace to the next line.",
       "severity": "MINOR",
@@ -1081,7 +1081,7 @@
     },
     {
       "key": "09c98252-040e-4da8-b58d-446ec3a8e5bf",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 284,
       "message": "Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.",
       "severity": "MAJOR",
@@ -1092,7 +1092,7 @@
     },
     {
       "key": "11889a54-a412-4e20-81fa-cae306cd1124",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 244,
       "message": "Rename \"privateElements\" which hides the field declared at line 45.",
       "severity": "MAJOR",
@@ -1103,7 +1103,7 @@
     },
     {
       "key": "15983841-f1db-4890-9258-bc3e22566d1f",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 263,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1114,7 +1114,7 @@
     },
     {
       "key": "17cf8c1f-9a40-409c-bd71-7e95984d71da",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 186,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1125,7 +1125,7 @@
     },
     {
       "key": "1a6f4c91-89b8-4b1c-8baf-c87b55af025f",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 99,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1136,7 +1136,7 @@
     },
     {
       "key": "23a994f0-6b97-4087-ab95-9cde0bc8a95d",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 119,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1147,7 +1147,7 @@
     },
     {
       "key": "43c22b4e-d480-4793-a883-20cdd07fced3",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 259,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1158,7 +1158,7 @@
     },
     {
       "key": "46d1442e-82bc-474f-a6d6-89cc0d383424",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 285,
       "message": "Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.",
       "severity": "MAJOR",
@@ -1169,7 +1169,7 @@
     },
     {
       "key": "4bec68c5-d891-45f2-a5fe-3f09afbcc57e",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 275,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1180,7 +1180,7 @@
     },
     {
       "key": "544b2cfd-0752-40e2-abed-5a825b23faa6",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 229,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1191,7 +1191,7 @@
     },
     {
       "key": "561e842b-10ae-4269-a7a7-830b3327d0c5",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 220,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1202,7 +1202,7 @@
     },
     {
       "key": "689b77a5-8936-4a82-b9aa-01ae80231b89",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 195,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1213,7 +1213,7 @@
     },
     {
       "key": "6c64d85b-fd0b-4a0c-ac49-534c070ec3b0",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 284,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1224,7 +1224,7 @@
     },
     {
       "key": "7aa7bdda-7228-48ae-baf1-91e484edd723",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 271,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1235,7 +1235,7 @@
     },
     {
       "key": "7fd4b6e2-8804-4c18-ae7b-e701a8af1601",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 104,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1246,7 +1246,7 @@
     },
     {
       "key": "87c8df4d-6082-47ab-8ce1-dae3fb1721d1",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 90,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1257,7 +1257,7 @@
     },
     {
       "key": "87f505aa-7c1f-4474-8e89-19cf9fb102b0",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 233,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1268,7 +1268,7 @@
     },
     {
       "key": "8c639384-98cc-4504-b65c-b7cafd4fb005",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 243,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1279,7 +1279,7 @@
     },
     {
       "key": "9c2f9ace-0140-4638-b32e-8d83ecb8218a",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 213,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1290,7 +1290,7 @@
     },
     {
       "key": "a55c9381-4ef2-411f-8fc2-b66650b05a3f",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 127,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1301,7 +1301,7 @@
     },
     {
       "key": "aaef1fba-a16f-4429-9701-492a25950366",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 123,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1312,7 +1312,7 @@
     },
     {
       "key": "ae94c62c-2f87-442b-b267-9db1c0583e66",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 182,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1323,7 +1323,7 @@
     },
     {
       "key": "af43710f-7664-40d9-bd72-e95503b12679",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 209,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1334,7 +1334,7 @@
     },
     {
       "key": "b032a01e-9fa1-4fb2-8f47-52e60f3aac38",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 201,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1345,7 +1345,7 @@
     },
     {
       "key": "b4e07fae-1c11-48b9-ad12-21d7b4e54f7a",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 132,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1356,7 +1356,7 @@
     },
     {
       "key": "b91ec80b-d3b9-4823-919c-c7569adce6ba",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 205,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1367,7 +1367,7 @@
     },
     {
       "key": "b9293175-fff1-4081-be01-5c8667225b57",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 178,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1378,7 +1378,7 @@
     },
     {
       "key": "cdff4f3d-b4f4-4fbf-80c9-3e497e507c37",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 267,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1389,7 +1389,7 @@
     },
     {
       "key": "d20e3d29-ec06-48de-9bf0-4530e4f7199f",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 108,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1400,7 +1400,7 @@
     },
     {
       "key": "d3910537-9f05-413a-b501-fc4cc59756b6",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 335,
       "message": "This block of commented-out lines of code should be removed.",
       "severity": "MAJOR",
@@ -1411,7 +1411,7 @@
     },
     {
       "key": "de2983a6-cd20-42de-a715-921b9f0a294d",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 138,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1422,7 +1422,7 @@
     },
     {
       "key": "e716347f-21d4-4919-9430-51e822439309",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 224,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1433,7 +1433,7 @@
     },
     {
       "key": "f4f6c7b9-f12e-4fde-8b84-bd6ff368d8b8",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 285,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1444,7 +1444,7 @@
     },
     {
       "key": "f7838b99-2085-482a-9119-bb63fe7537d8",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "line": 112,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1455,7 +1455,7 @@
     },
     {
       "key": "01128be0-5201-4d25-ada2-4424c14e9d11",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 182,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1466,7 +1466,7 @@
     },
     {
       "key": "0e712ed0-dd25-4198-9c6d-974b32a63312",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 135,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1477,7 +1477,7 @@
     },
     {
       "key": "186d27c7-a78b-4d86-b6dd-4ba546525554",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 131,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1488,7 +1488,7 @@
     },
     {
       "key": "18819ce1-b7eb-4589-8715-a15acb02d58b",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 143,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1499,7 +1499,7 @@
     },
     {
       "key": "41a88510-13e8-42e9-904e-3c808ffeef6d",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 92,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1510,7 +1510,7 @@
     },
     {
       "key": "488bbe1b-0cf0-4fa5-89ff-02de0e6fe1b2",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 97,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1521,7 +1521,7 @@
     },
     {
       "key": "5b2a88ef-c1b9-420d-b540-230e1f3dac3e",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 151,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1532,7 +1532,7 @@
     },
     {
       "key": "5cffd450-b88d-48ec-a0de-7501bdf2af87",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 87,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1543,7 +1543,7 @@
     },
     {
       "key": "7c9530d0-671a-4298-8228-cc656805ead1",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 116,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1554,7 +1554,7 @@
     },
     {
       "key": "83b3a38e-e2fc-4443-a4af-ef39be9bd861",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 147,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1565,7 +1565,7 @@
     },
     {
       "key": "8d5164f1-091b-45f7-b9f9-174e1c6f23ac",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 107,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1576,7 +1576,7 @@
     },
     {
       "key": "8e5d5246-e0cd-41fb-bfad-e748f543ec42",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 169,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1587,7 +1587,7 @@
     },
     {
       "key": "a27dd768-66d6-482c-b1a5-bf3f5e3ceafa",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 165,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1598,7 +1598,7 @@
     },
     {
       "key": "c3838ebe-98e4-4fc9-a524-8e952c89cdb3",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 178,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1609,7 +1609,7 @@
     },
     {
       "key": "c3ac7b1b-fc68-4570-a6fa-9e2557ab085a",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 102,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1620,7 +1620,7 @@
     },
     {
       "key": "cb2b1ff7-43f6-420e-9c82-131800a4d3fd",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 139,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1631,7 +1631,7 @@
     },
     {
       "key": "cddfa9d5-c0db-4dc5-8804-222aef229eb5",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 161,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1642,7 +1642,7 @@
     },
     {
       "key": "db10a992-f0fc-49af-845e-ed6add606d42",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 186,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1653,7 +1653,7 @@
     },
     {
       "key": "f8999bb9-ba82-4cf6-b7e1-6d29cb2f2c90",
-      "component": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
+      "component": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
       "line": 174,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1664,7 +1664,7 @@
     },
     {
       "key": "10f03aa7-be5a-4fa9-90ea-181a609fdb00",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 98,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -1675,7 +1675,7 @@
     },
     {
       "key": "1fc334d5-5aaf-410c-9c61-4ded375c7631",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 111,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -1686,7 +1686,7 @@
     },
     {
       "key": "34d0073f-f1b6-49d8-9fef-d2ce7c350a12",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 98,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -1697,7 +1697,7 @@
     },
     {
       "key": "361154ff-0fcb-493f-b45e-6fabd1e689b6",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 106,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1708,7 +1708,7 @@
     },
     {
       "key": "3d96abfb-cb20-4490-a5c9-72932f244b74",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 111,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1719,7 +1719,7 @@
     },
     {
       "key": "3fd8dea6-c451-4d0c-b4ab-3f7542ffa56b",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 116,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -1730,7 +1730,7 @@
     },
     {
       "key": "7203bcc4-31c6-4634-b3e2-15802873114b",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 106,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -1741,7 +1741,7 @@
     },
     {
       "key": "a66efc87-0aa9-4f39-83bc-0f4c3fc9954e",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 106,
       "message": "Add the missing @deprecated Javadoc tag.",
       "severity": "MAJOR",
@@ -1752,7 +1752,7 @@
     },
     {
       "key": "ab826671-3b7b-476e-8d12-20002c87aca0",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 111,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -1763,7 +1763,7 @@
     },
     {
       "key": "bede8dd0-e99b-4cf2-ae82-a687dddec476",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 116,
       "message": "Move this constructor to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1774,7 +1774,7 @@
     },
     {
       "key": "eeb3e7a0-7279-42b6-b83b-667e255ce2f3",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 116,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -1785,7 +1785,7 @@
     },
     {
       "key": "f5396001-5fae-49bf-9709-7558f335378f",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
       "line": 98,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1796,7 +1796,7 @@
     },
     {
       "key": "6883fa37-17b8-41e9-9723-41d6fb2eb804",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
       "line": 77,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1807,7 +1807,7 @@
     },
     {
       "key": "7a550e07-b80f-4e17-b36e-c136baad2615",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
       "line": 57,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1818,7 +1818,7 @@
     },
     {
       "key": "84303011-3ef9-4bed-a33b-32c4f91e523f",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
       "line": 65,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1829,7 +1829,7 @@
     },
     {
       "key": "c8fece6e-17cf-4d5e-86f2-e3add472aae8",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
       "line": 89,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1840,7 +1840,7 @@
     },
     {
       "key": "b0495af4-beef-4075-a54a-be098f2181ce",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/DateTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/DateTypeConverter.java",
       "line": 32,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -1851,7 +1851,7 @@
     },
     {
       "key": "996b3698-4855-4b50-a507-aa29a2df8736",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/URITypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/URITypeConverter.java",
       "line": 26,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -1862,7 +1862,7 @@
     },
     {
       "key": "d7ae55fb-baf6-4f5b-bb13-ed21930083de",
-      "component": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/URLTypeConverter.java",
+      "component": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/URLTypeConverter.java",
       "line": 26,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -1873,7 +1873,7 @@
     },
     {
       "key": "3d626f31-beae-4c87-9be3-ead498ca9d7b",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/UIProvider.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/UIProvider.java",
       "line": 32,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -1884,7 +1884,7 @@
     },
     {
       "key": "993ec435-f562-4371-a669-71f6ca193639",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/UIProvider.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/UIProvider.java",
       "line": 30,
       "message": "Define and throw a dedicated exception instead of using a generic one.",
       "severity": "MAJOR",
@@ -1895,7 +1895,7 @@
     },
     {
       "key": "188ed243-ae37-4326-85ac-2cf397f0bddc",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
       "line": 27,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1906,7 +1906,7 @@
     },
     {
       "key": "45ba65f6-d0d8-4563-9a08-8a86a72f19f8",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
       "line": 65,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1917,7 +1917,7 @@
     },
     {
       "key": "a0a24cb5-b83a-4f8d-8200-484a1adbd3d0",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
       "line": 40,
       "message": "Move this variable to comply with Java Code Conventions.",
       "severity": "MINOR",
@@ -1928,7 +1928,7 @@
     },
     {
       "key": "db34e023-7aac-4bb8-880d-e25b879b2b0a",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
       "line": 40,
       "message": "Reduce this anonymous class number of lines from 24 to at most 20, or make it a named class.",
       "severity": "MAJOR",
@@ -1939,7 +1939,7 @@
     },
     {
       "key": "f6d236cc-1d55-4013-8b84-0a5b81500fb2",
-      "component": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
+      "component": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
       "line": 66,
       "message": "Add the \"@Override\" annotation above this method signature",
       "severity": "MAJOR",
@@ -1951,972 +1951,972 @@
   ],
   "components": [
     {
-      "key": "com.maxifier.guice:x-guice"
+      "key": "com.megaproject.juice:x-juice"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean",
-      "path": "guice-mbean"
+      "key": "com.megaproject.juice:juice-mbean",
+      "path": "juice-mbean"
     },
     {
-      "key": "com.maxifier.guice:guice-events",
-      "path": "guice-events"
+      "key": "com.megaproject.juice:juice-events",
+      "path": "juice-events"
     },
     {
-      "key": "com.maxifier.guice:guice-property",
-      "path": "guice-property"
+      "key": "com.megaproject.juice:juice-property",
+      "path": "juice-property"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle",
-      "path": "guice-lifecycle"
+      "key": "com.megaproject.juice:juice-lifecycle",
+      "path": "juice-lifecycle"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes",
-      "path": "guice-scopes"
+      "key": "com.megaproject.juice:juice-scopes",
+      "path": "juice-scopes"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap",
-      "path": "guice-bootstrap"
+      "key": "com.megaproject.juice:juice-bootstrap",
+      "path": "juice-bootstrap"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator",
-      "path": "guice-decorator"
+      "key": "com.megaproject.juice:juice-decorator",
+      "path": "juice-decorator"
     },
     {
-      "key": "com.maxifier.guice:guice-override",
-      "path": "guice-override"
+      "key": "com.megaproject.juice:juice-override",
+      "path": "juice-override"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa",
-      "path": "guice-jpa"
+      "key": "com.megaproject.juice:juice-jpa",
+      "path": "juice-jpa"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBean.java",
-      "path": "src/main/java/com/magenta/guice/mbean/MBean.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBean.java",
+      "path": "src/main/java/com/turquoise/juice/mbean/MBean.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManager.java",
-      "path": "src/main/java/com/magenta/guice/mbean/MBeanManager.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManager.java",
+      "path": "src/main/java/com/turquoise/juice/mbean/MBeanManager.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
-      "path": "src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
+      "path": "src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/AnnotatedMethodCache.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/AnnotatedMethodCache.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/AnnotatedMethodCache.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/AnnotatedMethodCache.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/AnnotationMatcher.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/AnnotationMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/AnnotationMatcher.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/AnnotationMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/CGLIBMBeanGenerator.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/CGLIBMBeanGenerator.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/CGLIBMBeanGenerator.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/CGLIBMBeanGenerator.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBean.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBean.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBean.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBean.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanGenerationException.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanGenerationException.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanGenerationException.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanGenerationException.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanGenerator.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanGenerator.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanGenerator.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanGenerator.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManager.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanManager.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManager.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanManager.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanManagerImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanManagerImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanMethod.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanMethod.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanMethod.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanMethod.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanModule.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanModule.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanModule.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanModule.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/MBeanTypeListener.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/MBeanTypeListener.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/MBeanTypeListener.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/MBeanTypeListener.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean/NoOperationsMBeanManager.java",
-      "path": "src/main/java/com/maxifier/guice/mbean/NoOperationsMBeanManager.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean/NoOperationsMBeanManager.java",
+      "path": "src/main/java/com/megaproject/juice/mbean/NoOperationsMBeanManager.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/CGLIBMBeanGeneratorTest.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/CGLIBMBeanGeneratorTest.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/CGLIBMBeanGeneratorTest.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/CGLIBMBeanGeneratorTest.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/DoubleStartTest.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/DoubleStartTest.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/DoubleStartTest.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/DoubleStartTest.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/MBeanAnnotationMatcherTest.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/MBeanAnnotationMatcherTest.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/MBeanAnnotationMatcherTest.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/MBeanAnnotationMatcherTest.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/MBeanManagerTest.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/MBeanManagerTest.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/MBeanManagerTest.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/MBeanManagerTest.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/MBeanTypeListenerTest.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/MBeanTypeListenerTest.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/MBeanTypeListenerTest.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/MBeanTypeListenerTest.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean/Sandbox.java",
-      "path": "src/test/java/com/maxifier/guice/mbean/Sandbox.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean/Sandbox.java",
+      "path": "src/test/java/com/megaproject/juice/mbean/Sandbox.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
-      "path": "src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java",
+      "path": "src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/CyclicFilterAnnotationException.java",
-      "path": "src/main/java/com/magenta/guice/events/CyclicFilterAnnotationException.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/CyclicFilterAnnotationException.java",
+      "path": "src/main/java/com/turquoise/juice/events/CyclicFilterAnnotationException.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
-      "path": "src/main/java/com/magenta/guice/events/EnumMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EnumMatcher.java",
+      "path": "src/main/java/com/turquoise/juice/events/EnumMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventClassMatcher.java",
-      "path": "src/main/java/com/magenta/guice/events/EventClassMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventClassMatcher.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventClassMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
-      "path": "src/main/java/com/magenta/guice/events/EventDispatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcher.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventDispatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherControl.java",
-      "path": "src/main/java/com/magenta/guice/events/EventDispatcherControl.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherControl.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventDispatcherControl.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherControlMBean.java",
-      "path": "src/main/java/com/magenta/guice/events/EventDispatcherControlMBean.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherControlMBean.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventDispatcherControlMBean.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
-      "path": "src/main/java/com/magenta/guice/events/EventDispatcherImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventDispatcherImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcherModule.java",
-      "path": "src/main/java/com/magenta/guice/events/EventDispatcherModule.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcherModule.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventDispatcherModule.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventGroup.java",
-      "path": "src/main/java/com/magenta/guice/events/EventGroup.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventGroup.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventGroup.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventMatcher.java",
-      "path": "src/main/java/com/magenta/guice/events/EventMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventMatcher.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventReflectionParser.java",
-      "path": "src/main/java/com/magenta/guice/events/EventReflectionParser.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventReflectionParser.java",
+      "path": "src/main/java/com/turquoise/juice/events/EventReflectionParser.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/Filter.java",
-      "path": "src/main/java/com/magenta/guice/events/Filter.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/Filter.java",
+      "path": "src/main/java/com/turquoise/juice/events/Filter.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandleAnnotated.java",
-      "path": "src/main/java/com/magenta/guice/events/HandleAnnotated.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandleAnnotated.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandleAnnotated.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandleClass.java",
-      "path": "src/main/java/com/magenta/guice/events/HandleClass.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandleClass.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandleClass.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/Handler.java",
-      "path": "src/main/java/com/magenta/guice/events/Handler.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/Handler.java",
+      "path": "src/main/java/com/turquoise/juice/events/Handler.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
-      "path": "src/main/java/com/magenta/guice/events/HandlerAnnotation.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandlerAnnotation.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerInvocator.java",
-      "path": "src/main/java/com/magenta/guice/events/HandlerInvocator.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerInvocator.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandlerInvocator.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerMethod.java",
-      "path": "src/main/java/com/magenta/guice/events/HandlerMethod.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerMethod.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandlerMethod.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerMethodInfo.java",
-      "path": "src/main/java/com/magenta/guice/events/HandlerMethodInfo.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerMethodInfo.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandlerMethodInfo.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/HandlerMethodInstance.java",
-      "path": "src/main/java/com/magenta/guice/events/HandlerMethodInstance.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/HandlerMethodInstance.java",
+      "path": "src/main/java/com/turquoise/juice/events/HandlerMethodInstance.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerClass.java",
-      "path": "src/main/java/com/magenta/guice/events/ListenerClass.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerClass.java",
+      "path": "src/main/java/com/turquoise/juice/events/ListenerClass.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerClassInstance.java",
-      "path": "src/main/java/com/magenta/guice/events/ListenerClassInstance.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerClassInstance.java",
+      "path": "src/main/java/com/turquoise/juice/events/ListenerClassInstance.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerReference.java",
-      "path": "src/main/java/com/magenta/guice/events/ListenerReference.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerReference.java",
+      "path": "src/main/java/com/turquoise/juice/events/ListenerReference.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ListenerRegistrationQueue.java",
-      "path": "src/main/java/com/magenta/guice/events/ListenerRegistrationQueue.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ListenerRegistrationQueue.java",
+      "path": "src/main/java/com/turquoise/juice/events/ListenerRegistrationQueue.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/MatcherConstructor.java",
-      "path": "src/main/java/com/magenta/guice/events/MatcherConstructor.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/MatcherConstructor.java",
+      "path": "src/main/java/com/turquoise/juice/events/MatcherConstructor.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ReflectionHandlerInvocator.java",
-      "path": "src/main/java/com/magenta/guice/events/ReflectionHandlerInvocator.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ReflectionHandlerInvocator.java",
+      "path": "src/main/java/com/turquoise/juice/events/ReflectionHandlerInvocator.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/Animal.java",
-      "path": "src/test/java/com/magenta/guice/events/Animal.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/Animal.java",
+      "path": "src/test/java/com/turquoise/juice/events/Animal.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/AnimalHandler.java",
-      "path": "src/test/java/com/magenta/guice/events/AnimalHandler.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/AnimalHandler.java",
+      "path": "src/test/java/com/turquoise/juice/events/AnimalHandler.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/AnimalListener.java",
-      "path": "src/test/java/com/magenta/guice/events/AnimalListener.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/AnimalListener.java",
+      "path": "src/test/java/com/turquoise/juice/events/AnimalListener.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/AnimalListenerImpl.java",
-      "path": "src/test/java/com/magenta/guice/events/AnimalListenerImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/AnimalListenerImpl.java",
+      "path": "src/test/java/com/turquoise/juice/events/AnimalListenerImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/ClassgenHandlerInvocatorUTest.java",
-      "path": "src/test/java/com/magenta/guice/events/ClassgenHandlerInvocatorUTest.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/ClassgenHandlerInvocatorUTest.java",
+      "path": "src/test/java/com/turquoise/juice/events/ClassgenHandlerInvocatorUTest.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/CyclicAnnotation1.java",
-      "path": "src/test/java/com/magenta/guice/events/CyclicAnnotation1.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/CyclicAnnotation1.java",
+      "path": "src/test/java/com/turquoise/juice/events/CyclicAnnotation1.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/CyclicAnnotation2.java",
-      "path": "src/test/java/com/magenta/guice/events/CyclicAnnotation2.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/CyclicAnnotation2.java",
+      "path": "src/test/java/com/turquoise/juice/events/CyclicAnnotation2.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/EventDispatcherUTest.java",
-      "path": "src/test/java/com/magenta/guice/events/EventDispatcherUTest.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/EventDispatcherUTest.java",
+      "path": "src/test/java/com/turquoise/juice/events/EventDispatcherUTest.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/HandlerForAllTest.java",
-      "path": "src/test/java/com/magenta/guice/events/HandlerForAllTest.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/HandlerForAllTest.java",
+      "path": "src/test/java/com/turquoise/juice/events/HandlerForAllTest.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/HandlerInjectionUTest.java",
-      "path": "src/test/java/com/magenta/guice/events/HandlerInjectionUTest.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/HandlerInjectionUTest.java",
+      "path": "src/test/java/com/turquoise/juice/events/HandlerInjectionUTest.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/InvalidAutoAnnotation.java",
-      "path": "src/test/java/com/magenta/guice/events/InvalidAutoAnnotation.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/InvalidAutoAnnotation.java",
+      "path": "src/test/java/com/turquoise/juice/events/InvalidAutoAnnotation.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events/ListenerReferenceUTest.java",
-      "path": "src/test/java/com/magenta/guice/events/ListenerReferenceUTest.java",
-      "moduleKey": "com.maxifier.guice:guice-events",
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events/ListenerReferenceUTest.java",
+      "path": "src/test/java/com/turquoise/juice/events/ListenerReferenceUTest.java",
+      "moduleKey": "com.megaproject.juice:juice-events",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/JavaPropertiesHandler.java",
-      "path": "src/main/java/com/magenta/guice/property/JavaPropertiesHandler.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/JavaPropertiesHandler.java",
+      "path": "src/main/java/com/turquoise/juice/property/JavaPropertiesHandler.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertiesHandler.java",
-      "path": "src/main/java/com/magenta/guice/property/PropertiesHandler.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertiesHandler.java",
+      "path": "src/main/java/com/turquoise/juice/property/PropertiesHandler.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/Property.java",
-      "path": "src/main/java/com/magenta/guice/property/Property.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/Property.java",
+      "path": "src/main/java/com/turquoise/juice/property/Property.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyImpl.java",
-      "path": "src/main/java/com/magenta/guice/property/PropertyImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyImpl.java",
+      "path": "src/main/java/com/turquoise/juice/property/PropertyImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/PropertyModule.java",
-      "path": "src/main/java/com/magenta/guice/property/PropertyModule.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/PropertyModule.java",
+      "path": "src/main/java/com/turquoise/juice/property/PropertyModule.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayMatcher.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/ArrayMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayMatcher.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/ArrayMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/ArrayTypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/ArrayTypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/ClazzMatcher.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/ClazzMatcher.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/ClazzMatcher.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/ClazzMatcher.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/DateFormatTypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/DateFormatTypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/DateFormatTypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/DateFormatTypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/DateTypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/DateTypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/DateTypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/DateTypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/FileTypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/FileTypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/FileTypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/FileTypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/URITypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/URITypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/URITypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/URITypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter/URLTypeConverter.java",
-      "path": "src/main/java/com/magenta/guice/property/converter/URLTypeConverter.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter/URLTypeConverter.java",
+      "path": "src/main/java/com/turquoise/juice/property/converter/URLTypeConverter.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/PropertyTest.java",
-      "path": "src/test/java/com/magenta/guice/property/PropertyTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/PropertyTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/PropertyTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/ArrayMatcherTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/ArrayMatcherTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/ArrayMatcherTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/ArrayMatcherTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/ArrayPropertyTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/ArrayPropertyTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/ArrayPropertyTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/ArrayPropertyTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/ArrayTypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/ArrayTypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/ArrayTypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/ArrayTypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/ClazzMatcherTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/ClazzMatcherTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/ClazzMatcherTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/ClazzMatcherTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/DateFormatTypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/DateFormatTypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/DateFormatTypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/DateFormatTypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/DateTypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/DateTypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/DateTypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/DateTypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/FileTypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/FileTypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/FileTypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/FileTypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/URITypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/URITypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/URITypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/URITypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter/URLTypeConverterTest.java",
-      "path": "src/test/java/com/magenta/guice/property/converter/URLTypeConverterTest.java",
-      "moduleKey": "com.maxifier.guice:guice-property",
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter/URLTypeConverterTest.java",
+      "path": "src/test/java/com/turquoise/juice/property/converter/URLTypeConverterTest.java",
+      "moduleKey": "com.megaproject.juice:juice-property",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/AnnotatedMethodCache.java",
-      "path": "src/main/java/com/magenta/guice/lifecycle/AnnotatedMethodCache.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/AnnotatedMethodCache.java",
+      "path": "src/main/java/com/turquoise/juice/lifecycle/AnnotatedMethodCache.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
-      "path": "src/main/java/com/magenta/guice/lifecycle/Lifecycle.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
+      "path": "src/main/java/com/turquoise/juice/lifecycle/Lifecycle.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/LifecycleModule.java",
-      "path": "src/main/java/com/magenta/guice/lifecycle/LifecycleModule.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/LifecycleModule.java",
+      "path": "src/main/java/com/turquoise/juice/lifecycle/LifecycleModule.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/SafeShutdownInterceptor.java",
-      "path": "src/main/java/com/magenta/guice/lifecycle/SafeShutdownInterceptor.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/SafeShutdownInterceptor.java",
+      "path": "src/main/java/com/turquoise/juice/lifecycle/SafeShutdownInterceptor.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle/ShutdownSafe.java",
-      "path": "src/main/java/com/magenta/guice/lifecycle/ShutdownSafe.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle/ShutdownSafe.java",
+      "path": "src/main/java/com/turquoise/juice/lifecycle/ShutdownSafe.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/ContainerErrorTest.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/ContainerErrorTest.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/ContainerErrorTest.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/ContainerErrorTest.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/LifecycleTest.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/LifecycleTest.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/LifecycleTest.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/LifecycleTest.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/PostConstructExceptionTest.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/PostConstructExceptionTest.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/PostConstructExceptionTest.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/PostConstructExceptionTest.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/SafeShutdownTest.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/SafeShutdownTest.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/SafeShutdownTest.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/SafeShutdownTest.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/ShutdownHookTest.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/ShutdownHookTest.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/ShutdownHookTest.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/ShutdownHookTest.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle/TrickyJIT.java",
-      "path": "src/test/java/com/magenta/guice/lifecycle/TrickyJIT.java",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle",
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle/TrickyJIT.java",
+      "path": "src/test/java/com/turquoise/juice/lifecycle/TrickyJIT.java",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/magenta/guice/scope/LazySingleton.java",
-      "path": "src/main/java/com/magenta/guice/scope/LazySingleton.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/turquoise/juice/scope/LazySingleton.java",
+      "path": "src/main/java/com/turquoise/juice/scope/LazySingleton.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/magenta/guice/scope/ThreadLocalScope.java",
-      "path": "src/main/java/com/magenta/guice/scope/ThreadLocalScope.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/turquoise/juice/scope/ThreadLocalScope.java",
+      "path": "src/main/java/com/turquoise/juice/scope/ThreadLocalScope.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/magenta/guice/scope/UISingleton.java",
-      "path": "src/main/java/com/magenta/guice/scope/UISingleton.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/turquoise/juice/scope/UISingleton.java",
+      "path": "src/main/java/com/turquoise/juice/scope/UISingleton.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/LazySingleton.java",
-      "path": "src/main/java/com/maxifier/guice/scope/LazySingleton.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/LazySingleton.java",
+      "path": "src/main/java/com/megaproject/juice/scope/LazySingleton.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/ThreadLocalScope.java",
-      "path": "src/main/java/com/maxifier/guice/scope/ThreadLocalScope.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/ThreadLocalScope.java",
+      "path": "src/main/java/com/megaproject/juice/scope/ThreadLocalScope.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/UIProvider.java",
-      "path": "src/main/java/com/maxifier/guice/scope/UIProvider.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/UIProvider.java",
+      "path": "src/main/java/com/megaproject/juice/scope/UIProvider.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/UISingleton.java",
-      "path": "src/main/java/com/maxifier/guice/scope/UISingleton.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/UISingleton.java",
+      "path": "src/main/java/com/megaproject/juice/scope/UISingleton.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope/XScopes.java",
-      "path": "src/main/java/com/maxifier/guice/scope/XScopes.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope/XScopes.java",
+      "path": "src/main/java/com/megaproject/juice/scope/XScopes.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/test/java/com/magenta/guice/scope/SingletonCheckTest.java",
-      "path": "src/test/java/com/magenta/guice/scope/SingletonCheckTest.java",
-      "moduleKey": "com.maxifier.guice:guice-scopes",
+      "key": "com.megaproject.juice:juice-scopes:src/test/java/com/turquoise/juice/scope/SingletonCheckTest.java",
+      "path": "src/test/java/com/turquoise/juice/scope/SingletonCheckTest.java",
+      "moduleKey": "com.megaproject.juice:juice-scopes",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
-      "path": "src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
-      "path": "src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/Alone.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/Alone.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/Alone.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/Alone.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/AsEager.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/AsEager.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/AsEager.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/AsEager.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/Constant.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/Constant.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/Constant.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/Constant.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/First.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/First.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/First.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/First.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/Foo.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/Foo.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/Foo.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/Foo.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/FooImpl.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/FooImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/FooImpl.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/FooImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/FooModule.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/FooModule.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/FooModule.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/FooModule.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/In.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/In.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/In.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/In.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/InImpl.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/InImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/InImpl.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/InImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/Second.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/Second.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/Second.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/Second.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/TestAnnotation.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/TestAnnotation.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/TestAnnotation.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/TestAnnotation.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/TestInterface.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/TestInterface.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/TestInterface.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/TestInterface.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml/XmlConfigurationTest.java",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml/XmlConfigurationTest.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml/XmlConfigurationTest.java",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml/XmlConfigurationTest.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/plugins/Foo.java",
-      "path": "src/test/java/com/magenta/guice/plugins/Foo.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/plugins/Foo.java",
+      "path": "src/test/java/com/turquoise/juice/plugins/Foo.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/plugins/FooImpl.java",
-      "path": "src/test/java/com/magenta/guice/plugins/FooImpl.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/plugins/FooImpl.java",
+      "path": "src/test/java/com/turquoise/juice/plugins/FooImpl.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/plugins/MainModule.java",
-      "path": "src/test/java/com/magenta/guice/plugins/MainModule.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/plugins/MainModule.java",
+      "path": "src/test/java/com/turquoise/juice/plugins/MainModule.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/plugins/PluginsManagerTest.java",
-      "path": "src/test/java/com/magenta/guice/plugins/PluginsManagerTest.java",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap",
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/plugins/PluginsManagerTest.java",
+      "path": "src/test/java/com/turquoise/juice/plugins/PluginsManagerTest.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/main/java/com/magenta/guice/decorator/Decorated.java",
-      "path": "src/main/java/com/magenta/guice/decorator/Decorated.java",
-      "moduleKey": "com.maxifier.guice:guice-decorator",
+      "key": "com.megaproject.juice:juice-decorator:src/main/java/com/turquoise/juice/decorator/Decorated.java",
+      "path": "src/main/java/com/turquoise/juice/decorator/Decorated.java",
+      "moduleKey": "com.megaproject.juice:juice-decorator",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/main/java/com/magenta/guice/decorator/Decorator.java",
-      "path": "src/main/java/com/magenta/guice/decorator/Decorator.java",
-      "moduleKey": "com.maxifier.guice:guice-decorator",
+      "key": "com.megaproject.juice:juice-decorator:src/main/java/com/turquoise/juice/decorator/Decorator.java",
+      "path": "src/main/java/com/turquoise/juice/decorator/Decorator.java",
+      "moduleKey": "com.megaproject.juice:juice-decorator",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/main/java/com/magenta/guice/decorator/DuplicateMemberException.java",
-      "path": "src/main/java/com/magenta/guice/decorator/DuplicateMemberException.java",
-      "moduleKey": "com.maxifier.guice:guice-decorator",
+      "key": "com.megaproject.juice:juice-decorator:src/main/java/com/turquoise/juice/decorator/DuplicateMemberException.java",
+      "path": "src/main/java/com/turquoise/juice/decorator/DuplicateMemberException.java",
+      "moduleKey": "com.megaproject.juice:juice-decorator",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/test/java/com/magenta/guice/decorator/DecoratorTest.java",
-      "path": "src/test/java/com/magenta/guice/decorator/DecoratorTest.java",
-      "moduleKey": "com.maxifier.guice:guice-decorator",
+      "key": "com.megaproject.juice:juice-decorator:src/test/java/com/turquoise/juice/decorator/DecoratorTest.java",
+      "path": "src/test/java/com/turquoise/juice/decorator/DecoratorTest.java",
+      "moduleKey": "com.megaproject.juice:juice-decorator",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
+      "key": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
       "path": "src/main/java/com/google/inject/spi/RecordingOverrideBinder.java",
-      "moduleKey": "com.maxifier.guice:guice-override",
+      "moduleKey": "com.megaproject.juice:juice-override",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override/OverrideModule.java",
-      "path": "src/main/java/com/magenta/guice/override/OverrideModule.java",
-      "moduleKey": "com.maxifier.guice:guice-override",
+      "key": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override/OverrideModule.java",
+      "path": "src/main/java/com/turquoise/juice/override/OverrideModule.java",
+      "moduleKey": "com.megaproject.juice:juice-override",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/test/java/com/magenta/guice/override/OverrideModuleTest.java",
-      "path": "src/test/java/com/magenta/guice/override/OverrideModuleTest.java",
-      "moduleKey": "com.maxifier.guice:guice-override",
+      "key": "com.megaproject.juice:juice-override:src/test/java/com/turquoise/juice/override/OverrideModuleTest.java",
+      "path": "src/test/java/com/turquoise/juice/override/OverrideModuleTest.java",
+      "moduleKey": "com.megaproject.juice:juice-override",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DB.java",
-      "path": "src/main/java/com/magenta/guice/jpa/DB.java",
-      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "key": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DB.java",
+      "path": "src/main/java/com/turquoise/juice/jpa/DB.java",
+      "moduleKey": "com.megaproject.juice:juice-jpa",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
-      "path": "src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
-      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "key": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
+      "path": "src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
+      "moduleKey": "com.megaproject.juice:juice-jpa",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/JPAModule.java",
-      "path": "src/main/java/com/magenta/guice/jpa/JPAModule.java",
-      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "key": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/JPAModule.java",
+      "path": "src/main/java/com/turquoise/juice/jpa/JPAModule.java",
+      "moduleKey": "com.megaproject.juice:juice-jpa",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/test/java/com/magenta/guice/jpa/DBInterceptorTest.java",
-      "path": "src/test/java/com/magenta/guice/jpa/DBInterceptorTest.java",
-      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "key": "com.megaproject.juice:juice-jpa:src/test/java/com/turquoise/juice/jpa/DBInterceptorTest.java",
+      "path": "src/test/java/com/turquoise/juice/jpa/DBInterceptorTest.java",
+      "moduleKey": "com.megaproject.juice:juice-jpa",
       "status": "SAME"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean",
-      "path": "src/main/java/com/magenta/guice/mbean",
-      "moduleKey": "com.maxifier.guice:guice-mbean"
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean",
+      "path": "src/main/java/com/turquoise/juice/mbean",
+      "moduleKey": "com.megaproject.juice:juice-mbean"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/maxifier/guice/mbean",
-      "path": "src/main/java/com/maxifier/guice/mbean",
-      "moduleKey": "com.maxifier.guice:guice-mbean"
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/megaproject/juice/mbean",
+      "path": "src/main/java/com/megaproject/juice/mbean",
+      "moduleKey": "com.megaproject.juice:juice-mbean"
     },
     {
-      "key": "com.maxifier.guice:guice-mbean:src/test/java/com/maxifier/guice/mbean",
-      "path": "src/test/java/com/maxifier/guice/mbean",
-      "moduleKey": "com.maxifier.guice:guice-mbean"
+      "key": "com.megaproject.juice:juice-mbean:src/test/java/com/megaproject/juice/mbean",
+      "path": "src/test/java/com/megaproject/juice/mbean",
+      "moduleKey": "com.megaproject.juice:juice-mbean"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events",
-      "path": "src/main/java/com/magenta/guice/events",
-      "moduleKey": "com.maxifier.guice:guice-events"
+      "key": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events",
+      "path": "src/main/java/com/turquoise/juice/events",
+      "moduleKey": "com.megaproject.juice:juice-events"
     },
     {
-      "key": "com.maxifier.guice:guice-events:src/test/java/com/magenta/guice/events",
-      "path": "src/test/java/com/magenta/guice/events",
-      "moduleKey": "com.maxifier.guice:guice-events"
+      "key": "com.megaproject.juice:juice-events:src/test/java/com/turquoise/juice/events",
+      "path": "src/test/java/com/turquoise/juice/events",
+      "moduleKey": "com.megaproject.juice:juice-events"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property",
-      "path": "src/main/java/com/magenta/guice/property",
-      "moduleKey": "com.maxifier.guice:guice-property"
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property",
+      "path": "src/main/java/com/turquoise/juice/property",
+      "moduleKey": "com.megaproject.juice:juice-property"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/main/java/com/magenta/guice/property/converter",
-      "path": "src/main/java/com/magenta/guice/property/converter",
-      "moduleKey": "com.maxifier.guice:guice-property"
+      "key": "com.megaproject.juice:juice-property:src/main/java/com/turquoise/juice/property/converter",
+      "path": "src/main/java/com/turquoise/juice/property/converter",
+      "moduleKey": "com.megaproject.juice:juice-property"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property",
-      "path": "src/test/java/com/magenta/guice/property",
-      "moduleKey": "com.maxifier.guice:guice-property"
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property",
+      "path": "src/test/java/com/turquoise/juice/property",
+      "moduleKey": "com.megaproject.juice:juice-property"
     },
     {
-      "key": "com.maxifier.guice:guice-property:src/test/java/com/magenta/guice/property/converter",
-      "path": "src/test/java/com/magenta/guice/property/converter",
-      "moduleKey": "com.maxifier.guice:guice-property"
+      "key": "com.megaproject.juice:juice-property:src/test/java/com/turquoise/juice/property/converter",
+      "path": "src/test/java/com/turquoise/juice/property/converter",
+      "moduleKey": "com.megaproject.juice:juice-property"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/main/java/com/magenta/guice/lifecycle",
-      "path": "src/main/java/com/magenta/guice/lifecycle",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle"
+      "key": "com.megaproject.juice:juice-lifecycle:src/main/java/com/turquoise/juice/lifecycle",
+      "path": "src/main/java/com/turquoise/juice/lifecycle",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle"
     },
     {
-      "key": "com.maxifier.guice:guice-lifecycle:src/test/java/com/magenta/guice/lifecycle",
-      "path": "src/test/java/com/magenta/guice/lifecycle",
-      "moduleKey": "com.maxifier.guice:guice-lifecycle"
+      "key": "com.megaproject.juice:juice-lifecycle:src/test/java/com/turquoise/juice/lifecycle",
+      "path": "src/test/java/com/turquoise/juice/lifecycle",
+      "moduleKey": "com.megaproject.juice:juice-lifecycle"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/magenta/guice/scope",
-      "path": "src/main/java/com/magenta/guice/scope",
-      "moduleKey": "com.maxifier.guice:guice-scopes"
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/turquoise/juice/scope",
+      "path": "src/main/java/com/turquoise/juice/scope",
+      "moduleKey": "com.megaproject.juice:juice-scopes"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/main/java/com/maxifier/guice/scope",
-      "path": "src/main/java/com/maxifier/guice/scope",
-      "moduleKey": "com.maxifier.guice:guice-scopes"
+      "key": "com.megaproject.juice:juice-scopes:src/main/java/com/megaproject/juice/scope",
+      "path": "src/main/java/com/megaproject/juice/scope",
+      "moduleKey": "com.megaproject.juice:juice-scopes"
     },
     {
-      "key": "com.maxifier.guice:guice-scopes:src/test/java/com/magenta/guice/scope",
-      "path": "src/test/java/com/magenta/guice/scope",
-      "moduleKey": "com.maxifier.guice:guice-scopes"
+      "key": "com.megaproject.juice:juice-scopes:src/test/java/com/turquoise/juice/scope",
+      "path": "src/test/java/com/turquoise/juice/scope",
+      "moduleKey": "com.megaproject.juice:juice-scopes"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins",
-      "path": "src/main/java/com/magenta/guice/bootstrap/plugins",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap"
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/plugins",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml",
-      "path": "src/main/java/com/magenta/guice/bootstrap/xml",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap"
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/xml",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/bootstrap/xml",
-      "path": "src/test/java/com/magenta/guice/bootstrap/xml",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap"
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/bootstrap/xml",
+      "path": "src/test/java/com/turquoise/juice/bootstrap/xml",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap"
     },
     {
-      "key": "com.maxifier.guice:guice-bootstrap:src/test/java/com/magenta/guice/plugins",
-      "path": "src/test/java/com/magenta/guice/plugins",
-      "moduleKey": "com.maxifier.guice:guice-bootstrap"
+      "key": "com.megaproject.juice:juice-bootstrap:src/test/java/com/turquoise/juice/plugins",
+      "path": "src/test/java/com/turquoise/juice/plugins",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/main/java/com/magenta/guice/decorator",
-      "path": "src/main/java/com/magenta/guice/decorator",
-      "moduleKey": "com.maxifier.guice:guice-decorator"
+      "key": "com.megaproject.juice:juice-decorator:src/main/java/com/turquoise/juice/decorator",
+      "path": "src/main/java/com/turquoise/juice/decorator",
+      "moduleKey": "com.megaproject.juice:juice-decorator"
     },
     {
-      "key": "com.maxifier.guice:guice-decorator:src/test/java/com/magenta/guice/decorator",
-      "path": "src/test/java/com/magenta/guice/decorator",
-      "moduleKey": "com.maxifier.guice:guice-decorator"
+      "key": "com.megaproject.juice:juice-decorator:src/test/java/com/turquoise/juice/decorator",
+      "path": "src/test/java/com/turquoise/juice/decorator",
+      "moduleKey": "com.megaproject.juice:juice-decorator"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/main/java/com/google/inject/spi",
+      "key": "com.megaproject.juice:juice-override:src/main/java/com/google/inject/spi",
       "path": "src/main/java/com/google/inject/spi",
-      "moduleKey": "com.maxifier.guice:guice-override"
+      "moduleKey": "com.megaproject.juice:juice-override"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/main/java/com/magenta/guice/override",
-      "path": "src/main/java/com/magenta/guice/override",
-      "moduleKey": "com.maxifier.guice:guice-override"
+      "key": "com.megaproject.juice:juice-override:src/main/java/com/turquoise/juice/override",
+      "path": "src/main/java/com/turquoise/juice/override",
+      "moduleKey": "com.megaproject.juice:juice-override"
     },
     {
-      "key": "com.maxifier.guice:guice-override:src/test/java/com/magenta/guice/override",
-      "path": "src/test/java/com/magenta/guice/override",
-      "moduleKey": "com.maxifier.guice:guice-override"
+      "key": "com.megaproject.juice:juice-override:src/test/java/com/turquoise/juice/override",
+      "path": "src/test/java/com/turquoise/juice/override",
+      "moduleKey": "com.megaproject.juice:juice-override"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa",
-      "path": "src/main/java/com/magenta/guice/jpa",
-      "moduleKey": "com.maxifier.guice:guice-jpa"
+      "key": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa",
+      "path": "src/main/java/com/turquoise/juice/jpa",
+      "moduleKey": "com.megaproject.juice:juice-jpa"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/test/java/com/magenta/guice/jpa",
-      "path": "src/test/java/com/magenta/guice/jpa",
-      "moduleKey": "com.maxifier.guice:guice-jpa"
+      "key": "com.megaproject.juice:juice-jpa:src/test/java/com/turquoise/juice/jpa",
+      "path": "src/test/java/com/turquoise/juice/jpa",
+      "moduleKey": "com.megaproject.juice:juice-jpa"
     }
   ],
   "rules": [

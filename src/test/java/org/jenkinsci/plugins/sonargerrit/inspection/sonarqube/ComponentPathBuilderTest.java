@@ -39,9 +39,9 @@ public class ComponentPathBuilderTest {
         String realFileName = builder
                 .buildPrefixedPathForComponentWithKey(issueComponent, config.getProjectPath())
                 .or(issueComponent);
-        Assert.assertEquals("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java", realFileName);
+        Assert.assertEquals("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", realFileName);
 
-        Assert.assertEquals("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java", ((SonarQubeIssue) issue).getFilepath()); // logic of another class - todo move out there
+        Assert.assertEquals("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", ((SonarQubeIssue) issue).getFilepath()); // logic of another class - todo move out there
     }
 
     @Test
@@ -85,13 +85,13 @@ public class ComponentPathBuilderTest {
         Multimap<String, Issue> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
-        Assert.assertEquals(1, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
-        Assert.assertEquals(2, multimap.get("guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
-        Assert.assertEquals(8, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
-        Assert.assertEquals(4, multimap.get("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java").size());
-        Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java").size());
-        Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
-        Assert.assertEquals(1, multimap.get("guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
+        Assert.assertEquals(1, multimap.get("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
+        Assert.assertEquals(2, multimap.get("juice-jpa/src/main/java/com/turquoise/juice/jpa/DBInterceptor.java").size());
+        Assert.assertEquals(8, multimap.get("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(4, multimap.get("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java").size());
+        Assert.assertEquals(1, multimap.get("juice-events/src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java").size());
+        Assert.assertEquals(1, multimap.get("juice-events/src/main/java/com/turquoise/juice/events/EnumMatcher.java").size());
+        Assert.assertEquals(1, multimap.get("juice-events/src/main/java/com/turquoise/juice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
     }
 
@@ -107,13 +107,13 @@ public class ComponentPathBuilderTest {
         Multimap<String, Issue> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
-        Assert.assertEquals(1, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
-        Assert.assertEquals(2, multimap.get("testfolder/guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
-        Assert.assertEquals(8, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
-        Assert.assertEquals(4, multimap.get("testfolder/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
+        Assert.assertEquals(2, multimap.get("testfolder/juice-jpa/src/main/java/com/turquoise/juice/jpa/DBInterceptor.java").size());
+        Assert.assertEquals(8, multimap.get("testfolder/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(4, multimap.get("testfolder/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/juice-events/src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/juice-events/src/main/java/com/turquoise/juice/events/EnumMatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder/juice-events/src/main/java/com/turquoise/juice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
 
     }
@@ -129,14 +129,14 @@ public class ComponentPathBuilderTest {
         Multimap<String, Issue> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(9, multimap.keySet().size());
-        Assert.assertEquals(1, multimap.get("testfolder1/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java").size());
-        Assert.assertEquals(2, multimap.get("testfolder1/guice-jpa/src/main/java/com/magenta/guice/jpa/DBInterceptor.java").size());
-        Assert.assertEquals(5, multimap.get("testfolder1/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
-        Assert.assertEquals(3, multimap.get("testfolder2/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java").size());
-        Assert.assertEquals(4, multimap.get("testfolder2/guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EnumMatcher.java").size());
-        Assert.assertEquals(1, multimap.get("testfolder2/guice-events/src/main/java/com/magenta/guice/events/EventDispatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder1/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
+        Assert.assertEquals(2, multimap.get("testfolder1/juice-jpa/src/main/java/com/turquoise/juice/jpa/DBInterceptor.java").size());
+        Assert.assertEquals(5, multimap.get("testfolder1/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(3, multimap.get("testfolder2/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java").size());
+        Assert.assertEquals(4, multimap.get("testfolder2/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/juice-events/src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/juice-events/src/main/java/com/turquoise/juice/events/EnumMatcher.java").size());
+        Assert.assertEquals(1, multimap.get("testfolder2/juice-events/src/main/java/com/turquoise/juice/events/EventDispatcher.java").size());
         Assert.assertEquals(1, multimap.get("testfolder2/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
     }
 

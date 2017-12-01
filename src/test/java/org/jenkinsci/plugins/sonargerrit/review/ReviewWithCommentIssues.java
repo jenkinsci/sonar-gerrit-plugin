@@ -17,8 +17,8 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     @Before
     public void initialize() {
         super.initialize();
-        commentIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
-        commentIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager1.java", new DummyIssue());
+        commentIssues.put("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
+        commentIssues.put("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager1.java", new DummyIssue());
     }
 
     @Test

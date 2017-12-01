@@ -16,13 +16,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <pre>
  *
     {
-        "key": "com.maxifier.guice:guice-bootstrap",
-        "path": "guice-bootstrap"
+        "key": "com.megaproject.juice:juice-bootstrap",
+        "path": "juice-bootstrap"
     },
     {
-        "key": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-        "path": "src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
-        "moduleKey": "com.maxifier.guice:guice-bootstrap",
+        "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+        "path": "src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+        "moduleKey": "com.megaproject.juice:juice-bootstrap",
         "status": "SAME"
     }
  * </pre>
@@ -84,7 +84,7 @@ public class ComponentPathBuilder {
             return Optional.of(parent);
         }
         // find parent by replacing *one* '.' with ':' in back-to-front order
-        // e.g. "base.guice:events", "base:guice.events"
+        // e.g. "base.juice:events", "base:juice.events"
         int dotPosition = parentKeyTemplate.length();
         while (parent == null) {
             dotPosition = parentKeyTemplate.lastIndexOf('.', dotPosition - 1);

@@ -17,7 +17,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
     @Before
     public void initialize() {
         super.initialize();
-        scoreIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
+        scoreIssues.put("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
     }
 
     // review settings are same as for ReviewWithNoIssuesTest

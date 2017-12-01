@@ -3,7 +3,7 @@
   "issues": [
     {
       "key": "6b8a2d04-e126-481d-83ef-5719e3c470ea",
-      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "component": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "line": 228,
       "message": "Do not forget to remove this deprecated code someday.",
       "severity": "INFO",
@@ -15,13 +15,13 @@
   ],
   "components": [
     {
-      "key": "com.maxifier.guice:guice-jpa",
-      "path": "guice-jpa"
+      "key": "com.megaproject.juice:juice-jpa",
+      "path": "juice-jpa"
     },
     {
-      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
-      "path": "src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
-      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "key": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
+      "path": "src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
+      "moduleKey": "com.megaproject.juice:juice-jpa",
       "status": "SAME"
     }
   ],

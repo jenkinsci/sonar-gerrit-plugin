@@ -16,7 +16,7 @@ public class ReviewCommentedIssuesNotificationTest extends BaseNotificationTest 
     @Override
     public void initialize() {
         super.initialize();
-        commentIssues.put("guice-bootstrap/src/main/java/com/magenta/guice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
+        commentIssues.put("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java", new DummyIssue());
     }
 
     protected NotifyHandling getDefault() {

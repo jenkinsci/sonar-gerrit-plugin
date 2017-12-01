@@ -64,7 +64,7 @@
     },
 
     {
-      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/ClassgenHandlerInvocator.java",
+      "filename": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/ClassgenHandlerInvocator.java",
       "diffInfo": {
         "content": [
           {
@@ -123,7 +123,7 @@
     },
 
     {
-      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EnumMatcher.java",
+      "filename": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EnumMatcher.java",
       "diffInfo": {
         "content": [
           {
@@ -182,7 +182,7 @@
       }
     },
     {
-      "filename": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "filename": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
       "diffInfo": {
         "content": [
           {
@@ -197,7 +197,7 @@
       }
     },
     {
-      "filename": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "filename": "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
       "diffInfo": {
         "content": [
           {
@@ -212,7 +212,7 @@
       }
     },
     {
-      "filename": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "filename": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/xml/XmlModule.java",
       "diffInfo": {
         "content": [
           {
@@ -227,7 +227,7 @@
       }
     },
     {
-      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "filename": "com.megaproject.juice:juice-events:src/main/java/com/turquoise/juice/events/EventDispatcher.java",
       "diffInfo": {
         "content": [
           {
