@@ -1,12 +1,15 @@
-package org.jenkinsci.plugins.sonargerrit;
+package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
+import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
+import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +38,10 @@ public class ReviewResultTest extends ReportBasedTest {
     }
 
     protected ReviewInput getReviewResult() {
-        return publisher.getReviewResult(commentIssues, scoreIssues);
+        GerritReviewBuilder builder = new GerritReviewBuilder(commentIssues, scoreIssues,
+                publisher.getReviewConfig(), publisher.getScoreConfig(),
+                publisher.getNotificationConfig(), publisher.getSonarURL());
+        return builder.buildReview();
     }
 
     protected ReviewConfig getReviewConfig() {

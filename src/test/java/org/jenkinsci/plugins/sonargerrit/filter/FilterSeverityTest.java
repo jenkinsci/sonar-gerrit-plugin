@@ -18,17 +18,17 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
 
     @Test
     public void testInfoSeverity() {
-        doCheckSeverity(Severity.INFO, 19);
+        doCheckSeverity(Severity.INFO, 11);
     }
 
     @Test
     public void testMinorSeverity() {
-        doCheckSeverity(Severity.MINOR, 18);
+        doCheckSeverity(Severity.MINOR, 10);
     }
 
     @Test
     public void testMajorSeverity() {
-        doCheckSeverity(Severity.MAJOR, 12);
+        doCheckSeverity(Severity.MAJOR, 7);
     }
 
     @Test
@@ -58,7 +58,9 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
         Severity severity = Severity.valueOf(severityStr);
         // check that all filtered out issues have severity lower than criteria
         for (Issue issue : filteredOutIssues) {
-            Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
+            if (isFileChanged(issue)) {
+                Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
+            }
         }
     }
 

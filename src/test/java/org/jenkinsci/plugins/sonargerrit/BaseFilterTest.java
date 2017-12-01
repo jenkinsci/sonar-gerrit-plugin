@@ -1,15 +1,18 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
+import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.filter.predicates.BySpecifiedComponentListPredicate;
+import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +41,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
     public void initialize() throws InterruptedException, IOException, URISyntaxException {
         loadReport();
         buildPublisher();  //todo check all issues read correctly?
+        diffInfo = readChange("diff_info.json");
     }
 
     protected void loadReport() throws InterruptedException, IOException, URISyntaxException {
@@ -53,6 +57,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
     public void reset() {
         filteredIssues = null;
         filteredOutIssues = null;
+        diffInfo = null;
     }
 
     //    @Before
@@ -67,7 +72,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
 
 //        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
-        Assert.assertEquals(1, publisher.getSubJobConfigs().size());
+//        Assert.assertEquals(1, publisher.getSubJobConfigs().size());
 
         publisher.setAuthConfig(null);
 
@@ -76,17 +81,26 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         publisher.setScoreConfig(new ScoreConfig());
     }
 
-    protected Multimap<String, Issue> getMultimap() {
-        return SonarToGerritPublisher.generateFilenameToIssuesMapFilteredByPredicates("", report, report.getIssues());
-    }
-
     protected void doFilterIssues(IssueFilterConfig config) {
         // filter issues
         List<Issue> allIssues = report.getIssues();
+
         //todo temporary - should be realized in publisher
-        List<Issue> step2 = allIssues;
-        if (diffInfo != null && config.isChangedLinesOnly()) {
-            Map<String, List<Range<Integer>>> changed = new HashMap<>();
+        // todo check filtered out as unchanged file
+//        List<Issue> step2 = allIssues;
+        Map<String, List<Range<Integer>>> changed = getChangedLines();
+
+        IssueFilter filter = new IssueFilter(config, allIssues, changed);
+        filteredIssues = Sets.newHashSet(filter.filter());
+
+        // get issues that were filtered out
+        filteredOutIssues = new HashSet<>(allIssues);
+        filteredOutIssues.removeAll(filteredIssues);
+    }
+
+    protected Map<String, List<Range<Integer>>> getChangedLines() {
+        Map<String, List<Range<Integer>>> changed = new HashMap<>();
+        if (diffInfo != null) {
             for (String s : diffInfo.keySet()) {
                 List<Range<Integer>> rangeList = new ArrayList<>();
                 DiffInfo diffInfo = this.diffInfo.get(s);
@@ -103,17 +117,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
                 }
                 changed.put(s, rangeList);
             }
-            Iterable<Issue> filtered = Iterables.filter(allIssues, BySpecifiedComponentListPredicate.apply(changed));
-            step2 = new ArrayList<Issue>();
-            for (Issue i : filtered) {
-                step2.add(i);
-            }
-        }
-        filteredIssues = Sets.newHashSet(publisher.filterIssuesByPredicates(step2, config));
-
-        // get issues that were filtered out
-        filteredOutIssues = new HashSet<>(allIssues);
-        filteredOutIssues.removeAll(filteredIssues);
+        } return changed;
     }
 
     protected void doCheckSeverity(Severity severity) {
@@ -147,6 +151,12 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
     protected boolean isChangedLinesOnlyCriteriaSatisfied(Boolean isChangesLinesOnly, Issue issue) {
         return !isChangesLinesOnly || isChanged(issue.getComponent(), issue.getLine());
+    }
+
+    protected boolean isFileChanged(Issue issue) {
+        String filename = issue.getComponent();
+        DiffInfo diffInfo = this.diffInfo.get(filename);
+        return diffInfo != null;
     }
 
     protected boolean isChanged(String filename, int line) {

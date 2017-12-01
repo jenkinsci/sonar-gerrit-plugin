@@ -1,0 +1,30 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "6b8a2d04-e126-481d-83ef-5719e3c470ea",
+      "component": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "line": 228,
+      "message": "Do not forget to remove this deprecated code someday.",
+      "severity": "INFO",
+      "rule": "squid:S1133",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.maxifier.guice:guice-jpa",
+      "path": "guice-jpa"
+    },
+    {
+      "key": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "path": "src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "moduleKey": "com.maxifier.guice:guice-jpa",
+      "status": "SAME"
+    }
+  ],
+  "rules": [],
+  "users": []
+}

@@ -13,10 +13,10 @@ import java.util.*;
  * <p/>
  * $Id$
  */
-public class BySpecifiedComponentListPredicate implements Predicate<Issue> {
+public class ByChangedLinesPredicate implements Predicate<Issue> {
     private final Map<String, List<Range<Integer>>> allowedComponents;
 
-    private BySpecifiedComponentListPredicate(Map<String, List<Range<Integer>>> allowedComponents) {
+    private ByChangedLinesPredicate(Map<String, List<Range<Integer>>> allowedComponents) {
         if (allowedComponents != null) {
             this.allowedComponents = new HashMap<>();
             this.allowedComponents.putAll(allowedComponents);
@@ -44,7 +44,7 @@ public class BySpecifiedComponentListPredicate implements Predicate<Issue> {
         return false;
     }
 
-    public static BySpecifiedComponentListPredicate apply(Map<String, List<Range<Integer>>> allowedComponents) {
-        return new BySpecifiedComponentListPredicate(allowedComponents);
+    public static ByChangedLinesPredicate apply(Map<String, List<Range<Integer>>> allowedComponents) {
+        return new ByChangedLinesPredicate(allowedComponents);
     }
 }

@@ -103,7 +103,7 @@ public class DefaultValuesTest implements BaseConfigTest {
 
         SonarToGerritPublisher publisher = new SonarToGerritPublisher();
         Assert.assertEquals(SONAR_URL, publisher.getSonarURL());
-        Assert.assertEquals(SONAR_REPORT_PATH, publisher.getSubJobConfigs().get(0).getSonarReportPath());
+//        Assert.assertEquals(SONAR_REPORT_PATH, publisher.getSubJobConfigs().get(0).getSonarReportPath());
     }
 
     @Test

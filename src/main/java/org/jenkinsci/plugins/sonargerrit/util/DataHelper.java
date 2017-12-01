@@ -2,9 +2,10 @@ package org.jenkinsci.plugins.sonargerrit.util;
 
 import hudson.Util;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -38,6 +39,32 @@ public final class DataHelper {
             return value;
         } catch (MalformedURLException e) {
             return null;
+        }
+    }
+
+    public static Integer parseNumber(String value) {
+        try {
+             return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public static void checkNotEmpty(String value, String errMessage) {
+        if (Util.fixEmpty(value) == null) {
+            throw new IllegalArgumentException(errMessage);
+        }
+    }
+
+    public static void checkNotEmpty(Object value, String errMessage) {
+        if (value == null) {
+            throw new IllegalArgumentException(errMessage);
+        }
+    }
+
+    public static void checkNotNull(Object value, String errMessage) {
+        if (value == null) {
+            throw new IllegalStateException(errMessage);
         }
     }
 

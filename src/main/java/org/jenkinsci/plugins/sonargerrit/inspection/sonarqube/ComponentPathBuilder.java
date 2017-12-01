@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.inspection;
+package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;

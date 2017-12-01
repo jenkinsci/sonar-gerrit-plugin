@@ -1,8 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import org.jenkinsci.plugins.sonargerrit.ReviewResultTest;
-import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.junit.Assert;
 import org.junit.Before;

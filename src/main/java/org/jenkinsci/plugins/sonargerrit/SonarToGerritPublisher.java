@@ -1,23 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.*;
-import com.google.gerrit.extensions.api.GerritApi;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Range;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import com.google.gerrit.extensions.api.changes.RevisionApi;
-import com.google.gerrit.extensions.common.DiffInfo;
-import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
-import com.urswolfer.gerrit.client.rest.GerritAuthData;
-import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
@@ -27,22 +17,21 @@ import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.config.*;
-import org.jenkinsci.plugins.sonargerrit.inspection.ComponentPathBuilder;
-import org.jenkinsci.plugins.sonargerrit.inspection.SonarReportBuilder;
-import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
-import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
+import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByMinSeverityPredicate;
-import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByNewPredicate;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssue;
+import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
+import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
+import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
+import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
 import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -120,178 +109,67 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         setNotificationConfig(notificationConfig);
     }
 
-
-    @VisibleForTesting
-    static Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(String projectPath, Report report, Iterable<Issue> filtered) {
-        final Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-        // generating map consisting of real file names to corresponding issues
-        // collections.
-        final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
-        for (Issue issue : filtered) {
-            String issueComponent = issue.getComponent();
-            String realFileName = pathBuilder.buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
-                    .or(issueComponent);
-            file2issues.put(realFileName, issue);
-        }
-        return file2issues;
-    }
-
-    private boolean postScore() {
-        return this.scoreConfig != null;
-    }
-
-
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        List<ReportInfo> issueInfos = readSonarReports(listener, filePath);
-        if (issueInfos == null) {        //todo make more readable
-            throw new AbortException(getLocalized("jenkins.plugin.error.path.no.project.config.available"));
-        }
+        SonarConnector sonarConnector = new SonarConnector(listener, subJobConfigs);
+        sonarConnector.readSonarReports(filePath);
 
-        IssueFilterConfig reviewIssueFilterConfig = reviewConfig.getIssueFilterConfig();
-        Multimap<String, Issue> file2issuesToComment = generateFilenameToIssuesMapFilteredByPredicates(issueInfos, reviewIssueFilterConfig);
-
-        IssueFilterConfig scoreIssueFilterConfig = scoreConfig.getIssueFilterConfig();
-        Multimap<String, Issue> file2issuesToScore = postScore() ? generateFilenameToIssuesMapFilteredByPredicates(issueInfos, scoreIssueFilterConfig) : null;
-
-        // Step 3 - Prepare Gerrit REST API client
-        // Check Gerrit configuration is available
-        String gerritNameEnvVar = getEnvVar(run, listener, GERRIT_NAME_ENV_VAR_NAME);
         GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-        String gerritServerName = gerritNameEnvVar != null ? gerritNameEnvVar : trigger != null ? trigger.getServerName() : null;
-        if (gerritServerName == null) {
-            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.server.empty"));
-        }
-        IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(gerritServerName);
-        if (gerritConfig == null) {
-            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.config.empty"));
-        }
-
-        if (!gerritConfig.isUseRestApi()) {
-            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.restapi.off"));
-        }
-        if (gerritConfig.getGerritHttpUserName() == null) {
-            throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.user.empty"));
-        }
-        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        String username = authConfig == null ? gerritConfig.getGerritHttpUserName() : authConfig.getUsername();
-        String password = authConfig == null ? gerritConfig.getGerritHttpPassword() : authConfig.getPassword();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(gerritConfig.getGerritFrontEndUrl(),
-                username, password, gerritConfig.isUseRestApi());
-        GerritApi gerritApi = gerritRestApiFactory.create(authData);
+        Map<String, String> envVars = getEnvVars(run, listener, GerritConnectionInfo.REQUIRED_VARS);
+        GerritConnectionInfo connectionInfo = new GerritConnectionInfo(envVars, trigger, authConfig);
         try {
-            String changeNStr = getEnvVar(run, listener, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME);
-            if (changeNStr == null) {
-                throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.change.number.empty"));
-            }
-            int changeNumber = Integer.parseInt(changeNStr);
+            GerritConnector connector = new GerritConnector(connectionInfo);
+            connector.connect();
+            GerritRevisionWrapper revisionInfo = new GerritRevisionWrapper(connector.getRevision());
+            Map<String, List<Range<Integer>>> fileToChangedLines = revisionInfo.getFileToChangedLines();
 
-            String patchsetNStr = getEnvVar(run, listener, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME);
-            if (patchsetNStr == null) {
-                throw new AbortException(getLocalized("jenkins.plugin.error.gerrit.patchset.number.empty"));
-            }
-            int patchSetNumber = Integer.parseInt(patchsetNStr);
+            Multimap<String, Issue> file2issuesToComment = getFilteredFileToIssueMultimap(
+                    reviewConfig.getIssueFilterConfig(),sonarConnector, fileToChangedLines);
 
-            RevisionApi revision = gerritApi.changes().id(changeNumber).revision(patchSetNumber);
-            logMessage(listener, "jenkins.plugin.connected.to.gerrit", Level.INFO, new Object[]{gerritServerName, changeNumber, patchSetNumber});
-
-            // Step 4 - Filter issues by changed files
-            file2issuesToComment = filterIssuesByChangedFiles(file2issuesToComment, revision);
-
-//            logResultMap(file2issuesToComment, "Filter issues by changed files: {0} elements");
-
-            if (reviewIssueFilterConfig.isChangedLinesOnly()) {
-                // Step 4a - Filter issues by changed lines in file only
-                filterIssuesByChangedLines(file2issuesToComment, revision);
-//                logResultMap(file2issuesToComment, "Filter issues by changed lines: {0} elements");
+            Multimap<String, Issue> file2issuesToScore = null;
+            boolean postScore = scoreConfig != null;
+            if (postScore) {
+                file2issuesToScore = getFilteredFileToIssueMultimap(
+                        scoreConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
             }
 
-            if (postScore() && scoreIssueFilterConfig.isChangedLinesOnly()) {
-                // Step 4a - Filter issues by changed lines in file only
-                filterIssuesByChangedLines(file2issuesToScore, revision);
-//                logResultMap(file2issuesToComment, "Filter issues by changed lines: {0} elements");
-            }
+            ReviewInput reviewInput =
+                    new GerritReviewBuilder(
+                            file2issuesToComment, file2issuesToScore, reviewConfig, scoreConfig, notificationConfig, sonarURL)
+                            .buildReview();
+            revisionInfo.sendReview(reviewInput);
 
-            // Step 6 - Send review to Gerrit
-            ReviewInput reviewInput = getReviewResult(file2issuesToComment, file2issuesToScore);
-
-            // Step 7 - Post review
-            revision.review(reviewInput);
-            logMessage(listener, "jenkins.plugin.review.sent", Level.INFO);
+            TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
         } catch (RestApiException e) {
             LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
             throw new AbortException("Unable to post review: " + e.getMessage());
+        } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
+            throw new AbortException(e.getMessage());
         }
     }
 
-    private Multimap<String, Issue> filterIssuesByChangedFiles(Multimap<String, Issue> file2issues, RevisionApi revision) throws RestApiException {
-        final Map<String, FileInfo> files = revision.files();
-        file2issues = Multimaps.filterKeys(file2issues, new Predicate<String>() {
-            @Override
-            public boolean apply(@Nullable String input) {
-                return input != null && files.keySet().contains(input);
-            }
-        });
-        return file2issues;
+    private Multimap<String, Issue> getFilteredFileToIssueMultimap(IssueFilterConfig filterConfig,
+                                                                     SonarConnector sonarConnector,
+                                                                     Map<String, List<Range<Integer>>> fileToChangedLines) {
+        IssueFilter<SonarQubeIssue> commentFilter = new IssueFilter<>(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
+        Iterable<SonarQubeIssue> issuesToComment = commentFilter.filter();
+        return sonarConnector.getReportData(issuesToComment);
     }
 
-    @VisibleForTesting
-    Multimap<String, Issue> generateFilenameToIssuesMapFilteredByPredicates(List<ReportInfo> issueInfos, IssueFilterConfig filter) {
-        Multimap<String, Issue> file2issues = LinkedListMultimap.create();
-        for (ReportInfo info : issueInfos) {
-
-            Report report = info.report;
-
-            // Step 1 - Filter issues by issues only predicates
-            Iterable<Issue> filtered = filterIssuesByPredicates(report.getIssues(), filter);
-
-            // Step 2 - Calculate real file name for issues and store to multimap
-            file2issues.putAll(generateFilenameToIssuesMapFilteredByPredicates(info.directoryPath, report, filtered));
+    private Map<String, String> getEnvVars(Run<?, ?> run, TaskListener listener, String... varNames) throws IOException, InterruptedException {
+        Map<String, String> envVars = new HashMap<>();
+        for (String varName : varNames) {
+            envVars.put(varName, getEnvVar(run, listener, varName));
         }
-        return file2issues;
+        return envVars;
     }
 
-    private Report readSonarReport(TaskListener listener, FilePath workspace, SubJobConfig config) throws IOException,
-            InterruptedException {
-        FilePath reportPath = workspace.child(config.getSonarReportPath());
-        if (!reportPath.exists()) {
-            logMessage(listener, "jenkins.plugin.error.sonar.report.not.exists", Level.SEVERE, reportPath);
-            return null;
-        }
-
-        if (reportPath.isDirectory()) {
-            logMessage(listener, "jenkins.plugin.error.sonar.report.path.directory", Level.SEVERE, reportPath);
-            return null;
-        }
-        logMessage(listener, "jenkins.plugin.getting.report", Level.INFO, reportPath);
-
-        SonarReportBuilder builder = new SonarReportBuilder();
-        String reportJson = reportPath.readToString();
-        Report report = builder.fromJson(reportJson);
-        logMessage(listener, "jenkins.plugin.report.loaded", Level.INFO, report.getIssues().size());
-        return report;
-    }
-
-    @VisibleForTesting
-    List<ReportInfo> readSonarReports(TaskListener listener, FilePath workspace) throws IOException,
-            InterruptedException {
-        List<ReportInfo> reports = new ArrayList<ReportInfo>();
-        for (SubJobConfig subJobConfig : getSubJobConfigs(false)) { // to be replaced by this.subJobConfigs in further releases - this code is to support older versions
-            Report report = readSonarReport(listener, workspace, subJobConfig);
-            if (report == null) {
-                return null;
-            }
-            reports.add(new ReportInfo(subJobConfig.getProjectPath(), report));
-        }
-        return reports;
-    }
-
-    private String getEnvVar(Run<?, ?> build, TaskListener listener, String name) throws IOException, InterruptedException {
-        EnvVars envVars = build.getEnvironment(listener);
+    private String getEnvVar(Run<?, ?> run, TaskListener listener, String name) throws IOException, InterruptedException {
+        EnvVars envVars = run.getEnvironment(listener);
         String value = envVars.get(name);
         // due to JENKINS-30910 old versions of workflow-job-plugin do not have code copying ParameterAction values to Environment Variables in pipeline jobs.
         if (value == null) {
-            ParametersAction action = build.getAction(ParametersAction.class);
+            ParametersAction action = run.getAction(ParametersAction.class);
             if (action != null) {
                 ParameterValue parameter = action.getParameter(name);
                 if (parameter != null) {
@@ -303,134 +181,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             }
         }
         return value;
-    }
-
-    private void logMessage(TaskListener listener, String message, Level l, Object... params) {
-        message = getLocalized(message, params);
-        if (listener != null) {     // it can be it tests
-            listener.getLogger().println(message);
-        }
-        LOGGER.log(l, message);
-    }
-
-    private String getReviewMessage(Multimap<String, Issue> finalIssues) {
-        return new CustomReportFormatter(finalIssues.values(), reviewConfig.getSomeIssuesTitleTemplate(), reviewConfig.getNoIssuesTitleTemplate()).getMessage();
-    }
-
-    private int getReviewMark(int finalIssuesCount) {
-        Integer mark = finalIssuesCount > 0 ? scoreConfig.getIssuesScore() : scoreConfig.getNoIssuesScore();
-        return mark.intValue();
-    }
-
-    public List<SubJobConfig> getSubJobConfigs() {
-        return getSubJobConfigs(true);
-    }
-
-    public List<SubJobConfig> getSubJobConfigs(boolean addDefault) {
-        if (subJobConfigs == null) {
-            subJobConfigs = new ArrayList<SubJobConfig>();
-            // add configuration from previous plugin version
-            if (addDefault) {
-                subJobConfigs.add(new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH));
-            }
-        }
-        return subJobConfigs;
-    }
-
-    //todo replace by enum
-    private NotifyHandling getNotificationSettings(int finalIssuesToCommentCount, int score) {
-        return score < 0 ?
-                NotifyHandling.valueOf(notificationConfig.getNegativeScoreNotificationRecipient()) :
-                finalIssuesToCommentCount > 0 ?
-                        NotifyHandling.valueOf(notificationConfig.getCommentedIssuesNotificationRecipient()) :
-                        NotifyHandling.valueOf(notificationConfig.getNoIssuesNotificationRecipient());
-    }
-
-//    private int parseNumber(String number, int deflt) {
-//        try {
-//            return Integer.parseInt(number);
-//        } catch (NumberFormatException e) {
-//            return deflt;
-//        }
-//
-//    }
-
-    @VisibleForTesting
-    ReviewInput getReviewResult(Multimap<String, Issue> finalIssuesToComment, Multimap<String, Issue> finalIssuesToScore) {
-        String reviewMessage = getReviewMessage(finalIssuesToComment);
-        ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
-
-
-        int score = postScore() ? getReviewMark(finalIssuesToScore.size()) : 0;
-        if (postScore()) {
-            reviewInput.label(scoreConfig.getCategory(), score);
-        }
-        reviewInput.notify = getNotificationSettings(finalIssuesToComment.size(), score);
-
-        reviewInput.comments = new HashMap<String, List<ReviewInput.CommentInput>>();
-        for (String file : finalIssuesToComment.keySet()) {
-            reviewInput.comments.put(file, Lists.newArrayList(
-                            Collections2.transform(finalIssuesToComment.get(file),
-                                    new Function<Issue, ReviewInput.CommentInput>() {
-                                        @Nullable
-                                        @Override
-                                        public ReviewInput.CommentInput apply(@Nullable Issue input) {
-                                            if (input == null) {
-                                                return null;
-                                            }
-                                            ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
-                                            commentInput.id = input.getKey();
-                                            commentInput.line = input.getLine();
-                                            commentInput.message = new CustomIssueFormatter(input, reviewConfig.getIssueCommentTemplate(), getSonarURL()).getMessage();
-                                            return commentInput;
-                                        }
-
-                                    }
-                            )
-                    )
-            );
-        }
-        return reviewInput;
-    }
-
-    @VisibleForTesting
-    void filterIssuesByChangedLines(Multimap<String, Issue> finalIssues, RevisionApi revision) throws RestApiException {
-        for (String filename : new HashSet<String>(finalIssues.keySet())) {
-            List<DiffInfo.ContentEntry> content = revision.file(filename).diff().content;
-            int processed = 0;
-//            final RangeSet<Integer> rangeSet = TreeRangeSet.create();
-            Set<Integer> rangeSet = new HashSet<Integer>();
-            for (DiffInfo.ContentEntry contentEntry : content) {
-                if (contentEntry.ab != null) {
-                    processed += contentEntry.ab.size();
-                } else if (contentEntry.b != null) {
-                    int start = processed + 1;
-                    int end = processed + contentEntry.b.size();
-                    for (int i = start; i <= end; i++) {    // todo use guava Range for this purpose
-                        rangeSet.add(i);
-                    }
-//                    rangeSet.add(Range.closed(start, end));
-                    processed += contentEntry.b.size();
-                }
-            }
-
-            Collection<Issue> issues = new ArrayList<Issue>(finalIssues.get(filename));
-            for (Issue i : issues) {
-                if (!rangeSet.contains(i.getLine())) {
-                    finalIssues.get(filename).remove(i);
-                }
-            }
-        }
-    }
-
-    @VisibleForTesting
-    Iterable<Issue> filterIssuesByPredicates(List<Issue> issues, IssueFilterConfig filter) {
-        Severity sev = Severity.valueOf(filter.getSeverity());
-        return Iterables.filter(issues,
-                Predicates.and(
-                        ByMinSeverityPredicate.apply(sev),   // if Info - extra work
-                        ByNewPredicate.apply(filter.isNewIssuesOnly()))  // if false - extra work
-        );
     }
 
     // Overridden for better type safety.
@@ -446,18 +196,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return BuildStepMonitor.NONE;
     }
 
-    @VisibleForTesting
-    static class ReportInfo {
-
-        private String directoryPath;
-        private Report report;
-
-        public ReportInfo(String directoryPath, Report report) {
-            this.directoryPath = directoryPath;
-            this.report = report;
-        }
-
-    }
 
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
@@ -493,18 +231,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final boolean NEW_ISSUES_ONLY = false;
         public static final boolean CHANGED_LINES_ONLY = false;
 
-//        public static final SubJobConfig JOB_CONFIG = new SubJobConfig(PROJECT_PATH, SONAR_REPORT_PATH);
-//        public static final List<SubJobConfig> JOB_CONFIGS = new LinkedList<>(Arrays.asList(JOB_CONFIG));
-
-//        public static final IssueFilterConfig COMMENT_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
-
-//        public static final IssueFilterConfig SCORE_ISSUE_FILTER = new IssueFilterConfig(SEVERITY, NEW_ISSUES_ONLY, CHANGED_LINES_ONLY);
-
         public static final int DEFAULT_SCORE = 0;
-
-//        public static final ReviewConfig REVIEW_CONFIG = new ReviewConfig(COMMENT_ISSUE_FILTER, NO_ISSUES_TEXT, SOME_ISSUES_TEXT, ISSUE_COMMENT_TEXT);
-
-//        public static final NotificationConfig NOTIFICATION_CONFIG = new NotificationConfig(NOTIFICATION_RECIPIENT_NO_ISSUES, NOTIFICATION_RECIPIENT_SOME_ISSUES, NOTIFICATION_RECIPIENT_NEGATIVE_SCORE);
 
         /**
          * In order to load the persisted global configuration, you have to
@@ -792,5 +519,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 && subJobConfigs.get(0).getProjectPath() == DescriptorImpl.PROJECT_PATH;
     }
 
+    @Nonnull
+    public List<SubJobConfig> getSubJobConfigs() {
+        return subJobConfigs;
+    }
 }
 

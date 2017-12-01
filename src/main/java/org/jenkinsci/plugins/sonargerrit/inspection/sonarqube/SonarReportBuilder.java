@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.inspection;
+package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;

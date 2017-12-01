@@ -6,9 +6,6 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -16,12 +13,6 @@ import java.net.URISyntaxException;
  * $Id$
  */
 public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean> {
-    @Override
-    public void initialize() throws InterruptedException, IOException, URISyntaxException {
-        super.initialize();
-        diffInfo = readChange("diff_info.json");
-    }
-
     @Test
     public void testChangedLinesOnly() {
         doCheckChangedLinesOnly(true, 2);
@@ -29,7 +20,7 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
 
     @Test
     public void testAll() {
-        doCheckChangedLinesOnly(false, 19);
+        doCheckChangedLinesOnly(false, 11);
     }
 
     @Override
@@ -45,16 +36,12 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
     }
 
     @Override
-    public void reset() {
-        super.reset();
-        diffInfo = null;
-    }
-
-    @Override
     protected void doCheckFilteredOutByCriteria(Boolean changedOnly) {
         // check that all filtered out issues have severity lower than criteria
         for (Issue issue : filteredOutIssues) {
-            Assert.assertFalse(isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
+            if (isFileChanged(issue)) {
+                Assert.assertFalse(isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
+            }
         }
     }
 

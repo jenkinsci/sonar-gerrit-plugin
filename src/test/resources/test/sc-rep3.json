@@ -1,0 +1,26 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "81c5c4f8-08c9-4340-861e-8491c9f4666a",
+      "component": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "line": 18,
+      "message": "Add a private constructor to hide the implicit public one.",
+      "severity": "MAJOR",
+      "rule": "squid:S1118",
+      "status": "OPEN",
+      "isNew": true,
+      "creationDate": "2015-08-29T23:00:23-0400"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "path": "src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
+      "moduleKey": "com.aquarellian:sonar-gerrit",
+      "status": "ADDED"
+    }
+  ],
+  "rules": [],
+  "users": []
+}

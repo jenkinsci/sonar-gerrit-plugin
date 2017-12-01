@@ -2,10 +2,9 @@ package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
 import hudson.FilePath;
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.inspection.SonarReportBuilder;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
 import org.junit.Test;
 
 import java.io.File;

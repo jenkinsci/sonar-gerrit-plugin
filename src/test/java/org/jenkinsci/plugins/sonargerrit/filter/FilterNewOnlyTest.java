@@ -20,7 +20,7 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
 
     @Test
     public void testAll() {
-        doCheckNewOnly(false, 19);
+        doCheckNewOnly(false, 11);
     }
 
     @Override
@@ -39,7 +39,9 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     protected void doCheckFilteredOutByCriteria(Boolean newOnly) {
         // check that all filtered out issues have severity lower than criteria
         for (Issue issue : filteredOutIssues) {
-            Assert.assertFalse(isNewOnlyCriteriaSatisfied(newOnly, issue));
+            if (isFileChanged(issue)) {
+                Assert.assertFalse(isNewOnlyCriteriaSatisfied(newOnly, issue));
+            }
         }
     }
 

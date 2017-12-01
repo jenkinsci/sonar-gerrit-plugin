@@ -180,6 +180,66 @@
           }
         ]
       }
+    },
+    {
+      "filename": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "diffInfo": {
+        "content": [
+          {
+            "a": [
+              "1 unchanged string of the file"
+            ],
+            "b": [
+              "1 changed string of the file"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "filename": "com.maxifier.guice:guice-jpa:src/main/java/com/magenta/guice/jpa/DBInterceptor.java",
+      "diffInfo": {
+        "content": [
+          {
+            "a": [
+              "1 unchanged string of the file"
+            ],
+            "b": [
+              "1 changed string of the file"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "filename": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/xml/XmlModule.java",
+      "diffInfo": {
+        "content": [
+          {
+            "a": [
+              "1 unchanged string of the file"
+            ],
+            "b": [
+              "1 changed string of the file"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "filename": "com.maxifier.guice:guice-events:src/main/java/com/magenta/guice/events/EventDispatcher.java",
+      "diffInfo": {
+        "content": [
+          {
+            "a": [
+              "1 unchanged string of the file"
+            ],
+            "b": [
+              "1 changed string of the file"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

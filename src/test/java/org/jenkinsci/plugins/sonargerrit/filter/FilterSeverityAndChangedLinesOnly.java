@@ -2,14 +2,11 @@ package org.jenkinsci.plugins.sonargerrit.filter;
 
 import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.filter.util.Pair;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.filter.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -17,24 +14,24 @@ import java.net.URISyntaxException;
  * Created: 15.11.2017 20:41
  * $Id$
  */
-public abstract class FilterSeverityAndChangedLinesOnly  extends BaseFilterTest<Pair<String, Boolean>> {
+public abstract class FilterSeverityAndChangedLinesOnly extends BaseFilterTest<Pair<String, Boolean>> {
 
     @Test
     public void testInfoSeverity() {
         doCheckSeverityAndChanged(Severity.INFO, true, 2);
-        doCheckSeverityAndChanged(Severity.INFO, false, 19);
+        doCheckSeverityAndChanged(Severity.INFO, false, 11);
     }
 
     @Test
     public void testMinorSeverity() {
         doCheckSeverityAndChanged(Severity.MINOR, true, 2);
-        doCheckSeverityAndChanged(Severity.MINOR, false, 18);
+        doCheckSeverityAndChanged(Severity.MINOR, false, 10);
     }
 
     @Test
     public void testMajorSeverity() {
         doCheckSeverityAndChanged(Severity.MAJOR, true, 1);
-        doCheckSeverityAndChanged(Severity.MAJOR, false, 12);
+        doCheckSeverityAndChanged(Severity.MAJOR, false, 7);
     }
 
     @Test
@@ -47,12 +44,6 @@ public abstract class FilterSeverityAndChangedLinesOnly  extends BaseFilterTest<
     public void testBlockerSeverity() {
         doCheckSeverityAndChanged(Severity.BLOCKER, true, 0);
         doCheckSeverityAndChanged(Severity.BLOCKER, false, 1);
-    }
-
-    @Override
-    public void initialize() throws InterruptedException, IOException, URISyntaxException {
-        super.initialize();
-        diffInfo = readChange("diff_info.json");
     }
 
     @Override
@@ -75,19 +66,15 @@ public abstract class FilterSeverityAndChangedLinesOnly  extends BaseFilterTest<
     }
 
     @Override
-    public void reset() {
-        super.reset();
-        diffInfo = null;
-    }
-
-    @Override
     protected void doCheckFilteredOutByCriteria(Pair<String, Boolean> severityAndChanged) {
         Severity severity = Severity.valueOf(severityAndChanged.getFirst());
         Boolean changedOnly = severityAndChanged.getSecond();
 
         // check that all filtered out issues have severity lower than criteria
         for (Issue issue : filteredOutIssues) {
-            Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue) && isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
+            if (isFileChanged(issue)) {
+                Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue) && isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
+            }
         }
     }
 

@@ -2,7 +2,7 @@ package org.jenkinsci.plugins.sonargerrit.review.notification;
 
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import org.jenkinsci.plugins.sonargerrit.ReviewResultTest;
+import org.jenkinsci.plugins.sonargerrit.review.ReviewResultTest;
 import org.junit.Assert;
 import org.junit.Test;
 
