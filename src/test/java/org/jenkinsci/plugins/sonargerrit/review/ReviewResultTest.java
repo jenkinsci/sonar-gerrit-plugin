@@ -8,7 +8,9 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +23,8 @@ import org.junit.Test;
  * $Id$
  */
 public class ReviewResultTest extends ReportBasedTest {
-    protected Multimap<String, Issue> scoreIssues = LinkedListMultimap.create();
-    protected Multimap<String, Issue> commentIssues = LinkedListMultimap.create();
+    protected Multimap<String, IssueAdapter> scoreIssues = LinkedListMultimap.create();
+    protected Multimap<String, IssueAdapter> commentIssues = LinkedListMultimap.create();
     protected SonarToGerritPublisher publisher;
 
     @Before
@@ -48,7 +50,7 @@ public class ReviewResultTest extends ReportBasedTest {
         return publisher.getReviewConfig();
     }
 
-    public class DummyIssue extends Issue {
+    public class DummyIssue extends Issue implements IssueAdapter {
         @Override
         public Severity getSeverity() {
             return Severity.CRITICAL;
@@ -62,6 +64,11 @@ public class ReviewResultTest extends ReportBasedTest {
         @Override
         public String getMessage() {
             return "message";
+        }
+
+        @Override
+        public String getFilepath(){
+            return getComponent();
         }
     }
 

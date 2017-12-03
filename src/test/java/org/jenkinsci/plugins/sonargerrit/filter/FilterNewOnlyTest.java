@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.filter;
 
-import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.junit.Assert;
@@ -38,7 +39,7 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     @Override
     protected void doCheckFilteredOutByCriteria(Boolean newOnly) {
         // check that all filtered out issues have severity lower than criteria
-        for (Issue issue : filteredOutIssues) {
+        for (IssueAdapter issue : filteredOutIssues) {
             if (isFileChanged(issue)) {
                 Assert.assertFalse(isNewOnlyCriteriaSatisfied(newOnly, issue));
             }

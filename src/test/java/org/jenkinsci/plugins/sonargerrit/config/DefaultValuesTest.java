@@ -8,7 +8,7 @@ import org.junit.Test;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.11.2017 14:09
- * <p/>
+ * <p>
  * $Id$
  */
 public class DefaultValuesTest implements BaseConfigTest {

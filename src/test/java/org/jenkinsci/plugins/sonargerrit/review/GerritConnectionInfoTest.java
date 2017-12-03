@@ -12,7 +12,7 @@ import java.util.Map;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 28.11.2017 23:06
- * <p/>
+ * <p>
  * $Id$
  */
 public class GerritConnectionInfoTest {

@@ -11,7 +11,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 19.11.2017 22:11
- * <p/>
+ * <p>
  * $Id$
  */
 public final class DataHelper {

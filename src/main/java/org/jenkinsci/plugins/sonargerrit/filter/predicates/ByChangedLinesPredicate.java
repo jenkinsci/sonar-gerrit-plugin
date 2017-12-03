@@ -1,50 +1,43 @@
 package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Range;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 20.11.2017 13:47
- * <p/>
+ * <p>
  * $Id$
  */
-public class ByChangedLinesPredicate implements Predicate<Issue> {
-    private final Map<String, List<Range<Integer>>> allowedComponents;
+public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
+    private final Map<String, Set<Integer>> allowedFilesAndLines;
 
-    private ByChangedLinesPredicate(Map<String, List<Range<Integer>>> allowedComponents) {
-        if (allowedComponents != null) {
-            this.allowedComponents = new HashMap<>();
-            this.allowedComponents.putAll(allowedComponents);
+    private ByChangedLinesPredicate(Map<String, Set<Integer>> allowedFilesAndLines) {
+        if (allowedFilesAndLines != null) {
+            this.allowedFilesAndLines = new HashMap<>();
+            this.allowedFilesAndLines.putAll(allowedFilesAndLines);
         } else {
-            this.allowedComponents = null;
+            this.allowedFilesAndLines = null;
         }
     }
 
     @Override
-    public boolean apply(Issue issue) {
-        return allowedComponents == null
-                || allowedComponents.keySet().contains(issue.getComponent())
-                && isLineChanged(issue.getLine(), allowedComponents.get(issue.getComponent()));
+    public boolean apply(IssueAdapter issue) {
+        return allowedFilesAndLines == null
+                || allowedFilesAndLines.keySet().contains(issue.getComponent())
+                && isLineChanged(issue.getLine(), allowedFilesAndLines.get(issue.getFilepath()));
     }
 
-    private boolean isLineChanged(Integer line, List<Range<Integer>> changedLines){
-        for (Range<Integer> r: changedLines){
-            if (r.contains(line)){
-                return true;
-            }
-            if (r.upperEndpoint().compareTo(line) > 0){
-                break;
-            }
-        }
-        return false;
+    private boolean isLineChanged(Integer line, Set<Integer> changedLines) {
+        return changedLines.contains(line);
     }
 
-    public static ByChangedLinesPredicate apply(Map<String, List<Range<Integer>>> allowedComponents) {
+    public static ByChangedLinesPredicate apply(Map<String, Set<Integer>> allowedComponents) {
         return new ByChangedLinesPredicate(allowedComponents);
     }
 }

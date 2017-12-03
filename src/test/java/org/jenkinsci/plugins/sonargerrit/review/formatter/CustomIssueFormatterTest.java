@@ -2,9 +2,10 @@ package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
 import hudson.FilePath;
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 import org.junit.Test;
 
 import java.io.File;
@@ -16,12 +17,11 @@ import java.net.URL;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:05
- *
  */
 public class CustomIssueFormatterTest {
     @Test
     public void testKnownUrl() throws IOException, InterruptedException, URISyntaxException {
-        Issue i = getIssue();
+        IssueAdapter i = getIssue();
         String text = "<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>";
         String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: http://localhost:9000/coding_rules#rule_key=squid%3AUselessImportCheck";
         CustomIssueFormatter basicIssueConverter = new CustomIssueFormatter(i, text, "http://localhost:9000");
@@ -30,14 +30,14 @@ public class CustomIssueFormatterTest {
 
     @Test
     public void testUnknownUrl() throws IOException, InterruptedException, URISyntaxException {
-        Issue i = getIssue();
+        IssueAdapter i = getIssue();
         String text = "<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>";
         String expectedResult = "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: squid:UselessImportCheck";
         CustomIssueFormatter basicIssueConverter = new CustomIssueFormatter(i, text, null);
         Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
     }
 
-    private Issue getIssue() throws URISyntaxException, IOException, InterruptedException {
+    private IssueAdapter getIssue() throws URISyntaxException, IOException, InterruptedException {
         URL url = getClass().getClassLoader().getResource("filter.json");
 
         File path = new File(url.toURI());
@@ -45,6 +45,6 @@ public class CustomIssueFormatterTest {
         String json = filePath.readToString();
         Report rep = new SonarReportBuilder().fromJson(json);
 
-        return rep.getIssues().get(0);
+        return new SonarQubeIssueAdapter(rep.getIssues().get(0), null, "");
     }
 }

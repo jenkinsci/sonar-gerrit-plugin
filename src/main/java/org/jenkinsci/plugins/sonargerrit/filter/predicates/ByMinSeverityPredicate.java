@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import com.google.common.base.Predicate;
 
@@ -10,7 +11,7 @@ import com.google.common.base.Predicate;
  * Created: 16.09.2015 13:24
  *
  */
-public class ByMinSeverityPredicate implements Predicate<Issue> {
+public class ByMinSeverityPredicate implements Predicate<IssueAdapter> {
 
     private final Severity severity;
 
@@ -19,7 +20,7 @@ public class ByMinSeverityPredicate implements Predicate<Issue> {
     }
 
     @Override
-    public boolean apply(Issue issue) {
+    public boolean apply(IssueAdapter issue) {
         return issue.getSeverity().equals(severity) || issue.getSeverity().ordinal() >= severity.ordinal();
     }
 

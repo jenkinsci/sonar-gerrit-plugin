@@ -7,7 +7,7 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 13:47
- * <p/>
+ * <p>
  * $Id$
  */
 public interface GerritReviewTest {

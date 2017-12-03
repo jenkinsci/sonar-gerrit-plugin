@@ -20,7 +20,7 @@ import java.util.Map;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 14.11.2017 17:31
- * <p/>
+ * <p>
  * $Id$
  */
 public class ReportBasedTest {

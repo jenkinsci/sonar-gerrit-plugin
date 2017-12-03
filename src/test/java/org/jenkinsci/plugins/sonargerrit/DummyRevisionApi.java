@@ -15,7 +15,7 @@ import java.util.Set;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 27.07.2017 13:05
- * <p/>
+ * <p>
  * $Id$
  */
 public class DummyRevisionApi implements RevisionApi {

@@ -10,7 +10,7 @@ import org.junit.Test;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 14:57
- * <p/>
+ * <p>
  * $Id$
  */
 public abstract class BaseNotificationTest extends ReviewResultTest implements GerritReviewNotificationTest {

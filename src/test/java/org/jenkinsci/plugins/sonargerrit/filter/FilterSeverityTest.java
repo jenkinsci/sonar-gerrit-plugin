@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.filter;
 
-import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
@@ -11,7 +12,7 @@ import org.junit.Test;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 15.11.2017 14:01
- * <p/>
+ * <p>
  * $Id$
  */
 public abstract class FilterSeverityTest extends BaseFilterTest<String> {
@@ -57,7 +58,7 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
     protected void doCheckFilteredOutByCriteria(String severityStr) {
         Severity severity = Severity.valueOf(severityStr);
         // check that all filtered out issues have severity lower than criteria
-        for (Issue issue : filteredOutIssues) {
+        for (IssueAdapter issue : filteredOutIssues) {
             if (isFileChanged(issue)) {
                 Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
             }

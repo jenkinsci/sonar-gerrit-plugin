@@ -13,7 +13,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 28.11.2017 16:33
- * <p/>
+ * <p>
  * $Id$
  */
 public class GerritConnectionInfo implements ConnectionInfo {

@@ -8,7 +8,7 @@ import org.junit.Test;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 21:29
- * <p/>
+ * <p>
  * $Id$
  */
 public class NonDefaultValuesTest implements DetailedConfigTest {

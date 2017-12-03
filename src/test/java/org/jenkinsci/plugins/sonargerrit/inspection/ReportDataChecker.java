@@ -14,7 +14,7 @@ import java.util.TimeZone;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 30.11.2017 15:32
- * <p/>
+ * <p>
  * $Id$
  */
 public class ReportDataChecker {

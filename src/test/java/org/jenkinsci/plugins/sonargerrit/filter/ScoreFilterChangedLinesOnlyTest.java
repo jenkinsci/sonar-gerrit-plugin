@@ -6,7 +6,7 @@ import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 15.11.2017 15:34
- * <p/>
+ * <p>
  * $Id$
  */
 public class ScoreFilterChangedLinesOnlyTest  extends FilterChangedLinesOnlyTest {

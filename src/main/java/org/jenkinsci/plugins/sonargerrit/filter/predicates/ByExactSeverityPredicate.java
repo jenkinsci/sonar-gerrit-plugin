@@ -1,16 +1,15 @@
 package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import com.google.common.base.Predicate;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 13:25
- *
  */
-public class ByExactSeverityPredicate implements Predicate<Issue> {
+public class ByExactSeverityPredicate implements Predicate<IssueAdapter> {
 
     private final Severity severity;
 
@@ -19,7 +18,7 @@ public class ByExactSeverityPredicate implements Predicate<Issue> {
     }
 
     @Override
-    public boolean apply(Issue issue) {
+    public boolean apply(IssueAdapter issue) {
         return issue.getSeverity().equals(severity);
     }
 

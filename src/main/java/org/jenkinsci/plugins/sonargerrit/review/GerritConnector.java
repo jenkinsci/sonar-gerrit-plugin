@@ -16,7 +16,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 20.11.2017 16:19
- * <p/>
+ * <p>
  * $Id$
  */
 public class GerritConnector {

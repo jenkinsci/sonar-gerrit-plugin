@@ -10,6 +10,7 @@ import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
 
@@ -20,18 +21,21 @@ import java.util.*;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 28.11.2017 14:03
- * <p/>
+ * <p>
  * $Id$
  */
 public class GerritReviewBuilder {
-    private Multimap<String, Issue> finalIssuesToComment;
-    private Multimap<String, Issue> finalIssuesToScore;
+    private Multimap<String, IssueAdapter> finalIssuesToComment;
+    private Multimap<String, IssueAdapter> finalIssuesToScore;
     private ReviewConfig reviewConfig;
     private ScoreConfig scoreConfig;
     private NotificationConfig notificationConfig;
     private String sonarURL;
 
-    public GerritReviewBuilder(Multimap<String, Issue> finalIssuesToComment, Multimap<String, Issue> finalIssuesToScore, ReviewConfig reviewConfig, ScoreConfig scoreConfig, NotificationConfig notificationConfig, String sonarURL) {
+    public GerritReviewBuilder(Multimap<String, IssueAdapter> finalIssuesToComment,
+                               Multimap<String, IssueAdapter> finalIssuesToScore,
+                               ReviewConfig reviewConfig, ScoreConfig scoreConfig,
+                               NotificationConfig notificationConfig, String sonarURL) {
         this.finalIssuesToComment = finalIssuesToComment;
         this.finalIssuesToScore = finalIssuesToScore;
         this.reviewConfig = reviewConfig;
@@ -64,7 +68,7 @@ public class GerritReviewBuilder {
         return scoreConfig != null;
     }
 
-    private String getReviewMessage(Multimap<String, Issue> finalIssues) {
+    private String getReviewMessage(Multimap<String, IssueAdapter> finalIssues) {
         return new CustomReportFormatter(finalIssues.values(), reviewConfig.getSomeIssuesTitleTemplate(), reviewConfig.getNoIssuesTitleTemplate()).getMessage();
     }
 
@@ -85,7 +89,7 @@ public class GerritReviewBuilder {
     private Map<String, List<ReviewInput.CommentInput>> generateComments() {
         Map<String, List<ReviewInput.CommentInput>> file2comments = new HashMap<String, List<ReviewInput.CommentInput>>();
         for (String file : finalIssuesToComment.keySet()) {
-            Collection<Issue> issues = finalIssuesToComment.get(file);
+            Collection<IssueAdapter> issues = finalIssuesToComment.get(file);
             Collection<ReviewInput.CommentInput> comments = Collections2.transform(issues, new IssueToCommentTransformation());
             ArrayList<ReviewInput.CommentInput> commentList = Lists.newArrayList(comments);
             file2comments.put(file, commentList);
@@ -93,7 +97,7 @@ public class GerritReviewBuilder {
         return file2comments;
     }
 
-    protected ReviewInput.CommentInput createComment(@Nullable Issue input) {
+    protected ReviewInput.CommentInput createComment(@Nullable IssueAdapter input) {
         if (input == null) {
             return null;
         }
@@ -108,10 +112,10 @@ public class GerritReviewBuilder {
         return commentInput;
     }
 
-    private class IssueToCommentTransformation implements Function<Issue, ReviewInput.CommentInput> {
+    private class IssueToCommentTransformation implements Function<IssueAdapter, ReviewInput.CommentInput> {
         @Nullable
         @Override
-        public ReviewInput.CommentInput apply(@Nullable Issue input) {
+        public ReviewInput.CommentInput apply(@Nullable IssueAdapter input) {
             return createComment(input);
         }
     }

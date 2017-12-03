@@ -3,11 +3,10 @@ package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 import com.google.common.collect.Multimap;
 import hudson.FilePath;
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.junit.Test;
 
 import java.io.File;
@@ -19,7 +18,7 @@ import java.util.List;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 30.11.2017 18:26
- * <p/>
+ * <p>
  * $Id$
  */
 public class ComponentPathBuilderTest {
@@ -29,9 +28,9 @@ public class ComponentPathBuilderTest {
         SubJobConfig config = createConfig("", filename);
 
         SonarConnector connector = readSonarReport(config);
-        List<? extends Issue> issues = connector.getIssues();
+        List<IssueAdapter> issues = connector.getIssues();
         Assert.assertEquals(1, issues.size());
-        Issue issue = issues.get(0);
+        IssueAdapter issue = issues.get(0);
 
         Report report = connector.getRawReport(config);
         ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
@@ -41,7 +40,7 @@ public class ComponentPathBuilderTest {
                 .or(issueComponent);
         Assert.assertEquals("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", realFileName);
 
-        Assert.assertEquals("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", ((SonarQubeIssue) issue).getFilepath()); // logic of another class - todo move out there
+        Assert.assertEquals("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java", issue.getFilepath()); // logic of another class - todo move out there
     }
 
     @Test
@@ -49,7 +48,7 @@ public class ComponentPathBuilderTest {
         String filename = "report3_with-nested-subprojects.json";
         SubJobConfig config = createConfig("testfolder", filename);
         SonarConnector connector = readSonarReport(config);
-        List<? extends Issue> issues = connector.getIssues();
+        List<IssueAdapter> issues = connector.getIssues();
         Assert.assertEquals(8, issues.size());
 
         Report report = connector.getRawReport(config);
@@ -63,7 +62,7 @@ public class ComponentPathBuilderTest {
         testIssue(builder, issues.get(6), config.getProjectPath(), "testfolder/base/com.acme.util/src/main/java/com/acme/util/Util.java");
         testIssue(builder, issues.get(7), config.getProjectPath(), "testfolder/com.acme.app/src/main/java/com/acme/app/App.java");
 
-        Multimap<String, Issue> multimap = connector.getReportData();
+        Multimap<String, IssueAdapter> multimap = connector.getReportData();
         Assert.assertEquals(8, multimap.size());
         Assert.assertEquals(3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
         Assert.assertEquals(1, multimap.get("testfolder/base/core/proj2/sub2/src/main/java/com/proj2/sub2/SubProj2.java").size());
@@ -79,10 +78,10 @@ public class ComponentPathBuilderTest {
         SubJobConfig config = createConfig("", filename);
 
         SonarConnector connector = readSonarReport(config);
-        List<? extends Issue> issues = connector.getIssues();
+        List<IssueAdapter> issues = connector.getIssues();
         Assert.assertEquals(19, issues.size());
 
-        Multimap<String, Issue> multimap = connector.getReportData();
+        Multimap<String, IssueAdapter> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
@@ -101,10 +100,10 @@ public class ComponentPathBuilderTest {
         SubJobConfig config = createConfig("testfolder", filename);
 
         SonarConnector connector = readSonarReport(config);
-        List<? extends Issue> issues = connector.getIssues();
+        List<IssueAdapter> issues = connector.getIssues();
         Assert.assertEquals(19, issues.size());
 
-        Multimap<String, Issue> multimap = connector.getReportData();
+        Multimap<String, IssueAdapter> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(8, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
@@ -123,10 +122,10 @@ public class ComponentPathBuilderTest {
         SubJobConfig config1 = createConfig("testfolder1", "report1.json");
         SubJobConfig config2 = createConfig("testfolder2", "report2.json");
         SonarConnector connector = readSonarReport(config1, config2);
-        List<? extends Issue> issues = connector.getIssues();
+        List<IssueAdapter> issues = connector.getIssues();
         Assert.assertEquals(19, issues.size());
 
-        Multimap<String, Issue> multimap = connector.getReportData();
+        Multimap<String, IssueAdapter> multimap = connector.getReportData();
         Assert.assertEquals(19, multimap.size());
         Assert.assertEquals(9, multimap.keySet().size());
         Assert.assertEquals(1, multimap.get("testfolder1/juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java").size());
@@ -140,15 +139,14 @@ public class ComponentPathBuilderTest {
         Assert.assertEquals(1, multimap.get("testfolder2/src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java").size());
     }
 
-    private void testIssue(ComponentPathBuilder builder, Issue issue, String projectPath, String expectedFilename) {
+    private void testIssue(ComponentPathBuilder builder, IssueAdapter issue, String projectPath, String expectedFilename) {
         String issueComponent = issue.getComponent();
         String realFileName = builder
                 .buildPrefixedPathForComponentWithKey(issueComponent, projectPath)
                 .or(issueComponent);
         Assert.assertEquals(expectedFilename, realFileName);
 
-        // logic of another class - todo move out there
-        Assert.assertEquals(expectedFilename, ((SonarQubeIssue) issue).getFilepath());
+        Assert.assertEquals(expectedFilename, issue.getFilepath());
     }
 
     protected SonarConnector readSonarReport(SubJobConfig... configs) throws IOException, InterruptedException {

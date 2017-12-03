@@ -1,18 +1,19 @@
-package org.jenkinsci.plugins.sonargerrit;
+package org.jenkinsci.plugins.sonargerrit.review;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
+import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
+import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,15 +26,15 @@ import java.util.*;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 10.11.2017 21:47
- * <p/>
+ * <p>
  * $Id$
  */
 public abstract class BaseFilterTest<A> extends ReportBasedTest {
     protected Report report;
     protected SonarToGerritPublisher publisher;
 
-    protected Set<Issue> filteredIssues;
-    protected Set<Issue> filteredOutIssues;
+    protected Set<IssueAdapter> filteredIssues;
+    protected Set<IssueAdapter> filteredOutIssues;
 
     protected Map<String, DiffInfo> diffInfo;
 
@@ -84,77 +85,70 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
     protected void doFilterIssues(IssueFilterConfig config) {
         // filter issues
         List<Issue> allIssues = report.getIssues();
+        List<IssueAdapter> allIssuesAdp = new ArrayList<>();
+        for (Issue i : allIssues) {
+            allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, ""));
+        }
 
         //todo temporary - should be realized in publisher
         // todo check filtered out as unchanged file
 //        List<Issue> step2 = allIssues;
-        Map<String, List<Range<Integer>>> changed = getChangedLines();
+        Map<String, Set<Integer>> changed = getChangedLines();
 
-        IssueFilter filter = new IssueFilter(config, allIssues, changed);
+        IssueFilter filter = new IssueFilter(config, allIssuesAdp, changed);
         filteredIssues = Sets.newHashSet(filter.filter());
 
         // get issues that were filtered out
-        filteredOutIssues = new HashSet<>(allIssues);
+        filteredOutIssues = new HashSet<>(allIssuesAdp);
         filteredOutIssues.removeAll(filteredIssues);
     }
 
-    protected Map<String, List<Range<Integer>>> getChangedLines() {
-        Map<String, List<Range<Integer>>> changed = new HashMap<>();
+    protected Map<String, Set<Integer>> getChangedLines() {
+        Map<String, Set<Integer>> changed = new HashMap<>();
         if (diffInfo != null) {
             for (String s : diffInfo.keySet()) {
-                List<Range<Integer>> rangeList = new ArrayList<>();
-                DiffInfo diffInfo = this.diffInfo.get(s);
-                int processed = 0;
-                for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
-                    if (contentEntry.ab != null) {
-                        processed += contentEntry.ab.size();
-                    } else if (contentEntry.b != null) {
-                        int start = processed + 1;
-                        int end = processed + contentEntry.b.size();
-                        rangeList.add(Range.closed(start, end));
-                        processed += contentEntry.b.size();
-                    }
-                }
-                changed.put(s, rangeList);
+                GerritRevisionWrapper w = new GerritRevisionWrapper(null);
+                changed.put(s, w.getChangedLines(diffInfo.get(s)));
             }
-        } return changed;
+        }
+        return changed;
     }
 
     protected void doCheckSeverity(Severity severity) {
         // check that all remaining issues have severity higher or equal to criteria
-        for (Issue issue : filteredIssues) {
+        for (IssueAdapter issue : filteredIssues) {
             Assert.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
         }
     }
 
     protected void doCheckNewOnly(boolean isNewOnly) {
         // check that all remaining issues are new
-        for (Issue issue : filteredIssues) {
+        for (IssueAdapter issue : filteredIssues) {
             Assert.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
         }
     }
 
     protected void doCheckChangedLinesOnly(boolean isChangesLinesOnly) {
         // check that all remaining issues are in changed lines
-        for (Issue issue : filteredIssues) {
+        for (IssueAdapter issue : filteredIssues) {
             Assert.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
         }
     }
 
-    protected boolean isSeverityCriteriaSatisfied(Severity severity, Issue issue) {
+    protected boolean isSeverityCriteriaSatisfied(Severity severity, IssueAdapter issue) {
         return issue.getSeverity().ordinal() >= severity.ordinal();
     }
 
-    protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, Issue issue) {
+    protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, IssueAdapter issue) {
         return !isNewOnly || issue.isNew();
     }
 
-    protected boolean isChangedLinesOnlyCriteriaSatisfied(Boolean isChangesLinesOnly, Issue issue) {
-        return !isChangesLinesOnly || isChanged(issue.getComponent(), issue.getLine());
+    protected boolean isChangedLinesOnlyCriteriaSatisfied(Boolean isChangesLinesOnly, IssueAdapter issue) {
+        return !isChangesLinesOnly || isChanged(issue.getFilepath(), issue.getLine());
     }
 
-    protected boolean isFileChanged(Issue issue) {
-        String filename = issue.getComponent();
+    protected boolean isFileChanged(IssueAdapter issue) {
+        String filename = issue.getFilepath();
         DiffInfo diffInfo = this.diffInfo.get(filename);
         return diffInfo != null;
     }

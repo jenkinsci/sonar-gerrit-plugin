@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -9,15 +9,14 @@ import java.net.URLEncoder;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 16.09.2015 12:51
- *
  */
 public class CustomIssueFormatter implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
 
-    private Issue issue;
+    private IssueAdapter issue;
     private String text;
     private String host;
 
-    public CustomIssueFormatter(Issue issue, String text, String host) {
+    public CustomIssueFormatter(IssueAdapter issue, String text, String host) {
         this.issue = issue;
 //        this.text = prepareText(text, DefaultPluginSettings.ISSUE_COMMENT_TEXT);
         this.host = host;

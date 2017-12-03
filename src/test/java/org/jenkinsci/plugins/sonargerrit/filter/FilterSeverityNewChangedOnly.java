@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.filter;
 
-import org.jenkinsci.plugins.sonargerrit.BaseFilterTest;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.util.Triple;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
@@ -87,7 +88,7 @@ public abstract class FilterSeverityNewChangedOnly extends BaseFilterTest<Triple
         Boolean changedOnly = severityNewChanged.getThird();
 
         // check that all filtered out issues have severity lower than criteria
-        for (Issue issue : filteredOutIssues) {
+        for (IssueAdapter issue : filteredOutIssues) {
             if (isFileChanged(issue)) {
                 Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue)
                         && isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue)

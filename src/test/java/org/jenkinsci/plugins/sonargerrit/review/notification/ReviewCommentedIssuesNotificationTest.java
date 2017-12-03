@@ -9,7 +9,7 @@ import org.junit.Assert;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 14:42
- * <p/>
+ * <p>
  * $Id$
  */
 public class ReviewCommentedIssuesNotificationTest extends BaseNotificationTest {

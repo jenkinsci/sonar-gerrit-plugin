@@ -1,9 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Range;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.restapi.RestApiException;
@@ -19,9 +17,10 @@ import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.config.*;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssue;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
@@ -121,16 +120,18 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             GerritConnector connector = new GerritConnector(connectionInfo);
             connector.connect();
             GerritRevisionWrapper revisionInfo = new GerritRevisionWrapper(connector.getRevision());
-            Map<String, List<Range<Integer>>> fileToChangedLines = revisionInfo.getFileToChangedLines();
+            Map<String, Set<Integer>> fileToChangedLines = revisionInfo.getFileToChangedLines();
 
-            Multimap<String, Issue> file2issuesToComment = getFilteredFileToIssueMultimap(
-                    reviewConfig.getIssueFilterConfig(),sonarConnector, fileToChangedLines);
+            Multimap<String, IssueAdapter> file2issuesToComment = getFilteredFileToIssueMultimap(
+                    reviewConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
+            TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.comment", file2issuesToComment.entries().size());
 
-            Multimap<String, Issue> file2issuesToScore = null;
+            Multimap<String, IssueAdapter> file2issuesToScore = null;
             boolean postScore = scoreConfig != null;
             if (postScore) {
                 file2issuesToScore = getFilteredFileToIssueMultimap(
                         scoreConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
+                TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.score", file2issuesToScore.entries().size());
             }
 
             ReviewInput reviewInput =
@@ -148,11 +149,11 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         }
     }
 
-    private Multimap<String, Issue> getFilteredFileToIssueMultimap(IssueFilterConfig filterConfig,
-                                                                     SonarConnector sonarConnector,
-                                                                     Map<String, List<Range<Integer>>> fileToChangedLines) {
-        IssueFilter<SonarQubeIssue> commentFilter = new IssueFilter<>(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
-        Iterable<SonarQubeIssue> issuesToComment = commentFilter.filter();
+    private Multimap<String, IssueAdapter> getFilteredFileToIssueMultimap(IssueFilterConfig filterConfig,
+                                                                   SonarConnector sonarConnector,
+                                                                   Map<String, Set<Integer>> fileToChangedLines) {
+        IssueFilter commentFilter = new IssueFilter(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
+        Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
         return sonarConnector.getReportData(issuesToComment);
     }
 
@@ -200,8 +201,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     /**
      * Descriptor for {@link SonarToGerritPublisher}. Used as a singleton.
      * The class is marked as public so that it can be accessed from views.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * See <tt>src/main/resources/hudson/plugins/hello_world/SonarToGerritBuilder/*.jelly</tt>
      * for the actual HTML fragment for the configuration screen.
      */
@@ -246,7 +247,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.

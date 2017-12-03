@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +11,7 @@ import org.junit.Test;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 13:34
- * <p/>
+ * <p>
  * $Id$
  */
 public class ReviewWithScoreIssuesTest extends ReviewResultTest implements GerritReviewTest {

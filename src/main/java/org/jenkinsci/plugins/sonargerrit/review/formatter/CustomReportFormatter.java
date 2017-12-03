@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByExactSeverityPredicate;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByMinSeverityPredicate;
@@ -18,9 +19,9 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
     private String successMessage;
     private String failMessage;
 
-    private Iterable<Issue> issues;
+    private Iterable<IssueAdapter> issues;
 
-    public CustomReportFormatter(Iterable<Issue> issues, String failMessage, String successMessage) {
+    public CustomReportFormatter(Iterable<IssueAdapter> issues, String failMessage, String successMessage) {
         this.issues = issues;
         this.failMessage = failMessage;
         this.successMessage = successMessage;
@@ -68,11 +69,11 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
         return Lists.newArrayList(i).size();
     }
 
-    private Iterable<Issue> filterByExactSeverityPredicate(Severity s) {
+    private Iterable<IssueAdapter> filterByExactSeverityPredicate(Severity s) {
         return Iterables.filter(issues, ByExactSeverityPredicate.apply(s));
     }
 
-    private Iterable<Issue> filterByMinSeverityPredicate(Severity s) {
+    private Iterable<IssueAdapter> filterByMinSeverityPredicate(Severity s) {
         return Iterables.filter(issues, ByMinSeverityPredicate.apply(s));
     }
 

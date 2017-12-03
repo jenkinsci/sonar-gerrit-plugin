@@ -6,7 +6,7 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 18.11.2017 21:35
- * <p/>
+ * <p>
  * $Id$
  */
 public interface DetailedConfigTest extends BaseConfigTest {

@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 28.11.2017 14:42
- * <p/>
+ * <p>
  * $Id$
  */
 public class SonarConnector {
@@ -50,15 +51,15 @@ public class SonarConnector {
         report = new InspectionReport(reports);
     }
 
-    public Multimap<String, Issue> getReportData() {
+    public Multimap<String, IssueAdapter> getReportData() {
         return report.asMultimap(getIssues());
     }
 
-    public Multimap<String, Issue> getReportData(Iterable<SonarQubeIssue> issues) {
+    public Multimap<String, IssueAdapter> getReportData(Iterable<IssueAdapter> issues) {
         return report.asMultimap(issues);
     }
 
-    public List<SonarQubeIssue> getIssues() {
+    public List<IssueAdapter> getIssues() {
         return report.getIssuesList();
     }
 

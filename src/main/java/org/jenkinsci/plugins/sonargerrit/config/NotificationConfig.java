@@ -110,7 +110,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -125,7 +125,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
@@ -140,7 +140,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
          *
          * @param value This parameter receives the value that the user has typed.
          * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p/>
+         * <p>
          * Note that returning {@link FormValidation#error(String)} does not
          * prevent the form from being saved. It just means that a message
          * will be displayed to the user.
