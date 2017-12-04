@@ -6,6 +6,7 @@ import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
@@ -16,11 +17,9 @@ import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.config.*;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
@@ -150,8 +149,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     private Multimap<String, IssueAdapter> getFilteredFileToIssueMultimap(IssueFilterConfig filterConfig,
-                                                                   SonarConnector sonarConnector,
-                                                                   Map<String, Set<Integer>> fileToChangedLines) {
+                                                                          SonarConnector sonarConnector,
+                                                                          Map<String, Set<Integer>> fileToChangedLines) {
         IssueFilter commentFilter = new IssueFilter(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
         Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
         return sonarConnector.getReportData(issuesToComment);
@@ -246,6 +245,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
          * Performs on-the-fly validation of the form field 'sonarURL'.
          *
          * @param value This parameter receives the value that the user has typed.
+         *
          * @return Indicates the outcome of the validation. This is sent to the browser.
          * <p>
          * Note that returning {@link FormValidation#error(String)} does not
@@ -514,6 +514,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         }
     }
 
+    @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ")
     protected boolean isDefaultConfig() {
         return subJobConfigs.size() == 1
                 && subJobConfigs.get(0).getSonarReportPath() == DescriptorImpl.SONAR_REPORT_PATH

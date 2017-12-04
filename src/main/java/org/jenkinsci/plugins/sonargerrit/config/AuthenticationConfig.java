@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -37,6 +38,7 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
         this.password = password;
     }
 
+    @SuppressFBWarnings(value="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public AuthenticationConfig() {
     }
 

@@ -22,7 +22,7 @@ public class GerritConnectionInfo implements ConnectionInfo {
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    public static final String[] REQUIRED_VARS = new String[]{GERRIT_NAME_ENV_VAR_NAME, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME};
+    public static final String[] REQUIRED_VARS = {GERRIT_NAME_ENV_VAR_NAME, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME};
 
     private final String serverName;
     private final String changeNumber;

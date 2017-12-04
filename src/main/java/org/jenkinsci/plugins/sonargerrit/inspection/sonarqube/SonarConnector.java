@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import com.google.common.collect.Multimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.TaskListener;
@@ -92,6 +93,7 @@ public class SonarConnector {
         return report;
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
     private List<SubJobConfig> getSubJobConfigs() {
         return getSubJobConfigs(true);
     }
