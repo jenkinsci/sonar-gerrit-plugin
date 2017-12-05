@@ -15,6 +15,7 @@ public interface DetailedConfigTest extends BaseConfigTest {
     Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
     String ISSUE_COMMENT_TEMPLATE = ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
     String SOME_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
+    boolean FAIL_ONLY = ReviewConfig.DescriptorImpl.FAIL_ONLY;
     String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
     String NO_ISSUES_NOTIFICATION = NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES.name();
     String ISSUES_NOTIFICATION = NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES.name();

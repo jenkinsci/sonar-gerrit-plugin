@@ -91,8 +91,8 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
 
         String className2 = "org.jenkinsci.plugins.sonargerrit.config.ReviewConfig";
 
-        String[] paramClasses2 = {className, stringType, stringType, stringType};
-        Object[] params2 = {c1, "Test", "Test", "Test"};
+        String[] paramClasses2 = {className, stringType, stringType, stringType, booleanType};
+        Object[] params2 = {c1, "Test", "Test", "Test", true};
 
         Object c2 = invokeConstructor(className2, paramClasses2, params2);
         Assert.assertNotSame(readFieldValue(c2, "noIssuesTitleTemplate"), readFieldValue(p, "reviewConfig", "noIssuesTitleTemplate"));
@@ -106,6 +106,7 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
         Assert.assertEquals(readFieldValue(c2, "noIssuesTitleTemplate"), readFieldValue(p, "reviewConfig", "noIssuesTitleTemplate"));
         Assert.assertEquals(readFieldValue(c2, "someIssuesTitleTemplate"), readFieldValue(p, "reviewConfig", "someIssuesTitleTemplate"));
         Assert.assertEquals(readFieldValue(c2, "issueCommentTemplate"), readFieldValue(p, "reviewConfig", "issueCommentTemplate"));
+        Assert.assertEquals(readFieldValue(c2, "failOnly"), readFieldValue(p, "reviewConfig", "failOnly"));
     }
 
     @Test

@@ -25,5 +25,11 @@
                     default="${descriptor.ISSUE_COMMENT_TEMPLATE}"
                     placeholder="${descriptor.ISSUE_COMMENT_TEMPLATE}"/>
         </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.gerrit.review.failonly}"
+                 field="failOnly"
+                 value="${failOnly}"
+                 description="${%jenkins.plugin.settings.gerrit.review.failonly.description}">
+            <f:checkbox selected="${failOnly}" default="descriptor.FAIL_ONLY"/>
+        </f:entry>
     </f:section>
 </j:jelly>

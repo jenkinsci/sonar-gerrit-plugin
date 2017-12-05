@@ -47,16 +47,30 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
     @Nonnull
     private String issueCommentTemplate = DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
 
-    public ReviewConfig(@Nonnull IssueFilterConfig issueFilterConfig, @Nonnull String noIssuesTitleTemplate, @Nonnull String someIssuesTitleTemplate, @Nonnull String issueCommentTemplate) {
+    /*
+    * Post review only on failure
+    * */
+    private boolean failOnly = false;
+
+    public ReviewConfig(@Nonnull IssueFilterConfig issueFilterConfig,
+            @Nonnull String noIssuesTitleTemplate,
+            @Nonnull String someIssuesTitleTemplate,
+            @Nonnull String issueCommentTemplate,
+            boolean failOnly) {
         setIssueFilterConfig(issueFilterConfig);
         setNoIssuesTitleTemplate(noIssuesTitleTemplate);
         setSomeIssuesTitleTemplate(someIssuesTitleTemplate);
         setIssueCommentTemplate(issueCommentTemplate);
+        setFailOnly(failOnly);
     }
 
     @DataBoundConstructor
     public ReviewConfig() {
-        this(new IssueFilterConfig(), DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE, DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE, DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
+        this(new IssueFilterConfig(),
+                DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE,
+                DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE,
+                DescriptorImpl.ISSUE_COMMENT_TEMPLATE,
+                false);
     }
 
     public IssueFilterConfig getIssueFilterConfig() {
@@ -98,6 +112,15 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         this.issueCommentTemplate = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(issueCommentTemplate), DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
     }
 
+    public boolean getFailOnly() {
+        return failOnly;
+    }
+
+    @DataBoundSetter
+    public void setFailOnly(boolean failOnly) {
+        this.failOnly = MoreObjects.firstNonNull(failOnly, false);
+    }
+
     @Override
     public DescriptorImpl getDescriptor() {
         return new DescriptorImpl();
@@ -108,6 +131,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         public static final String NO_ISSUES_TITLE_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.NO_ISSUES_TEXT;
         public static final String SOME_ISSUES_TITLE_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.SOME_ISSUES_TEXT;
         public static final String ISSUE_COMMENT_TEMPLATE = SonarToGerritPublisher.DescriptorImpl.ISSUE_COMMENT_TEXT;
+        public static final boolean FAIL_ONLY = SonarToGerritPublisher.DescriptorImpl.FAIL_ONLY;
 
         /**
          * Performs on-the-fly validation of the form field 'noIssuesTitleTemplate'.
