@@ -113,7 +113,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         sonarConnector.readSonarReports(filePath);
 
         GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-        Map<String, String> envVars = getEnvVars(run, listener, GerritConnectionInfo.REQUIRED_VARS);
+        Map<String, String> envVars = getEnvVars(run, listener, (String[])GerritConnectionInfo.REQUIRED_VARS.toArray());
         GerritConnectionInfo connectionInfo = new GerritConnectionInfo(envVars, trigger, authConfig);
         try {
             GerritConnector connector = new GerritConnector(connectionInfo);

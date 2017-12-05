@@ -5,6 +5,9 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigge
 import org.jenkinsci.plugins.sonargerrit.config.AuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
@@ -22,7 +25,8 @@ public class GerritConnectionInfo implements ConnectionInfo {
     public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
-    public static final String[] REQUIRED_VARS = {GERRIT_NAME_ENV_VAR_NAME, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME};
+    public static final List<String> REQUIRED_VARS = Collections.unmodifiableList(Arrays.asList(
+            GERRIT_NAME_ENV_VAR_NAME, GERRIT_CHANGE_NUMBER_ENV_VAR_NAME, GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
 
     private final String serverName;
     private final String changeNumber;
