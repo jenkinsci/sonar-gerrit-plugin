@@ -50,7 +50,7 @@ public class ChangedFilesTest extends ReportBasedTest {
 
         GerritRevisionWrapper w = getRevisionAdapter();
 
-        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false), r.getIssuesList(), w.getFileToChangedLines());
+        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false, false), r.getIssuesList(), w.getFileToChangedLines());
         Iterable<IssueAdapter> filtered = f.filter();
 
         boolean contains = isFilterResultContainsFile(FILENAME_IN_GERRIT, filtered);
@@ -67,7 +67,7 @@ public class ChangedFilesTest extends ReportBasedTest {
 
         performAutoPathCorrection(r, w);
 
-        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false), r.getIssuesList(), w.getFileToChangedLines());
+        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false, false), r.getIssuesList(), w.getFileToChangedLines());
         Iterable<IssueAdapter> filtered = f.filter();
 
         boolean contains = isFilterResultContainsFile(FILENAME_IN_GERRIT, filtered);
@@ -82,7 +82,7 @@ public class ChangedFilesTest extends ReportBasedTest {
 
         GerritRevisionWrapper w = getRevisionAdapter();
 
-        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false), r.getIssuesList(), w.getFileToChangedLines());
+        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false, false), r.getIssuesList(), w.getFileToChangedLines());
         Iterable<IssueAdapter> filtered = f.filter();
 
         boolean contains = isFilterResultContainsFile(FILENAME_IN_GERRIT, filtered);
@@ -99,7 +99,7 @@ public class ChangedFilesTest extends ReportBasedTest {
 
         GerritRevisionWrapper w = getRevisionAdapter(EXTRA_FILENAME_IN_GERRIT);
 
-        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false), r.getIssuesList(), w.getFileToChangedLines());
+        IssueFilter f = new IssueFilter(new IssueFilterConfig(Severity.INFO.toString(), false, false, false), r.getIssuesList(), w.getFileToChangedLines());
         Iterable<IssueAdapter> filtered = f.filter();
 
         boolean contains = isFilterResultContainsFile(FILENAME_IN_GERRIT, filtered);

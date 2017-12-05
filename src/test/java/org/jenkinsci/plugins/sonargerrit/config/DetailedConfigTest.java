@@ -27,6 +27,7 @@ public interface DetailedConfigTest extends BaseConfigTest {
     boolean NEW_ISSUES_ONLY = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
     boolean CHANGED_LINES_ONLY = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
     boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
+    boolean FAIL_ONLY = IssueFilterConfig.DescriptorImpl.FAIL_ONLY;
 
     // IssueFilterConfig
     void testSeverity();

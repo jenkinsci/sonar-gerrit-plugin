@@ -82,7 +82,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             setAuthConfig(new GerritAuthenticationConfig(httpUsername, httpPassword));
         }
 
-        IssueFilterConfig issueFilterConfig = new IssueFilterConfig(severity, newIssuesOnly, changedLinesOnly);
+        IssueFilterConfig issueFilterConfig = new IssueFilterConfig(severity, newIssuesOnly, changedLinesOnly, false);
 
         ReviewConfig reviewConfig = new ReviewConfig(issueFilterConfig, noIssuesToPostText, someIssuesToPostText, issueComment);
         setReviewConfig(reviewConfig);
@@ -134,6 +134,11 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 file2issuesToScore = getFilteredFileToIssueMultimap(
                         scoreConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
                 TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.score", file2issuesToScore.entries().size());
+            }
+
+            boolean hasIssues = (!file2issuesToComment.isEmpty()) || (file2issuesToScore != null && !file2issuesToScore.isEmpty());
+            if (!hasIssues && reviewConfig.getIssueFilterConfig().getFailOnly()) {
+                return;
             }
 
             //send review
@@ -225,6 +230,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final String NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
         public static final String SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");
         public static final String ISSUE_COMMENT_TEXT = Localization.getLocalized("jenkins.plugin.default.review.body");
+        public static final boolean FAIL_ONLY = false;
 
         public static final String CATEGORY = "Code-Review";
         public static final Integer NO_ISSUES_SCORE = 1;

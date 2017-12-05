@@ -25,16 +25,22 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
     private String severity;       // todo make enum
     private boolean newIssuesOnly;
     private boolean changedLinesOnly;
+    private boolean failOnly;
 
-    public IssueFilterConfig(String severity, boolean newIssuesOnly, boolean changedLinesOnly) {
+
+    public IssueFilterConfig(String severity, boolean newIssuesOnly, boolean changedLinesOnly, boolean failOnly) {
         setSeverity(severity);
         setNewIssuesOnly(newIssuesOnly);
         setChangedLinesOnly(changedLinesOnly);
+        setFailOnly(failOnly);
     }
 
     @DataBoundConstructor
     public IssueFilterConfig() {
-        this(DescriptorImpl.SEVERITY, DescriptorImpl.NEW_ISSUES_ONLY, DescriptorImpl.CHANGED_LINES_ONLY);
+        this(DescriptorImpl.SEVERITY,
+                DescriptorImpl.NEW_ISSUES_ONLY,
+                DescriptorImpl.CHANGED_LINES_ONLY,
+                DescriptorImpl.FAIL_ONLY);
     }
 
     public String getSeverity() {
@@ -47,6 +53,10 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
 
     public boolean isNewIssuesOnly() {
         return newIssuesOnly;
+    }
+
+    public boolean getFailOnly() {
+        return failOnly;
     }
 
     @DataBoundSetter
@@ -65,6 +75,11 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
         this.changedLinesOnly = changedLinesOnly;
     }
 
+    @DataBoundSetter
+    public void setFailOnly(boolean failOnly) {
+        this.failOnly = failOnly;
+    }
+
     @Override
     public DescriptorImpl getDescriptor() {
         return new DescriptorImpl();
@@ -75,6 +90,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
         public static final String SEVERITY = SonarToGerritPublisher.DescriptorImpl.SEVERITY;
         public static final boolean NEW_ISSUES_ONLY = SonarToGerritPublisher.DescriptorImpl.NEW_ISSUES_ONLY;
         public static final boolean CHANGED_LINES_ONLY = SonarToGerritPublisher.DescriptorImpl.CHANGED_LINES_ONLY;
+        public static final boolean FAIL_ONLY = SonarToGerritPublisher.DescriptorImpl.FAIL_ONLY;
 
         /**
          * Performs on-the-fly validation of the form field 'severity'.
