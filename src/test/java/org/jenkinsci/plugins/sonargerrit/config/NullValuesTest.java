@@ -63,6 +63,14 @@ public class NullValuesTest implements DetailedConfigTest {
     }
 
     @Test
+    public void testFailOnly() {
+        ReviewConfig config = new ReviewConfig();
+        Assert.assertEquals(FAIL_ONLY, config.getFailOnly());
+        config.setFailOnly(true);
+        Assert.assertTrue(config.getFailOnly());
+    }
+
+    @Test
     public void testReviewConfig() {
         SonarToGerritPublisher publisher = new SonarToGerritPublisher();
         publisher.setReviewConfig(null);
@@ -75,7 +83,7 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
         Assert.assertEquals(CHANGED_LINES_ONLY, config.getIssueFilterConfig().isChangedLinesOnly());
 
-        config = new ReviewConfig(null, null, null, null);
+        config = new ReviewConfig(null, null, null, null, false);
         Assert.assertNotNull(config.getIssueFilterConfig());
         Assert.assertEquals(SEVERITY, config.getIssueFilterConfig().getSeverity());
         Assert.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
@@ -83,6 +91,7 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
         Assert.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
         Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
+        Assert.assertEquals(FAIL_ONLY, config.getFailOnly());
     }
 
     @Test
