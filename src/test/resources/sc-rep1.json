@@ -1,0 +1,30 @@
+{
+  "version": "5.1",
+  "issues": [
+    {
+      "key": "c48d7f88-64bb-45ec-b64d-b5a536384183",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+      "line": 5,
+      "message": "Remove this unused import 'com.turquoise.juice.property.PropertiesHandler'.",
+      "severity": "MINOR",
+      "rule": "squid:UselessImportCheck",
+      "status": "OPEN",
+      "isNew": false,
+      "creationDate": "2015-05-10T00:46:09+0300"
+    }
+  ],
+  "components": [
+    {
+      "key": "com.megaproject.juice:juice-bootstrap",
+      "path": "juice-bootstrap"
+    },
+    {
+      "key": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+      "path": "src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
+      "moduleKey": "com.megaproject.juice:juice-bootstrap",
+      "status": "SAME"
+    }
+  ],
+  "rules": [],
+  "users": []
+}

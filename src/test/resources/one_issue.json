@@ -3,9 +3,9 @@
   "issues": [
     {
       "key": "c48d7f88-64bb-45ec-b64d-b5a536384183",
-      "component": "com.maxifier.guice:guice-bootstrap:src/main/java/com/magenta/guice/bootstrap/plugins/ChildModule.java",
+      "component": "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
       "line": 5,
-      "message": "Remove this unused import 'com.magenta.guice.property.PropertiesHandler'.",
+      "message": "Remove this unused import 'com.turquoise.juice.property.PropertiesHandler'.",
       "severity": "MINOR",
       "rule": "squid:UselessImportCheck",
       "status": "OPEN",
@@ -15,14 +15,14 @@
   ],
   "components": [
     {
-      "key": "com.maxifier.guice:guice-mbean",
-      "path": "guice-mbean"
+      "key": "com.megaproject.juice:juice-mbean",
+      "path": "juice-mbean"
     },
 
     {
-      "key": "com.maxifier.guice:guice-mbean:src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
-      "path": "src/main/java/com/magenta/guice/mbean/MBeanManagerModule.java",
-      "moduleKey": "com.maxifier.guice:guice-mbean",
+      "key": "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
+      "path": "src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
+      "moduleKey": "com.megaproject.juice:juice-mbean",
       "status": "SAME"
     }
 

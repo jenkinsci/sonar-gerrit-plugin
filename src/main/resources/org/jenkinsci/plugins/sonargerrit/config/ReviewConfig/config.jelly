@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:property
+            title="${%jenkins.plugin.settings.gerrit.review.filter}"
+            field="issueFilterConfig" />
+
+    <f:section title="${%jenkins.plugin.settings.gerrit.review.template}">
+        <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.no.issues}"
+                 field="noIssuesTitleTemplate">
+            <f:textbox
+                    default="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"
+                    placeholder="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"/>
+        </f:entry>
+        <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.issues}"
+                 field="someIssuesTitleTemplate">
+            <f:textbox
+                    default="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"
+                    placeholder="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"/>
+        </f:entry>
+        <f:entry
+                title="${%jenkins.plugin.settings.gerrit.review.template.body}"
+                field="issueCommentTemplate">
+            <f:textarea
+                    default="${descriptor.ISSUE_COMMENT_TEMPLATE}"
+                    placeholder="${descriptor.ISSUE_COMMENT_TEMPLATE}"/>
+        </f:entry>
+    </f:section>
+</j:jelly>
