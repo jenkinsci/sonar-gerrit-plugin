@@ -28,8 +28,13 @@ import java.util.Map;
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
  * Created: 05.12.2017 18:52
- * <p/>
+ *
  * $Id$
+ */
+
+/*
+ * Slightly different approach to test ComponentPathBuilder
+ * The more tests, the better :)
  */
 public class ChangedFilesTest extends ReportBasedTest {
     @Test
@@ -39,7 +44,6 @@ public class ChangedFilesTest extends ReportBasedTest {
         Assert.assertEquals(12, report.getComponents().size());
         SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(new SubJobConfig(SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH, SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH), report);
         InspectionReport r = new InspectionReport(Arrays.asList(info));
-//        Assert.assertEquals(3, r.asMultimap().size());
 
         final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
         FileInfo fileInfo = new FileInfo();
@@ -76,8 +80,6 @@ public class ChangedFilesTest extends ReportBasedTest {
                 contains = true;
             }
         }
-//        ByFilenamesPredicate.apply(new HashSet<String>(w.getChangedFiles()));
-        // Shows full path to file rather than restricted path visible in report
         Assert.assertTrue(contains);
     }
 
@@ -88,7 +90,6 @@ public class ChangedFilesTest extends ReportBasedTest {
         Assert.assertEquals(12, report.getComponents().size());
         SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(new SubJobConfig("testcontext-viewstore", SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH), report);
         InspectionReport r = new InspectionReport(Arrays.asList(info));
-//        Assert.assertEquals(3, r.asMultimap().size());
 
         final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
         FileInfo fileInfo = new FileInfo();
@@ -125,8 +126,6 @@ public class ChangedFilesTest extends ReportBasedTest {
                 contains = true;
             }
         }
-//        ByFilenamesPredicate.apply(new HashSet<String>(w.getChangedFiles()));
-        // Shows full path to file rather than restricted path visible in report
         Assert.assertTrue(contains);
     }
 }
