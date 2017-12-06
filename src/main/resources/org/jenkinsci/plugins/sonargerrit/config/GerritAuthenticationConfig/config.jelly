@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.username}"
+             field="username" >
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.password}"
+             field="password" >
+        <f:password/>
+    </f:entry>
+
+    <j:set var="servers" value="${descriptor.getGerritServerNames()}"/>
+    <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.server}">
+        <select name="serverName">
+            <j:forEach var="inst" items="${servers}">
+                <f:option>${inst}</f:option>
+            </j:forEach>
+        </select>
+    </f:entry>
+    <f:validateButton
+            title="${%jenkins.plugin.settings.gerrit.credentials.test}"
+            progress="${%jenkins.plugin.settings.gerrit.credentials.test.progress}"
+            method="testConnection" with="username,password,serverName"/>
+
+</j:jelly>

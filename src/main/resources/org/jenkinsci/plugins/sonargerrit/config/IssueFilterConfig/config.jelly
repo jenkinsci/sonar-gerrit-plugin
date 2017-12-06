@@ -1,0 +1,37 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.filter.severity}">
+        <select name="severity" field="severity" value="${instance.severity}" default="${descriptor.SEVERITY}">
+            <f:option value="INFO" selected="${instance.severity == 'INFO'}">
+                ${%INFO}
+            </f:option>
+            <f:option value="MINOR" selected="${instance.severity == 'MINOR'}">
+                ${%MINOR}
+            </f:option>
+            <f:option value="MAJOR" selected="${instance.severity == 'MAJOR'}">
+                ${%MAJOR}
+            </f:option>
+            <f:option value="CRITICAL" selected="${instance.severity == 'CRITICAL'}">
+                ${%CRITICAL}
+            </f:option>
+            <f:option value="BLOCKER" selected="${instance.severity == 'BLOCKER'}">
+                ${%BLOCKER}
+            </f:option>
+        </select>
+    </f:entry>
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.filter.new}"
+             field="newIssuesOnly"
+             value="${newIssuesOnly}"
+             description="${%jenkins.plugin.settings.gerrit.filter.new.description}">
+        <f:checkbox selected="${newIssuesOnly}" default="descriptor.NEW_ISSUES_ONLY"/>
+    </f:entry>
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.filter.lines.changed}"
+             field="changedLinesOnly"
+             value="${changedLinesOnly}"
+             description="${%jenkins.plugin.settings.gerrit.filter.lines.changed.description}">
+        <f:checkbox default="descriptor.CHANGED_LINES_ONLY"/>
+    </f:entry>
+</j:jelly>

@@ -1,0 +1,74 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+    <f:entry title="${%jenkins.plugin.settings.gerrit.notification.settings.no.issues}"
+             field="noIssuesNotificationRecipient"
+             value="instance.noIssuesNotificationRecipient"
+             default="${descriptor.NOTIFICATION_RECIPIENT_NO_ISSUES_STR}">
+        <!--<f:enum field="noIssuesNotificationRecipient">${it.name()}</f:enum>-->
+        <!--</f:entry>-->
+        <select name="noIssuesNotificationRecipient" field="noIssuesNotificationRecipient"  value="instance.noIssuesNotificationRecipient"
+                default="${descriptor.NOTIFICATION_RECIPIENT_NO_ISSUES_STR}">
+            <f:option value="NONE" selected="${instance.noIssuesNotificationRecipient =='NONE'}">
+                ${%NONE}
+            </f:option>
+            <f:option value="OWNER" selected="${instance.noIssuesNotificationRecipient =='OWNER'}">
+                ${%OWNER}
+            </f:option>
+            <f:option value="OWNER_REVIEWERS" selected="${instance.noIssuesNotificationRecipient =='OWNER_REVIEWERS'}">
+                ${%OWNER_REVIEWERS}
+            </f:option>
+            <f:option value="ALL" selected="${instance.noIssuesNotificationRecipient =='ALL'}">
+                ${%ALL}
+            </f:option>
+
+        </select>
+    </f:entry>
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.notification.settings.comments}"
+             field="commentedIssuesNotificationRecipient"
+             default="${descriptor.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES_STR}"
+             value="instance.commentedIssuesNotificationRecipient">
+        <!--<f:enum>${it.name()}</f:enum>-->
+        <!--</f:entry>-->
+        <select name="commentedIssuesNotificationRecipient"
+                field="commentedIssuesNotificationRecipient"
+                default="${descriptor.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES_STR}">
+            <f:option value="NONE" selected="${instance.commentedIssuesNotificationRecipient =='NONE'}">
+                ${%NONE}
+            </f:option>
+            <f:option value="OWNER" selected="${instance.commentedIssuesNotificationRecipient =='OWNER'}">
+                ${%OWNER}
+            </f:option>
+            <f:option value="OWNER_REVIEWERS" selected="${instance.commentedIssuesNotificationRecipient =='OWNER_REVIEWERS'}">
+                ${%OWNER_REVIEWERS}
+            </f:option>
+            <f:option value="ALL" selected="${instance.commentedIssuesNotificationRecipient =='ALL'}">
+                ${%ALL}
+            </f:option>
+        </select>
+    </f:entry>
+
+    <f:entry title="${%jenkins.plugin.settings.gerrit.notification.settings.score}"
+             field="negativeScoreNotificationRecipient"
+             default="${descriptor.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE_STR}">
+        <!--<f:enum>${it.name()}</f:enum>-->
+        <!--</f:entry>-->
+        <select name="negativeScoreNotificationRecipient"
+                field="negativeScoreNotificationRecipient"
+                default="${descriptor.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE_STR}"
+                value="instance.negativeScoreNotificationRecipient">
+            <f:option value="NONE" selected="${instance.negativeScoreNotificationRecipient =='NONE'}">
+                ${%NONE}
+            </f:option>
+            <f:option value="OWNER" selected="${instance.negativeScoreNotificationRecipient =='OWNER'}">
+                ${%OWNER}
+            </f:option>
+            <f:option value="OWNER_REVIEWERS" selected="${instance.negativeScoreNotificationRecipient =='OWNER_REVIEWERS'}">
+                ${%OWNER_REVIEWERS}
+            </f:option>
+            <f:option value="ALL" selected="${instance.negativeScoreNotificationRecipient =='ALL'}">
+                ${%ALL}
+            </f:option>
+        </select>
+    </f:entry>
+</j:jelly>
