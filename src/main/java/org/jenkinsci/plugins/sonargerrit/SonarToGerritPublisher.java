@@ -6,13 +6,11 @@ import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.sonargerrit.config.*;
@@ -20,6 +18,7 @@ import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
+import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
@@ -27,13 +26,9 @@ import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
 import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,11 +51,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     * The URL of SonarQube server to be used for comments
     * */
     @Nonnull
-    private String sonarURL = DescriptorImpl.SONAR_URL;
-
-    @Nonnull
-    private List<SubJobConfig> subJobConfigs = new LinkedList<>(Arrays.asList(
-            new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH)));
+    private InspectionConfig inspectionConfig = new InspectionConfig();
 
     @Nonnull
     private NotificationConfig notificationConfig = new NotificationConfig();
@@ -109,11 +100,13 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        SonarConnector sonarConnector = new SonarConnector(listener, subJobConfigs);
+        //load inspection report
+        SonarConnector sonarConnector = new SonarConnector(listener, inspectionConfig);
         sonarConnector.readSonarReports(filePath);
 
+        //load revision info
         GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-        Map<String, String> envVars = getEnvVars(run, listener, (String[])GerritConnectionInfo.REQUIRED_VARS.toArray());
+        Map<String, String> envVars = getEnvVars(run, listener, (String[]) GerritConnectionInfo.REQUIRED_VARS.toArray());
         GerritConnectionInfo connectionInfo = new GerritConnectionInfo(envVars, trigger, authConfig);
         try {
             GerritConnector connector = new GerritConnector(connectionInfo);
@@ -121,10 +114,18 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             GerritRevisionWrapper revisionInfo = new GerritRevisionWrapper(connector.getRevision());
             Map<String, Set<Integer>> fileToChangedLines = revisionInfo.getFileToChangedLines();
 
+            //match inspection report and revision info
+            if (inspectionConfig.isPathCorrectionNeeded()) {
+                new IssueAdapterProcessor(listener, sonarConnector, revisionInfo).process();
+            }
+
+            //generate review output
+            //get issues to be commented
             Multimap<String, IssueAdapter> file2issuesToComment = getFilteredFileToIssueMultimap(
                     reviewConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
             TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.comment", file2issuesToComment.entries().size());
 
+            //get issues to be scored
             Multimap<String, IssueAdapter> file2issuesToScore = null;
             boolean postScore = scoreConfig != null;
             if (postScore) {
@@ -133,10 +134,10 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.score", file2issuesToScore.entries().size());
             }
 
-            ReviewInput reviewInput =
-                    new GerritReviewBuilder(
-                            file2issuesToComment, file2issuesToScore, reviewConfig, scoreConfig, notificationConfig, sonarURL)
-                            .buildReview();
+            //send review
+            ReviewInput reviewInput = new GerritReviewBuilder(file2issuesToComment, file2issuesToScore,
+                    reviewConfig, scoreConfig, notificationConfig, inspectionConfig
+            ).buildReview();
             revisionInfo.sendReview(reviewInput);
 
             TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
@@ -241,32 +242,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             load();
         }
 
-        /**
-         * Performs on-the-fly validation of the form field 'sonarURL'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         *
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
-        @SuppressWarnings(value = "unused")
-        public FormValidation doCheckSonarURL(@QueryParameter String value) throws ServletException, IOException {
-            if (Util.fixEmptyAndTrim(value) == null) {
-                return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.empty"));
-            }
-            try {
-                new URL(value);
-            } catch (MalformedURLException e) {
-                return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.invalid"));
-            }
-            return FormValidation.ok();
-        }
-
-        //todo validate subconfigs?
-
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
@@ -283,8 +258,9 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     }
 
-    public String getSonarURL() {
-        return sonarURL;
+    @Nonnull
+    public InspectionConfig getInspectionConfig() {
+        return inspectionConfig;
     }
 
     @Nonnull
@@ -292,7 +268,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return notificationConfig;
     }
 
-    //@SuppressWarnings(value = "unused")
     @Nonnull
     public ReviewConfig getReviewConfig() {
         return reviewConfig;
@@ -307,14 +282,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     @DataBoundSetter
-    public void setSonarURL(String sonarURL) {
-        this.sonarURL = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(sonarURL), DescriptorImpl.SONAR_URL);
-    }
-
-    @DataBoundSetter
-    public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) { // todo check sjc pats != null
-        this.subJobConfigs = MoreObjects.firstNonNull(subJobConfigs, new LinkedList<SubJobConfig>(Arrays.asList(
-                new SubJobConfig(DescriptorImpl.PROJECT_PATH, DescriptorImpl.SONAR_REPORT_PATH))));
+    public void setInspectionConfig(@Nonnull InspectionConfig inspectionConfig) {
+        this.inspectionConfig = MoreObjects.firstNonNull(inspectionConfig, new InspectionConfig());
     }
 
     @DataBoundSetter
@@ -338,6 +307,27 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     }
 
     // --------------deprecated methods to support back compatibility
+
+    @Deprecated
+    @DataBoundSetter
+    public void setSonarURL(String sonarURL) {
+        this.inspectionConfig.setServerURL(sonarURL);
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
+        if (subJobConfigs == null || subJobConfigs.size() == 0) {
+            this.inspectionConfig.setBaseConfig(new SubJobConfig());
+            this.inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
+        } else if (subJobConfigs.size() == 1){
+            this.inspectionConfig.setBaseConfig(subJobConfigs.get(0));
+            this.inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
+        } else {
+            this.inspectionConfig.setBaseConfig(null);
+            this.inspectionConfig.setSubJobConfigs(subJobConfigs);
+        }
+    }
 
     @Deprecated
     @DataBoundSetter
@@ -489,41 +479,19 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @Deprecated
     @DataBoundSetter
     public void setProjectPath(String path) {
-        //todo
-        if (subJobConfigs == null || subJobConfigs.isEmpty() || isDefaultConfig()) {
-            subJobConfigs = new LinkedList<>();
-            SubJobConfig config = new SubJobConfig(path, null);
-            subJobConfigs.add(config);
-        } else if (subJobConfigs.size() == 1 && subJobConfigs.get(0).getProjectPath() == null) {
-            SubJobConfig config = subJobConfigs.get(0);
-            config.setProjectPath(path);
+        if (inspectionConfig.getBaseConfig() == null){
+            inspectionConfig.setBaseConfig(new SubJobConfig());
         }
+        inspectionConfig.getBaseConfig().setProjectPath(path);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setPath(String path) {
-        //todo
-        if (subJobConfigs == null || subJobConfigs.isEmpty() || isDefaultConfig()) {
-            subJobConfigs = new LinkedList<>();
-            SubJobConfig config = new SubJobConfig(null, path);
-            subJobConfigs.add(config);
-        } else if (subJobConfigs.size() == 1 && subJobConfigs.get(0).getProjectPath() == null) {
-            SubJobConfig config = subJobConfigs.get(0);
-            config.setSonarReportPath(path);
+        if (inspectionConfig.getBaseConfig() == null){
+            inspectionConfig.setBaseConfig(new SubJobConfig());
         }
-    }
-
-    @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ")
-    protected boolean isDefaultConfig() {
-        return subJobConfigs.size() == 1
-                && subJobConfigs.get(0).getSonarReportPath() == DescriptorImpl.SONAR_REPORT_PATH
-                && subJobConfigs.get(0).getProjectPath() == DescriptorImpl.PROJECT_PATH;
-    }
-
-    @Nonnull
-    public List<SubJobConfig> getSubJobConfigs() {
-        return subJobConfigs;
+        inspectionConfig.getBaseConfig().setSonarReportPath(path);
     }
 }
 

@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 
@@ -15,12 +16,12 @@ public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
 
     private ComponentPathBuilder pathBuilder;
 
-    private String projectPath;
+    private SubJobConfig config;
 
-    public SonarQubeIssueAdapter(Issue issue, ComponentPathBuilder pathBuilder, String projectPath) {
+    public SonarQubeIssueAdapter(Issue issue, ComponentPathBuilder pathBuilder, SubJobConfig config) {
         super(issue);
         this.pathBuilder = pathBuilder;
-        this.projectPath = projectPath;
+        this.config = config;
     }
 
     @Override
@@ -28,12 +29,17 @@ public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
         if (filepath == null) {
             if (pathBuilder != null) {
                 filepath = pathBuilder
-                        .buildPrefixedPathForComponentWithKey(getComponent(), projectPath)
+                        .buildPrefixedPathForComponentWithKey(getComponent(), config.getProjectPath())
                         .or(getComponent());
             } else {
                 filepath = getComponent();
             }
         }
         return filepath;
+    }
+
+    @Override
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
     }
 }

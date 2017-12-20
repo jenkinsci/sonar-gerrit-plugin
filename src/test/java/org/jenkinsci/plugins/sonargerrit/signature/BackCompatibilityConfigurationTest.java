@@ -211,18 +211,18 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
     public void testSetProjectPath() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String path = "Test";
-        Assert.assertNotSame(path, readFieldValue(p, "subJobConfigs", "projectPath"));
+        Assert.assertNotSame(path, readFieldValue(p, "inspectionConfig", "baseConfig", "projectPath"));
         invokeSetter(p, "projectPath", path);
-        Assert.assertEquals(path, readFieldValue(p, "subJobConfigs", "projectPath"));
+        Assert.assertEquals(path, readFieldValue(p, "inspectionConfig", "baseConfig", "projectPath"));
     }
 
     @Test
     public void testSetPath() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String path = "Test";
-        Assert.assertNotSame(path, readFieldValue(p, "subJobConfigs", "sonarReportPath"));
+        Assert.assertNotSame(path, readFieldValue(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
         invokeSetter(p, "path", path);
-        Assert.assertEquals(path, readFieldValue(p, "subJobConfigs", "sonarReportPath"));
+        Assert.assertEquals(path, readFieldValue(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
     }
 
     @Override

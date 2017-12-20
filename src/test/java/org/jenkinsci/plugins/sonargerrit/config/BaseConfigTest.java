@@ -18,7 +18,5 @@ public interface BaseConfigTest {
 
     void testAuthenticationConfig();
 
-    void testSonarConfig();
-
-    void testProjectConfig();
+    void testInspectionConfig();
 }

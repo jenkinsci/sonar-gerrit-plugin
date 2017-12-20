@@ -59,12 +59,12 @@ public interface DetailedConfigTest extends BaseConfigTest {
 
     // Sonar config
 
+    void testSubJobConfig();
+
     void testSonarUrl();
 
     void testSonarReportPath();
 
-//    void testProjectConfig();
-//
-//    void testSonarConfig();
+    void testProjectConfig();
 
 }

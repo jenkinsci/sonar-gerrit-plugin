@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 import com.google.common.collect.Multimap;
 import hudson.FilePath;
 import junit.framework.Assert;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
@@ -150,7 +151,7 @@ public class ComponentPathBuilderTest {
     }
 
     protected SonarConnector readSonarReport(SubJobConfig... configs) throws IOException, InterruptedException {
-        SonarConnector connector = new SonarConnector(null, Arrays.asList(configs));
+        SonarConnector connector = new SonarConnector(null, new InspectionConfig("", null, Arrays.asList(configs)));
         connector.readSonarReports(new FilePath(new File("")));
         return connector;
     }

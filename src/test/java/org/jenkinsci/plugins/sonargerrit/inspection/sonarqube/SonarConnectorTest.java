@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import hudson.FilePath;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.ReportDataChecker;
 import org.junit.Assert;
@@ -69,7 +70,7 @@ public class SonarConnectorTest {
     }
 
     protected SonarConnector readSonarReport(SubJobConfig... configs) throws IOException, InterruptedException {
-        SonarConnector connector = new SonarConnector(null, Arrays.asList(configs));
+        SonarConnector connector = new SonarConnector(null, new InspectionConfig("", null, Arrays.asList(configs)));
         connector.readSonarReports(new FilePath(new File("")));
         return connector;
     }

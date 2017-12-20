@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+
+    <f:entry title="${%jenkins.plugin.settings.inspection.project.report.path}">
+        <f:textbox field="sonarReportPath" value="${subJobConfigs.sonarReportPath}"
+                   default="${descriptor.SONAR_REPORT_PATH}"
+                   placeholder="${descriptor.SONAR_REPORT_PATH}"/>
+    </f:entry>
+
+    <f:entry title="${%jenkins.plugin.settings.inspection.project.base.path}">
+        <f:textbox field="projectPath" value="${subJobConfigs.projectPath}"
+                   default="${descriptor.PROJECT_PATH}"
+                   placeholder="${descriptor.PROJECT_PATH}"/>
+    </f:entry>
+</j:jelly>

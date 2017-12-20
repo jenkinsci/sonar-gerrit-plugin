@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
@@ -30,18 +31,18 @@ public class GerritReviewBuilder {
     private ReviewConfig reviewConfig;
     private ScoreConfig scoreConfig;
     private NotificationConfig notificationConfig;
-    private String sonarURL;
+    private InspectionConfig inspectionConfig;
 
     public GerritReviewBuilder(Multimap<String, IssueAdapter> finalIssuesToComment,
                                Multimap<String, IssueAdapter> finalIssuesToScore,
                                ReviewConfig reviewConfig, ScoreConfig scoreConfig,
-                               NotificationConfig notificationConfig, String sonarURL) {
+                               NotificationConfig notificationConfig, InspectionConfig inspectionConfig) {
         this.finalIssuesToComment = finalIssuesToComment;
         this.finalIssuesToScore = finalIssuesToScore;
         this.reviewConfig = reviewConfig;
         this.scoreConfig = scoreConfig;
         this.notificationConfig = notificationConfig;
-        this.sonarURL = sonarURL;
+        this.inspectionConfig = inspectionConfig;
     }
 
     public ReviewInput buildReview() {
@@ -103,7 +104,7 @@ public class GerritReviewBuilder {
         }
 
         String commentTemplate = reviewConfig.getIssueCommentTemplate();
-        String message = new CustomIssueFormatter(input, commentTemplate, sonarURL).getMessage();
+        String message = new CustomIssueFormatter(input, commentTemplate, inspectionConfig.getServerURL()).getMessage();
 
         ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
         commentInput.id = input.getKey();

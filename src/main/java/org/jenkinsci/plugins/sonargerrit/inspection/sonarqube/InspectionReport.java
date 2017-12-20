@@ -27,7 +27,7 @@ public class InspectionReport {
         issuesList = new ArrayList<>();
         for (SonarConnector.ReportInfo info : issueInfos) {
             Report report = info.report;
-            generateIssueAdapterList(info.config.getProjectPath(), report, report.getIssues());
+            generateIssueAdapterList(info.config, report, report.getIssues());
         }
     }
 
@@ -50,10 +50,10 @@ public class InspectionReport {
     /**
      * Generates issues wrapper consisting corrected filepath
      */
-    private void generateIssueAdapterList(String projectPath, Report report, Iterable<Issue> issues) {
+    private void generateIssueAdapterList(SubJobConfig config, Report report, Iterable<Issue> issues) {
         final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
         for (Issue issue : issues) {
-            issuesList.add(new SonarQubeIssueAdapter(issue, pathBuilder, projectPath));
+            issuesList.add(new SonarQubeIssueAdapter(issue, pathBuilder, config));
         }
     }
 

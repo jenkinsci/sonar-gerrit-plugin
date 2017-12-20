@@ -11,6 +11,8 @@ import java.util.Date;
 public interface IssueAdapter {
     String getFilepath();
 
+    void setFilepath(String path);
+
     String getKey();
 
     String getComponent();

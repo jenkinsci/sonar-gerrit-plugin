@@ -96,22 +96,15 @@ public class DefaultValuesTest implements BaseConfigTest {
     }
 
     @Test
-    public void testSonarConfig() {
-        //todo   extract
-        Assert.assertEquals(SONAR_URL, SonarToGerritPublisher.DescriptorImpl.SONAR_URL);
-        Assert.assertEquals(SONAR_REPORT_PATH, SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
+    public void testInspectionConfig() {
+        Assert.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
+        Assert.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
+        Assert.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
 
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(SONAR_URL, publisher.getSonarURL());
-//        Assert.assertEquals(SONAR_REPORT_PATH, publisher.getSubJobConfigs().get(0).getSonarReportPath());
+        InspectionConfig config = new InspectionConfig();
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
     }
 
-    @Test
-    public void testProjectConfig() {
-        Assert.assertEquals(PROJECT_PATH, SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH);
-        //todo extract
-
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(PROJECT_PATH, publisher.getSubJobConfigs().get(0).getProjectPath());
-    }
 }

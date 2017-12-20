@@ -163,40 +163,51 @@ public class NullValuesTest implements DetailedConfigTest {
 
     @Test
     public void testSonarUrl() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        publisher.setSonarURL(null);
-        Assert.assertEquals(SONAR_URL, publisher.getSonarURL());
+        InspectionConfig config = new InspectionConfig();
+        config.setServerURL(null);
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
     }
 
     @Test
     public void testSonarReportPath() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        SubJobConfig config = publisher.getSubJobConfigs().get(0);
+        SubJobConfig config = new SubJobConfig();
         Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
         config.setSonarReportPath(null);
         Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
     }
 
     @Test
-    public void testAuthenticationConfig() {
-
+    public void testInspectionConfig() {
+        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
+        publisher.setInspectionConfig(null);
+        InspectionConfig config = publisher.getInspectionConfig();
+        Assert.assertNotNull(config);
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
     }
 
     @Test
-    public void testSonarConfig() {
+    public void testSubJobConfig() {
         SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        publisher.setSubJobConfigs(null);
-        SubJobConfig config = publisher.getSubJobConfigs().get(0);
-        Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
-        Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
+        publisher.setInspectionConfig(null);
+        InspectionConfig config = publisher.getInspectionConfig();
+        Assert.assertNotNull(config);
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
     }
 
     @Test
     public void testProjectConfig() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        SubJobConfig config = publisher.getSubJobConfigs().get(0);
+        SubJobConfig config = new SubJobConfig();
         Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
         config.setProjectPath(null);
         Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
+    }
+
+    @Test
+    public void testAuthenticationConfig() {
+
     }
 }

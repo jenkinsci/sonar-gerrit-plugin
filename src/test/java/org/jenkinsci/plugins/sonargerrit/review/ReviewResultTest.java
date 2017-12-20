@@ -42,7 +42,7 @@ public class ReviewResultTest extends ReportBasedTest {
     protected ReviewInput getReviewResult() {
         GerritReviewBuilder builder = new GerritReviewBuilder(commentIssues, scoreIssues,
                 publisher.getReviewConfig(), publisher.getScoreConfig(),
-                publisher.getNotificationConfig(), publisher.getSonarURL());
+                publisher.getNotificationConfig(), publisher.getInspectionConfig());
         return builder.buildReview();
     }
 
@@ -69,6 +69,11 @@ public class ReviewResultTest extends ReportBasedTest {
         @Override
         public String getFilepath(){
             return getComponent();
+        }
+
+        @Override
+        public void setFilepath(String path) {
+
         }
     }
 

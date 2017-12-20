@@ -310,50 +310,67 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
 
     @Test
     public void testSonarUrl() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(SONAR_URL, publisher.getSonarURL());
+        InspectionConfig config = new InspectionConfig();
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
         Assert.assertNotSame("Test", SONAR_URL);
-        publisher.setSonarURL("Test");
-        Assert.assertEquals("Test", publisher.getSonarURL());
+        config.setServerURL("Test");
+        Assert.assertEquals("Test", config.getServerURL());
     }
 
     @Test
     public void testSonarReportPath() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(SONAR_REPORT_PATH, publisher.getSubJobConfigs().get(0).getSonarReportPath());
+        SubJobConfig config = new SubJobConfig();
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
         Assert.assertNotSame("Test", SONAR_REPORT_PATH);
-        publisher.getSubJobConfigs().get(0).setSonarReportPath("Test");
-        Assert.assertEquals("Test", publisher.getSubJobConfigs().get(0).getSonarReportPath());
+        config.setSonarReportPath("Test");
+        Assert.assertEquals("Test", config.getSonarReportPath());
     }
 
     @Test
-    public void testSonarConfig() {
-        //todo   extract
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(SONAR_URL, publisher.getSonarURL());
-        Assert.assertEquals(SONAR_REPORT_PATH, publisher.getSubJobConfigs().get(0).getSonarReportPath());
-        Assert.assertEquals(PROJECT_PATH, publisher.getSubJobConfigs().get(0).getProjectPath());
+    public void testProjectConfig() {
+        SubJobConfig config = new SubJobConfig();
+        Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
+        Assert.assertNotSame("Test", PROJECT_PATH);
+        config.setProjectPath("Test");
+        Assert.assertEquals("Test", config.getProjectPath());
+    }
+
+    @Test
+    public void testInspectionConfig() {
+        InspectionConfig config = new InspectionConfig();
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
+        Assert.assertEquals(0, config.getSubJobConfigs().size());
 
         Assert.assertNotSame("Test1", SONAR_URL);
         Assert.assertNotSame("Test2", SONAR_REPORT_PATH);
         Assert.assertNotSame("Test3", PROJECT_PATH);
 
-        publisher.setSonarURL("Test1");
-        publisher.getSubJobConfigs().get(0).setSonarReportPath("Test2");
-        publisher.getSubJobConfigs().get(0).setProjectPath("Test3");
+        config.setServerURL("Test1");
+        config.getBaseConfig().setSonarReportPath("Test2");
+        config.getBaseConfig().setProjectPath("Test3");
 
-        Assert.assertEquals("Test1", publisher.getSonarURL());
-        Assert.assertEquals("Test2", publisher.getSubJobConfigs().get(0).getSonarReportPath());
-        Assert.assertEquals("Test3", publisher.getSubJobConfigs().get(0).getProjectPath());
+        Assert.assertEquals("Test1", config.getServerURL());
+        Assert.assertEquals("Test2", config.getBaseConfig().getSonarReportPath());
+        Assert.assertEquals("Test3", config.getBaseConfig().getProjectPath());
 
     }
 
-    @Test
-    public void testProjectConfig() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        Assert.assertEquals(PROJECT_PATH, publisher.getSubJobConfigs().get(0).getProjectPath());
-        Assert.assertNotSame("Test", PROJECT_PATH);
-        publisher.getSubJobConfigs().get(0).setProjectPath("Test");
-        Assert.assertEquals("Test", publisher.getSubJobConfigs().get(0).getProjectPath());
+    @Override
+    public void testSubJobConfig() {
+        SubJobConfig config = new SubJobConfig();
+        Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
+
+        Assert.assertNotSame("Test12", SONAR_REPORT_PATH);
+        Assert.assertNotSame("Test13", PROJECT_PATH);
+
+        config.setSonarReportPath("Test12");
+        config.setProjectPath("Test13");
+
+        Assert.assertEquals("Test12", config.getSonarReportPath());
+        Assert.assertEquals("Test13", config.getProjectPath());
+
     }
 }

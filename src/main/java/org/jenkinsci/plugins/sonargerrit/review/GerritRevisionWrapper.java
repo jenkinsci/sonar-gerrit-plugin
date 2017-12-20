@@ -7,7 +7,10 @@ import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -16,49 +19,38 @@ import java.util.*;
  * <p>
  * $Id$
  */
-public class GerritRevisionWrapper {
-    public RevisionApi revision;
+public class GerritRevisionWrapper implements RevisionAdapter{
+    private RevisionApi revision;
+    private Set<String> changedFiles;
+    private Map<String, Set<Integer>> file2changedLines;
 
-    public GerritRevisionWrapper(RevisionApi revision) {
+    public GerritRevisionWrapper(RevisionApi revision) throws RestApiException {
         this.revision = revision;
+        loadData();
+    }
+
+    protected void loadData() throws RestApiException {
+        this.changedFiles = calculateChangedFiles();
+        this.file2changedLines = calculateFile2ChangedLines();
     }
 
     public void sendReview(ReviewInput reviewInput) throws RestApiException {
         revision.review(reviewInput);
     }
 
-    public Set<String> getChangedFiles() throws RestApiException {
+    public Set<String> getChangedFiles() {
+        return changedFiles;
+    }
+
+    public Map<String, Set<Integer>> getFileToChangedLines() {
+        return file2changedLines;
+    }
+
+    protected Set<String> calculateChangedFiles() throws RestApiException {
         return revision.files().keySet();
     }
 
-//    public Map<String, List<Range<Integer>>> getFileToChangedLines() throws RestApiException {
-//        Map<String, List<Range<Integer>>> file2changedLinesInfo = new HashMap<>();
-//        Map<String, FileInfo> files = revision.files();
-//        for (String filename : files.keySet()) {
-//            List<Range<Integer>> changedLinesByFile = getChangedLinesByFile(filename);
-//            file2changedLinesInfo.put(filename, changedLinesByFile);
-//        }
-//        return file2changedLinesInfo;
-//    }
-
-//    public List<Range<Integer>> getChangedLinesByFile(String filename) throws RestApiException {
-//        DiffInfo diffInfo = revision.file(filename).diff();
-//        List<Range<Integer>> rangeList = new ArrayList<>();
-//        int processed = 0;
-//        for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
-//            if (contentEntry.ab != null) {
-//                processed += contentEntry.ab.size();
-//            } else if (contentEntry.b != null) {
-//                int start = processed + 1;
-//                int end = processed + contentEntry.b.size();
-//                rangeList.add(Range.closed(start, end));
-//                processed += contentEntry.b.size();
-//            }
-//        }
-//        return rangeList;
-//    }
-
-    public Map<String, Set<Integer>> getFileToChangedLines() throws RestApiException {
+    protected Map<String, Set<Integer>> calculateFile2ChangedLines() throws RestApiException {
         Map<String, Set<Integer>> file2changedLinesInfo = new HashMap<>();
         Map<String, FileInfo> files = revision.files();
         for (String filename : files.keySet()) {
@@ -68,7 +60,7 @@ public class GerritRevisionWrapper {
         return file2changedLinesInfo;
     }
 
-    public Set<Integer> getChangedLinesByFile(String filename) throws RestApiException {
+    protected Set<Integer> getChangedLinesByFile(String filename) throws RestApiException {
         DiffInfo diffInfo = revision.file(filename).diff();
         return getChangedLines(diffInfo);
     }

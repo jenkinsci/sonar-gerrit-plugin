@@ -102,20 +102,19 @@ public class WrongValuesTest implements DetailedConfigTest {
 
     @Test
     public void testSonarUrl() {
-        SonarToGerritPublisher p = new SonarToGerritPublisher();
-        p.setSonarURL("");
-        Assert.assertEquals(SONAR_URL, p.getSonarURL());
+        InspectionConfig config = new InspectionConfig();
+        config.setServerURL("");
+        Assert.assertEquals(SONAR_URL, config.getServerURL());
     }
 
     @Test
     public void testSonarReportPath() {
-        SonarToGerritPublisher p = new SonarToGerritPublisher();
-        p.setPath("fghdfh^%&$(&*IOUM V");
-        SubJobConfig subJobConfig = p.getSubJobConfigs().get(0);
-        Assert.assertEquals("fghdfh^%&$(&*IOUM V", subJobConfig.getSonarReportPath());
+        SubJobConfig config = new SubJobConfig();
+        config.setSonarReportPath("fghdfh^%&$(&*IOUM V");
+        Assert.assertEquals("fghdfh^%&$(&*IOUM V", config.getSonarReportPath());
 
-        subJobConfig.setSonarReportPath("fghdfh^%&$(&*IOUM V");
-        Assert.assertEquals("fghdfh^%&$(&*IOUM V", subJobConfig.getSonarReportPath());
+        config.setSonarReportPath("fghdfh^%&$(&*IOUM V");
+        Assert.assertEquals("fghdfh^%&$(&*IOUM V", config.getSonarReportPath());
     }
 
     @Override
@@ -144,18 +143,22 @@ public class WrongValuesTest implements DetailedConfigTest {
     }
 
     @Override
-    public void testSonarConfig() {
+    public void testInspectionConfig() {
         // nope
+    }
+
+    @Override
+    public void testSubJobConfig() {
+
     }
 
     @Test
     public void testProjectConfig() {
-        SonarToGerritPublisher p = new SonarToGerritPublisher();
-        p.setProjectPath("fghdfh^%&$(&*IOUM V");
-        SubJobConfig subJobConfig = p.getSubJobConfigs().get(0);
-        Assert.assertEquals("fghdfh^%&$(&*IOUM V", subJobConfig.getProjectPath());
+        SubJobConfig config = new SubJobConfig();
+        config.setProjectPath("fghdfh^%&$(&*IOUM V");
+        Assert.assertEquals("fghdfh^%&$(&*IOUM V", config.getProjectPath());
 
-        subJobConfig.setProjectPath("fghdfh^%&$(&*IOUM V");
-        Assert.assertEquals("fghdfh^%&$(&*IOUM V", subJobConfig.getProjectPath());
+        config.setProjectPath("fghdfh^%&$(&*IOUM V");
+        Assert.assertEquals("fghdfh^%&$(&*IOUM V", config.getProjectPath());
     }
 }

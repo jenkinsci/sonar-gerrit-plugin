@@ -4,6 +4,7 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Author:  Tatiana Didik
  * Created: 17.11.2017 20:56
  * $Id$
- * */
+ */
 
 /*
  * If this test fails then probably SonarToGerritPublisher's signature has changed.
@@ -24,12 +25,47 @@ import java.util.List;
 public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest {
 
     @Test
+    public void testInspectionConfig() throws ReflectiveOperationException {
+        SonarToGerritPublisher p = invokeConstructor();
+
+        String configClassName = "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig";
+        String stringType = "java.lang.String";
+        String[] configParamClasses = {stringType, stringType};
+        String[] config1Params = {"TEST", "TEST"};
+        String[] config2Params = {"TEST2", "TEST2"};
+        String[] config3Params = {"TEST3", "TEST3"};
+
+
+        Object config1 = invokeConstructor(configClassName, configParamClasses, config1Params);
+        Object config2 = invokeConstructor(configClassName, configParamClasses, config2Params);
+        Object config3 = invokeConstructor(configClassName, configParamClasses, config3Params);
+        List configs = Arrays.asList(config2, config3);
+
+        String className = "org.jenkinsci.plugins.sonargerrit.config.InspectionConfig";
+        String subJobType = "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig";
+        String collectionType = "java.util.List";
+        String[] paramClasses = {stringType, subJobType, collectionType};
+        Object[] params = {"http://localhost:9000", config1, configs};
+
+        Object c = invokeConstructor(className, paramClasses, params);
+        invokeSetter(p, "inspectionConfig", c);
+
+        Assert.assertEquals("http://localhost:9000", readFieldValue(p, "inspectionConfig", "serverURL"));
+
+        Assert.assertEquals(readFieldValue(config1, "projectPath"), readFieldValue(p, "inspectionConfig", "baseConfig",  "projectPath"));
+        Assert.assertEquals(readFieldValue(config1, "sonarReportPath"), readFieldValue(p, "inspectionConfig", "baseConfig",  "sonarReportPath"));
+
+        Assert.assertEquals(readFieldValue(config2, "projectPath"), readFieldValue(p, "inspectionConfig", "subJobConfigs",  "projectPath"));
+        Assert.assertEquals(readFieldValue(config2, "sonarReportPath"), readFieldValue(p, "inspectionConfig", "subJobConfigs",  "sonarReportPath"));
+    }
+
+    @Test
     public void testSetSonarURL() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String sonarURL = "test";
-        Assert.assertNotSame(sonarURL, readFieldValue(p, "sonarURL"));
+        Assert.assertNotSame(sonarURL, readFieldValue(p, "inspectionConfig", "serverURL"));
         invokeSetter(p, "sonarURL", "test");
-        Assert.assertEquals("test", readFieldValue(p, "sonarURL"));
+        Assert.assertEquals("test", readFieldValue(p, "inspectionConfig", "serverURL"));
     }
 
     @Test
@@ -42,14 +78,14 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
         String[] params = {"TEST", "TEST"};
 
         Object c = invokeConstructor(className, paramClasses, params);
-        Assert.assertNotSame(readFieldValue(c, "projectPath"), readFieldValue(p, "subJobConfigs", "projectPath"));
-        Assert.assertNotSame(readFieldValue(c, "sonarReportPath"), readFieldValue(p, "subJobConfigs", "sonarReportPath"));
+        Assert.assertNotSame(readFieldValue(c, "projectPath"), readFieldValue(p, "inspectionConfig", "baseConfig", "projectPath"));
+        Assert.assertNotSame(readFieldValue(c, "sonarReportPath"), readFieldValue(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
 
         List value = new LinkedList<>();
         value.add(c);
         invokeSetter(p, "subJobConfigs", value);
-        Assert.assertEquals(readFieldValue(c, "projectPath"), readFieldValue(p, "subJobConfigs", "projectPath"));
-        Assert.assertEquals(readFieldValue(c, "sonarReportPath"), readFieldValue(p, "subJobConfigs", "sonarReportPath"));
+        Assert.assertEquals(readFieldValue(c, "projectPath"), readFieldValue(p, "inspectionConfig", "baseConfig",  "projectPath"));
+        Assert.assertEquals(readFieldValue(c, "sonarReportPath"), readFieldValue(p, "inspectionConfig", "baseConfig",  "sonarReportPath"));
 
     }
 

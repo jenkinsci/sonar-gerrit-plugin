@@ -7,6 +7,7 @@ import hudson.FilePath;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
@@ -25,23 +26,23 @@ import java.util.logging.Logger;
  * <p>
  * $Id$
  */
-public class SonarConnector {
+public class SonarConnector implements InspectionReportAdapter{
 
     private static final Logger LOGGER = Logger.getLogger(SonarConnector.class.getName());
 
-    private List<SubJobConfig> subJobConfigs;
     private TaskListener listener;
     private InspectionReport report;
+    private InspectionConfig inspectionConfig;
 
-    public SonarConnector(TaskListener listener, List<SubJobConfig> subJobConfigs) {
-        this.subJobConfigs = subJobConfigs;
+    public SonarConnector(TaskListener listener, InspectionConfig inspectionConfig) {
+        this.inspectionConfig = inspectionConfig;
         this.listener = listener;
     }
 
     public void readSonarReports(FilePath workspace) throws IOException,
             InterruptedException {
         List<ReportInfo> reports = new ArrayList<ReportInfo>();
-        for (SubJobConfig subJobConfig : getSubJobConfigs(false)) { // to be replaced by this.subJobConfigs in further releases - this code is to support older versions
+        for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
             Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
             if (report == null) {  //todo fail all? skip errors?
                 TaskListenerLogger.logMessage(listener, LOGGER, Level.SEVERE, "jenkins.plugin.error.path.no.project.config.available");
@@ -91,23 +92,6 @@ public class SonarConnector {
 
         TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.inspection.report.loaded", report.getIssues().size());
         return report;
-    }
-
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD")
-    private List<SubJobConfig> getSubJobConfigs() {
-        return getSubJobConfigs(true);
-    }
-
-    private List<SubJobConfig> getSubJobConfigs(boolean addDefault) {
-        if (subJobConfigs == null) {
-            subJobConfigs = new ArrayList<SubJobConfig>();
-            // add configuration from previous plugin version
-            if (addDefault) {
-                subJobConfigs.add(new SubJobConfig(SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH,
-                        SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH));
-            }
-        }
-        return subJobConfigs;
     }
 
     static class ReportInfo {

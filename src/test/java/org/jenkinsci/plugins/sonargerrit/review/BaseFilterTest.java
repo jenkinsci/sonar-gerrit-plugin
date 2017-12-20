@@ -2,12 +2,10 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
-import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
-import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.config.*;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
@@ -87,7 +85,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         List<Issue> allIssues = report.getIssues();
         List<IssueAdapter> allIssuesAdp = new ArrayList<>();
         for (Issue i : allIssues) {
-            allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, ""));
+            allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, new SubJobConfig()));
         }
 
         //todo temporary - should be realized in publisher
@@ -103,11 +101,21 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         filteredOutIssues.removeAll(filteredIssues);
     }
 
-    protected Map<String, Set<Integer>> getChangedLines() {
+    protected Map<String, Set<Integer>> getChangedLines()  {
         Map<String, Set<Integer>> changed = new HashMap<>();
         if (diffInfo != null) {
             for (String s : diffInfo.keySet()) {
-                GerritRevisionWrapper w = new GerritRevisionWrapper(null);
+                GerritRevisionWrapper w = null;
+                try {
+                    w = new GerritRevisionWrapper(null){
+                        @Override
+                        protected void loadData() throws RestApiException {
+                            // do nothing
+                        }
+                    };
+                } catch (RestApiException e) {
+                    e.printStackTrace();
+                }
                 changed.put(s, w.getChangedLines(diffInfo.get(s)));
             }
         }

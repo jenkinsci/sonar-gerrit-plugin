@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.sonargerrit.review.formatter;
 
 import hudson.FilePath;
 import junit.framework.Assert;
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
@@ -45,6 +46,6 @@ public class CustomIssueFormatterTest {
         String json = filePath.readToString();
         Report rep = new SonarReportBuilder().fromJson(json);
 
-        return new SonarQubeIssueAdapter(rep.getIssues().get(0), null, "");
+        return new SonarQubeIssueAdapter(rep.getIssues().get(0), null, new SubJobConfig());
     }
 }
