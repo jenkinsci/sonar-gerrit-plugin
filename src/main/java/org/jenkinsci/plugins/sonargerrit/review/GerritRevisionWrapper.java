@@ -6,11 +6,14 @@ import com.google.gerrit.extensions.api.changes.RevisionApi;
 import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import org.jenkinsci.plugins.sonargerrit.review.RevisionAdapter;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -19,17 +22,19 @@ import java.util.Set;
  * <p>
  * $Id$
  */
-public class GerritRevisionWrapper implements RevisionAdapter{
+public class GerritRevisionWrapper implements RevisionAdapter {
     private RevisionApi revision;
-    private Set<String> changedFiles;
+    protected Set<String> changedFiles;
+    protected boolean dataLoaded;
     private Map<String, Set<Integer>> file2changedLines;
 
-    public GerritRevisionWrapper(RevisionApi revision) throws RestApiException {
+    public GerritRevisionWrapper(RevisionApi revision) {
         this.revision = revision;
-        loadData();
+        dataLoaded = false;
     }
 
-    protected void loadData() throws RestApiException {
+    public void loadData() throws RestApiException {
+        this.dataLoaded = true;
         this.changedFiles = calculateChangedFiles();
         this.file2changedLines = calculateFile2ChangedLines();
     }
@@ -39,10 +44,16 @@ public class GerritRevisionWrapper implements RevisionAdapter{
     }
 
     public Set<String> getChangedFiles() {
+        if (!dataLoaded) {
+            throw new IllegalStateException(getLocalized("jenkins.plugin.error.gerrit.revision.data.not.loaded"));
+        }
         return changedFiles;
     }
 
     public Map<String, Set<Integer>> getFileToChangedLines() {
+        if (!dataLoaded) {
+            throw new IllegalStateException(getLocalized("jenkins.plugin.error.gerrit.revision.data.not.loaded"));
+        }
         return file2changedLines;
     }
 

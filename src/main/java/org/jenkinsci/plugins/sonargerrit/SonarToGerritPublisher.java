@@ -112,6 +112,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
             GerritConnector connector = new GerritConnector(connectionInfo);
             connector.connect();
             GerritRevisionWrapper revisionInfo = new GerritRevisionWrapper(connector.getRevision());
+            revisionInfo.loadData();
+
             Map<String, Set<Integer>> fileToChangedLines = revisionInfo.getFileToChangedLines();
 
             //match inspection report and revision info

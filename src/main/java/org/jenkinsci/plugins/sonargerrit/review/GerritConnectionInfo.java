@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.review;
 import com.google.common.base.MoreObjects;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import org.jenkinsci.plugins.sonargerrit.config.AuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.review.ConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 
 import java.util.Arrays;

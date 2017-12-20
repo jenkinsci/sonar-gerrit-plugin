@@ -4,7 +4,7 @@ import hudson.model.TaskListener;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByFilenameEndPredicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.InspectionReportAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.RevisionAdapter;
 
 import java.util.HashMap;

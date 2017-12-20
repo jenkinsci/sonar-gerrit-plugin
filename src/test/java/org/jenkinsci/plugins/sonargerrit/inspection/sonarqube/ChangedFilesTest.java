@@ -12,6 +12,7 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
+import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
@@ -131,7 +132,7 @@ public class ChangedFilesTest extends ReportBasedTest {
         return contains;
     }
 
-    protected GerritRevisionWrapper getRevisionAdapter(String ... additionalFiles) throws RestApiException {
+    protected GerritRevisionWrapper getRevisionAdapter(String... additionalFiles) throws RestApiException {
         final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
         FileInfo fileInfo = new FileInfo();
         fileInfo.status = 'A';
@@ -140,11 +141,12 @@ public class ChangedFilesTest extends ReportBasedTest {
         fileInfo = new FileInfo();
         fileInfo.linesInserted = 4;
         files.put(FILENAME_IN_GERRIT, fileInfo);
-        for (String f:additionalFiles){
+        for (String f : additionalFiles) {
             files.put(f, fileInfo);
         }
 
         RevisionApi revInfo = new DummyRevisionApi(null) {
+
             @Override
             public Map<String, FileInfo> files() throws RestApiException {
                 return files;
@@ -158,7 +160,9 @@ public class ChangedFilesTest extends ReportBasedTest {
                 return info;
             }
         };
-        return new GerritRevisionWrapper(revInfo);
+        GerritRevisionWrapper gerritRevisionWrapper = new GerritRevisionWrapper(revInfo);
+        gerritRevisionWrapper.loadData();
+        return gerritRevisionWrapper;
     }
 
     protected InspectionReport getReport(SubJobConfig config, boolean manuallyCorrected) throws IOException, InterruptedException, URISyntaxException {

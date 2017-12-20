@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.*;
@@ -101,21 +100,12 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
         filteredOutIssues.removeAll(filteredIssues);
     }
 
-    protected Map<String, Set<Integer>> getChangedLines()  {
+    protected Map<String, Set<Integer>> getChangedLines() {
         Map<String, Set<Integer>> changed = new HashMap<>();
         if (diffInfo != null) {
             for (String s : diffInfo.keySet()) {
                 GerritRevisionWrapper w = null;
-                try {
-                    w = new GerritRevisionWrapper(null){
-                        @Override
-                        protected void loadData() throws RestApiException {
-                            // do nothing
-                        }
-                    };
-                } catch (RestApiException e) {
-                    e.printStackTrace();
-                }
+                w = new GerritRevisionWrapper(null);
                 changed.put(s, w.getChangedLines(diffInfo.get(s)));
             }
         }

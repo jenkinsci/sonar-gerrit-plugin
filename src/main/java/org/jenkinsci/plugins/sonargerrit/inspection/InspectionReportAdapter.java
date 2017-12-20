@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
+package org.jenkinsci.plugins.sonargerrit.inspection;
 
 import com.google.common.collect.Multimap;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
