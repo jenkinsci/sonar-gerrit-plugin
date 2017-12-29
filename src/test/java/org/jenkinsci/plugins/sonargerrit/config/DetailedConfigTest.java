@@ -23,8 +23,10 @@ public interface DetailedConfigTest extends BaseConfigTest {
     String SONAR_REPORT_PATH = SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
     String PROJECT_PATH = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
     String SEVERITY = IssueFilterConfig.DescriptorImpl.SEVERITY;
+    String DEFAULT_INSPECTION_CONFIG_TYPE = InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
     boolean NEW_ISSUES_ONLY = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
     boolean CHANGED_LINES_ONLY = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
+    boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
 
     // IssueFilterConfig
     void testSeverity();

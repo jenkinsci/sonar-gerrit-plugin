@@ -1,8 +1,9 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -28,6 +29,10 @@ public class DefaultValuesTest implements BaseConfigTest {
     public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
     public static final String SONAR_URL = "http://localhost:9000";
     public static final String PROJECT_PATH = "";
+    public static final String DEFAULT_INSPECTION_CONFIG_TYPE = "base";
+    public static final boolean PATH_AUTO_MATCH = false;
+    public static final String MULTI_TYPE = "multi";
+    public static final String BASE_TYPE = "base";
 
     @Test
     public void testFilterConfig() {
@@ -100,11 +105,22 @@ public class DefaultValuesTest implements BaseConfigTest {
         Assert.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
         Assert.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
         Assert.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
+        Assert.assertEquals(DEFAULT_INSPECTION_CONFIG_TYPE, InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
+        Assert.assertEquals(PATH_AUTO_MATCH, InspectionConfig.DescriptorImpl.AUTO_MATCH);
+        Assert.assertEquals(DEFAULT_INSPECTION_CONFIG_TYPE, InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
 
         InspectionConfig config = new InspectionConfig();
         Assert.assertEquals(SONAR_URL, config.getServerURL());
         Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
         Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
+        Assert.assertFalse(config.isMultiConfigMode());
+        Assert.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
+
+        Assert.assertNotNull(config.getSubJobConfigs());
+        Assert.assertEquals(1, config.getSubJobConfigs().size());
+        SubJobConfig sConfig = new ArrayList<>(config.getSubJobConfigs()).get(0);
+        Assert.assertEquals(SONAR_REPORT_PATH, sConfig.getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, sConfig.getProjectPath());
     }
 
 }

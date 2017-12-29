@@ -4,6 +4,8 @@ import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -341,19 +343,39 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
         Assert.assertEquals(SONAR_URL, config.getServerURL());
         Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
         Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
-        Assert.assertEquals(0, config.getSubJobConfigs().size());
+        Assert.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
+        Assert.assertTrue(config.isType(DEFAULT_INSPECTION_CONFIG_TYPE));
+        Assert.assertEquals(1, config.getSubJobConfigs().size());
+        SubJobConfig subJobConfig = new ArrayList<>(config.getSubJobConfigs()).get(0);
+        Assert.assertEquals(SONAR_REPORT_PATH, subJobConfig.getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, subJobConfig.getProjectPath());
+        Assert.assertEquals(PATH_AUTO_MATCH, subJobConfig.isAutoMatch());
+        Assert.assertEquals(config.isAutoMatch(), config.getBaseConfig().isAutoMatch());
+        Assert.assertFalse(config.isMultiConfigMode());
+        Assert.assertEquals(config.getBaseConfig(), new ArrayList<>(config.getAllSubJobConfigs()).get(0));
 
         Assert.assertNotSame("Test1", SONAR_URL);
         Assert.assertNotSame("Test2", SONAR_REPORT_PATH);
         Assert.assertNotSame("Test3", PROJECT_PATH);
+        Assert.assertNotSame(true, PATH_AUTO_MATCH);
+        Assert.assertNotSame("multi", DEFAULT_INSPECTION_CONFIG_TYPE);
 
         config.setServerURL("Test1");
         config.getBaseConfig().setSonarReportPath("Test2");
         config.getBaseConfig().setProjectPath("Test3");
 
+        config.setAutoMatch(true);
+        Assert.assertTrue(config.getBaseConfig().isAutoMatch());
+        Assert.assertEquals(config.isAutoMatch(), config.getBaseConfig().isAutoMatch());
+        config.setType("multi");
+        Assert.assertNotSame(config.isAutoMatch(), config.getBaseConfig().isAutoMatch());
+
         Assert.assertEquals("Test1", config.getServerURL());
         Assert.assertEquals("Test2", config.getBaseConfig().getSonarReportPath());
         Assert.assertEquals("Test3", config.getBaseConfig().getProjectPath());
+        Assert.assertTrue(config.isMultiConfigMode());
+        Assert.assertNotSame(config.getBaseConfig(), new ArrayList<>(config.getAllSubJobConfigs()).get(0));
+        Assert.assertEquals(new ArrayList<>(config.getSubJobConfigs()).get(0), new ArrayList<>(config.getAllSubJobConfigs()).get(0));
 
     }
 

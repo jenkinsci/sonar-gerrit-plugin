@@ -219,6 +219,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final String PROJECT_PATH = "";
         public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
         public static final String SONAR_URL = "http://localhost:9000";
+        public static final String DEFAULT_INSPECTION_CONFIG_TYPE = InspectionConfig.DescriptorImpl.BASE_TYPE;
+        public static final boolean AUTO_MATCH_INSPECTION_AND_REVISION_PATHS = false;
 
         public static final String NO_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.no.issues");
         public static final String SOME_ISSUES_TEXT = Localization.getLocalized("jenkins.plugin.default.review.title.issues");

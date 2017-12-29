@@ -4,6 +4,9 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -21,91 +24,91 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
     public void testSetSeverity() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String severity = "BLOCKER";
-        Assert.assertNotSame(severity, readFieldValue(p, "reviewConfig", "issueFilterConfig", "severity"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig")); //
+        Assert.assertNotSame(severity, invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig")); //
         invokeSetter(p, "severity", severity);
 
-        Assert.assertEquals(severity, readFieldValue(p, "reviewConfig", "issueFilterConfig", "severity"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertEquals(severity, invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         severity = "CRITICAL";
-        Assert.assertNotSame(severity, readFieldValue(p, "reviewConfig", "issueFilterConfig", "severity"));
+        Assert.assertNotSame(severity, invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "severity", severity);
-        Assert.assertEquals(severity, readFieldValue(p, "reviewConfig", "issueFilterConfig", "severity"));
-        Assert.assertEquals(severity, readFieldValue(p, "scoreConfig", "issueFilterConfig", "severity"));
+        Assert.assertEquals(severity, invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
+        Assert.assertEquals(severity, invokeGetter(p, "scoreConfig", "issueFilterConfig", "severity"));
     }
 
     @Test
     public void testSetChangedLinesOnly() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         boolean changedLinesOnly = true;
-        Assert.assertNotSame(changedLinesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig")); //
+        Assert.assertNotSame(changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig")); //
         invokeSetter(p, "changedLinesOnly", changedLinesOnly);
-        Assert.assertEquals(changedLinesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertEquals(changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         changedLinesOnly = false;
-        Assert.assertNotSame(changedLinesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        Assert.assertNotSame(changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "changedLinesOnly", changedLinesOnly);
-        Assert.assertEquals(changedLinesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
-        Assert.assertEquals(changedLinesOnly, readFieldValue(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly")); //
+        Assert.assertEquals(changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        Assert.assertEquals(changedLinesOnly, invokeGetter(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly")); //
     }
 
     @Test
     public void testSetNewIssuesOnly() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         boolean newIssuesOnly = true;
-        Assert.assertNotSame(newIssuesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig")); //
+        Assert.assertNotSame(newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig")); //
         invokeSetter(p, "newIssuesOnly", newIssuesOnly);
-        Assert.assertEquals(newIssuesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertEquals(newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         newIssuesOnly = false;
-        Assert.assertNotSame(newIssuesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        Assert.assertNotSame(newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "newIssuesOnly", newIssuesOnly);
-        Assert.assertEquals(newIssuesOnly, readFieldValue(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
-        Assert.assertEquals(newIssuesOnly, readFieldValue(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly")); //
+        Assert.assertEquals(newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        Assert.assertEquals(newIssuesOnly, invokeGetter(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly")); //
     }
 
     @Test
     public void testSetNoIssuesToPostText() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String noIssuesToPostText = "Test";
-        Assert.assertNotSame(noIssuesToPostText, readFieldValue(p, "reviewConfig", "noIssuesTitleTemplate"));
+        Assert.assertNotSame(noIssuesToPostText, invokeGetter(p, "reviewConfig", "noIssuesTitleTemplate"));
         invokeSetter(p, "noIssuesToPostText", noIssuesToPostText);
-        Assert.assertEquals(noIssuesToPostText, readFieldValue(p, "reviewConfig", "noIssuesTitleTemplate"));
+        Assert.assertEquals(noIssuesToPostText, invokeGetter(p, "reviewConfig", "noIssuesTitleTemplate"));
     }
 
     @Test
     public void testSetSomeIssuesToPostText() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String someIssuesToPostText = "Test";
-        Assert.assertNotSame(someIssuesToPostText, readFieldValue(p, "reviewConfig", "someIssuesTitleTemplate"));
+        Assert.assertNotSame(someIssuesToPostText, invokeGetter(p, "reviewConfig", "someIssuesTitleTemplate"));
         invokeSetter(p, "someIssuesToPostText", someIssuesToPostText);
-        Assert.assertEquals(someIssuesToPostText, readFieldValue(p, "reviewConfig", "someIssuesTitleTemplate"));
+        Assert.assertEquals(someIssuesToPostText, invokeGetter(p, "reviewConfig", "someIssuesTitleTemplate"));
     }
 
     @Test
     public void testSetIssueComment() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String issueComment = "Test";
-        Assert.assertNotSame(issueComment, readFieldValue(p, "reviewConfig", "issueCommentTemplate"));
+        Assert.assertNotSame(issueComment, invokeGetter(p, "reviewConfig", "issueCommentTemplate"));
         invokeSetter(p, "issueComment", issueComment);
-        Assert.assertEquals(issueComment, readFieldValue(p, "reviewConfig", "issueCommentTemplate"));
+        Assert.assertEquals(issueComment, invokeGetter(p, "reviewConfig", "issueCommentTemplate"));
     }
 
     @Test
     public void testSetOverrideCredentials() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         boolean overrideCredentials = true;
-        Assert.assertNull(readFieldValue(p, "authConfig"));
+        Assert.assertNull(invokeGetter(p, "authConfig"));
         invokeSetter(p, "overrideCredentials", overrideCredentials);
-        Assert.assertNotNull(readFieldValue(p, "authConfig"));
+        Assert.assertNotNull(invokeGetter(p, "authConfig"));
 
         // todo check false
     }
@@ -114,115 +117,145 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
     public void testSetHttpUsername() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String httpUsername = "Test";
-        Assert.assertNull(readFieldValue(p, "authConfig"));
+        Assert.assertNull(invokeGetter(p, "authConfig"));
         invokeSetter(p, "httpUsername", httpUsername);
-        Assert.assertNull(readFieldValue(p, "authConfig"));
+        Assert.assertNull(invokeGetter(p, "authConfig"));
 
         invokeSetter(p, "overrideCredentials", true);
         invokeSetter(p, "httpUsername", httpUsername);
-        Assert.assertNotNull(readFieldValue(p, "authConfig"));
-        Assert.assertEquals(httpUsername, readFieldValue(p, "authConfig", "username"));
+        Assert.assertNotNull(invokeGetter(p, "authConfig"));
+        Assert.assertEquals(httpUsername, invokeGetter(p, "authConfig", "username"));
     }
 
     @Test
     public void testSetHttpPassword() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String httpPassword = "Test";
-        Assert.assertNull(readFieldValue(p, "authConfig"));
+        Assert.assertNull(invokeGetter(p, "authConfig"));
         invokeSetter(p, "httpPassword", httpPassword);
-        Assert.assertNull(readFieldValue(p, "authConfig"));
+        Assert.assertNull(invokeGetter(p, "authConfig"));
 
         invokeSetter(p, "overrideCredentials", true);
         invokeSetter(p, "httpPassword", httpPassword);
-        Assert.assertNotNull(readFieldValue(p, "authConfig"));
-        Assert.assertEquals(httpPassword, readFieldValue(p, "authConfig", "password"));
+        Assert.assertNotNull(invokeGetter(p, "authConfig"));
+        Assert.assertEquals(httpPassword, invokeGetter(p, "authConfig", "password"));
     }
 
     @Test
     public void testSetPostScore() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         boolean postScore = true;
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
         invokeSetter(p, "postScore", postScore);
-        Assert.assertNotNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
     }
 
     @Test
     public void testSetCategory() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String category = "Test";
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
         invokeSetter(p, "category", category);
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "category", category);
-        Assert.assertNotNull(readFieldValue(p, "scoreConfig"));
-        Assert.assertEquals(category, readFieldValue(p, "scoreConfig", "category"));
+        Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
+        Assert.assertEquals(category, invokeGetter(p, "scoreConfig", "category"));
     }
 
     @Test
     public void testSetNoIssuesScore() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String noIssuesScore = "2";
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
         invokeSetter(p, "noIssuesScore", noIssuesScore);
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "noIssuesScore", noIssuesScore);
-        Assert.assertNotNull(readFieldValue(p, "scoreConfig"));
-        Assert.assertEquals(noIssuesScore, readFieldValue(p, "scoreConfig", "noIssuesScore").toString());
+        Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
+        Assert.assertEquals(noIssuesScore, invokeGetter(p, "scoreConfig", "noIssuesScore").toString());
     }
 
     @Test
     public void testSetIssuesScore() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String issuesScore = "-2";
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
         invokeSetter(p, "issuesScore", issuesScore);
-        Assert.assertNull(readFieldValue(p, "scoreConfig"));
+        Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
         invokeSetter(p, "issuesScore", issuesScore);
-        Assert.assertNotNull(readFieldValue(p, "scoreConfig"));
-        Assert.assertEquals(issuesScore, readFieldValue(p, "scoreConfig", "issuesScore").toString());
+        Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
+        Assert.assertEquals(issuesScore, invokeGetter(p, "scoreConfig", "issuesScore").toString());
     }
 
     @Test
     public void testSetNoIssuesNotification() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String noIssuesNotification = "ALL";
-        Assert.assertNotSame(noIssuesNotification, readFieldValue(p, "notificationConfig", "noIssuesNotificationRecipient"));
+        Assert.assertNotSame(noIssuesNotification, invokeGetter(p, "notificationConfig", "noIssuesNotificationRecipient"));
         invokeSetter(p, "noIssuesNotification", noIssuesNotification);
-        Assert.assertEquals(noIssuesNotification, readFieldValue(p, "notificationConfig", "noIssuesNotificationRecipient"));
+        Assert.assertEquals(noIssuesNotification, invokeGetter(p, "notificationConfig", "noIssuesNotificationRecipient"));
     }
 
     @Test
     public void testSetIssuesNotification() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String issuesNotification = "ALL";
-        Assert.assertNotSame(issuesNotification, readFieldValue(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
+        Assert.assertNotSame(issuesNotification, invokeGetter(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
         invokeSetter(p, "issuesNotification", issuesNotification);
-        Assert.assertEquals(issuesNotification, readFieldValue(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
+        Assert.assertEquals(issuesNotification, invokeGetter(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
     }
 
     @Test
     public void testSetProjectPath() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String path = "Test";
-        Assert.assertNotSame(path, readFieldValue(p, "inspectionConfig", "baseConfig", "projectPath"));
+        Assert.assertNotSame(path, invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
         invokeSetter(p, "projectPath", path);
-        Assert.assertEquals(path, readFieldValue(p, "inspectionConfig", "baseConfig", "projectPath"));
+        Assert.assertEquals(path, invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
     }
 
     @Test
     public void testSetPath() throws ReflectiveOperationException {
         SonarToGerritPublisher p = invokeConstructor();
         String path = "Test";
-        Assert.assertNotSame(path, readFieldValue(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
+        Assert.assertNotSame(path, invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
         invokeSetter(p, "path", path);
-        Assert.assertEquals(path, readFieldValue(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
+        Assert.assertEquals(path, invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
+    }
+
+    @Test
+    public void testSetSonarURL() throws ReflectiveOperationException {
+        SonarToGerritPublisher p = invokeConstructor();
+        String sonarURL = "test";
+        Assert.assertNotSame(sonarURL, invokeGetter(p, "inspectionConfig", "serverURL"));
+        invokeSetter(p, "sonarURL", "test");
+        Assert.assertEquals("test", invokeGetter(p, "inspectionConfig", "serverURL"));
+    }
+
+    @Test
+    public void testSubJobConfig() throws ReflectiveOperationException {
+        SonarToGerritPublisher p = invokeConstructor();
+
+        String className = "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig";
+        String paramsType = "java.lang.String";
+        String[] paramClasses = {paramsType, paramsType};
+        String[] params = {"TEST", "TEST"};
+
+        Object c = invokeConstructor(className, paramClasses, params);
+        Assert.assertNotSame(invokeGetter(c, "projectPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
+        Assert.assertNotSame(invokeGetter(c, "sonarReportPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
+
+        List value = new LinkedList<>();
+        value.add(c);
+        invokeSetter(p, "subJobConfigs", value);
+        Assert.assertEquals(invokeGetter(c, "projectPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
+        Assert.assertEquals(invokeGetter(c, "sonarReportPath"), invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
+
     }
 
     @Override

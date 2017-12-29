@@ -70,9 +70,16 @@ public class SonarConnectorTest {
     }
 
     protected SonarConnector readSonarReport(SubJobConfig... configs) throws IOException, InterruptedException {
-        SonarConnector connector = new SonarConnector(null, new InspectionConfig("", null, Arrays.asList(configs)));
+        SonarConnector connector = new SonarConnector(null, buildInspectionConfig(configs));
         connector.readSonarReports(new FilePath(new File("")));
         return connector;
+    }
+
+    private InspectionConfig buildInspectionConfig(SubJobConfig... configs){
+        InspectionConfig config = new InspectionConfig();
+        config.setType(InspectionConfig.DescriptorImpl.MULTI_TYPE);
+        config.setSubJobConfigs(Arrays.asList(configs));
+        return config;
     }
 
     private SubJobConfig createConfig(String ppath, String spath) {

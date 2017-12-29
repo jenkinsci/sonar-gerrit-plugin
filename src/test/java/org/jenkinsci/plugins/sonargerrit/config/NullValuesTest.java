@@ -4,6 +4,8 @@ import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -185,17 +187,30 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(SONAR_URL, config.getServerURL());
         Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
         Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
+        Assert.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
+        Assert.assertNotNull(config.getSubJobConfigs());
+        Assert.assertEquals(1, config.getSubJobConfigs().size());
+        SubJobConfig subJobConfig = new ArrayList<>(config.getAllSubJobConfigs()).get(0);
+        Assert.assertEquals(SONAR_REPORT_PATH, subJobConfig.getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, subJobConfig.getProjectPath());
+        Assert.assertFalse(subJobConfig.isAutoMatch());
     }
 
     @Test
     public void testSubJobConfig() {
-        SonarToGerritPublisher publisher = new SonarToGerritPublisher();
-        publisher.setInspectionConfig(null);
-        InspectionConfig config = publisher.getInspectionConfig();
-        Assert.assertNotNull(config);
-        Assert.assertEquals(SONAR_URL, config.getServerURL());
+        InspectionConfig config = new InspectionConfig();
+        config.setBaseConfig(null);
+        Assert.assertNotNull(config.getBaseConfig());
         Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
         Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
+        Assert.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
+
+        Assert.assertNotNull(config.getSubJobConfigs());
+        Assert.assertEquals(1, config.getSubJobConfigs().size());
+        SubJobConfig subJobConfig = new ArrayList<>(config.getSubJobConfigs()).get(0);
+        Assert.assertEquals(SONAR_REPORT_PATH, subJobConfig.getSonarReportPath());
+        Assert.assertEquals(PROJECT_PATH, subJobConfig.getProjectPath());
+        Assert.assertFalse(subJobConfig.isAutoMatch());
     }
 
     @Test
@@ -206,7 +221,7 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(PROJECT_PATH, config.getProjectPath());
     }
 
-    @Test
+    //@Test
     public void testAuthenticationConfig() {
 
     }

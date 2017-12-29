@@ -10,6 +10,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Collection;
 
 public class ConfigurationUpdateTest {
 
-    protected Object readFieldValue(Object obj, String... field) throws ReflectiveOperationException {
+    protected Object invokeGetter(Object obj, String... field) throws ReflectiveOperationException {
         Object res = null;
         Object object = obj;
         for (String f : field) {
@@ -57,7 +58,7 @@ public class ConfigurationUpdateTest {
         this.invokeSetter(obj, field, value, false);
     }
 
-    protected void invokeSetter(SonarToGerritPublisher obj, String field, Object value, boolean deprecated) throws ReflectiveOperationException {
+    protected void invokeSetter(Object obj, String field, Object value, boolean deprecated) throws ReflectiveOperationException {
         PropertyDescriptor e1 = PropertyUtils.getPropertyDescriptor(obj, field);
         Assert.assertNotNull(String.format("There is no public setter for field %s", field), e1); // check setter method exists
         Method wm1 = e1.getWriteMethod();
@@ -72,25 +73,12 @@ public class ConfigurationUpdateTest {
     }
 
     protected void invokeSetter(SonarToGerritPublisher obj, Object value, boolean deprecated, String... fields) throws ReflectiveOperationException {
-        Object res = null;
-        Object object = obj;
-        for (int i = 0; i < fields.length - 1; i++) {
-            Field wm = object.getClass().getDeclaredField(fields[i]);
-            wm.setAccessible(true);
-            res = wm.get(object);
-            object = res;
+        if (fields.length == 1){
+            invokeSetter(obj, fields[0], value, deprecated);
+            return;
         }
-
-
-        PropertyDescriptor e1 = PropertyUtils.getPropertyDescriptor(object, fields[fields.length - 1]);
-        Assert.assertNotNull(e1); // check setter method exists
-        Method wm1 = e1.getWriteMethod();
-        Assert.assertNotNull(wm1.getAnnotation(DataBoundSetter.class));  // check setter method annotated
-        if (deprecated) {
-            Assert.assertNotNull(wm1.getAnnotation(Deprecated.class));  // check setter method deprecated
-        }
-        wm1.setAccessible(true);
-        wm1.invoke(obj, value);
+        Object object = invokeGetter(obj, Arrays.copyOf(fields, fields.length - 1));
+        invokeSetter(object, fields[fields.length - 1], value, deprecated);
     }
 
     protected SonarToGerritPublisher invokeConstructor() throws ReflectiveOperationException {

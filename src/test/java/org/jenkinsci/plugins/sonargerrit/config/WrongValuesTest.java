@@ -142,9 +142,18 @@ public class WrongValuesTest implements DetailedConfigTest {
         // nope
     }
 
-    @Override
+    @Test
     public void testInspectionConfig() {
-        // nope
+        InspectionConfig config = new InspectionConfig();
+        config.setType("test");
+        Assert.assertFalse(config.isType("test"));
+        Assert.assertTrue(config.isType(DEFAULT_INSPECTION_CONFIG_TYPE));
+
+        config.setType("multi");
+        Assert.assertTrue(config.isType("multi"));
+        config.setType("test");
+        Assert.assertFalse(config.isType("test"));
+        Assert.assertTrue(config.isType("multi"));
     }
 
     @Override
