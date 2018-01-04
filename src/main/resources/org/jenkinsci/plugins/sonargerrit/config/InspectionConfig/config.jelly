@@ -4,12 +4,6 @@
         <f:textbox default="${descriptor.SONAR_URL}" placeholder="${descriptor.SONAR_URL}"/>
     </f:entry>
 
-    ${instance}
-    ${instance.baseConfig.autoMatch}
-    ${baseConfig.autoMatch}
-    ${baseConfig.autoMatch == null}
-    ${baseConfig}
-    ${baseConfig == null}
     <f:radioBlock name="type"
                   title="${%jenkins.plugin.settings.inspection.base.config}"
                   value="${descriptor.BASE_TYPE}"

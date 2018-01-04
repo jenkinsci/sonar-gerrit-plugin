@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 
+import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
+
 /**
  * Project: Sonar-Gerrit Plugin
  * Author:  Tatiana Didik
@@ -59,16 +61,16 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
 
             IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(serverName);
             if (gerritConfig == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.config.empty");
+                return FormValidation.error(getLocalized("jenkins.plugin.error.gerrit.config.empty"));
             }
 
             if (!gerritConfig.isUseRestApi()) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.restapi.off");
+                return FormValidation.error(getLocalized("jenkins.plugin.error.gerrit.restapi.off"));
             }
 
             GerritServer server = PluginImpl.getServer_(serverName);
             if (server == null) {
-                return FormValidation.error("jenkins.plugin.error.gerrit.server.empty");
+                return FormValidation.error(getLocalized("jenkins.plugin.error.gerrit.server.empty"));
             }
             return server.getDescriptor().doTestRestConnection(gerritConfig.getGerritFrontEndUrl(), username, password/*, gerritConfig.isUseRestApi()*/);
 

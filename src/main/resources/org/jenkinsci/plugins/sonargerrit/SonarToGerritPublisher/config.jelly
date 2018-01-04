@@ -5,9 +5,9 @@
         <f:property title="${%jenkins.plugin.settings.inspection.settings}" field="inspectionConfig"/>
     </f:section>
 
-    <f:advanced>
+    <f:advanced title="${%jenkins.plugin.settings.gerrit}">
 
-        <f:section title="${%jenkins.plugin.settings.gerrit}">
+        <!--<f:section title="${%jenkins.plugin.settings.gerrit}">-->
 
             <f:section title="${%jenkins.plugin.settings.gerrit.credentials}">
                 <f:optionalProperty title="${%jenkins.plugin.settings.gerrit.credentials}" field="authConfig"/>
@@ -25,6 +25,6 @@
                 <f:property title="${%jenkins.plugin.settings.gerrit.notification.settings}"
                             field="notificationConfig"/>
             </f:section>
-        </f:section>
+        <!--</f:section>-->
     </f:advanced>
 </j:jelly>

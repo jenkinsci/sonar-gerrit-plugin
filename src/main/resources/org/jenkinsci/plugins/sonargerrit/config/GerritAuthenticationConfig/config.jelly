@@ -11,7 +11,7 @@
     </f:entry>
 
     <j:set var="servers" value="${descriptor.getGerritServerNames()}"/>
-    <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.server}">
+    <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.server}" help="/help-serverName.html">
         <select name="serverName">
             <j:forEach var="inst" items="${servers}">
                 <f:option>${inst}</f:option>

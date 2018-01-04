@@ -3,27 +3,26 @@
 
     <f:property
             title="${%jenkins.plugin.settings.gerrit.review.filter}"
-            field="issueFilterConfig" />
+            field="issueFilterConfig"/>
 
-    <f:section title="${%jenkins.plugin.settings.gerrit.review.template}">
-        <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.no.issues}"
-                 field="noIssuesTitleTemplate">
-            <f:textbox
-                    default="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"
-                    placeholder="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"/>
-        </f:entry>
-        <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.issues}"
-                 field="someIssuesTitleTemplate">
-            <f:textbox
-                    default="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"
-                    placeholder="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"/>
-        </f:entry>
-        <f:entry
-                title="${%jenkins.plugin.settings.gerrit.review.template.body}"
-                field="issueCommentTemplate">
-            <f:textarea
-                    default="${descriptor.ISSUE_COMMENT_TEMPLATE}"
-                    placeholder="${descriptor.ISSUE_COMMENT_TEMPLATE}"/>
-        </f:entry>
-    </f:section>
+    <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.no.issues}"
+             field="noIssuesTitleTemplate">
+        <f:textbox
+                default="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"
+                placeholder="${descriptor.NO_ISSUES_TITLE_TEMPLATE}"/>
+    </f:entry>
+    <f:entry title="${%jenkins.plugin.settings.gerrit.review.template.title.issues}"
+             field="someIssuesTitleTemplate">
+        <f:textbox
+                default="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"
+                placeholder="${descriptor.SOME_ISSUES_TITLE_TEMPLATE}"/>
+    </f:entry>
+    <f:entry
+            title="${%jenkins.plugin.settings.gerrit.review.template.body}"
+            field="issueCommentTemplate">
+        <f:textarea
+                default="${descriptor.ISSUE_COMMENT_TEMPLATE}"
+                placeholder="${descriptor.ISSUE_COMMENT_TEMPLATE}"/>
+    </f:entry>
+
 </j:jelly>

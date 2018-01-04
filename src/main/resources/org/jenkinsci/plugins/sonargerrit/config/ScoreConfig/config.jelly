@@ -1,6 +1,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
+    <f:property
+            title="${%jenkins.plugin.settings.gerrit.score.filter}"
+            field="issueFilterConfig"/>
+
     <f:entry
             title="${%jenkins.plugin.settings.gerrit.score.category}"
             field="category"
@@ -8,9 +12,10 @@
         <f:textbox default="${descriptor.CATEGORY}"
                    placeholder="${descriptor.CATEGORY}"/>
     </f:entry>
+
     <f:entry title="${%jenkins.plugin.settings.gerrit.score.no.issues}"
              field="noIssuesScore"
-            required="true">
+             required="true">
         <f:number
                 clazz="number"
                 min="-2"
@@ -19,6 +24,7 @@
                 default="${descriptor.NO_ISSUES_SCORE}"
                 placeholder="${descriptor.NO_ISSUES_SCORE}"/>
     </f:entry>
+
     <f:entry
             title="${%jenkins.plugin.settings.gerrit.score.issues}"
             field="issuesScore"
@@ -32,7 +38,4 @@
                 placeholder="${descriptor.SOME_ISSUES_SCORE}"/>
     </f:entry>
 
-    <f:property
-            title="${%jenkins.plugin.settings.gerrit.score.filter}"
-            field="issueFilterConfig"/>
 </j:jelly>
