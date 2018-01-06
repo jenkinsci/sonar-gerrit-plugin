@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -26,9 +27,11 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
 
     private boolean autoMatch;
 
+    @SuppressFBWarnings(value="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") // values initialized by setters in constructor
     public SubJobConfig(String projectPath, String sonarReportPath) {
         setProjectPath(projectPath);
         setSonarReportPath(sonarReportPath);
+        setAutoMatch(InspectionConfig.DescriptorImpl.AUTO_MATCH);
     }
 
     @DataBoundConstructor

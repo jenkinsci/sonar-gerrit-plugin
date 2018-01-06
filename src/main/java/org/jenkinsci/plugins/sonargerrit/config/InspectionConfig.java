@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
@@ -40,6 +41,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         this(DescriptorImpl.SONAR_URL, null, null, DescriptorImpl.BASE_TYPE); // set default values
     }
 
+    @SuppressFBWarnings(value="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") // subJobConfigs is initialized in setter
     private InspectionConfig(@Nonnull String serverURL, SubJobConfig baseConfig, List<SubJobConfig> subJobConfigs, String type) {
         setServerURL(serverURL);
         setBaseConfig(baseConfig);
@@ -124,9 +126,10 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         public static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
         public static final String BASE_TYPE = "base";
         public static final String MULTI_TYPE = "multi";
-        public static final Set<String> ALLOWED_TYPES = new HashSet<>(Arrays.asList(BASE_TYPE, MULTI_TYPE));
         public static final String DEFAULT_INSPECTION_CONFIG_TYPE = SonarToGerritPublisher.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
         public static final boolean AUTO_MATCH = SonarToGerritPublisher.DescriptorImpl.AUTO_MATCH_INSPECTION_AND_REVISION_PATHS;
+
+        private static final Set<String> ALLOWED_TYPES = new HashSet<>(Arrays.asList(BASE_TYPE, MULTI_TYPE));
 
         /**
          * Performs on-the-fly validation of the form field 'serverURL'.
