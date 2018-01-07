@@ -34,7 +34,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
 
     @DataBoundConstructor
     public IssueFilterConfig() {
-        this(DescriptorImpl.SEVERITY, DescriptorImpl.NEW_ISSUES_ONLY, DescriptorImpl.NEW_ISSUES_ONLY);
+        this(DescriptorImpl.SEVERITY, DescriptorImpl.NEW_ISSUES_ONLY, DescriptorImpl.CHANGED_LINES_ONLY);
     }
 
     public String getSeverity() {
