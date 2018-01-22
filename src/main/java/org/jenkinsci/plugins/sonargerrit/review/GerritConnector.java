@@ -45,7 +45,7 @@ public class GerritConnector {
         checkRestApiAllowed(useRestApi);
 
         String username = getUsername(connectionInfo.getUsername(), gerritConfig);
-        String password = getPassword(connectionInfo.getUsername(), gerritConfig);
+        String password = getPassword(connectionInfo.getPassword(), gerritConfig);
         DataHelper.checkNotEmpty(username, "jenkins.plugin.error.gerrit.user.empty");
 
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
