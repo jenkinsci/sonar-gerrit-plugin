@@ -23,6 +23,7 @@ import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
 import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
+import org.jenkinsci.plugins.sonargerrit.util.BackCompatibilityHelper;
 import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -62,6 +63,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     private ScoreConfig scoreConfig = null;
 
     private GerritAuthenticationConfig authConfig = null;
+
+    private BackCompatibilityHelper backCompatibilityHelper = new BackCompatibilityHelper(this);
 
     @DataBoundConstructor
     public SonarToGerritPublisher() {
@@ -315,187 +318,211 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
     @Deprecated
     @DataBoundSetter
     public void setSonarURL(String sonarURL) {
-        this.inspectionConfig.setServerURL(sonarURL);
+        backCompatibilityHelper.setSonarURL(sonarURL);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
-        if (subJobConfigs == null || subJobConfigs.size() == 0) {
-            this.inspectionConfig.setBaseConfig(new SubJobConfig());
-            this.inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
-        } else if (subJobConfigs.size() == 1){
-            this.inspectionConfig.setBaseConfig(subJobConfigs.get(0));
-            this.inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
-        } else {
-            this.inspectionConfig.setBaseConfig(null);
-            this.inspectionConfig.setSubJobConfigs(subJobConfigs);
-        }
+        backCompatibilityHelper.setSubJobConfigs(subJobConfigs);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setSeverity(String severity) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
-        reviewFilterConfig.setSeverity(severity);
-
-        ScoreConfig scoreConfig = getScoreConfig();
-        if (scoreConfig != null) {
-            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
-            scoreFilterConfig.setSeverity(severity);
-        }
+        backCompatibilityHelper.setSeverity(severity);
     }
 
     @Deprecated
     @DataBoundSetter
-    public void setNewIssuesOnly(Boolean changedLinesOnly) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
-        reviewFilterConfig.setNewIssuesOnly(changedLinesOnly);
-
-        ScoreConfig scoreConfig = getScoreConfig();
-        if (scoreConfig != null) {
-            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
-            scoreFilterConfig.setNewIssuesOnly(changedLinesOnly);
-        }
+    public void setNewIssuesOnly(boolean newIssuesOnly) {
+        backCompatibilityHelper.setNewIssuesOnly(newIssuesOnly);
     }
 
     @Deprecated
     @DataBoundSetter
-    public void setChangedLinesOnly(Boolean changedLinesOnly) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        IssueFilterConfig reviewFilterConfig = reviewConfig.getIssueFilterConfig();
-        reviewFilterConfig.setChangedLinesOnly(changedLinesOnly);
-
-        ScoreConfig scoreConfig = getScoreConfig();
-        if (scoreConfig != null) {
-            IssueFilterConfig scoreFilterConfig = scoreConfig.getIssueFilterConfig();
-            scoreFilterConfig.setChangedLinesOnly(changedLinesOnly);
-        }
+    public void setChangedLinesOnly(boolean changedLinesOnly) {
+        backCompatibilityHelper.setChangedLinesOnly(changedLinesOnly);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setNoIssuesToPostText(String noIssuesToPost) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        reviewConfig.setNoIssuesTitleTemplate(noIssuesToPost);
+        backCompatibilityHelper.setNoIssuesToPostText(noIssuesToPost);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setSomeIssuesToPostText(String someIssuesToPost) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        reviewConfig.setSomeIssuesTitleTemplate(someIssuesToPost);
+        backCompatibilityHelper.setSomeIssuesToPostText(someIssuesToPost);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setIssueComment(String issueComment) {
-        ReviewConfig reviewConfig = getReviewConfig();
-        reviewConfig.setIssueCommentTemplate(issueComment);
+        backCompatibilityHelper.setIssueComment(issueComment);
     }
 
     @Deprecated
     @DataBoundSetter
-    public void setOverrideCredentials(Boolean overrideCredentials) {
-        if (overrideCredentials) {
-            if (authConfig == null) {
-                authConfig = new GerritAuthenticationConfig();
-            }
-        } else {
-            authConfig = null;
-        }
+    public void setOverrideCredentials(boolean overrideCredentials) {
+        backCompatibilityHelper.setOverrideCredentials(overrideCredentials);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setHttpUsername(String overrideHttpUsername) {
-        if (authConfig != null) {
-            authConfig.setUsername(overrideHttpUsername);
-        }
+        backCompatibilityHelper.setHttpUsername(overrideHttpUsername);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setHttpPassword(String overrideHttpPassword) {
-        if (authConfig != null) {
-            authConfig.setPassword(overrideHttpPassword);
-        }
+        backCompatibilityHelper.setHttpPassword(overrideHttpPassword);
     }
 
     @Deprecated
     @DataBoundSetter
-    public void setPostScore(Boolean postScore) {
-        if (postScore) {
-            if (scoreConfig == null) {
-                scoreConfig = new ScoreConfig();
-            }
-        } else {
-            scoreConfig = null;
-        }
+    public void setPostScore(boolean postScore) {
+        backCompatibilityHelper.setPostScore(postScore);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setCategory(String category) {
-        if (scoreConfig != null) {
-            scoreConfig.setCategory(category);
-        }
+        backCompatibilityHelper.setCategory(category);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setNoIssuesScore(String score) {
-        if (scoreConfig != null) {
-            try {
-                scoreConfig.setNoIssuesScore(Integer.parseInt(score));
-            } catch (NumberFormatException nfe) {
-                // keep default
-            }
-        }
+        backCompatibilityHelper.setNoIssuesScore(score);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setIssuesScore(String score) {
-        if (scoreConfig != null) {
-            try {
-                scoreConfig.setIssuesScore(Integer.parseInt(score));
-            } catch (NumberFormatException nfe) {
-                // keep default
-            }
-        }
+        backCompatibilityHelper.setIssuesScore(score);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setNoIssuesNotification(String notification) {
-        notificationConfig.setNoIssuesNotificationRecipient(notification);
+        backCompatibilityHelper.setNoIssuesNotification(notification);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setIssuesNotification(String notification) {
-        notificationConfig.setCommentedIssuesNotificationRecipient(notification);
+        backCompatibilityHelper.setIssuesNotification(notification);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setProjectPath(String path) {
-        if (inspectionConfig.getBaseConfig() == null){
-            inspectionConfig.setBaseConfig(new SubJobConfig());
-        }
-        inspectionConfig.getBaseConfig().setProjectPath(path);
+        backCompatibilityHelper.setProjectPath(path);
     }
 
     @Deprecated
     @DataBoundSetter
     public void setPath(String path) {
-        if (inspectionConfig.getBaseConfig() == null){
-            inspectionConfig.setBaseConfig(new SubJobConfig());
-        }
-        inspectionConfig.getBaseConfig().setSonarReportPath(path);
+        backCompatibilityHelper.setPath(path);
+    }
+
+    @Deprecated
+    public String getSonarURL() {
+        return null;
+
+    }
+
+    @Deprecated
+    public Collection<SubJobConfig> getSubJobConfigs() {
+        return null;
+    }
+
+    @Deprecated
+    public String getSeverity() {
+        return null;
+    }
+
+    @Deprecated
+    public boolean isNewIssuesOnly() {
+        return false;
+    }
+
+    @Deprecated
+    public boolean isChangedLinesOnly() {
+        return false;
+    }
+
+    @Deprecated
+    public String getNoIssuesToPostText() {
+        return null;
+    }
+
+    @Deprecated
+    public String getSomeIssuesToPostText() {
+        return null;
+    }
+
+    @Deprecated
+    public String getIssueComment() {
+        return null;
+    }
+
+    @Deprecated
+    public boolean isOverrideCredentials() {
+        return false;
+    }
+
+    @Deprecated
+    public String getHttpUsername() {
+        return null;
+    }
+
+    @Deprecated
+    public String getHttpPassword() {
+        return null;
+    }
+
+    @Deprecated
+    public boolean isPostScore() {
+        return false;
+    }
+
+    @Deprecated
+    public String getCategory() {
+        return null;
+    }
+
+    @Deprecated
+    public String getNoIssuesScore() {
+        return null;
+    }
+
+    @Deprecated
+    public String getIssuesScore() {
+        return null;
+    }
+
+    @Deprecated
+    public String getNoIssuesNotification() {
+        return null;
+    }
+
+    @Deprecated
+    public String getIssuesNotification() {
+        return null;
+    }
+
+    @Deprecated
+    public String getProjectPath() {
+        return null;
+    }
+
+    @Deprecated
+    public String getPath() {
+        return null;
     }
 }
 

@@ -92,6 +92,10 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         }
     }
 
+    public String getType() {
+        return type;
+    }
+
     public boolean isMultiConfigMode() {
         return isType(DescriptorImpl.MULTI_TYPE);
     }

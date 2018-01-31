@@ -122,7 +122,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNull(invokeGetter(p, "authConfig"));
 
         invokeSetter(p, "overrideCredentials", true);
-        invokeSetter(p, "httpUsername", httpUsername);
+//        invokeSetter(p, "httpUsername", httpUsername);
         Assert.assertNotNull(invokeGetter(p, "authConfig"));
         Assert.assertEquals(httpUsername, invokeGetter(p, "authConfig", "username"));
     }
@@ -136,7 +136,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNull(invokeGetter(p, "authConfig"));
 
         invokeSetter(p, "overrideCredentials", true);
-        invokeSetter(p, "httpPassword", httpPassword);
+//        invokeSetter(p, "httpPassword", httpPassword);
         Assert.assertNotNull(invokeGetter(p, "authConfig"));
         Assert.assertEquals(httpPassword, invokeGetter(p, "authConfig", "password"));
     }
@@ -159,7 +159,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
-        invokeSetter(p, "category", category);
+//        invokeSetter(p, "category", category);
         Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
         Assert.assertEquals(category, invokeGetter(p, "scoreConfig", "category"));
     }
@@ -173,7 +173,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
-        invokeSetter(p, "noIssuesScore", noIssuesScore);
+//        invokeSetter(p, "noIssuesScore", noIssuesScore);
         Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
         Assert.assertEquals(noIssuesScore, invokeGetter(p, "scoreConfig", "noIssuesScore").toString());
     }
@@ -187,7 +187,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
         invokeSetter(p, "postScore", true);
-        invokeSetter(p, "issuesScore", issuesScore);
+//        invokeSetter(p, "issuesScore", issuesScore);
         Assert.assertNotNull(invokeGetter(p, "scoreConfig"));
         Assert.assertEquals(issuesScore, invokeGetter(p, "scoreConfig", "issuesScore").toString());
     }
