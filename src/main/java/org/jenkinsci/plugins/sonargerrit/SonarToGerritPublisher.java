@@ -431,98 +431,98 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @Deprecated
     public String getSonarURL() {
-        return null;
+        return backCompatibilityHelper.getSonarURL();
 
     }
 
     @Deprecated
     public Collection<SubJobConfig> getSubJobConfigs() {
-        return null;
+        return backCompatibilityHelper.getSubJobConfigs();
     }
 
     @Deprecated
     public String getSeverity() {
-        return null;
+        return backCompatibilityHelper.getSeverity();
     }
 
     @Deprecated
     public boolean isNewIssuesOnly() {
-        return false;
+        return backCompatibilityHelper.isNewIssuesOnly();
     }
 
     @Deprecated
     public boolean isChangedLinesOnly() {
-        return false;
+        return backCompatibilityHelper.isChangedLinesOnly();
     }
 
     @Deprecated
     public String getNoIssuesToPostText() {
-        return null;
+        return backCompatibilityHelper.getNoIssuesToPostText();
     }
 
     @Deprecated
     public String getSomeIssuesToPostText() {
-        return null;
+        return backCompatibilityHelper.getSomeIssuesToPostText();
     }
 
     @Deprecated
     public String getIssueComment() {
-        return null;
+        return backCompatibilityHelper.getIssueComment();
     }
 
     @Deprecated
     public boolean isOverrideCredentials() {
-        return false;
+        return backCompatibilityHelper.isOverrideCredentials();
     }
 
     @Deprecated
     public String getHttpUsername() {
-        return null;
+        return backCompatibilityHelper.getHttpUsername();
     }
 
     @Deprecated
     public String getHttpPassword() {
-        return null;
+        return backCompatibilityHelper.getHttpPassword();
     }
 
     @Deprecated
     public boolean isPostScore() {
-        return false;
+        return backCompatibilityHelper.isPostScore();
     }
 
     @Deprecated
     public String getCategory() {
-        return null;
+        return backCompatibilityHelper.getCategory();
     }
 
     @Deprecated
     public String getNoIssuesScore() {
-        return null;
+        return backCompatibilityHelper.getNoIssuesScore();
     }
 
     @Deprecated
     public String getIssuesScore() {
-        return null;
+        return backCompatibilityHelper.getIssuesScore();
     }
 
     @Deprecated
     public String getNoIssuesNotification() {
-        return null;
+        return backCompatibilityHelper.getNoIssuesNotification();
     }
 
     @Deprecated
     public String getIssuesNotification() {
-        return null;
+        return backCompatibilityHelper.getIssuesNotification();
     }
 
     @Deprecated
     public String getProjectPath() {
-        return null;
+        return backCompatibilityHelper.getProjectPath();
     }
 
     @Deprecated
     public String getPath() {
-        return null;
+        return backCompatibilityHelper.getPath();
     }
 }
 

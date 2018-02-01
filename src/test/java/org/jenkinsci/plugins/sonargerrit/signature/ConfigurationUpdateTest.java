@@ -7,6 +7,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -103,5 +104,51 @@ public class ConfigurationUpdateTest {
         Constructor c = Class.forName(className).getConstructor(classes);
         //Assert.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
         return c.newInstance(params);
+    }
+
+    protected Object invokeMethod(Object obj, String methodName, Class<? extends Annotation>... annotations) throws ReflectiveOperationException {
+        Class<?> aClass = obj.getClass();
+        Method declaredMethod = aClass.getDeclaredMethod(methodName);
+        for (Class a : annotations) {
+            Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
+        }
+        return declaredMethod.invoke(obj);
+    }
+
+    protected Object invokeMethod(Object obj, String methodName, Object parameter, Class<? extends Annotation>... annotations) throws ReflectiveOperationException {
+        Method declaredMethod = getDeclaredMethod(obj.getClass(), methodName, parameter.getClass());
+        for (Class a : annotations) {
+            Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
+        }
+        return declaredMethod.invoke(obj, parameter);
+
+    }
+
+    private Method getDeclaredMethod(Class aClass, String methodName, Class paramClass) throws NoSuchMethodException {
+        Method declaredMethod = tryGetDeclaredMethod(aClass, methodName, paramClass);
+        if (declaredMethod == null) {
+            Class superclass = paramClass.getSuperclass();
+            if (superclass != null) {
+                declaredMethod = getDeclaredMethod(aClass, methodName, superclass);
+            }
+            if (declaredMethod == null) {
+                for (Class anInterface : paramClass.getInterfaces()) {
+                    declaredMethod = getDeclaredMethod(aClass, methodName, anInterface);
+                    if (declaredMethod != null) {
+                        return declaredMethod;
+                    }
+                }
+            }
+
+        }
+        return declaredMethod;
+    }
+
+    private Method tryGetDeclaredMethod(Class aClass, String methodName, Class paramClass) {
+        try {
+            return aClass.getDeclaredMethod(methodName, paramClass);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
     }
 }

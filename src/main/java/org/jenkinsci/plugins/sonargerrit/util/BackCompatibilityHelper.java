@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.sonargerrit.util;
 
 import com.google.common.base.MoreObjects;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher.DescriptorImpl;
 import org.jenkinsci.plugins.sonargerrit.config.*;
 
 import java.util.Collection;
@@ -183,7 +182,7 @@ public final class BackCompatibilityHelper {
 
     // helper methods
     // mandatory properties - should be created anyway
-    
+
     private InspectionConfig getOrCreateInspectionConfig() {
         if (getInspectionConfig() == null) {
             publisher.setInspectionConfig(new InspectionConfig());
@@ -217,6 +216,110 @@ public final class BackCompatibilityHelper {
         return MoreObjects.firstNonNull(getAuthConfig(), tempAuthConfig);
     }
 
+    // getters returning null - support for pipeline snippet generator
+
+    public String getSonarURL() {
+        return getNull(String.class);
+
+    }
+
+
+    public Collection<SubJobConfig> getSubJobConfigs() {
+        return getNull(Collection.class);
+    }
+
+
+    public String getSeverity() {
+        return getNull(String.class);
+    }
+
+
+    public boolean isNewIssuesOnly() {
+        return getNull();
+    }
+
+
+    public boolean isChangedLinesOnly() {
+        return getNull();
+    }
+
+
+    public String getNoIssuesToPostText() {
+        return getNull(String.class);
+    }
+
+
+    public String getSomeIssuesToPostText() {
+        return getNull(String.class);
+    }
+
+
+    public String getIssueComment() {
+        return getNull(String.class);
+    }
+
+
+    public boolean isOverrideCredentials() {
+        return getNull();
+    }
+
+
+    public String getHttpUsername() {
+        return getNull(String.class);
+    }
+
+
+    public String getHttpPassword() {
+        return getNull(String.class);
+    }
+
+
+    public boolean isPostScore() {
+        return getNull();
+    }
+
+
+    public String getCategory() {
+        return getNull(String.class);
+    }
+
+
+    public String getNoIssuesScore() {
+        return getNull(String.class);
+    }
+
+
+    public String getIssuesScore() {
+        return getNull(String.class);
+    }
+
+
+    public String getNoIssuesNotification() {
+        return getNull(String.class);
+    }
+
+
+    public String getIssuesNotification() {
+        return getNull(String.class);
+    }
+
+
+    public String getProjectPath() {
+        return getNull(String.class);
+    }
+
+    public String getPath() {
+        return getNull(String.class);
+    }
+
+    private <V extends Object> V getNull(Class<V> clazz) {
+        return null;
+    }
+
+    private boolean getNull() {
+        return false;
+    }
+
     // simple getters
 
     private InspectionConfig getInspectionConfig() {
@@ -238,4 +341,6 @@ public final class BackCompatibilityHelper {
     private GerritAuthenticationConfig getAuthConfig() {
         return publisher.getAuthConfig();
     }
+
+
 }
