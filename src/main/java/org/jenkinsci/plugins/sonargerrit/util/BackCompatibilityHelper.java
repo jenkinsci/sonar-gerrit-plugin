@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.util;
 
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.*;
 
@@ -183,6 +184,7 @@ public final class BackCompatibilityHelper {
     // helper methods
     // mandatory properties - should be created anyway
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private InspectionConfig getOrCreateInspectionConfig() {
         if (getInspectionConfig() == null) {
             publisher.setInspectionConfig(new InspectionConfig());
@@ -190,6 +192,7 @@ public final class BackCompatibilityHelper {
         return getInspectionConfig();
     }
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private ReviewConfig getOrCreateReviewConfig() {
         if (getReviewConfig() == null) {
             publisher.setReviewConfig(new ReviewConfig());
@@ -197,6 +200,7 @@ public final class BackCompatibilityHelper {
         return getReviewConfig();
     }
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private NotificationConfig getOrCreateNotificationConfig() {
         if (getNotificationConfig() == null) {
             publisher.setNotificationConfig(new NotificationConfig());
