@@ -184,27 +184,27 @@ public final class BackCompatibilityHelper {
     // helper methods
     // mandatory properties - should be created anyway
 
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+    //@SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private InspectionConfig getOrCreateInspectionConfig() {
-        if (getInspectionConfig() == null) {
-            publisher.setInspectionConfig(new InspectionConfig());
-        }
+//        if (getInspectionConfig() == null) {
+//            publisher.setInspectionConfig(new InspectionConfig());
+//        }
         return getInspectionConfig();
     }
 
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+//    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private ReviewConfig getOrCreateReviewConfig() {
-        if (getReviewConfig() == null) {
-            publisher.setReviewConfig(new ReviewConfig());
-        }
+//        if (getReviewConfig() == null) {
+//            publisher.setReviewConfig(new ReviewConfig());
+//        }
         return getReviewConfig();
     }
 
-    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
+//    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
     private NotificationConfig getOrCreateNotificationConfig() {
-        if (getNotificationConfig() == null) {
-            publisher.setNotificationConfig(new NotificationConfig());
-        }
+//        if (getNotificationConfig() == null) {
+//            publisher.setNotificationConfig(new NotificationConfig());
+//        }
         return getNotificationConfig();
     }
 
