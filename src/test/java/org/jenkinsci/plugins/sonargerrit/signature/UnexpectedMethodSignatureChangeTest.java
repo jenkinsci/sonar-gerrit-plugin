@@ -86,13 +86,14 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
         String stringType = "java.lang.String";
         String booleanType = "boolean";
 
-        String[] paramClasses = {stringType, booleanType, booleanType};
-        Object[] params = {"BLOCKER", true, true};
+        String[] paramClasses = {stringType, booleanType, booleanType, booleanType};
+        Object[] params = {"BLOCKER", true, true, true};
 
         Object c1 = invokeConstructor(className, paramClasses, params);
         Assert.assertNotSame(invokeGetter(c1, "severity"), invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
         Assert.assertNotSame(invokeGetter(c1, "newIssuesOnly"), invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
         Assert.assertNotSame(invokeGetter(c1, "changedLinesOnly"), invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        Assert.assertNotSame(invokeGetter(c1, "failOnly"), invokeGetter(p, "reviewConfig", "issueFilterConfig", "failOnly"));
 
         String className2 = "org.jenkinsci.plugins.sonargerrit.config.ReviewConfig";
 
@@ -122,13 +123,14 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
         String booleanType = "boolean";
         String integerType = "java.lang.Integer";
 
-        String[] paramClasses = {stringType, booleanType, booleanType};
-        Object[] params = {"BLOCKER", true, true};
+        String[] paramClasses = {stringType, booleanType, booleanType, booleanType};
+        Object[] params = {"BLOCKER", true, true, true};
 
         Object c1 = invokeConstructor(className, paramClasses, params);
 //        Assert.assertNotSame(invokeGetter(c1, "severity"), invokeGetter(p, "scoreConfig", "issueFilterConfig", "severity"));
 //        Assert.assertNotSame(invokeGetter(c1, "newIssuesOnly"), invokeGetter(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly"));
 //        Assert.assertNotSame(invokeGetter(c1, "changedLinesOnly"), invokeGetter(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly"));
+//        Assert.assertNotSame(readFieldValue(c1, "failOnly"), readFieldValue(p, "scoreConfig", "issueFilterConfig", "failOnly"));
 
         String className2 = "org.jenkinsci.plugins.sonargerrit.config.ScoreConfig";
 

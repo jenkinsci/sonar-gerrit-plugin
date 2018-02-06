@@ -30,6 +30,10 @@ public class NullValuesTest implements DetailedConfigTest {
         // boolean doesn't allow null
     }
 
+    public void testFailOnly() {
+        // boolean doesn't allow null
+    }
+
     @Test
     public void testFilterConfig() {
         ReviewConfig config = new ReviewConfig();
@@ -39,7 +43,7 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
         Assert.assertEquals(CHANGED_LINES_ONLY, config.getIssueFilterConfig().isChangedLinesOnly());
 
-        IssueFilterConfig fconfig = new IssueFilterConfig(null, false, false);
+        IssueFilterConfig fconfig = new IssueFilterConfig(null, false, false, false);
         Assert.assertEquals(SEVERITY, fconfig.getSeverity());
     }
 
@@ -122,7 +126,7 @@ public class NullValuesTest implements DetailedConfigTest {
         Assert.assertEquals(CATEGORY, config.getCategory());
         Assert.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
         Assert.assertEquals(SOME_ISSUES_SCORE, config.getIssuesScore());
-
+        Assert.assertEquals(FAIL_ONLY, config.getIssueFilterConfig().getFailOnly());
     }
 
     @Test
