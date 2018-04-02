@@ -23,40 +23,35 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
     * Gerrit http username if overridden (the original one is in Gerrit Trigger settings)
     * todo needs to be replaced by Credentials plugin config
     * */
-    @Nonnull
     private String username;
 
     /*
     * Gerrit http password if overridden (the original one is in Gerrit Trigger settings)
     * todo needs to be replaced by Credentials plugin config
     * */
-    @Nonnull
     private String password;
 
-    public AuthenticationConfig(@Nonnull String username, @Nonnull String password) {
+    public AuthenticationConfig(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    @SuppressFBWarnings(value="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     public AuthenticationConfig() {
     }
 
-    @Nonnull
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(@Nonnull String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    @Nonnull
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(@Nonnull String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
