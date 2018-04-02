@@ -28,9 +28,10 @@ public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
 
     @Override
     public boolean apply(IssueAdapter issue) {
-        return allowedFilesAndLines == null
-                || allowedFilesAndLines.keySet().contains(issue.getComponent())
-                && isLineChanged(issue.getLine(), allowedFilesAndLines.get(issue.getFilepath()));
+        String filepath = issue.getFilepath();
+        return allowedFilesAndLines == null  // no filename restriction or
+                || allowedFilesAndLines.keySet().contains(filepath) // this file was changed and
+                && isLineChanged(issue.getLine(), allowedFilesAndLines.get(filepath)); // this line was changed
     }
 
     private boolean isLineChanged(Integer line, Set<Integer> changedLines) {
