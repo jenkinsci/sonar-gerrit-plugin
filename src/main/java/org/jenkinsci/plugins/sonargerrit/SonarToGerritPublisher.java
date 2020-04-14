@@ -109,7 +109,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
         //load revision info
         GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-        Map<String, String> envVars = getEnvVars(run, listener, (String[]) GerritConnectionInfo.REQUIRED_VARS.toArray());
+        Map<String, String> envVars = getEnvVars(run, listener, GerritConnectionInfo.REQUIRED_VARS);
         GerritConnectionInfo connectionInfo = new GerritConnectionInfo(envVars, trigger, authConfig);
         try {
             GerritConnector connector = new GerritConnector(connectionInfo);
@@ -162,7 +162,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         return sonarConnector.getReportData(issuesToComment);
     }
 
-    private Map<String, String> getEnvVars(Run<?, ?> run, TaskListener listener, String... varNames) throws IOException, InterruptedException {
+    private Map<String, String> getEnvVars(Run<?, ?> run, TaskListener listener, List<String> varNames) throws IOException, InterruptedException {
         Map<String, String> envVars = new HashMap<>();
         for (String varName : varNames) {
             envVars.put(varName, getEnvVar(run, listener, varName));
