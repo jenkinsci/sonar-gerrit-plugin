@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>sonar-gerrit</artifactId>
-    <version>2.4.3-SNAPSHOT</version>
+    <version>2.4.3</version>
     <packaging>hpi</packaging>
 
     <properties>
@@ -53,7 +53,7 @@
         <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
         </developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>sonar-gerrit-2.4</tag>
+        <tag>sonar-gerrit-2.4.3</tag>
     </scm>
 
     <repositories>
