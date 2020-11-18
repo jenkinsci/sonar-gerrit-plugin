@@ -1,41 +1,87 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:entry title="${%jenkins.plugin.settings.inspection.server.url}" field="serverURL">
-        <f:textbox default="${descriptor.SONAR_URL}" placeholder="${descriptor.SONAR_URL}"/>
-    </f:entry>
 
-    <f:radioBlock name="type"
-                  title="${%jenkins.plugin.settings.inspection.base.config}"
-                  value="${descriptor.BASE_TYPE}"
-                  checked="${instance.isType(descriptor.BASE_TYPE)}"
+    <f:radioBlock name="analysisType"
+                  title="${%jenkins.plugin.settings.inspection.analysis.pullRequest}"
+                  value="${descriptor.ANALYSIS_TYPE_PULL_REQUEST}"
+                  checked="${instance.analysisType == descriptor.ANALYSIS_TYPE_PULL_REQUEST}"
                   inline="true">
         <f:nested>
-            <f:property
-                    title="${%jenkins.plugin.settings.inspection.base.config}"
-                    field="baseConfig"/>
-            <f:entry
-                    title="${%jenkins.plugin.settings.inspection.base.config.allow.auto.match}"
-                    field="autoMatch">
-                <f:checkbox selected="${autoMatch}" default="${descriptor.AUTO_MATCH}"/>
+            <!-- SonarQube Installation -->
+            <j:set var="sonars" value="${instance.sonarInstallations}"/>
+            <j:if test="${empty(sonars)}">
+                <!-- no SonarQube installation is configured, so warn the user now -->
+                <f:entry title="${%SonarInstallation}">
+                    <div class="error">${%SonarInstallation.error(rootURL)}</div>
+                </f:entry>
+            </j:if>
+
+            <j:if test="${sonars.size() gt 0}">
+                <!-- choise not necessary if there's no choice -->
+                <f:entry title="${%SonarInstallation}: " help="/plugin/sonar/help-sonar-installation.html">
+                    <select class="setting-input" name="sonarInstallationName">
+                        <j:forEach var="inst" items="${sonars}">
+                            <f:option value="${inst.name}" selected="${inst.name==instance.sonarInstallationName}">${inst.name}
+                            </f:option>
+                        </j:forEach>
+                    </select>
+                </f:entry>
+            </j:if>
+
+            <f:entry title="${%jenkins.plugin.settings.inspection.pullrequest.key}" field="pullrequestKey">
+                <f:textbox default="${descriptor.SONAR_PULLREQUEST_KEY}"/>
+            </f:entry>
+
+            <f:entry title="${%jenkins.plugin.settings.inspection.component}" field="component">
+                <f:combobox/>
             </f:entry>
         </f:nested>
     </f:radioBlock>
 
-    <f:radioBlock name="type"
-                  title="${%jenkins.plugin.settings.inspection.list.configs}"
-                  value="${descriptor.MULTI_TYPE}"
-                  checked="${instance.isType(descriptor.MULTI_TYPE)}"
+    <f:radioBlock name="analysisType"
+                  title="${%jenkins.plugin.settings.inspection.analysis.previewMode}"
+                  value="${descriptor.ANALYSIS_TYPE_PREVIEW_MODE}"
+                  checked="${instance.analysisType == descriptor.ANALYSIS_TYPE_PREVIEW_MODE}"
                   inline="true">
         <f:nested>
-            <f:entry>
-                <f:repeatableProperty field="subJobConfigs" minimum="1" noAddButton="false">
-                    <f:entry title="">
-                        <div align="right">
-                            <f:repeatableDeleteButton/>
-                        </div>
-                    </f:entry>
-                </f:repeatableProperty>
+            <f:entry title="${%jenkins.plugin.settings.inspection.server.url}" field="serverURL">
+                <f:textbox default="${descriptor.SONAR_URL}" placeholder="${descriptor.SONAR_URL}"/>
             </f:entry>
+
+            <f:radioBlock name="type"
+                          title="${%jenkins.plugin.settings.inspection.base.config}"
+                          value="${descriptor.BASE_TYPE}"
+                          checked="${instance.isType(descriptor.BASE_TYPE)}"
+                          inline="true">
+                <f:nested>
+                    <f:property
+                            title="${%jenkins.plugin.settings.inspection.base.config}"
+                            field="baseConfig"/>
+                    <f:entry
+                            title="${%jenkins.plugin.settings.inspection.base.config.allow.auto.match}"
+                            field="autoMatch">
+                        <f:checkbox selected="${autoMatch}" default="${descriptor.AUTO_MATCH}"/>
+                    </f:entry>
+                </f:nested>
+            </f:radioBlock>
+
+            <f:radioBlock name="type"
+                          title="${%jenkins.plugin.settings.inspection.list.configs}"
+                          value="${descriptor.MULTI_TYPE}"
+                          checked="${instance.isType(descriptor.MULTI_TYPE)}"
+                          inline="true">
+                <f:nested>
+                    <f:entry>
+                        <f:repeatableProperty field="subJobConfigs" minimum="1" noAddButton="false">
+                            <f:entry title="">
+                                <div align="right">
+                                    <f:repeatableDeleteButton/>
+                                </div>
+                            </f:entry>
+                        </f:repeatableProperty>
+                    </f:entry>
+                </f:nested>
+            </f:radioBlock>
         </f:nested>
     </f:radioBlock>
 </j:jelly>

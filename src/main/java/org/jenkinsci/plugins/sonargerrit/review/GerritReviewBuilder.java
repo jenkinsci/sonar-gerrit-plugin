@@ -1,22 +1,26 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
+import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
-import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
-import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
-import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
-import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
-import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
-
-import javax.annotation.Nullable;
-import java.util.*;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -31,18 +35,18 @@ public class GerritReviewBuilder {
     private ReviewConfig reviewConfig;
     private ScoreConfig scoreConfig;
     private NotificationConfig notificationConfig;
-    private InspectionConfig inspectionConfig;
+    private String serverUrl;
 
     public GerritReviewBuilder(Multimap<String, IssueAdapter> finalIssuesToComment,
-                               Multimap<String, IssueAdapter> finalIssuesToScore,
-                               ReviewConfig reviewConfig, ScoreConfig scoreConfig,
-                               NotificationConfig notificationConfig, InspectionConfig inspectionConfig) {
+            Multimap<String, IssueAdapter> finalIssuesToScore,
+            ReviewConfig reviewConfig, ScoreConfig scoreConfig,
+            NotificationConfig notificationConfig, String serverUrl) {
         this.finalIssuesToComment = finalIssuesToComment;
         this.finalIssuesToScore = finalIssuesToScore;
         this.reviewConfig = reviewConfig;
         this.scoreConfig = scoreConfig;
         this.notificationConfig = notificationConfig;
-        this.inspectionConfig = inspectionConfig;
+        this.serverUrl = serverUrl;
     }
 
     public ReviewInput buildReview() {
@@ -88,7 +92,7 @@ public class GerritReviewBuilder {
     }
 
     private Map<String, List<ReviewInput.CommentInput>> generateComments() {
-        Map<String, List<ReviewInput.CommentInput>> file2comments = new HashMap<String, List<ReviewInput.CommentInput>>();
+        Map<String, List<ReviewInput.CommentInput>> file2comments = new HashMap<>();
         for (String file : finalIssuesToComment.keySet()) {
             Collection<IssueAdapter> issues = finalIssuesToComment.get(file);
             Collection<ReviewInput.CommentInput> comments = Collections2.transform(issues, new IssueToCommentTransformation());
@@ -104,7 +108,7 @@ public class GerritReviewBuilder {
         }
 
         String commentTemplate = reviewConfig.getIssueCommentTemplate();
-        String message = new CustomIssueFormatter(input, commentTemplate, inspectionConfig.getServerURL()).getMessage();
+        String message = new CustomIssueFormatter(input, commentTemplate, serverUrl).getMessage();
 
         ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
         commentInput.id = input.getKey();
@@ -114,6 +118,8 @@ public class GerritReviewBuilder {
     }
 
     private class IssueToCommentTransformation implements Function<IssueAdapter, ReviewInput.CommentInput> {
+
+
         @Nullable
         @Override
         public ReviewInput.CommentInput apply(@Nullable IssueAdapter input) {

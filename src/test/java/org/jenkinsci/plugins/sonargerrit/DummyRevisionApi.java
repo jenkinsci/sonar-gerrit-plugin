@@ -30,6 +30,11 @@ public class DummyRevisionApi implements RevisionApi {
         return getFileApi(path);
     }
 
+    @Override
+    public CommitInfo commit(boolean addLinks) throws RestApiException {
+        return null;
+    }
+
     private FileApi getFileApi(final String path) {
         return new FileApi() {
             @Override
@@ -101,7 +106,17 @@ public class DummyRevisionApi implements RevisionApi {
     }
 
     @Override
-    public void review(ReviewInput in) throws RestApiException {
+    public String description() throws RestApiException {
+        return null;
+    }
+
+    @Override
+    public void description(String description) throws RestApiException {
+
+    }
+
+    @Override
+    public ReviewResult review(ReviewInput in) throws RestApiException {
         throw new UnsupportedOperationException("This is a dummy test class");
     }
 
@@ -138,6 +153,11 @@ public class DummyRevisionApi implements RevisionApi {
     @Override
     public boolean canRebase() {
         throw new UnsupportedOperationException("This is a dummy test class");
+    }
+
+    @Override
+    public RevisionReviewerApi reviewer(String id) throws RestApiException {
+        return null;
     }
 
     @Override
@@ -216,6 +236,11 @@ public class DummyRevisionApi implements RevisionApi {
     }
 
     @Override
+    public List<String> queryFiles(String query) throws RestApiException {
+        return null;
+    }
+
+    @Override
     public MergeListRequest getMergeList() throws RestApiException {
         throw new UnsupportedOperationException("This is a dummy test class");
     }
@@ -236,6 +261,11 @@ public class DummyRevisionApi implements RevisionApi {
     }
 
     @Override
+    public String etag() throws RestApiException {
+        return null;
+    }
+
+    @Override
     public Map<String, List<RobotCommentInfo>> robotComments() throws RestApiException {
         throw new UnsupportedOperationException("This is a dummy test class");
     }
@@ -246,8 +276,18 @@ public class DummyRevisionApi implements RevisionApi {
     }
 
     @Override
+    public EditInfo applyFix(String fixId) throws RestApiException {
+        return null;
+    }
+
+    @Override
     public BinaryResult submitPreview() throws RestApiException {
         throw new UnsupportedOperationException("This is a dummy test class");
+    }
+
+    @Override
+    public BinaryResult submitPreview(String format) throws RestApiException {
+        return null;
     }
 
     @Override

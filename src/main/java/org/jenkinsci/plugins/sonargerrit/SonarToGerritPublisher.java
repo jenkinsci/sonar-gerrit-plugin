@@ -1,19 +1,18 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Multimap;
-import com.google.gerrit.extensions.api.changes.NotifyHandling;
-import com.google.gerrit.extensions.api.changes.ReviewInput;
-import com.google.gerrit.extensions.restapi.RestApiException;
-import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
-import hudson.*;
-import hudson.model.*;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Publisher;
-import jenkins.tasks.SimpleBuildStep;
+import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
+
+import javax.annotation.Nonnull;
+
 import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.sonargerrit.config.*;
+import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.config.SonarInstallationReader;
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
@@ -28,13 +27,37 @@ import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Multimap;
+import com.google.gerrit.extensions.api.changes.NotifyHandling;
+import com.google.gerrit.extensions.api.changes.ReviewInput;
+import com.google.gerrit.extensions.restapi.RestApiException;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+
+import hudson.AbortException;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.plugins.sonar.SonarInstallation;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Publisher;
+import jenkins.tasks.SimpleBuildStep;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -103,8 +126,10 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+        LOGGER.info("Starting Sonar to Gerrit Publisher with analysis type " + inspectionConfig.getAnalysisType());
+
         //load inspection report
-        SonarConnector sonarConnector = new SonarConnector(listener, inspectionConfig);
+        SonarConnector sonarConnector = new SonarConnector(run, listener, inspectionConfig);
         sonarConnector.readSonarReports(filePath);
 
         //load revision info
@@ -139,15 +164,23 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
                 TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.issues.to.score", file2issuesToScore.entries().size());
             }
 
+            String serverUrl;
+            if (inspectionConfig.getAnalysisType() == InspectionConfig.DescriptorImpl.AnalysisType.PREVIEW_MODE) {
+                serverUrl = inspectionConfig.getServerURL();
+            } else {
+                SonarInstallation sonarInstallation = SonarInstallationReader
+                        .getSonarInstallation(inspectionConfig.getSonarInstallationName());
+                serverUrl = sonarInstallation.getServerUrl();
+            }
+
             //send review
             ReviewInput reviewInput = new GerritReviewBuilder(file2issuesToComment, file2issuesToScore,
-                    reviewConfig, scoreConfig, notificationConfig, inspectionConfig
-            ).buildReview();
+                    reviewConfig, scoreConfig, notificationConfig, serverUrl).buildReview();
             revisionInfo.sendReview(reviewInput);
 
             TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
         } catch (RestApiException e) {
-            LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
+            LOGGER.log(Level.SEVERE, e, () -> "Unable to post review: " + e.getMessage());
             throw new AbortException("Unable to post review: " + e.getMessage());
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
             throw new AbortException(e.getMessage());
@@ -222,6 +255,8 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final String PROJECT_PATH = "";
         public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
         public static final String SONAR_URL = "http://localhost:9000";
+        public static final String SONAR_PULLREQUEST_KEY = "${GERRIT_CHANGE_NUMBER}";
+
         public static final String DEFAULT_INSPECTION_CONFIG_TYPE = InspectionConfig.DescriptorImpl.BASE_TYPE;
         public static final boolean AUTO_MATCH_INSPECTION_AND_REVISION_PATHS = false;
 
@@ -240,6 +275,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         public static final boolean CHANGED_LINES_ONLY = false;
 
         public static final int DEFAULT_SCORE = 0;
+
 
         /**
          * In order to load the persisted global configuration, you have to
