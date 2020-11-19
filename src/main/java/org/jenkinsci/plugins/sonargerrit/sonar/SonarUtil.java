@@ -19,7 +19,10 @@ import hudson.security.ACL;
 public class SonarUtil {
     private static Pattern componentKeyPattern = Pattern.compile(".*\\((?<key>.*)\\)");
 
-    /** Name (group:componentKey) -> group:componentKey */
+    /**
+     * @param value (group:componentKey)
+     * @return group:componentKey
+     */
     public static String isolateComponentKey(String value) {
         Matcher matcher = componentKeyPattern.matcher(value);
         if (matcher.matches()) {
@@ -32,7 +35,9 @@ public class SonarUtil {
     /**
      * Possible pattern: Name (key) or key
      *
-     * @return key
+     * @param sonarInstallationName name of SonarQube installation which should be used
+     * @return client to access SonarQube
+     * @throws AbortException if Sonar installation cannot be found
      */
     public static SonarClient getSonarClient(String sonarInstallationName) throws AbortException {
         SonarInstallation sonarInstallation = SonarInstallationReader.getSonarInstallation(sonarInstallationName);

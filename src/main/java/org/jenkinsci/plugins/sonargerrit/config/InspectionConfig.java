@@ -229,6 +229,12 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
         /**
          * Is only called once, filtering is done in Frontend by Combo Box
+         *
+         * @param value component to search for
+         * @param sonarInstallationName sonarInstallationName which chooses the SonarQube server where the components are fetched
+         * @param analysisType only for AnalysisType.PULL_REQUEST components are filled
+         * @return list of components matching value
+         * @throws AbortException if Sonar installation cannot be found
          */
         @SuppressWarnings("unused")
         public ComboBoxModel doFillComponentItems(@QueryParameter String value, @QueryParameter String sonarInstallationName,

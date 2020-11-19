@@ -54,6 +54,8 @@ public class SonarClient {
     /**
      * @see  <a href="https://sonarqube.mamdev.server.lan/web_api/api/components">https://sonarqube.mamdev.server.lan/web_api/api/components</a>
      *
+     * @param component name of component which should be fetched
+     * @return result matching the component name
      */
     public ComponentSearchResult fetchComponent(String component) {
         ComponentSearchResult componentSearchResult = null;
