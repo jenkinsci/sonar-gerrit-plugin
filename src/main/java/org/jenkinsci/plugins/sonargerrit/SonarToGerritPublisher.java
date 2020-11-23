@@ -180,7 +180,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
             TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
         } catch (RestApiException e) {
-            LOGGER.log(Level.SEVERE, e, () -> "Unable to post review: " + e.getMessage());
             throw new AbortException("Unable to post review: " + e.getMessage());
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
             throw new AbortException(e.getMessage());

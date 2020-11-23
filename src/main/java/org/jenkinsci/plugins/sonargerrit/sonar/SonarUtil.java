@@ -19,6 +19,8 @@ import hudson.security.ACL;
 public class SonarUtil {
     private static Pattern componentKeyPattern = Pattern.compile(".*\\((?<key>.*)\\)");
 
+    private SonarUtil() {}
+
     /**
      * @param value (group:componentKey)
      * @return group:componentKey

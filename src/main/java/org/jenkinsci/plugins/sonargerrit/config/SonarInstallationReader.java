@@ -8,6 +8,8 @@ import hudson.plugins.sonar.SonarInstallation;
 import jenkins.model.GlobalConfiguration;
 
 public class SonarInstallationReader {
+    private SonarInstallationReader() {}
+
     public static SonarInstallation getSonarInstallation(String sonarInstallationName) throws AbortException {
         SonarGlobalConfiguration sonarGlobalConfiguration = GlobalConfiguration.all().get(SonarGlobalConfiguration.class);
 
