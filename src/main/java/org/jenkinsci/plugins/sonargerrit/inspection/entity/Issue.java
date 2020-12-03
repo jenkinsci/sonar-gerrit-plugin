@@ -125,11 +125,11 @@ public class Issue {
     }
 
     public void setNew(Boolean aNew) {
-        isNew = aNew;
+        this.isNew = aNew;
     }
 
     public Boolean getNew() {
-        return isNew;
+        return this.isNew;
     }
 
     public Date getCreationDate() {

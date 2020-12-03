@@ -126,7 +126,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
-        LOGGER.info("Starting Sonar to Gerrit Publisher with analysis type " + inspectionConfig.getAnalysisType());
+        TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.sonar.start", inspectionConfig.getAnalysisType());
 
         //load inspection report
         SonarConnector sonarConnector = new SonarConnector(run, listener, inspectionConfig);

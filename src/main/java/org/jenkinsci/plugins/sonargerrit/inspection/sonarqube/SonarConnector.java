@@ -59,14 +59,15 @@ public class SonarConnector implements InspectionReportAdapter {
             SonarInstallation sonarInstallation = SonarInstallationReader.getSonarInstallation(inspectionConfig.getSonarInstallationName());
             StringCredentials credentials = sonarInstallation.getCredentials(run);
 
-            SonarClient sonarClient = new SonarClient(sonarInstallation, credentials);
+            SonarClient sonarClient = new SonarClient(sonarInstallation, credentials, listener);
             try {
-                LOGGER.info("Sonar report processing can take some time, so wait 5 seconds ...");
-                Thread.sleep(5000);
+                int secondsToWait = 5;
+                TaskListenerLogger.logMessage(listener, LOGGER, Level.FINE, "jenkins.plugin.sonar.issues.wait", secondsToWait);
+                Thread.sleep(secondsToWait * 1000);
 
                 Report report = sonarClient.fetchIssues(
                         SonarUtil.isolateComponentKey(inspectionConfig.getComponent()),
-                        TokenMacro.expandAll(run, workspace, listener, inspectionConfig.getPullrequestKey()));
+                        TokenMacro.expandAll(run, workspace, listener, inspectionConfig.getPullRequestKey()));
                 reports.add(new ReportInfo(new SubJobConfig(), report));
             } catch (MacroEvaluationException e) {
                 throw new AbortException(e.getMessage());
@@ -75,7 +76,7 @@ public class SonarConnector implements InspectionReportAdapter {
             for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
                 Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
 
-                if (report == null) {  //tod fail all? skip errors?
+                if (report == null) {  //todo fail all? skip errors?
                     TaskListenerLogger
                             .logMessage(listener, LOGGER, Level.SEVERE, "jenkins.plugin.error.path.no.project.config.available");
                     throw new AbortException(getLocalized("jenkins.plugin.error.path.no.project.config.available"));

@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -7,26 +8,35 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.sonar.dto.ComponentSearchResult;
+import org.jenkinsci.plugins.sonargerrit.util.Localization;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import hudson.AbortException;
+import hudson.model.TaskListener;
 import hudson.plugins.sonar.SonarInstallation;
 
 public class SonarClient {
     private static final Logger LOGGER = Logger.getLogger(SonarClient.class.getName());
 
     private final String serverUrl;
-
     private final Client client;
 
-    public SonarClient(SonarInstallation sonarInstallation, StringCredentials credentials) throws AbortException {
+    @Nullable
+    private final TaskListener taskListener;
+
+
+    public SonarClient(SonarInstallation sonarInstallation, StringCredentials credentials, @Nullable TaskListener taskListener)
+            throws AbortException {
         this.serverUrl = sonarInstallation.getServerUrl();
+        this.taskListener = taskListener;
 
         if (credentials == null) {
-            throw new AbortException("Missing Server authentication token for SonarQube Server " + sonarInstallation.getName());
+            throw new AbortException(Localization.getLocalized("jenkins.plugin.error.sonar.server.authmissing"));
         }
         String token = credentials.getSecret().getPlainText();
         HttpAuthenticationFeature basicAuth = HttpAuthenticationFeature.basic(token, "");
@@ -40,13 +50,13 @@ public class SonarClient {
                 .queryParam("componentKeys", component)
                 .queryParam("pullRequest", pullrequestKey);
 
-        LOGGER.info(() -> "Fetch issues from " + target.toString());
+        TaskListenerLogger.logMessage(taskListener, LOGGER, Level.INFO, "jenkins.plugin.sonar.fetch", target.getUri());
 
         Report report = target.request(MediaType.APPLICATION_JSON_TYPE).get(Report.class);
         // Pull Request Analysis only reports new issues, attribute is not present in JSON response
         report.getIssues().forEach(issue -> issue.setNew(true));
 
-        LOGGER.info(() -> "Report has " + report.getIssues().size() + " issues.");
+        TaskListenerLogger.logMessage(taskListener, LOGGER, Level.INFO, "jenkins.plugin.sonar.report", report.getIssues().size());
 
         return report;
     }

@@ -1,5 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import org.jenkinsci.plugins.sonargerrit.util.Localization;
+
 import java.util.Arrays;
 
 import hudson.AbortException;
@@ -14,19 +16,18 @@ public class SonarInstallationReader {
         SonarGlobalConfiguration sonarGlobalConfiguration = GlobalConfiguration.all().get(SonarGlobalConfiguration.class);
 
         if (sonarGlobalConfiguration == null) {
-            throw new AbortException("Missing SonarGlobalConfiguration -> Install SonarQube Scanner for Jenkins: "
-                    + "https://plugins.jenkins.io/sonar/");
+            throw new AbortException(Localization.getLocalized("jenkins.plugin.error.sonar.config.missing"));
         }
 
         SonarInstallation[] installations = sonarGlobalConfiguration.getInstallations();
 
         if (installations.length == 0) {
-            throw new AbortException("No SonarQube server found -> Add one in Jenkins system configuration - SonarQube servers");
+            throw new AbortException(Localization.getLocalized("jenkins.plugin.error.sonar.server.missing"));
         }
 
         return Arrays.stream(installations)
                 .filter(installation -> installation.getName().equals(sonarInstallationName)).findFirst()
-                .orElseThrow(() -> new AbortException("SonarQube '" + sonarInstallationName + "' not found -> Add it in Jenkins"
-                        + " system configuration - SonarQube servers"));
+                .orElseThrow(() ->
+                        new AbortException(Localization.getLocalized("jenkins.plugin.error.sonar.server.notfound")));
     }
 }

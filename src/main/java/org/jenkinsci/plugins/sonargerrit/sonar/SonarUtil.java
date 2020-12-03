@@ -17,7 +17,7 @@ import hudson.plugins.sonar.SonarInstallation;
 import hudson.security.ACL;
 
 public class SonarUtil {
-    private static Pattern componentKeyPattern = Pattern.compile(".*\\((?<key>.*)\\)");
+    private static final Pattern componentKeyPattern = Pattern.compile(".*\\((?<key>.*)\\)");
 
     private SonarUtil() {}
 
@@ -54,9 +54,6 @@ public class SonarUtil {
                 CredentialsMatchers.withId(sonarInstallation.getCredentialsId())
         );
 
-        if (credentials == null) {
-            throw new IllegalStateException("Missing Server authentication token for SonarQube Server " + sonarInstallation.getName());
-        }
-        return new SonarClient(sonarInstallation, credentials);
+        return new SonarClient(sonarInstallation, credentials, null);
     }
 }

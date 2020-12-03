@@ -48,9 +48,11 @@ import jenkins.model.GlobalConfiguration;
 public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> {
     private DescriptorImpl.AnalysisType analysisType;
 
+    @Nonnull
     private String serverURL = DescriptorImpl.SONAR_URL;
 
-    private String pullrequestKey;
+    private String pullRequestKey;
+
     private String component;
 
     private SubJobConfig baseConfig;
@@ -82,6 +84,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         return new DescriptorImpl();
     }
 
+    @Nonnull
     public String getServerURL() {
         return serverURL;
     }
@@ -149,7 +152,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     }
 
     @DataBoundSetter
-    public void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
+    public final void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
         if (subJobConfigs != null && !subJobConfigs.isEmpty()) {
             this.subJobConfigs = new LinkedList<>(subJobConfigs);
         } else {
@@ -162,13 +165,13 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         return isAutoMatch();
     }
 
-    public String getPullrequestKey() {
-        return pullrequestKey;
+    public String getPullRequestKey() {
+        return pullRequestKey;
     }
 
     @DataBoundSetter
-    public void setPullrequestKey(String pullrequestKey) {
-        this.pullrequestKey = pullrequestKey;
+    public void setPullRequestKey(String pullRequestKey) {
+        this.pullRequestKey = pullRequestKey;
     }
 
     public String getComponent() {
@@ -228,12 +231,12 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         }
 
         /**
-         * Is only called once, filtering is done in Frontend by Combo Box
+         * Is only called once, filtering is done in Frontend by a Combo Box
          *
          * @param value component to search for
-         * @param sonarInstallationName sonarInstallationName which chooses the SonarQube server where the components are fetched
-         * @param analysisType only for AnalysisType.PULL_REQUEST components are filled
-         * @return list of components matching value
+         * @param sonarInstallationName  specifies the SonarQube server where the components are fetched from
+         * @param analysisType only for Analysis Type.PULL_REQUEST the components are inserted into the model's list of components
+         * @return model containing a list of components matching the given component name
          * @throws AbortException if Sonar installation cannot be found
          */
         @SuppressWarnings("unused")
@@ -241,7 +244,8 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
                 @QueryParameter AnalysisType analysisType) throws AbortException {
             if (analysisType == AnalysisType.PULL_REQUEST) {
                 SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName);
-                ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(value);
+                String componentKey = SonarUtil.isolateComponentKey(value);
+                ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(componentKey);
                 return new ComboBoxModel(componentSearchResult.getComponents().stream()
                         .map(c -> c.getName() + " (" + c.getKey() + ")")
                         .collect(Collectors.toList()));
