@@ -16,12 +16,15 @@ import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.base.Strings;
+
 import hudson.AbortException;
 import hudson.model.TaskListener;
 import hudson.plugins.sonar.SonarInstallation;
 
-public class SonarClient {
+public class SonarClient implements AutoCloseable {
     private static final Logger LOGGER = Logger.getLogger(SonarClient.class.getName());
+    private static final int PAGE_SIZE = 500;
 
     private final String serverUrl;
     private final Client client;
@@ -71,7 +74,7 @@ public class SonarClient {
         ComponentSearchResult componentSearchResult = null;
         Integer total = null;
 
-        for (int currentPage = 1; total == null || (currentPage - 1) * 500 < total; currentPage++) {
+        for (int currentPage = 1; total == null || (currentPage - 1) * PAGE_SIZE < total; currentPage++) {
             ComponentSearchResult pageResult = fetchComponent(component, currentPage);
             if (componentSearchResult == null) {
                 componentSearchResult = pageResult;
@@ -84,13 +87,13 @@ public class SonarClient {
         return componentSearchResult;
     }
 
-    private ComponentSearchResult fetchComponent(String component, Integer page) {
+    private ComponentSearchResult fetchComponent(String component, int page) {
         WebTarget target = client.target(serverUrl).path("api").path("components").path("search")
                 .queryParam("qualifiers", "TRK") // TRK - Projects
-                .queryParam("ps", 500) // page size
+                .queryParam("ps", PAGE_SIZE) // page size
                 .queryParam("p", page); // 1-based page number
 
-        if (component != null && !component.isEmpty()) {
+        if (!Strings.isNullOrEmpty(component)) {
             target = target.queryParam("q", component); // component key
         }
 
@@ -99,5 +102,10 @@ public class SonarClient {
 
     public String getServerUrl() {
         return serverUrl;
+    }
+
+    @Override
+    public void close() {
+        client.close();
     }
 }

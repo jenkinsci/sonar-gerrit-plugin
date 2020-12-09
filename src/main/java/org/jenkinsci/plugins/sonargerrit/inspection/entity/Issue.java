@@ -128,16 +128,12 @@ public class Issue {
         this.isNew = aNew;
     }
 
-    public Boolean getNew() {
-        return this.isNew;
-    }
-
     public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+        return creationDate == null ? null : new Date(creationDate.getTime());
     }
 
     public void setCreationDate(Date creationDate) {
-        this.creationDate = new Date(creationDate.getTime());
+        this.creationDate = creationDate == null ? null : new Date(creationDate.getTime());
     }
 
     @Override

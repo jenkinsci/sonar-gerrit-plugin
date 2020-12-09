@@ -40,8 +40,12 @@ public class SonarConnector implements InspectionReportAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(SonarConnector.class.getName());
 
+    private static final int SECONDS_TO_WAIT = 15;
+
     private final Run<?, ?> run;
+
     private final TaskListener listener;
+
     private final InspectionConfig inspectionConfig;
 
     private InspectionReport inspectionReport;
@@ -53,39 +57,51 @@ public class SonarConnector implements InspectionReportAdapter {
     }
 
     public void readSonarReports(FilePath workspace) throws IOException, InterruptedException {
-        List<ReportInfo> reports = new ArrayList<>();
+        List<ReportInfo> reports;
 
         if (inspectionConfig.getAnalysisType() == InspectionConfig.DescriptorImpl.AnalysisType.PULL_REQUEST) {
-            SonarInstallation sonarInstallation = SonarInstallationReader.getSonarInstallation(inspectionConfig.getSonarInstallationName());
-            StringCredentials credentials = sonarInstallation.getCredentials(run);
-
-            SonarClient sonarClient = new SonarClient(sonarInstallation, credentials, listener);
-            try {
-                int secondsToWait = 5;
-                TaskListenerLogger.logMessage(listener, LOGGER, Level.FINE, "jenkins.plugin.sonar.issues.wait", secondsToWait);
-                Thread.sleep(secondsToWait * 1000);
-
-                Report report = sonarClient.fetchIssues(
-                        SonarUtil.isolateComponentKey(inspectionConfig.getComponent()),
-                        TokenMacro.expandAll(run, workspace, listener, inspectionConfig.getPullRequestKey()));
-                reports.add(new ReportInfo(new SubJobConfig(), report));
-            } catch (MacroEvaluationException e) {
-                throw new AbortException(e.getMessage());
-            }
+            reports = fetchReportFromSonarQube(workspace);
         } else {
-            for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
-                Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
-
-                if (report == null) {  //todo fail all? skip errors?
-                    TaskListenerLogger
-                            .logMessage(listener, LOGGER, Level.SEVERE, "jenkins.plugin.error.path.no.project.config.available");
-                    throw new AbortException(getLocalized("jenkins.plugin.error.path.no.project.config.available"));
-                }
-                reports.add(new ReportInfo(subJobConfig, report));
-            }
+            reports = readReportFromFile(workspace);
         }
 
         inspectionReport = new InspectionReport(reports);
+    }
+
+    private List<ReportInfo> readReportFromFile(FilePath workspace) throws IOException, InterruptedException {
+        List<ReportInfo> reports = new ArrayList<>();
+        for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
+            Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
+
+            if (report == null) {  //todo fail all? skip errors?
+                TaskListenerLogger
+                        .logMessage(listener, LOGGER, Level.SEVERE, "jenkins.plugin.error.path.no.project.config.available");
+                throw new AbortException(getLocalized("jenkins.plugin.error.path.no.project.config.available"));
+            }
+            reports.add(new ReportInfo(subJobConfig, report));
+        }
+
+        return reports;
+    }
+
+    private List<ReportInfo> fetchReportFromSonarQube(FilePath workspace) throws InterruptedException, IOException {
+        List<ReportInfo> reports = new ArrayList<>();
+        SonarInstallation sonarInstallation = SonarInstallationReader
+                .getSonarInstallation(inspectionConfig.getSonarInstallationName());
+        StringCredentials credentials = sonarInstallation.getCredentials(run);
+
+        TaskListenerLogger.logMessage(listener, LOGGER, Level.FINE, "jenkins.plugin.sonar.issues.wait", SECONDS_TO_WAIT);
+        Thread.sleep(SECONDS_TO_WAIT * 1000);
+
+        try (SonarClient sonarClient = new SonarClient(sonarInstallation, credentials, listener)) {
+            Report report = sonarClient.fetchIssues(
+                    SonarUtil.isolateComponentKey(inspectionConfig.getComponent()),
+                    TokenMacro.expandAll(run, workspace, listener, inspectionConfig.getPullRequestKey()));
+            reports.add(new ReportInfo(new SubJobConfig(), report));
+        } catch (MacroEvaluationException e) {
+            throw new AbortException(e.getMessage());
+        }
+        return reports;
     }
 
     public Multimap<String, IssueAdapter> getReportData() {

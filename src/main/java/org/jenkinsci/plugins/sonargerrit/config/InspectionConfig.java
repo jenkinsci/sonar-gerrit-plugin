@@ -128,7 +128,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     public DescriptorImpl.AnalysisType getAnalysisType() {
         // default of field and c'tor has no effect, so do it here
-        return analysisType != null ? analysisType : DescriptorImpl.AnalysisType.PREVIEW_MODE;
+        return analysisType == null ? DescriptorImpl.AnalysisType.PREVIEW_MODE : analysisType;
     }
 
     @DataBoundSetter
@@ -153,11 +153,11 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     @DataBoundSetter
     public final void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
-        if (subJobConfigs != null && !subJobConfigs.isEmpty()) {
-            this.subJobConfigs = new LinkedList<>(subJobConfigs);
-        } else {
+        if (subJobConfigs == null || subJobConfigs.isEmpty()) {
             this.subJobConfigs = new LinkedList<>();
             this.subJobConfigs.add(new SubJobConfig());
+        } else {
+            this.subJobConfigs = new LinkedList<>(subJobConfigs);
         }
     }
 
@@ -185,7 +185,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     public List<SonarInstallation> getSonarInstallations() {
         SonarGlobalConfiguration sonarGlobalConfiguration = GlobalConfiguration.all().get(SonarGlobalConfiguration.class);
-        return sonarGlobalConfiguration != null ? Arrays.asList(sonarGlobalConfiguration.getInstallations()) : null;
+        return sonarGlobalConfiguration == null ? null : Arrays.asList(sonarGlobalConfiguration.getInstallations());
     }
 
     @DataBoundSetter
@@ -243,9 +243,13 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         public ComboBoxModel doFillComponentItems(@QueryParameter String value, @QueryParameter String sonarInstallationName,
                 @QueryParameter AnalysisType analysisType) throws AbortException {
             if (analysisType == AnalysisType.PULL_REQUEST) {
-                SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName);
-                String componentKey = SonarUtil.isolateComponentKey(value);
-                ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(componentKey);
+                ComponentSearchResult componentSearchResult;
+
+                try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
+                    String componentKey = SonarUtil.isolateComponentKey(value);
+                    componentSearchResult = sonarClient.fetchComponent(componentKey);
+                }
+
                 return new ComboBoxModel(componentSearchResult.getComponents().stream()
                         .map(c -> c.getName() + " (" + c.getKey() + ")")
                         .collect(Collectors.toList()));
@@ -258,25 +262,26 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         public FormValidation doCheckComponent(@QueryParameter String value, @QueryParameter String sonarInstallationName,
                 @QueryParameter AnalysisType analysisType) throws AbortException {
             if (analysisType == AnalysisType.PULL_REQUEST) {
-                SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName);
-                String componentKey = SonarUtil.isolateComponentKey(value);
-                ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(componentKey);
+                try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
+                    String componentKey = SonarUtil.isolateComponentKey(value);
+                    ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(componentKey);
 
-                if (componentSearchResult.getPaging().getTotal() == 1) {
-                    Component component = componentSearchResult.getComponents().get(0);
-                    if (!Objects.equals(componentKey, component.getKey())) {
+                    if (componentSearchResult.getPaging().getTotal() == 1) {
+                        Component component = componentSearchResult.getComponents().get(0);
+                        if (!Objects.equals(componentKey, component.getKey())) {
+                            return FormValidation
+                                    .error("Ambiguous project key '%s'. Did you mean '%s'?", value, component.getKey());
+                        } else {
+                            return FormValidation
+                                    .ok("%s: %sdashboard?id=%s", component.getName(), sonarClient.getServerUrl(),
+                                            component.getKey());
+                        }
+                    } else if (componentSearchResult.getPaging().getTotal() > 1) {
                         return FormValidation
-                                .error("Ambiguous project key '" + value + "'. Did you mean '" + component.getKey() + "'?");
+                                .error("Multiple results found for '%s' on %s", componentKey, sonarClient.getServerUrl());
                     } else {
-                        return FormValidation
-                                .ok(component.getName() + ": " + sonarClient.getServerUrl() + "dashboard?id=" + component
-                                        .getKey());
+                        return FormValidation.error("'%s' could not be found on %s", componentKey, sonarClient.getServerUrl());
                     }
-                } else if (componentSearchResult.getPaging().getTotal() > 1) {
-                    return FormValidation
-                            .error("Multiple results found for '" + componentKey + "' on " + sonarClient.getServerUrl());
-                } else {
-                    return FormValidation.error("'" + componentKey + "' could not be found on " + sonarClient.getServerUrl());
                 }
             } else {
                 return FormValidation.ok();
