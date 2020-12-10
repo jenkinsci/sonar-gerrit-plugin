@@ -16,6 +16,7 @@ import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,7 +41,7 @@ public class SonarConnector implements InspectionReportAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(SonarConnector.class.getName());
 
-    private static final int SECONDS_TO_WAIT = 15;
+    private static final Duration SECONDS_TO_WAIT = Duration.ofSeconds(15);
 
     private final Run<?, ?> run;
 
@@ -91,7 +92,7 @@ public class SonarConnector implements InspectionReportAdapter {
         StringCredentials credentials = sonarInstallation.getCredentials(run);
 
         TaskListenerLogger.logMessage(listener, LOGGER, Level.FINE, "jenkins.plugin.sonar.issues.wait", SECONDS_TO_WAIT);
-        Thread.sleep(SECONDS_TO_WAIT * 1000);
+        Thread.sleep(SECONDS_TO_WAIT.getSeconds() * 1000);
 
         try (SonarClient sonarClient = new SonarClient(sonarInstallation, credentials, listener)) {
             Report report = sonarClient.fetchIssues(

@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     @DataBoundSetter
     public void setServerURL(String serverURL) {
-        this.serverURL = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(serverURL), DescriptorImpl.SONAR_URL);
+        this.serverURL = Optional.ofNullable(serverURL).map(Util::fixEmptyAndTrim).orElse(DescriptorImpl.SONAR_URL);
     }
 
     public SubJobConfig getBaseConfig() {
