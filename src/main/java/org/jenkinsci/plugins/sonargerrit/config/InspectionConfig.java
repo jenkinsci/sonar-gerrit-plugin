@@ -234,21 +234,19 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         /**
          * Is only called once, filtering is done in Frontend by a Combo Box
          *
-         * @param value component to search for
          * @param sonarInstallationName  specifies the SonarQube server where the components are fetched from
          * @param analysisType only for Analysis Type.PULL_REQUEST the components are inserted into the model's list of components
          * @return model containing a list of components matching the given component name
          * @throws AbortException if Sonar installation cannot be found
          */
         @SuppressWarnings("unused")
-        public ComboBoxModel doFillComponentItems(@QueryParameter String value, @QueryParameter String sonarInstallationName,
+        public ComboBoxModel doFillComponentItems(@QueryParameter String sonarInstallationName,
                 @QueryParameter AnalysisType analysisType) throws AbortException {
             if (analysisType == AnalysisType.PULL_REQUEST) {
                 ComponentSearchResult componentSearchResult;
 
                 try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
-                    String componentKey = SonarUtil.isolateComponentKey(value);
-                    componentSearchResult = sonarClient.fetchComponent(componentKey);
+                    componentSearchResult = sonarClient.fetchComponents(null);
                 }
 
                 return new ComboBoxModel(componentSearchResult.getComponents().stream()
@@ -265,7 +263,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
             if (analysisType == AnalysisType.PULL_REQUEST) {
                 try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
                     String componentKey = SonarUtil.isolateComponentKey(value);
-                    ComponentSearchResult componentSearchResult = sonarClient.fetchComponent(componentKey);
+                    ComponentSearchResult componentSearchResult = sonarClient.fetchComponents(componentKey);
 
                     if (componentSearchResult.getPaging().getTotal() == 1) {
                         Component component = componentSearchResult.getComponents().get(0);

@@ -28,7 +28,7 @@
                 </f:entry>
             </j:if>
 
-            <f:entry title="${%jenkins.plugin.settings.inspection.pullrequest.key}" field="pullrequestKey">
+            <f:entry title="${%jenkins.plugin.settings.inspection.pullrequest.key}" field="pullRequestKey">
                 <f:textbox default="${descriptor.SONAR_PULLREQUEST_KEY}"/>
             </f:entry>
 

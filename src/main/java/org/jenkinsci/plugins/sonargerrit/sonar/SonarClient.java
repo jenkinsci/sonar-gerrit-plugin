@@ -6,6 +6,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.jenkinsci.plugins.plaincredentials.StringCredentials;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
@@ -48,10 +49,17 @@ public class SonarClient implements AutoCloseable {
         client.register(basicAuth);
     }
 
-    public Report fetchIssues(String component, String pullrequestKey) {
+    public Report fetchIssues(String component, String pullRequestKey) throws AbortException {
+        if (StringUtils.isBlank(component)) {
+            throw new AbortException("SonarQube component is missing");
+        }
+        if (StringUtils.isBlank(pullRequestKey)) {
+            throw new AbortException("SonarQube pullRequestKey is missing");
+        }
+
         WebTarget target = client.target(serverUrl).path("api").path("issues").path("search")
                 .queryParam("componentKeys", component)
-                .queryParam("pullRequest", pullrequestKey);
+                .queryParam("pullRequest", pullRequestKey);
 
         TaskListenerLogger.logMessage(taskListener, LOGGER, Level.INFO, "jenkins.plugin.sonar.fetch", target.getUri());
 
@@ -70,12 +78,12 @@ public class SonarClient implements AutoCloseable {
      * @param component name of component which should be fetched
      * @return result matching the component name
      */
-    public ComponentSearchResult fetchComponent(String component) {
+    public ComponentSearchResult fetchComponents(@Nullable String component) {
         ComponentSearchResult componentSearchResult = null;
         Integer total = null;
 
         for (int currentPage = 1; total == null || (currentPage - 1) * PAGE_SIZE < total; currentPage++) {
-            ComponentSearchResult pageResult = fetchComponent(component, currentPage);
+            ComponentSearchResult pageResult = fetchComponents(component, currentPage);
             if (componentSearchResult == null) {
                 componentSearchResult = pageResult;
                 total = pageResult.getPaging().getTotal();
@@ -87,7 +95,7 @@ public class SonarClient implements AutoCloseable {
         return componentSearchResult;
     }
 
-    private ComponentSearchResult fetchComponent(String component, int page) {
+    private ComponentSearchResult fetchComponents(@Nullable String component, int page) {
         WebTarget target = client.target(serverUrl).path("api").path("components").path("search")
                 .queryParam("qualifiers", "TRK") // TRK - Projects
                 .queryParam("ps", PAGE_SIZE) // page size
