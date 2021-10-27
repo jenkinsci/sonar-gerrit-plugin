@@ -1,23 +1,44 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
-import com.google.common.base.MoreObjects;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.Extension;
-import hudson.Util;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.util.FormValidation;
+import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
+
+import javax.annotation.Nonnull;
+
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.sonar.SonarClient;
+import org.jenkinsci.plugins.sonargerrit.sonar.SonarUtil;
+import org.jenkinsci.plugins.sonargerrit.sonar.dto.Component;
+import org.jenkinsci.plugins.sonargerrit.sonar.dto.ComponentSearchResult;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
+import com.google.common.base.MoreObjects;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.AbortException;
+import hudson.Extension;
+import hudson.Util;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.plugins.sonar.SonarGlobalConfiguration;
+import hudson.plugins.sonar.SonarInstallation;
+import hudson.util.ComboBoxModel;
+import hudson.util.FormValidation;
+import jenkins.model.GlobalConfiguration;
 
 /**
  * Project: Sonar-Gerrit Plugin
@@ -26,8 +47,14 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
  * $Id$
  */
 public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> {
+    private DescriptorImpl.AnalysisType analysisType;
+
     @Nonnull
     private String serverURL = DescriptorImpl.SONAR_URL;
+
+    private String pullRequestKey;
+
+    private String component;
 
     private SubJobConfig baseConfig;
 
@@ -36,17 +63,21 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     private String type;
 
+    private String sonarInstallationName;
+
     @DataBoundConstructor
     public InspectionConfig() {
-        this(DescriptorImpl.SONAR_URL, null, null, DescriptorImpl.BASE_TYPE); // set default values
+        this(DescriptorImpl.SONAR_URL, null, null, DescriptorImpl.BASE_TYPE, DescriptorImpl.AnalysisType.PREVIEW_MODE); // set default values
     }
 
-    @SuppressFBWarnings(value="NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") // subJobConfigs is initialized in setter
-    private InspectionConfig(@Nonnull String serverURL, SubJobConfig baseConfig, List<SubJobConfig> subJobConfigs, String type) {
+    @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") // subJobConfigs is initialized in setter
+    private InspectionConfig(String serverURL, SubJobConfig baseConfig, List<SubJobConfig> subJobConfigs, String type,
+            DescriptorImpl.AnalysisType analysisType) {
         setServerURL(serverURL);
         setBaseConfig(baseConfig);
         setSubJobConfigs(subJobConfigs);
         setType(type);
+        setAnalysisType(analysisType);
     }
 
     @Override
@@ -60,8 +91,8 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     }
 
     @DataBoundSetter
-    public void setServerURL(@Nonnull String serverURL) {
-        this.serverURL = MoreObjects.firstNonNull(Util.fixEmptyAndTrim(serverURL), DescriptorImpl.SONAR_URL);
+    public void setServerURL(String serverURL) {
+        this.serverURL = Optional.ofNullable(serverURL).map(Util::fixEmptyAndTrim).orElse(DescriptorImpl.SONAR_URL);
     }
 
     public SubJobConfig getBaseConfig() {
@@ -96,6 +127,16 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         return type;
     }
 
+    public DescriptorImpl.AnalysisType getAnalysisType() {
+        // default of field and c'tor has no effect, so do it here
+        return analysisType == null ? DescriptorImpl.AnalysisType.PREVIEW_MODE : analysisType;
+    }
+
+    @DataBoundSetter
+    public void setAnalysisType(DescriptorImpl.AnalysisType analysisType) {
+        this.analysisType = analysisType;
+    }
+
     public boolean isMultiConfigMode() {
         return isType(DescriptorImpl.MULTI_TYPE);
     }
@@ -112,12 +153,12 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     }
 
     @DataBoundSetter
-    public void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
-        if (subJobConfigs != null && subJobConfigs.size() > 0) {
-            this.subJobConfigs = new LinkedList<>(subJobConfigs);
-        } else {
+    public final void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
+        if (subJobConfigs == null || subJobConfigs.isEmpty()) {
             this.subJobConfigs = new LinkedList<>();
             this.subJobConfigs.add(new SubJobConfig());
+        } else {
+            this.subJobConfigs = new LinkedList<>(subJobConfigs);
         }
     }
 
@@ -125,9 +166,50 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         return isAutoMatch();
     }
 
+    public String getPullRequestKey() {
+        return pullRequestKey;
+    }
+
+    @DataBoundSetter
+    public void setPullRequestKey(String pullRequestKey) {
+        this.pullRequestKey = pullRequestKey;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    @DataBoundSetter
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public List<SonarInstallation> getSonarInstallations() {
+        SonarGlobalConfiguration sonarGlobalConfiguration = GlobalConfiguration.all().get(SonarGlobalConfiguration.class);
+        return sonarGlobalConfiguration == null ? null : Arrays.asList(sonarGlobalConfiguration.getInstallations());
+    }
+
+    @DataBoundSetter
+    public void setSonarInstallationName(String sonarInstallationName) {
+        this.sonarInstallationName = sonarInstallationName;
+    }
+
+    public String getSonarInstallationName() {
+        return sonarInstallationName;
+    }
+
     @Extension
     public static class DescriptorImpl extends Descriptor<InspectionConfig> {
+        public enum AnalysisType {
+            PREVIEW_MODE,
+            PULL_REQUEST
+        }
+
+        public static final String ANALYSIS_TYPE_PREVIEW_MODE = AnalysisType.PREVIEW_MODE.name();
+        public static final String ANALYSIS_TYPE_PULL_REQUEST = AnalysisType.PULL_REQUEST.name();
+
         public static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
+        public static final String SONAR_PULLREQUEST_KEY = SonarToGerritPublisher.DescriptorImpl.SONAR_PULLREQUEST_KEY;
         public static final String BASE_TYPE = "base";
         public static final String MULTI_TYPE = "multi";
         public static final String DEFAULT_INSPECTION_CONFIG_TYPE = SonarToGerritPublisher.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
@@ -135,17 +217,6 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
         private static final Set<String> ALLOWED_TYPES = new HashSet<>(Arrays.asList(BASE_TYPE, MULTI_TYPE));
 
-        /**
-         * Performs on-the-fly validation of the form field 'serverURL'.
-         *
-         * @param value This parameter receives the value that the user has typed.
-         *
-         * @return Indicates the outcome of the validation. This is sent to the browser.
-         * <p>
-         * Note that returning {@link FormValidation#error(String)} does not
-         * prevent the form from being saved. It just means that a message
-         * will be displayed to the user.
-         */
         @SuppressWarnings(value = "unused")
         public FormValidation doCheckServerURL(@QueryParameter String value) {
             if (Util.fixEmptyAndTrim(value) == null) {
@@ -160,8 +231,67 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
         }
 
+        /**
+         * Is only called once, filtering is done in Frontend by a Combo Box
+         *
+         * @param sonarInstallationName  specifies the SonarQube server where the components are fetched from
+         * @param analysisType only for Analysis Type.PULL_REQUEST the components are inserted into the model's list of components
+         * @return model containing a list of components matching the given component name
+         * @throws AbortException if Sonar installation cannot be found
+         */
+        @SuppressWarnings("unused")
+        public ComboBoxModel doFillComponentItems(@QueryParameter String sonarInstallationName,
+                @QueryParameter AnalysisType analysisType) throws AbortException {
+            if (analysisType == AnalysisType.PULL_REQUEST) {
+                ComponentSearchResult componentSearchResult;
+
+                try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
+                    componentSearchResult = sonarClient.fetchComponents(null);
+                }
+
+                return new ComboBoxModel(componentSearchResult.getComponents().stream()
+                        .map(c -> c.getName() + " (" + c.getKey() + ")")
+                        .collect(Collectors.toList()));
+            } else {
+                return new ComboBoxModel();
+            }
+        }
+
+        @SuppressWarnings("unused")
+        public FormValidation doCheckComponent(@QueryParameter String value, @QueryParameter String sonarInstallationName,
+                @QueryParameter AnalysisType analysisType) throws AbortException {
+            if (analysisType == AnalysisType.PULL_REQUEST) {
+                try (SonarClient sonarClient = SonarUtil.getSonarClient(sonarInstallationName)) {
+                    String componentKey = SonarUtil.isolateComponentKey(value);
+                    ComponentSearchResult componentSearchResult = sonarClient.fetchComponents(componentKey);
+
+                    if (componentSearchResult.getPaging().getTotal() == 1) {
+                        Component component = componentSearchResult.getComponents().get(0);
+                        if (!Objects.equals(componentKey, component.getKey())) {
+                            return FormValidation
+                                    .error("Ambiguous project key '%s'. Did you mean '%s'?", value, component.getKey());
+                        } else {
+                            return FormValidation
+                                    .ok("%s: %sdashboard?id=%s", component.getName(), sonarClient.getServerUrl(),
+                                            component.getKey());
+                        }
+                    } else if (componentSearchResult.getPaging().getTotal() > 1) {
+                        return FormValidation
+                                .error("Multiple results found for '%s' on %s", componentKey, sonarClient.getServerUrl());
+                    } else {
+                        return FormValidation.error("'%s' could not be found on %s", componentKey, sonarClient.getServerUrl());
+                    }
+                }
+            } else {
+                return FormValidation.ok();
+            }
+        }
+
+        @Override
+        @Nonnull
         public String getDisplayName() {
             return "InspectionConfig";
         }
     }
+
 }

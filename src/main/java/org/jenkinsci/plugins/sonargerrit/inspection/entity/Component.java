@@ -47,6 +47,21 @@ public class Component {
         return status;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setModuleKey(String moduleKey) {
+        this.moduleKey = moduleKey;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     @Override
     public String toString() {
