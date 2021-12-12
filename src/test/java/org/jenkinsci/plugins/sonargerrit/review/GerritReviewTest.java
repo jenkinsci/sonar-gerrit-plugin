@@ -4,37 +4,34 @@ import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 
 /**
- * Project: Sonar-Gerrit Plugin
- * Author:  Tatiana Didik
- * Created: 18.11.2017 13:47
- * <p>
- * $Id$
+ * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 13:47
+ *
+ * <p>$Id$
  */
 public interface GerritReviewTest {
-    String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
-    Integer NO_ISSUES_SCORE = ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE;
-    Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
-    String NO_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE;
-    String SOME_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
+  String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
+  Integer NO_ISSUES_SCORE = ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE;
+  Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
+  String NO_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE;
+  String SOME_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
 
-    void testReviewHeader();
+  void testReviewHeader();
 
-    void testOverrideReviewHeader();
+  void testOverrideReviewHeader();
 
-    void testReviewComment();
+  void testReviewComment();
 
-    void testOverrideReviewComment();
+  void testOverrideReviewComment();
 
-    void testScore();
+  void testScore();
 
-    void testOverrideScore();
+  void testOverrideScore();
 
-    void testCategory();
+  void testCategory();
 
-    void testOverrideCategory();
+  void testOverrideCategory();
 
-    void testNoScoreConfig();
+  void testNoScoreConfig();
 
-    void testOverrideScoreAndCategory();
-
+  void testOverrideScoreAndCategory();
 }

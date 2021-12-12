@@ -2,32 +2,27 @@ package org.jenkinsci.plugins.sonargerrit.inspection.entity;
 
 import java.util.Date;
 
-/**
- * Project: Sonar-Gerrit Plugin
- * Author:  Tatiana Didik
- * Created: 03.12.2017 14:00
- * $Id$
- */
+/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 03.12.2017 14:00 $Id$ */
 public interface IssueAdapter {
-    String getFilepath();
+  String getFilepath();
 
-    void setFilepath(String path);
+  void setFilepath(String path);
 
-    String getKey();
+  String getKey();
 
-    String getComponent();
+  String getComponent();
 
-    Integer getLine();
+  Integer getLine();
 
-    String getMessage();
+  String getMessage();
 
-    Severity getSeverity();
+  Severity getSeverity();
 
-    String getRule();
+  String getRule();
 
-    String getStatus();
+  String getStatus();
 
-    boolean isNew();
+  boolean isNew();
 
-    Date getCreationDate();
+  Date getCreationDate();
 }

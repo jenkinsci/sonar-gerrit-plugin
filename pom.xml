@@ -1,171 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>plugin</artifactId>
-        <version>2.11</version>
-        <relativePath />
-    </parent>
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>2.11</version>
+    <relativePath/>
+  </parent>
 
-    <artifactId>sonar-gerrit</artifactId>
-    <version>2.4.4-SNAPSHOT</version>
-    <packaging>hpi</packaging>
+  <artifactId>sonar-gerrit</artifactId>
+  <version>2.4.4-SNAPSHOT</version>
+  <packaging>hpi</packaging>
 
-    <properties>
-        <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
-        <jenkins.version>1.625.3</jenkins.version>
-        <!-- Java Level to use. Java 7 required when using core >= 1.612 -->
-        <java.level>7</java.level>
-        <!-- Jenkins Test Harness version you use to test the plugin. -->
-        <!-- For Jenkins version >= 1.580.1 use JTH 2.x or higher. -->
-        <jenkins-test-harness.version>2.13</jenkins-test-harness.version>
-        <!-- Other properties you may want to use:
-             ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
-             ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
-        -->
-    </properties>
+  <properties>
+    <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
+    <jenkins.version>1.625.3</jenkins.version>
+    <!-- Java Level to use. Java 7 required when using core >= 1.612 -->
+    <java.level>7</java.level>
+    <!-- Jenkins Test Harness version you use to test the plugin. -->
+    <!-- For Jenkins version >= 1.580.1 use JTH 2.x or higher. -->
+    <jenkins-test-harness.version>2.13</jenkins-test-harness.version>
+    <!-- Other properties you may want to use:
+         ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
+         ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
+    -->
+    <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
+  </properties>
 
-    <name>Sonar Gerrit Plugin</name>
-    <url>https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit</url>
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://opensource.org/licenses/MIT</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <name>Sonar Gerrit Plugin</name>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <developers>
-        <developer>
-            <id>aquarellian</id>
-            <name>Tatiana Didik (Goretskaya)</name>
-            <email>aquarellian@gmail.com</email>
-        </developer>
-        <developer>
-            <id>adidik</id>
-            <name>Aleksey Didik</name>
-        </developer>
-    </developers>
-    <scm>
-        <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
-        </developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>sonar-gerrit-2.4.3</tag>
-    </scm>
+  <developers>
+    <developer>
+      <id>aquarellian</id>
+      <name>Tatiana Didik (Goretskaya)</name>
+      <email>aquarellian@gmail.com</email>
+    </developer>
+    <developer>
+      <id>adidik</id>
+      <name>Aleksey Didik</name>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/${project.artifactId}-plugin.git
+    </developerConnection>
+    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <tag>sonar-gerrit-2.4.3</tag>
+  </scm>
 
-    <repositories>
-        <repository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repo.jenkins-ci.org</id>
-            <url>https://repo.jenkins-ci.org/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
 
-    <profiles>
-        <profile>
-            <id>java8-doclint-disabled</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.opts>-Xdoclint:none</javadoc.opts>
-            </properties>
-        </profile>
-    </profiles>
+  <profiles>
+    <profile>
+      <id>java8-doclint-disabled</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <javadoc.opts>-Xdoclint:none</javadoc.opts>
+      </properties>
+    </profile>
+  </profiles>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jenkins-ci.tools</groupId>
-                <artifactId>maven-hpi-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <compatibleSinceVersion>1.0</compatibleSinceVersion>
-                </configuration>
-            </plugin>
-            <!--<plugin>-->
-                <!--<artifactId>maven-release-plugin</artifactId>-->
-                <!--<version>2.5.3</version>-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.apache.maven.scm</groupId>-->
-                        <!--<artifactId>maven-scm-provider-gitexe</artifactId>-->
-                        <!--<version>2.5</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-            <!--</plugin>-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <additionalparam>${javadoc.opts}</additionalparam>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <configuration>
-                                <additionalparam>${javadoc.opts}</additionalparam>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <additionalparam>${javadoc.opts}</additionalparam>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>structs</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sonyericsson.hudson.plugins.gerrit</groupId>
-            <artifactId>gerrit-trigger</artifactId>
-            <version>2.16.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.urswolfer.gerrit.client.rest</groupId>
-            <artifactId>gerrit-rest-java-client</artifactId>
-            <version>0.8.11</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jenkins-ci.tools</groupId>
+        <artifactId>maven-hpi-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <compatibleSinceVersion>1.0</compatibleSinceVersion>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <additionalparam>${javadoc.opts}</additionalparam>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.3</version>
+      </plugin>
+      <plugin>
+        <groupId>com.cosium.code</groupId>
+        <artifactId>git-code-format-maven-plugin</artifactId>
+        <version>${git-code-format-maven-plugin.version}</version>
+        <executions>
+          <!-- On commit, format the modified java files -->
+          <execution>
+            <id>install-formatter-hook</id>
+            <goals>
+              <goal>install-hooks</goal>
+            </goals>
+          </execution>
+          <!-- On Maven verify phase, fail if any file
+          (including unmodified) is badly formatted -->
+          <execution>
+            <id>validate-code-format</id>
+            <goals>
+              <goal>validate-code-format</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sonyericsson.hudson.plugins.gerrit</groupId>
+      <artifactId>gerrit-trigger</artifactId>
+      <version>2.16.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.urswolfer.gerrit.client.rest</groupId>
+      <artifactId>gerrit-rest-java-client</artifactId>
+      <version>0.8.11</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

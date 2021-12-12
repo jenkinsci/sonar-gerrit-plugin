@@ -2,6 +2,9 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.*;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.*;
@@ -15,190 +18,181 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
-
 /**
- * Project: Sonar-Gerrit Plugin
- * Author:  Tatiana Didik
- * Created: 10.11.2017 21:47
- * <p>
- * $Id$
+ * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 10.11.2017 21:47
+ *
+ * <p>$Id$
  */
 public abstract class BaseFilterTest<A> extends ReportBasedTest {
-    protected Report report;
-    protected SonarToGerritPublisher publisher;
+  protected Report report;
+  protected SonarToGerritPublisher publisher;
 
-    protected Set<IssueAdapter> filteredIssues;
-    protected Set<IssueAdapter> filteredOutIssues;
+  protected Set<IssueAdapter> filteredIssues;
+  protected Set<IssueAdapter> filteredOutIssues;
 
-    protected Map<String, DiffInfo> diffInfo;
+  protected Map<String, DiffInfo> diffInfo;
 
-    @Before
-    public void initialize() throws InterruptedException, IOException, URISyntaxException {
-        loadReport();
-        buildPublisher();  //todo check all issues read correctly?
-        diffInfo = readChange("diff_info.json");
+  @Before
+  public void initialize() throws InterruptedException, IOException, URISyntaxException {
+    loadReport();
+    buildPublisher(); // todo check all issues read correctly?
+    diffInfo = readChange("diff_info.json");
+  }
+
+  protected void loadReport() throws InterruptedException, IOException, URISyntaxException {
+    report = readreport("filter.json");
+    Assert.assertEquals(19, report.getIssues().size());
+  }
+
+  @After
+  public void resetFilter() {}
+
+  @After
+  public void reset() {
+    filteredIssues = null;
+    filteredOutIssues = null;
+    diffInfo = null;
+  }
+
+  //    @Before
+  public void setFilter(A a) {}
+
+  protected void buildPublisher() {
+    publisher = new SonarToGerritPublisher();
+
+    publisher.setSonarURL(SonarToGerritPublisher.DescriptorImpl.SONAR_URL);
+
+    //        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
+    //        Assert.assertEquals(1, publisher.getSubJobConfigs().size());
+
+    publisher.setAuthConfig(null);
+
+    publisher.setReviewConfig(new ReviewConfig());
+    publisher.setNotificationConfig(new NotificationConfig());
+    publisher.setScoreConfig(new ScoreConfig());
+  }
+
+  protected void doFilterIssues(IssueFilterConfig config) {
+    // filter issues
+    List<Issue> allIssues = report.getIssues();
+    List<IssueAdapter> allIssuesAdp = new ArrayList<>();
+    for (Issue i : allIssues) {
+      allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, new SubJobConfig()));
     }
 
-    protected void loadReport() throws InterruptedException, IOException, URISyntaxException {
-        report = readreport("filter.json");
-        Assert.assertEquals(19, report.getIssues().size());
+    // todo temporary - should be realized in publisher
+    // todo check filtered out as unchanged file
+    //        List<Issue> step2 = allIssues;
+    Map<String, Set<Integer>> changed = getChangedLines();
+
+    IssueFilter filter = new IssueFilter(config, allIssuesAdp, changed);
+    filteredIssues = Sets.newHashSet(filter.filter());
+
+    // get issues that were filtered out
+    filteredOutIssues = new HashSet<>(allIssuesAdp);
+    filteredOutIssues.removeAll(filteredIssues);
+  }
+
+  protected Map<String, Set<Integer>> getChangedLines() {
+    Map<String, Set<Integer>> changed = new HashMap<>();
+    if (diffInfo != null) {
+      for (String s : diffInfo.keySet()) {
+        GerritRevisionWrapper w = null;
+        w = new GerritRevisionWrapper(null);
+        changed.put(s, w.getChangedLines(diffInfo.get(s)));
+      }
     }
+    return changed;
+  }
 
-    @After
-    public void resetFilter() {
+  protected void doCheckSeverity(Severity severity) {
+    // check that all remaining issues have severity higher or equal to criteria
+    for (IssueAdapter issue : filteredIssues) {
+      Assert.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
     }
+  }
 
-    @After
-    public void reset() {
-        filteredIssues = null;
-        filteredOutIssues = null;
-        diffInfo = null;
+  protected void doCheckNewOnly(boolean isNewOnly) {
+    // check that all remaining issues are new
+    for (IssueAdapter issue : filteredIssues) {
+      Assert.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
     }
+  }
 
-    //    @Before
-    public void setFilter(A a) {
-
+  protected void doCheckChangedLinesOnly(boolean isChangesLinesOnly) {
+    // check that all remaining issues are in changed lines
+    for (IssueAdapter issue : filteredIssues) {
+      Assert.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
     }
+  }
 
-    protected void buildPublisher() {
-        publisher = new SonarToGerritPublisher();
+  protected boolean isSeverityCriteriaSatisfied(Severity severity, IssueAdapter issue) {
+    return issue.getSeverity().ordinal() >= severity.ordinal();
+  }
 
-        publisher.setSonarURL(SonarToGerritPublisher.DescriptorImpl.SONAR_URL);
+  protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, IssueAdapter issue) {
+    return !isNewOnly || issue.isNew();
+  }
 
+  protected boolean isChangedLinesOnlyCriteriaSatisfied(
+      Boolean isChangesLinesOnly, IssueAdapter issue) {
+    return !isChangesLinesOnly || isChanged(issue.getFilepath(), issue.getLine());
+  }
 
-//        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
-//        Assert.assertEquals(1, publisher.getSubJobConfigs().size());
+  protected boolean isFileChanged(IssueAdapter issue) {
+    String filename = issue.getFilepath();
+    DiffInfo diffInfo = this.diffInfo.get(filename);
+    return diffInfo != null;
+  }
 
-        publisher.setAuthConfig(null);
-
-        publisher.setReviewConfig(new ReviewConfig());
-        publisher.setNotificationConfig(new NotificationConfig());
-        publisher.setScoreConfig(new ScoreConfig());
+  protected boolean isChanged(String filename, int line) {
+    DiffInfo diffInfo = this.diffInfo.get(filename);
+    if (diffInfo == null) {
+      return false;
     }
-
-    protected void doFilterIssues(IssueFilterConfig config) {
-        // filter issues
-        List<Issue> allIssues = report.getIssues();
-        List<IssueAdapter> allIssuesAdp = new ArrayList<>();
-        for (Issue i : allIssues) {
-            allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, new SubJobConfig()));
+    int processed = 0;
+    for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
+      if (contentEntry.ab != null) {
+        processed += contentEntry.ab.size();
+        if (processed >= line) {
+          return false;
         }
-
-        //todo temporary - should be realized in publisher
-        // todo check filtered out as unchanged file
-//        List<Issue> step2 = allIssues;
-        Map<String, Set<Integer>> changed = getChangedLines();
-
-        IssueFilter filter = new IssueFilter(config, allIssuesAdp, changed);
-        filteredIssues = Sets.newHashSet(filter.filter());
-
-        // get issues that were filtered out
-        filteredOutIssues = new HashSet<>(allIssuesAdp);
-        filteredOutIssues.removeAll(filteredIssues);
-    }
-
-    protected Map<String, Set<Integer>> getChangedLines() {
-        Map<String, Set<Integer>> changed = new HashMap<>();
-        if (diffInfo != null) {
-            for (String s : diffInfo.keySet()) {
-                GerritRevisionWrapper w = null;
-                w = new GerritRevisionWrapper(null);
-                changed.put(s, w.getChangedLines(diffInfo.get(s)));
-            }
+      } else if (contentEntry.b != null) {
+        processed += contentEntry.b.size();
+        if (processed >= line) {
+          return true;
         }
-        return changed;
+      }
     }
+    return false;
+  }
 
-    protected void doCheckSeverity(Severity severity) {
-        // check that all remaining issues have severity higher or equal to criteria
-        for (IssueAdapter issue : filteredIssues) {
-            Assert.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
-        }
-    }
+  protected abstract void doCheckFilteredOutByCriteria(A a);
 
-    protected void doCheckNewOnly(boolean isNewOnly) {
-        // check that all remaining issues are new
-        for (IssueAdapter issue : filteredIssues) {
-            Assert.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
-        }
-    }
+  protected void doCheckCount(int expectedFilteredIssuesCount) {
+    // check that amount of filtered issues is equal to expected amount
+    Assert.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
 
-    protected void doCheckChangedLinesOnly(boolean isChangesLinesOnly) {
-        // check that all remaining issues are in changed lines
-        for (IssueAdapter issue : filteredIssues) {
-            Assert.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
-        }
-    }
+    // get amount of issues that are expected to be filtered out and check it
+    List<Issue> allIssues = report.getIssues();
+    int expectedFilteredOutCount = allIssues.size() - expectedFilteredIssuesCount;
+    Assert.assertEquals(expectedFilteredOutCount, filteredOutIssues.size());
+  }
 
-    protected boolean isSeverityCriteriaSatisfied(Severity severity, IssueAdapter issue) {
-        return issue.getSeverity().ordinal() >= severity.ordinal();
-    }
+  protected abstract IssueFilterConfig getFilterConfig();
 
-    protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, IssueAdapter issue) {
-        return !isNewOnly || issue.isNew();
-    }
+  protected void setSeverity(IssueFilterConfig config, String severity) {
+    config.setSeverity(severity);
+    Assert.assertEquals(severity, config.getSeverity());
+  }
 
-    protected boolean isChangedLinesOnlyCriteriaSatisfied(Boolean isChangesLinesOnly, IssueAdapter issue) {
-        return !isChangesLinesOnly || isChanged(issue.getFilepath(), issue.getLine());
-    }
+  protected void setNewOnly(IssueFilterConfig config, Boolean newOnly) {
+    config.setNewIssuesOnly(newOnly);
+    Assert.assertEquals(newOnly, config.isNewIssuesOnly());
+  }
 
-    protected boolean isFileChanged(IssueAdapter issue) {
-        String filename = issue.getFilepath();
-        DiffInfo diffInfo = this.diffInfo.get(filename);
-        return diffInfo != null;
-    }
-
-    protected boolean isChanged(String filename, int line) {
-        DiffInfo diffInfo = this.diffInfo.get(filename);
-        if (diffInfo == null) {
-            return false;
-        }
-        int processed = 0;
-        for (DiffInfo.ContentEntry contentEntry : diffInfo.content) {
-            if (contentEntry.ab != null) {
-                processed += contentEntry.ab.size();
-                if (processed >= line) {
-                    return false;
-                }
-            } else if (contentEntry.b != null) {
-                processed += contentEntry.b.size();
-                if (processed >= line) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    protected abstract void doCheckFilteredOutByCriteria(A a);
-
-    protected void doCheckCount(int expectedFilteredIssuesCount) {
-        // check that amount of filtered issues is equal to expected amount
-        Assert.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
-
-        // get amount of issues that are expected to be filtered out and check it
-        List<Issue> allIssues = report.getIssues();
-        int expectedFilteredOutCount = allIssues.size() - expectedFilteredIssuesCount;
-        Assert.assertEquals(expectedFilteredOutCount, filteredOutIssues.size());
-    }
-
-    protected abstract IssueFilterConfig getFilterConfig();
-
-    protected void setSeverity(IssueFilterConfig config, String severity) {
-        config.setSeverity(severity);
-        Assert.assertEquals(severity, config.getSeverity());
-    }
-
-    protected void setNewOnly(IssueFilterConfig config, Boolean newOnly) {
-        config.setNewIssuesOnly(newOnly);
-        Assert.assertEquals(newOnly, config.isNewIssuesOnly());
-    }
-
-    protected void setChangedOnly(IssueFilterConfig config, Boolean changedOnly) {
-        config.setChangedLinesOnly(changedOnly);
-        Assert.assertEquals(changedOnly, config.isChangedLinesOnly());
-    }
+  protected void setChangedOnly(IssueFilterConfig config, Boolean changedOnly) {
+    config.setChangedLinesOnly(changedOnly);
+    Assert.assertEquals(changedOnly, config.isChangedLinesOnly());
+  }
 }

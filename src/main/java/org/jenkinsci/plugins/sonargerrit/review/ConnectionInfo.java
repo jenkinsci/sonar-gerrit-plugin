@@ -1,20 +1,18 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
 /**
- * Project: Sonar-Gerrit Plugin
- * Author:  Tatiana Didik
- * Created: 28.11.2017 16:55
- * <p>
- * $Id$
+ * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 16:55
+ *
+ * <p>$Id$
  */
 public interface ConnectionInfo {
-    String getServerName();
+  String getServerName();
 
-    String getChangeNumber();
+  String getChangeNumber();
 
-    String getPatchsetNumber();
+  String getPatchsetNumber();
 
-    String getUsername();
+  String getUsername();
 
-    String getPassword();
+  String getPassword();
 }
