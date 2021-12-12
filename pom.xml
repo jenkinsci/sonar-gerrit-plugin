@@ -49,6 +49,11 @@
       <id>adidik</id>
       <name>Aleksey Didik</name>
     </developer>
+    <developer>
+      <id>reda-alaoui</id>
+      <name>Réda Housni Alaoui</name>
+      <email>reda-alaoui@hey.com</email>
+    </developer>
   </developers>
   <scm>
     <connection>scm:git:ssh://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>

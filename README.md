@@ -1,12 +1,6 @@
 ## Sonar Gerrit Plugin
 This plugin allows to transform [SonarQube](http://www.sonarqube.org/) issues to comments in [Gerrit](http://code.google.com/p/gerrit/) review
 
-## Maintainers
-
-Tatiana Didik
-aquarellian@gmail.com
-
-
 ## Wiki
 * [Wiki](https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit)
 * [Mailing Lists](http://jenkins-ci.org/content/mailing-lists)
