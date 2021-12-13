@@ -30,7 +30,7 @@
   </properties>
 
   <name>Sonar Gerrit Plugin</name>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/Sonar+Gerrit</url>
+  <url>https://github.com/jenkinsci/sonar-gerrit-plugin</url>
   <licenses>
     <license>
       <name>MIT License</name>
