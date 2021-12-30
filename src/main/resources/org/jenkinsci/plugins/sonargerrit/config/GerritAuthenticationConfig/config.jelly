@@ -21,6 +21,6 @@
     <f:validateButton
             title="${%jenkins.plugin.settings.gerrit.credentials.test}"
             progress="${%jenkins.plugin.settings.gerrit.credentials.test.progress}"
-            method="testConnection" with="username,password,serverName"/>
+            method="testConnection" with="username,secretPassword,serverName"/>
 
 </j:jelly>
