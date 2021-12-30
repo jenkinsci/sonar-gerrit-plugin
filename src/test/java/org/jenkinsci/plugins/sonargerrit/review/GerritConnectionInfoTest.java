@@ -12,7 +12,7 @@ import org.junit.Test;
  * <p>$Id$
  */
 public class GerritConnectionInfoTest {
-  @Test(expected = NullPointerException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void testNullServerName() {
     Map<String, String> envVars = createEnvVarsMap(null, "1", "1");
     GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);

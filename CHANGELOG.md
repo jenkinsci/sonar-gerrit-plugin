@@ -1,3 +1,10 @@
+# 3.0.0
+
+## New Features
+
+1. Moved to java 8
+1. Jenkins 2.249.3 is now the minimum version 
+
 # 2.4.5
 
 ## Bugs Fixed

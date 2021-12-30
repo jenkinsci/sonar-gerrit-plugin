@@ -2,12 +2,12 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
-import com.google.common.base.MoreObjects;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.jenkinsci.plugins.sonargerrit.config.AuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 
@@ -76,7 +76,7 @@ public class GerritConnectionInfo implements ConnectionInfo {
   private String retrieveServerName(Map<String, String> envVars, GerritTrigger trigger) {
     String serverName = envVars.get(GERRIT_NAME_ENV_VAR_NAME);
     String triggerServerName = trigger != null ? trigger.getServerName() : null;
-    serverName = MoreObjects.firstNonNull(serverName, triggerServerName);
+    serverName = Optional.ofNullable(serverName).orElse(triggerServerName);
     checkServerName(serverName);
     return serverName;
   }

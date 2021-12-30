@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.sonargerrit.config;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
-import hudson.util.Messages;
 import hudson.util.Secret;
 import java.io.IOException;
 import java.util.List;
@@ -103,7 +102,7 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
     @SuppressWarnings(value = "unused")
     public FormValidation doCheckSecretPassword(@QueryParameter Secret value) {
       if (value == null) {
-        return FormValidation.validateRequired(Messages.FormValidation_ValidateRequired());
+        return FormValidation.validateRequired(null);
       }
       return FormValidation.validateRequired(value.getPlainText());
     }
