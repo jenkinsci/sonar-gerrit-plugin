@@ -3,7 +3,8 @@
 ## New Features
 
 1. Moved to java 8
-1. Jenkins 2.249.3 is now the minimum version 
+2. Jenkins 2.249.3 is now the minimum version 
+3. Upgraded gerrit-rest-java-client to 0.9.3
 
 # 2.4.5
 
