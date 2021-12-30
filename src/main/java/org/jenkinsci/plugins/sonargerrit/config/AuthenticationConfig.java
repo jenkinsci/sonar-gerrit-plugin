@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.config;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.Messages;
 import hudson.util.Secret;
 import java.io.IOException;
 import java.util.List;
@@ -84,8 +85,15 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
       return FormValidation.validateRequired(value);
     }
 
+    /** @deprecated Use {@link #doCheckSecretPassword(Secret)} */
+    @Deprecated
+    @SuppressWarnings(value = "unused")
+    public FormValidation doCheckPassword(@QueryParameter String value) {
+      return FormValidation.validateRequired(value);
+    }
+
     /**
-     * Performs on-the-fly validation of the form field 'password'.
+     * Performs on-the-fly validation of the form field 'secretPassword'.
      *
      * @param value This parameter receives the value that the user has typed.
      * @return Indicates the outcome of the validation. This is sent to the browser.
@@ -93,13 +101,16 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
      *     from being saved. It just means that a message will be displayed to the user.
      */
     @SuppressWarnings(value = "unused")
-    public FormValidation doCheckPassword(@QueryParameter String value) {
-      return FormValidation.validateRequired(value);
+    public FormValidation doCheckSecretPassword(@QueryParameter Secret value) {
+      if (value == null) {
+        return FormValidation.validateRequired(Messages.FormValidation_ValidateRequired());
+      }
+      return FormValidation.validateRequired(value.getPlainText());
     }
 
     public abstract FormValidation doTestConnection(
         @QueryParameter("username") final String username,
-        @QueryParameter("password") final String password,
+        @QueryParameter("secretPassword") final Secret password,
         @QueryParameter("serverName") final String serverName)
         throws IOException, ServletException;
 

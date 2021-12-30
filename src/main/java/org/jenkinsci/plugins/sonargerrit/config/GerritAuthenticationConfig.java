@@ -64,11 +64,11 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
 
     public FormValidation doTestConnection(
         @QueryParameter("username") final String username,
-        @QueryParameter("password") final String password,
+        @QueryParameter("secretPassword") final Secret password,
         @QueryParameter("serverName") final String serverName)
         throws IOException, ServletException {
       doCheckUsername(username);
-      doCheckPassword(password);
+      doCheckSecretPassword(password);
 
       IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(serverName);
       if (gerritConfig == null) {
@@ -88,7 +88,7 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
           .doTestRestConnection(
               gerritConfig.getGerritFrontEndUrl(),
               username,
-              password /*, gerritConfig.isUseRestApi()*/);
+              password.getPlainText() /*, gerritConfig.isUseRestApi()*/);
     }
 
     public List<String> getServerNames() {
