@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.config;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -13,17 +14,21 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
 
   /*
    * Gerrit http username if overridden (the original one is in Gerrit Trigger settings)
-   * todo needs to be replaced by Credentials plugin config
    * */
   private String username;
 
   /*
    * Gerrit http password if overridden (the original one is in Gerrit Trigger settings)
-   * todo needs to be replaced by Credentials plugin config
    * */
-  private String password;
+  private Secret password;
 
+  /** @deprecated Use {@link #AuthenticationConfig(String, Secret)} */
+  @Deprecated
   public AuthenticationConfig(String username, String password) {
+    this(username, Secret.fromString(password));
+  }
+
+  public AuthenticationConfig(String username, Secret password) {
     this.username = username;
     this.password = password;
   }
@@ -38,11 +43,27 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
     this.username = username;
   }
 
+  /** @deprecated Use {@link #getSecretPassword()} */
+  @Deprecated
   public String getPassword() {
+    Secret pass = getSecretPassword();
+    if (pass == null) {
+      return null;
+    }
+    return pass.getPlainText();
+  }
+
+  /** @deprecated Use {@link #setSecretPassword(Secret)} */
+  @Deprecated
+  public void setPassword(String password) {
+    setSecretPassword(Secret.fromString(password));
+  }
+
+  public Secret getSecretPassword() {
     return password;
   }
 
-  public void setPassword(String password) {
+  public void setSecretPassword(Secret password) {
     this.password = password;
   }
 

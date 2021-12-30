@@ -140,20 +140,6 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
   }
 
   @Test
-  public void testSetHttpPassword() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = invokeConstructor();
-    String httpPassword = "Test";
-    Assert.assertNull(invokeGetter(p, "authConfig"));
-    invokeSetter(p, "httpPassword", httpPassword);
-    Assert.assertNull(invokeGetter(p, "authConfig"));
-
-    invokeSetter(p, "overrideCredentials", true);
-    //        invokeSetter(p, "httpPassword", httpPassword);
-    Assert.assertNotNull(invokeGetter(p, "authConfig"));
-    Assert.assertEquals(httpPassword, invokeGetter(p, "authConfig", "password"));
-  }
-
-  @Test
   public void testSetPostScore() throws ReflectiveOperationException {
     SonarToGerritPublisher p = invokeConstructor();
     boolean postScore = true;

@@ -275,28 +275,14 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Test
-  public void testPassword() {
-    GerritAuthenticationConfig config = new GerritAuthenticationConfig();
-    Assert.assertNull(config.getUsername());
-    Assert.assertNull(config.getPassword());
-
-    config.setPassword("Test");
-
-    Assert.assertNull(config.getUsername());
-    Assert.assertEquals("Test", config.getPassword());
-  }
-
-  @Test
   public void testAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
     Assert.assertNull(config.getUsername());
     Assert.assertNull(config.getPassword());
 
     config.setUsername("TestUsr");
-    config.setPassword("TestPwd");
 
     Assert.assertEquals("TestUsr", config.getUsername());
-    Assert.assertEquals("TestPwd", config.getPassword());
   }
 
   @Test

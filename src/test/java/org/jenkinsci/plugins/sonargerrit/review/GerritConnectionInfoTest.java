@@ -4,7 +4,6 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigge
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.Assert;
-import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
 import org.junit.Test;
 
 /**
@@ -95,16 +94,6 @@ public class GerritConnectionInfoTest {
     GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
     Assert.assertNull(info.getUsername());
     Assert.assertNull(info.getPassword());
-  }
-
-  @Test
-  public void testAuthConfig() {
-    Map<String, String> envVars = createEnvVarsMap("Test", "1", "1");
-    GerritAuthenticationConfig authenticationConfig =
-        new GerritAuthenticationConfig("tusername", "tpassword");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, authenticationConfig);
-    Assert.assertEquals("tusername", info.getUsername());
-    Assert.assertEquals("tpassword", info.getPassword());
   }
 
   private Map<String, String> createEnvVarsMap(String server, String change, String patchset) {

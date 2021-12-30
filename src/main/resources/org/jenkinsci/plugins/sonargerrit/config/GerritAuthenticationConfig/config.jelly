@@ -6,7 +6,7 @@
         <f:textbox/>
     </f:entry>
     <f:entry title="${%jenkins.plugin.settings.gerrit.credentials.password}"
-             field="password" >
+             field="secretPassword" >
         <f:password/>
     </f:entry>
 

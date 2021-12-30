@@ -1,3 +1,9 @@
+# 2.4.5
+
+## Bugs Fixed
+
+[55](https://github.com/jenkinsci/sonar-gerrit-plugin/issues/55) - A password field is stored in plain text
+
 # 2.3
 
 2 Apr 2018

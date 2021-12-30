@@ -8,6 +8,7 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import hudson.Extension;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import java.io.IOException;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -18,7 +19,13 @@ import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:53 $Id$ */
 public class GerritAuthenticationConfig extends AuthenticationConfig {
+  /** @deprecated Use {@link #GerritAuthenticationConfig(String, Secret)} */
+  @Deprecated
   public GerritAuthenticationConfig(@Nonnull String username, @Nonnull String password) {
+    super(username, password);
+  }
+
+  public GerritAuthenticationConfig(@Nonnull String username, @Nonnull Secret password) {
     super(username, password);
   }
 
@@ -27,10 +34,18 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
     super();
   }
 
+  /** @deprecated Use {@link #setSecretPassword(Secret)} */
+  @Deprecated
   @Override
   @DataBoundSetter
   public void setPassword(@Nonnull String password) {
     super.setPassword(password);
+  }
+
+  @Override
+  @DataBoundSetter
+  public void setSecretPassword(@Nonnull Secret password) {
+    super.setSecretPassword(password);
   }
 
   @Override
