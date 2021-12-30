@@ -286,10 +286,6 @@ sonarToGerrit (
     )
 ```
 
-### Known issues
-
-[JENKINS-43804](https://issues.jenkins.io/browse/JENKINS-43804) - Getting issue details... STATUS  - Overriding Gerrit credentials is unsafe (2.0)
-
 ## Result example
 
 ### Result of plugin work in Gerrit history:
