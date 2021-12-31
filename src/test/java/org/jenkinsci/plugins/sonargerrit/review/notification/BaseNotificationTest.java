@@ -19,21 +19,25 @@ public abstract class BaseNotificationTest extends ReviewResultTest
     Assert.assertEquals(getDefault(), reviewResult.notify);
   }
 
+  @Override
   @Test
   public void testNone() {
     testNotification(NotifyHandling.NONE, NotifyHandling.OWNER);
   }
 
+  @Override
   @Test
   public void testOwner() {
     testNotification(NotifyHandling.OWNER, NotifyHandling.NONE);
   }
 
+  @Override
   @Test
   public void testOwnerReviewers() {
     testNotification(NotifyHandling.OWNER_REVIEWERS, NotifyHandling.NONE);
   }
 
+  @Override
   @Test
   public void testAll() {
     testNotification(NotifyHandling.ALL, NotifyHandling.NONE);

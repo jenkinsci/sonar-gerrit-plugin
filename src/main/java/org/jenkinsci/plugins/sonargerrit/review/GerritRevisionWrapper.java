@@ -39,6 +39,7 @@ public class GerritRevisionWrapper implements RevisionAdapter {
     revision.review(reviewInput);
   }
 
+  @Override
   public Set<String> getChangedFiles() {
     if (!dataLoaded) {
       throw new IllegalStateException(
@@ -47,6 +48,7 @@ public class GerritRevisionWrapper implements RevisionAdapter {
     return changedFiles;
   }
 
+  @Override
   public Map<String, Set<Integer>> getFileToChangedLines() {
     if (!dataLoaded) {
       throw new IllegalStateException(

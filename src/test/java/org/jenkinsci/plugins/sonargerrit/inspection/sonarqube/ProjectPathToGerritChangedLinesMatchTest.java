@@ -37,6 +37,7 @@ public class ProjectPathToGerritChangedLinesMatchTest
     performTest(config, true, true);
   }
 
+  @Override
   protected IssueFilterConfig createFilterConfig() {
     return new IssueFilterConfig(Severity.INFO.toString(), false, true);
   }

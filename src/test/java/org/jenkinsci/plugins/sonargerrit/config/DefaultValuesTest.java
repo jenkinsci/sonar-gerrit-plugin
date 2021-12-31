@@ -32,6 +32,7 @@ public class DefaultValuesTest implements BaseConfigTest {
   public static final String MULTI_TYPE = "multi";
   public static final String BASE_TYPE = "base";
 
+  @Override
   @Test
   public void testFilterConfig() {
     Assert.assertEquals(SEVERITY, IssueFilterConfig.DescriptorImpl.SEVERITY);
@@ -44,6 +45,7 @@ public class DefaultValuesTest implements BaseConfigTest {
     Assert.assertEquals(CHANGED_ONLY, config.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testReviewConfig() {
     Assert.assertEquals(COMMENT, ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
@@ -61,6 +63,7 @@ public class DefaultValuesTest implements BaseConfigTest {
     Assert.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testScoreConfig() {
     Assert.assertEquals(CATEGORY, ScoreConfig.DescriptorImpl.CATEGORY);
@@ -78,6 +81,7 @@ public class DefaultValuesTest implements BaseConfigTest {
     Assert.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testNotificationConfig() {
     Assert.assertEquals(
@@ -96,6 +100,7 @@ public class DefaultValuesTest implements BaseConfigTest {
     Assert.assertEquals(NOTIFICATION_SCORE, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
@@ -103,6 +108,7 @@ public class DefaultValuesTest implements BaseConfigTest {
     Assert.assertNull(config.getPassword());
   }
 
+  @Override
   @Test
   public void testInspectionConfig() {
     Assert.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);

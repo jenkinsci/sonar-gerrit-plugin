@@ -117,6 +117,7 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
     @SuppressWarnings(value = "unused")
     public abstract List<String> getServerNames();
 
+    @Override
     public String getDisplayName() {
       return "AuthenticationConfig";
     }

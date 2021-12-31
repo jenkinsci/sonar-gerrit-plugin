@@ -90,6 +90,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
       return FormValidation.ok();
     }
 
+    @Override
     public String getDisplayName() {
       return "IssueFilterConfig";
     }

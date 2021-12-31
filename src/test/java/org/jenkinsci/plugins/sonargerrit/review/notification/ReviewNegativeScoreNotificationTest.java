@@ -19,10 +19,12 @@ public class ReviewNegativeScoreNotificationTest extends BaseNotificationTest {
         new DummyIssue());
   }
 
+  @Override
   protected NotifyHandling getDefault() {
     return NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE;
   }
 
+  @Override
   protected void testNotification(NotifyHandling handling, NotifyHandling other) {
     publisher.getNotificationConfig().setNoIssuesNotificationRecipient(other.name());
     publisher.getNotificationConfig().setCommentedIssuesNotificationRecipient(other.name());

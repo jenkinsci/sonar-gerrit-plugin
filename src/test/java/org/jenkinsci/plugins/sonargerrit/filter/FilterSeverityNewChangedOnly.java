@@ -108,5 +108,6 @@ public abstract class FilterSeverityNewChangedOnly
     doCheckFilteredOutByCriteria(severityNewChanged);
   }
 
+  @Override
   protected abstract IssueFilterConfig getFilterConfig();
 }

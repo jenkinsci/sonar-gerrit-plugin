@@ -7,6 +7,7 @@ import org.junit.Test;
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 13:34 $Id$ */
 public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritReviewTest {
 
+  @Override
   @Test
   public void testReviewHeader() {
     ReviewInput reviewResult = getReviewResult();
@@ -20,6 +21,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertEquals("No Issues Header", reviewResult.message);
   }
 
+  @Override
   @Test
   public void testReviewComment() {
     ReviewInput reviewResult = getReviewResult();
@@ -33,6 +35,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertEquals(0, reviewResult.comments.size());
   }
 
+  @Override
   @Test
   public void testScore() {
     ReviewInput reviewResult = getReviewResult();
@@ -40,6 +43,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertEquals(1, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testCategory() {
     ReviewInput reviewResult = getReviewResult();
@@ -47,6 +51,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertNotNull(reviewResult.labels.get(CATEGORY));
   }
 
+  @Override
   @Test
   public void testOverrideScore() {
     publisher.getScoreConfig().setNoIssuesScore(2);
@@ -55,6 +60,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertEquals(2, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideCategory() {
     publisher.getScoreConfig().setCategory("Other");
@@ -64,6 +70,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
     Assert.assertEquals(1, reviewResult.labels.get("Other").intValue());
   }
 
+  @Override
   @Test
   public void testOverrideScoreAndCategory() {
     publisher.getScoreConfig().setCategory("Other");

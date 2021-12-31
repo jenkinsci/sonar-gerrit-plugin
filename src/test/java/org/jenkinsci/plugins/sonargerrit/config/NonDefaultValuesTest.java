@@ -11,6 +11,7 @@ import org.junit.Test;
  */
 public class NonDefaultValuesTest implements DetailedConfigTest {
 
+  @Override
   @Test
   public void testSeverity() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -25,6 +26,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(CHANGED_LINES_ONLY, config.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testNewOnly() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -39,6 +41,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(CHANGED_LINES_ONLY, config.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testChangedLinesOnly() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -53,6 +56,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(changed, config.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testFilterConfig() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -73,6 +77,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(changed, config.isChangedLinesOnly());
   }
 
+  @Override
   @Test
   public void testNoIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -86,6 +91,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test
   public void testSomeIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -99,6 +105,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test
   public void testIssuesCommentTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -112,6 +119,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("Test", config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test
   public void testReviewConfig() {
     ReviewConfig config = new ReviewConfig();
@@ -132,6 +140,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("Test3", config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test
   public void testCategory() {
     ScoreConfig config = new ScoreConfig();
@@ -162,6 +171,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SOME_ISSUES_SCORE, config.getIssuesScore());
   }
 
+  @Override
   @Test
   public void testSomeIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
@@ -177,6 +187,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(Integer.valueOf(-2), config.getIssuesScore());
   }
 
+  @Override
   @Test
   public void testScoreConfig() {
     ScoreConfig config = new ScoreConfig();
@@ -197,6 +208,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(Integer.valueOf(-3), config.getIssuesScore());
   }
 
+  @Override
   @Test
   public void testNoIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -212,6 +224,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -227,6 +240,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testNegativeScoreNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -242,6 +256,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("ALL", config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testNotificationConfig() {
     NotificationConfig config = new NotificationConfig();
@@ -274,6 +289,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertNull(config.getPassword());
   }
 
+  @Override
   @Test
   public void testAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
@@ -285,6 +301,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("TestUsr", config.getUsername());
   }
 
+  @Override
   @Test
   public void testSonarUrl() {
     InspectionConfig config = new InspectionConfig();
@@ -294,6 +311,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("Test", config.getServerURL());
   }
 
+  @Override
   @Test
   public void testSonarReportPath() {
     SubJobConfig config = new SubJobConfig();
@@ -303,6 +321,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("Test", config.getSonarReportPath());
   }
 
+  @Override
   @Test
   public void testProjectConfig() {
     SubJobConfig config = new SubJobConfig();
@@ -312,6 +331,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     Assert.assertEquals("Test", config.getProjectPath());
   }
 
+  @Override
   @Test
   public void testInspectionConfig() {
     InspectionConfig config = new InspectionConfig();

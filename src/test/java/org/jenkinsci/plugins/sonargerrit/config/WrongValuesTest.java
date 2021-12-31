@@ -10,6 +10,7 @@ import org.junit.Test;
  * <p>$Id$
  */
 public class WrongValuesTest implements DetailedConfigTest {
+  @Override
   @Test
   public void testSeverity() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -27,6 +28,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     // nothing to check here
   }
 
+  @Override
   @Test
   public void testNoIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -34,6 +36,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
   }
 
+  @Override
   @Test
   public void testSomeIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -41,6 +44,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
   }
 
+  @Override
   @Test
   public void testIssuesCommentTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -48,6 +52,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test
   public void testCategory() {
     ScoreConfig config = new ScoreConfig();
@@ -55,6 +60,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(CATEGORY, config.getCategory());
   }
 
+  @Override
   @Test
   public void testNoIssuesScoreScore() {
     //        ScoreConfig config = new ScoreConfig();
@@ -66,6 +72,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_SCORE, p.getScoreConfig().getNoIssuesScore());
   }
 
+  @Override
   @Test
   public void testSomeIssuesScoreScore() {
     //        ScoreConfig config = new ScoreConfig();
@@ -77,6 +84,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SOME_ISSUES_SCORE, p.getScoreConfig().getIssuesScore());
   }
 
+  @Override
   @Test
   public void testNoIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -84,6 +92,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -91,6 +100,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testNegativeScoreNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -98,6 +108,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test
   public void testSonarUrl() {
     InspectionConfig config = new InspectionConfig();
@@ -105,6 +116,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SONAR_URL, config.getServerURL());
   }
 
+  @Override
   @Test
   public void testSonarReportPath() {
     SubJobConfig config = new SubJobConfig();
@@ -140,6 +152,7 @@ public class WrongValuesTest implements DetailedConfigTest {
     // nope
   }
 
+  @Override
   @Test
   public void testInspectionConfig() {
     InspectionConfig config = new InspectionConfig();
@@ -157,6 +170,7 @@ public class WrongValuesTest implements DetailedConfigTest {
   @Override
   public void testSubJobConfig() {}
 
+  @Override
   @Test
   public void testProjectConfig() {
     SubJobConfig config = new SubJobConfig();

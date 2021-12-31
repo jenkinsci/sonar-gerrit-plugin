@@ -188,6 +188,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
                       getLocalized("jenkins.plugin.error.review.notification.recipient.unknown")));
     }
 
+    @Override
     public String getDisplayName() {
       return "NotificationConfig";
     }

@@ -12,6 +12,7 @@ import org.junit.Test;
  */
 public class NullValuesTest implements DetailedConfigTest {
 
+  @Override
   @Test
   public void testSeverity() {
     IssueFilterConfig config = new IssueFilterConfig();
@@ -19,14 +20,17 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SEVERITY, config.getSeverity());
   }
 
+  @Override
   public void testNewOnly() {
     // boolean doesn't allow null
   }
 
+  @Override
   public void testChangedLinesOnly() {
     // boolean doesn't allow null
   }
 
+  @Override
   @Test
   public void testFilterConfig() {
     ReviewConfig config = new ReviewConfig();
@@ -40,6 +44,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SEVERITY, fconfig.getSeverity());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testNoIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -47,6 +52,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testSomeIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
@@ -61,6 +67,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testReviewConfig() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
@@ -84,6 +91,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testCategory() {
     ScoreConfig config = new ScoreConfig();
@@ -91,6 +99,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(CATEGORY, config.getCategory());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testNoIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
@@ -98,6 +107,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testSomeIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
@@ -105,6 +115,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SOME_ISSUES_SCORE, config.getIssuesScore());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testScoreConfig() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
@@ -121,6 +132,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SOME_ISSUES_SCORE, config.getIssuesScore());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testNoIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -128,6 +140,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -135,6 +148,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testNegativeScoreNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
@@ -142,6 +156,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testNotificationConfig() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
@@ -158,6 +173,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testSonarUrl() {
     InspectionConfig config = new InspectionConfig();
@@ -165,6 +181,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SONAR_URL, config.getServerURL());
   }
 
+  @Override
   @Test
   public void testSonarReportPath() {
     SubJobConfig config = new SubJobConfig();
@@ -173,6 +190,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
   }
 
+  @Override
   @Test // (expected = IllegalArgumentException.class)
   public void testInspectionConfig() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
@@ -191,6 +209,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertFalse(subJobConfig.isAutoMatch());
   }
 
+  @Override
   @Test
   public void testSubJobConfig() {
     InspectionConfig config = new InspectionConfig();
@@ -208,6 +227,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assert.assertFalse(subJobConfig.isAutoMatch());
   }
 
+  @Override
   @Test
   public void testProjectConfig() {
     SubJobConfig config = new SubJobConfig();
@@ -217,5 +237,6 @@ public class NullValuesTest implements DetailedConfigTest {
   }
 
   // @Test
+  @Override
   public void testAuthenticationConfig() {}
 }

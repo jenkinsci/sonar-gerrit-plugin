@@ -62,6 +62,7 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
   @Extension
   public static class DescriptorImpl extends AuthenticationConfig.DescriptorImpl {
 
+    @Override
     public FormValidation doTestConnection(
         @QueryParameter("username") final String username,
         @QueryParameter("secretPassword") final Secret password,
@@ -97,10 +98,12 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
               password.getPlainText() /*, gerritConfig.isUseRestApi()*/);
     }
 
+    @Override
     public List<String> getServerNames() {
       return PluginImpl.getServerNames_();
     }
 
+    @Override
     public String getDisplayName() {
       return "GerritAuthenticationConfig";
     }

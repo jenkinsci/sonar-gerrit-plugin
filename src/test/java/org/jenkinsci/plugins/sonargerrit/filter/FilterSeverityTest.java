@@ -71,5 +71,6 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
     doCheckFilteredOutByCriteria(severity.name());
   }
 
+  @Override
   protected abstract IssueFilterConfig getFilterConfig();
 }

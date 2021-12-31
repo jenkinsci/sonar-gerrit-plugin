@@ -67,6 +67,7 @@ public class ProjectPathToGerritFilenameMatchTest
     performTest(config, false, false, EXTRA_FILENAME_IN_GERRIT);
   }
 
+  @Override
   protected IssueFilterConfig createFilterConfig() {
     return new IssueFilterConfig(Severity.INFO.toString(), false, false);
   }

@@ -88,5 +88,6 @@ public abstract class FilterSeverityAndChangedLinesOnly
     doCheckFilteredOutByCriteria(severityAndChanged);
   }
 
+  @Override
   protected abstract IssueFilterConfig getFilterConfig();
 }

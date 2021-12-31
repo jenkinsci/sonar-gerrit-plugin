@@ -153,6 +153,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
       return FormValidation.validateRequired(value);
     }
 
+    @Override
     public String getDisplayName() {
       return "ReviewConfig";
     }

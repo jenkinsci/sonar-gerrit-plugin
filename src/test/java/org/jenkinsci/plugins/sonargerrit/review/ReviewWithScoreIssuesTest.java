@@ -12,6 +12,7 @@ import org.junit.Test;
  * <p>$Id$
  */
 public class ReviewWithScoreIssuesTest extends ReviewResultTest implements GerritReviewTest {
+  @Override
   @Before
   public void initialize() {
     super.initialize();
@@ -21,6 +22,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
   }
 
   // review settings are same as for ReviewWithNoIssuesTest
+  @Override
   @Test
   public void testReviewHeader() {
     ReviewInput reviewResult = getReviewResult();
@@ -34,6 +36,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
     Assert.assertEquals("No Issues Header", reviewResult.message);
   }
 
+  @Override
   @Test
   public void testReviewComment() {
     ReviewInput reviewResult = getReviewResult();
@@ -49,6 +52,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
 
   // from here its different from ReviewWithNoIssuesTest
 
+  @Override
   @Test
   public void testScore() {
     ReviewInput reviewResult = getReviewResult();
@@ -57,6 +61,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
         -1, reviewResult.labels.get(ScoreConfig.DescriptorImpl.CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideScore() {
     publisher.getScoreConfig().setIssuesScore(-2);
@@ -73,6 +78,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
     Assert.assertEquals(-1, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideCategory() {
     publisher.getScoreConfig().setCategory("Other");

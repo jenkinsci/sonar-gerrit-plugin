@@ -8,6 +8,7 @@ import org.junit.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 17:33 $Id$ */
 public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements GerritReviewTest {
+  @Override
   @Before
   public void initialize() {
     super.initialize();
@@ -22,6 +23,7 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
         new DummyIssue());
   }
 
+  @Override
   @Test
   public void testReviewHeader() {
     ReviewInput reviewResult = getReviewResult();
@@ -35,6 +37,7 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
     Assert.assertEquals("Some Issues Header", reviewResult.message);
   }
 
+  @Override
   @Test
   public void testReviewComment() {
     ReviewInput reviewResult = getReviewResult();
@@ -50,6 +53,7 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
     // todo check text
   }
 
+  @Override
   @Test
   public void testScore() {
     ReviewInput reviewResult = getReviewResult();
@@ -58,6 +62,7 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
         -1, reviewResult.labels.get(ScoreConfig.DescriptorImpl.CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideScore() {
     publisher.getScoreConfig().setIssuesScore(-2);
@@ -74,6 +79,7 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
     Assert.assertEquals(-1, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideCategory() {
     publisher.getScoreConfig().setCategory("Other");

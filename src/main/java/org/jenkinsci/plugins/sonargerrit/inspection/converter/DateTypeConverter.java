@@ -16,11 +16,13 @@ import org.apache.commons.httpclient.util.DateUtil;
 public class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
   private static final Logger LOGGER = Logger.getLogger(DateTypeConverter.class.getName());
   // @Override
+  @Override
   public JsonElement serialize(Date src, Type srcType, JsonSerializationContext context) {
     return new JsonPrimitive(DateUtil.formatDate(src));
   }
 
   // @Override
+  @Override
   public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) {
     String str = json.getAsString();
     try {

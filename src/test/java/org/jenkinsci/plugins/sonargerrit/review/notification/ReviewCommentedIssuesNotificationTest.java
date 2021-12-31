@@ -19,10 +19,12 @@ public class ReviewCommentedIssuesNotificationTest extends BaseNotificationTest 
         new DummyIssue());
   }
 
+  @Override
   protected NotifyHandling getDefault() {
     return NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES;
   }
 
+  @Override
   protected void testNotification(NotifyHandling handling, NotifyHandling other) {
     publisher.getNotificationConfig().setNoIssuesNotificationRecipient(other.name());
     publisher.getNotificationConfig().setCommentedIssuesNotificationRecipient(handling.name());

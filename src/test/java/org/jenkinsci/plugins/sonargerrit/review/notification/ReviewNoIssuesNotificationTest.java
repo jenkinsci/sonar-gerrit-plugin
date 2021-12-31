@@ -11,10 +11,12 @@ import org.junit.Assert;
  * <p>$Id$
  */
 public class ReviewNoIssuesNotificationTest extends BaseNotificationTest {
+  @Override
   protected NotifyHandling getDefault() {
     return NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES;
   }
 
+  @Override
   protected void testNotification(NotifyHandling handling, NotifyHandling other) {
     publisher.getNotificationConfig().setNoIssuesNotificationRecipient(handling.name());
     publisher.getNotificationConfig().setCommentedIssuesNotificationRecipient(other.name());

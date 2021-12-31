@@ -54,6 +54,7 @@ public class SonarConnector implements InspectionReportAdapter {
     report = new InspectionReport(reports);
   }
 
+  @Override
   public Multimap<String, IssueAdapter> getReportData() {
     return report.asMultimap(getIssues());
   }
@@ -62,6 +63,7 @@ public class SonarConnector implements InspectionReportAdapter {
     return report.asMultimap(issues);
   }
 
+  @Override
   public List<IssueAdapter> getIssues() {
     return report.getIssuesList();
   }

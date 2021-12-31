@@ -158,6 +158,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
       return FormValidation.validateRequired(value);
     }
 
+    @Override
     public String getDisplayName() {
       return "ScoreConfig";
     }

@@ -86,5 +86,6 @@ public abstract class FilterSeverityNewOnly extends BaseFilterTest<Pair<String, 
     doCheckFilteredOutByCriteria(severityAndNew);
   }
 
+  @Override
   protected abstract IssueFilterConfig getFilterConfig();
 }

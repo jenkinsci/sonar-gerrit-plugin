@@ -158,6 +158,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
       return FormValidation.ok();
     }
 
+    @Override
     public String getDisplayName() {
       return "InspectionConfig";
     }

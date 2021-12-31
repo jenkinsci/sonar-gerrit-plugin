@@ -74,6 +74,7 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
     public static final String SONAR_REPORT_PATH =
         SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
 
+    @Override
     public String getDisplayName() {
       return "SubJobConfig";
     }

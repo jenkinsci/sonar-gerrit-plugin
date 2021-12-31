@@ -12,6 +12,7 @@ import org.junit.Test;
  */
 public class ReviewWithCommentIssues extends ReviewResultTest implements GerritReviewTest {
 
+  @Override
   @Before
   public void initialize() {
     super.initialize();
@@ -23,6 +24,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
         new DummyIssue());
   }
 
+  @Override
   @Test
   public void testReviewHeader() {
     ReviewInput reviewResult = getReviewResult();
@@ -36,6 +38,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     Assert.assertEquals("Some Issues Header", reviewResult.message);
   }
 
+  @Override
   @Test
   public void testReviewComment() {
     ReviewInput reviewResult = getReviewResult();
@@ -52,6 +55,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
   }
 
   // the rest is same as ReviewWithNoIssuesTest
+  @Override
   @Test
   public void testScore() {
     ReviewInput reviewResult = getReviewResult();
@@ -59,6 +63,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     Assert.assertEquals(1, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testCategory() {
     ReviewInput reviewResult = getReviewResult();
@@ -66,6 +71,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     Assert.assertNotNull(reviewResult.labels.get(CATEGORY));
   }
 
+  @Override
   @Test
   public void testOverrideScore() {
     publisher.getScoreConfig().setNoIssuesScore(2);
@@ -74,6 +80,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     Assert.assertEquals(2, reviewResult.labels.get(CATEGORY).intValue());
   }
 
+  @Override
   @Test
   public void testOverrideCategory() {
     publisher.getScoreConfig().setCategory("Other");
@@ -83,6 +90,7 @@ public class ReviewWithCommentIssues extends ReviewResultTest implements GerritR
     Assert.assertEquals(1, reviewResult.labels.get("Other").intValue());
   }
 
+  @Override
   @Test
   public void testOverrideScoreAndCategory() {
     publisher.getScoreConfig().setCategory("Other");
