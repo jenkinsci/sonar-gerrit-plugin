@@ -27,9 +27,9 @@ public class SonarConnector implements InspectionReportAdapter {
 
   private static final Logger LOGGER = Logger.getLogger(SonarConnector.class.getName());
 
-  private TaskListener listener;
+  private final TaskListener listener;
   private InspectionReport report;
-  private InspectionConfig inspectionConfig;
+  private final InspectionConfig inspectionConfig;
 
   public SonarConnector(TaskListener listener, InspectionConfig inspectionConfig) {
     this.inspectionConfig = inspectionConfig;
@@ -37,7 +37,7 @@ public class SonarConnector implements InspectionReportAdapter {
   }
 
   public void readSonarReports(FilePath workspace) throws IOException, InterruptedException {
-    List<ReportInfo> reports = new ArrayList<ReportInfo>();
+    List<ReportInfo> reports = new ArrayList<>();
     for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
       Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
       if (report == null) { // todo fail all? skip errors?

@@ -27,7 +27,7 @@ public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
   public boolean apply(IssueAdapter issue) {
     String filepath = issue.getFilepath();
     return allowedFilesAndLines == null // no filename restriction or
-        || allowedFilesAndLines.keySet().contains(filepath) // this file was changed and
+        || allowedFilesAndLines.containsKey(filepath) // this file was changed and
             && isLineChanged(
                 issue.getLine(), allowedFilesAndLines.get(filepath)); // this line was changed
   }

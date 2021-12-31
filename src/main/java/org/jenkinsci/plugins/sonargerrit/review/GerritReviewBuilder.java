@@ -22,12 +22,12 @@ import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
  * <p>$Id$
  */
 public class GerritReviewBuilder {
-  private Multimap<String, IssueAdapter> finalIssuesToComment;
-  private Multimap<String, IssueAdapter> finalIssuesToScore;
-  private ReviewConfig reviewConfig;
-  private ScoreConfig scoreConfig;
-  private NotificationConfig notificationConfig;
-  private InspectionConfig inspectionConfig;
+  private final Multimap<String, IssueAdapter> finalIssuesToComment;
+  private final Multimap<String, IssueAdapter> finalIssuesToScore;
+  private final ReviewConfig reviewConfig;
+  private final ScoreConfig scoreConfig;
+  private final NotificationConfig notificationConfig;
+  private final InspectionConfig inspectionConfig;
 
   public GerritReviewBuilder(
       Multimap<String, IssueAdapter> finalIssuesToComment,
@@ -91,8 +91,7 @@ public class GerritReviewBuilder {
   }
 
   private Map<String, List<ReviewInput.CommentInput>> generateComments() {
-    Map<String, List<ReviewInput.CommentInput>> file2comments =
-        new HashMap<String, List<ReviewInput.CommentInput>>();
+    Map<String, List<ReviewInput.CommentInput>> file2comments = new HashMap<>();
     for (String file : finalIssuesToComment.keySet()) {
       Collection<IssueAdapter> issues = finalIssuesToComment.get(file);
       Collection<ReviewInput.CommentInput> comments =

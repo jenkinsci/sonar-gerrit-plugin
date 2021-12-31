@@ -8,9 +8,9 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 public class CustomIssueFormatter
     implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
 
-  private IssueAdapter issue;
-  private String text;
-  private String host;
+  private final IssueAdapter issue;
+  private final String text;
+  private final String host;
 
   public CustomIssueFormatter(IssueAdapter issue, String text, String host) {
     this.issue = issue;
@@ -18,10 +18,6 @@ public class CustomIssueFormatter
     this.host = host;
     this.text = text;
   }
-
-  //    private static String prepareText(String text, String defaultValue) {
-  //        return text != null && !text.trim().isEmpty() ? text.trim() : defaultValue;
-  //    }
 
   @Override
   public String getMessage() {

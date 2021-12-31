@@ -35,10 +35,10 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
   @Nonnull private String issueCommentTemplate = DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
 
   public ReviewConfig(
-      @Nonnull IssueFilterConfig issueFilterConfig,
-      @Nonnull String noIssuesTitleTemplate,
-      @Nonnull String someIssuesTitleTemplate,
-      @Nonnull String issueCommentTemplate) {
+      IssueFilterConfig issueFilterConfig,
+      String noIssuesTitleTemplate,
+      String someIssuesTitleTemplate,
+      String issueCommentTemplate) {
     setIssueFilterConfig(issueFilterConfig);
     setNoIssuesTitleTemplate(noIssuesTitleTemplate);
     setSomeIssuesTitleTemplate(someIssuesTitleTemplate);
@@ -69,7 +69,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
   }
 
   @DataBoundSetter
-  public void setSomeIssuesTitleTemplate(@Nonnull String someIssuesTitleTemplate) {
+  public void setSomeIssuesTitleTemplate(String someIssuesTitleTemplate) {
     this.someIssuesTitleTemplate =
         MoreObjects.firstNonNull(
             Util.fixEmptyAndTrim(someIssuesTitleTemplate),
@@ -82,7 +82,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
   }
 
   @DataBoundSetter
-  public void setNoIssuesTitleTemplate(@Nonnull String noIssuesTitleTemplate) {
+  public void setNoIssuesTitleTemplate(String noIssuesTitleTemplate) {
     this.noIssuesTitleTemplate =
         MoreObjects.firstNonNull(
             Util.fixEmptyAndTrim(noIssuesTitleTemplate), DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE);
@@ -94,7 +94,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
   }
 
   @DataBoundSetter
-  public void setIssueCommentTemplate(@Nonnull String issueCommentTemplate) {
+  public void setIssueCommentTemplate(String issueCommentTemplate) {
     this.issueCommentTemplate =
         MoreObjects.firstNonNull(
             Util.fixEmptyAndTrim(issueCommentTemplate), DescriptorImpl.ISSUE_COMMENT_TEMPLATE);

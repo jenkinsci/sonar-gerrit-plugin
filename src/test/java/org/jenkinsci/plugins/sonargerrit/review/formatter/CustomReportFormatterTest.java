@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
@@ -14,12 +15,13 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 14:13 */
 public class CustomReportFormatterTest {
-  private static String SUCCESS_TEXT = "SonarQube violations have not been found.";
-  private static String FAIL_TEXT =
+  private static final String SUCCESS_TEXT = "SonarQube violations have not been found.";
+  private static final String FAIL_TEXT =
       "<total_count> SonarQube violations have been found.\n"
           + "Info: <info_count>\n"
           + "Minor: <minor_count>\n"
@@ -31,7 +33,7 @@ public class CustomReportFormatterTest {
           + "Critical or harder: <min_critical_count>";
 
   @Test
-  public void testSuccess() throws IOException, InterruptedException, URISyntaxException {
+  public void testSuccess() {
     List<IssueAdapter> i = new ArrayList<>();
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter =
@@ -57,8 +59,9 @@ public class CustomReportFormatterTest {
     Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
-  // @Test
-  public void testSuccessEmpty() throws IOException, InterruptedException, URISyntaxException {
+  @Ignore
+  @Test
+  public void testSuccessEmpty() {
     List<IssueAdapter> i = new ArrayList<>();
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
@@ -67,7 +70,8 @@ public class CustomReportFormatterTest {
     Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
-  // @Test
+  @Ignore
+  @Test
   public void testFailEmpty() throws IOException, InterruptedException, URISyntaxException {
     List<IssueAdapter> i = getIssues();
     String expectedResult = "19 SonarQube violations have been found.";
@@ -81,7 +85,7 @@ public class CustomReportFormatterTest {
       throws URISyntaxException, IOException, InterruptedException {
     URL url = getClass().getClassLoader().getResource("filter.json");
 
-    File path = new File(url.toURI());
+    File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
     Report rep = new SonarReportBuilder().fromJson(json);

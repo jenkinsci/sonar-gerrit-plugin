@@ -1,12 +1,35 @@
 package org.jenkinsci.plugins.sonargerrit;
 
 import com.google.common.collect.ListMultimap;
-import com.google.gerrit.extensions.api.changes.*;
+import com.google.gerrit.extensions.api.changes.ChangeApi;
+import com.google.gerrit.extensions.api.changes.CherryPickInput;
+import com.google.gerrit.extensions.api.changes.CommentApi;
+import com.google.gerrit.extensions.api.changes.DraftApi;
+import com.google.gerrit.extensions.api.changes.DraftInput;
+import com.google.gerrit.extensions.api.changes.FileApi;
+import com.google.gerrit.extensions.api.changes.RebaseInput;
+import com.google.gerrit.extensions.api.changes.RelatedChangesInfo;
+import com.google.gerrit.extensions.api.changes.ReviewInput;
+import com.google.gerrit.extensions.api.changes.ReviewResult;
+import com.google.gerrit.extensions.api.changes.RevisionApi;
+import com.google.gerrit.extensions.api.changes.RevisionReviewerApi;
+import com.google.gerrit.extensions.api.changes.RobotCommentApi;
+import com.google.gerrit.extensions.api.changes.SubmitInput;
 import com.google.gerrit.extensions.client.ArchiveFormat;
 import com.google.gerrit.extensions.client.SubmitType;
-import com.google.gerrit.extensions.common.*;
+import com.google.gerrit.extensions.common.ActionInfo;
+import com.google.gerrit.extensions.common.ApprovalInfo;
+import com.google.gerrit.extensions.common.ChangeInfo;
+import com.google.gerrit.extensions.common.CommentInfo;
+import com.google.gerrit.extensions.common.CommitInfo;
+import com.google.gerrit.extensions.common.DiffInfo;
+import com.google.gerrit.extensions.common.EditInfo;
+import com.google.gerrit.extensions.common.FileInfo;
+import com.google.gerrit.extensions.common.MergeableInfo;
+import com.google.gerrit.extensions.common.RobotCommentInfo;
+import com.google.gerrit.extensions.common.TestSubmitRuleInfo;
+import com.google.gerrit.extensions.common.TestSubmitRuleInput;
 import com.google.gerrit.extensions.restapi.BinaryResult;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,44 +53,44 @@ public class DummyRevisionApi implements RevisionApi {
   }
 
   @Override
-  public CommitInfo commit(boolean addLinks) throws RestApiException {
+  public CommitInfo commit(boolean addLinks) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   private FileApi getFileApi(final String path) {
     return new FileApi() {
       @Override
-      public BinaryResult content() throws RestApiException {
+      public BinaryResult content() {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
 
       @Override
-      public DiffInfo diff() throws RestApiException {
+      public DiffInfo diff() {
         return generateDiffInfoByPath(path);
       }
 
       @Override
-      public DiffInfo diff(String base) throws RestApiException {
+      public DiffInfo diff(String base) {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
 
       @Override
-      public DiffInfo diff(int parent) throws RestApiException {
+      public DiffInfo diff(int parent) {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
 
       @Override
-      public DiffRequest diffRequest() throws RestApiException {
+      public DiffRequest diffRequest() {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
 
       @Override
-      public void setReviewed(boolean reviewed) throws RestApiException {
+      public void setReviewed(boolean reviewed) {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
 
       @Override
-      public BlameRequest blameRequest() throws RestApiException {
+      public BlameRequest blameRequest() {
         throw new UnsupportedOperationException("This is a dummy test class");
       }
     };
@@ -75,7 +98,7 @@ public class DummyRevisionApi implements RevisionApi {
 
   protected DiffInfo generateDiffInfoByPath(String path) {
     DiffInfo info = new DiffInfo();
-    info.content = new ArrayList<DiffInfo.ContentEntry>();
+    info.content = new ArrayList<>();
 
     List<Integer> lines = path2changedValues.get(path);
     if (lines != null) { // if file had been affected by change
@@ -92,14 +115,14 @@ public class DummyRevisionApi implements RevisionApi {
       String v = ((Integer) i).toString();
       if (changed) {
         if (entry.a == null || entry.b == null) {
-          entry.a = new ArrayList<String>();
-          entry.b = new ArrayList<String>();
+          entry.a = new ArrayList<>();
+          entry.b = new ArrayList<>();
         }
         entry.a.add(v + v);
         entry.b.add(v + v + v);
       } else {
         if (entry.ab == null) {
-          entry.ab = new ArrayList<String>();
+          entry.ab = new ArrayList<>();
         }
         entry.ab.add(v);
       }
@@ -108,57 +131,57 @@ public class DummyRevisionApi implements RevisionApi {
   }
 
   @Override
-  public void delete() throws RestApiException {
+  public void delete() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public String description() throws RestApiException {
+  public String description() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public void description(String description) throws RestApiException {
+  public void description(String description) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ReviewResult review(ReviewInput in) throws RestApiException {
+  public ReviewResult review(ReviewInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public void submit() throws RestApiException {
+  public void submit() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public void submit(SubmitInput in) throws RestApiException {
+  public void submit(SubmitInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public void publish() throws RestApiException {
+  public void publish() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ChangeApi cherryPick(CherryPickInput in) throws RestApiException {
+  public ChangeApi cherryPick(CherryPickInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ChangeInfo cherryPickAsInfo(CherryPickInput in) throws RestApiException {
+  public ChangeInfo cherryPickAsInfo(CherryPickInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ChangeApi rebase() throws RestApiException {
+  public ChangeApi rebase() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ChangeApi rebase(RebaseInput in) throws RestApiException {
+  public ChangeApi rebase(RebaseInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
@@ -168,172 +191,172 @@ public class DummyRevisionApi implements RevisionApi {
   }
 
   @Override
-  public RevisionReviewerApi reviewer(String id) throws RestApiException {
+  public RevisionReviewerApi reviewer(String id) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public void setReviewed(String path, boolean reviewed) throws RestApiException {
+  public void setReviewed(String path, boolean reviewed) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Set<String> reviewed() throws RestApiException {
+  public Set<String> reviewed() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, FileInfo> files() throws RestApiException {
+  public Map<String, FileInfo> files() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, FileInfo> files(String base) throws RestApiException {
+  public Map<String, FileInfo> files(String base) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public MergeableInfo mergeable() throws RestApiException {
+  public MergeableInfo mergeable() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public MergeableInfo mergeableOtherBranches() throws RestApiException {
+  public MergeableInfo mergeableOtherBranches() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, List<CommentInfo>> comments() throws RestApiException {
+  public Map<String, List<CommentInfo>> comments() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, List<CommentInfo>> drafts() throws RestApiException {
+  public Map<String, List<CommentInfo>> drafts() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public DraftApi createDraft(DraftInput in) throws RestApiException {
+  public DraftApi createDraft(DraftInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public DraftApi draft(String id) throws RestApiException {
+  public DraftApi draft(String id) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public CommentApi comment(String id) throws RestApiException {
+  public CommentApi comment(String id) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, ActionInfo> actions() throws RestApiException {
+  public Map<String, ActionInfo> actions() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public List<CommentInfo> commentsAsList() throws RestApiException {
+  public List<CommentInfo> commentsAsList() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public List<CommentInfo> draftsAsList() throws RestApiException {
+  public List<CommentInfo> draftsAsList() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, FileInfo> files(int parentNum) throws RestApiException {
+  public Map<String, FileInfo> files(int parentNum) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public List<String> queryFiles(String query) throws RestApiException {
+  public List<String> queryFiles(String query) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public MergeListRequest getMergeList() throws RestApiException {
+  public MergeListRequest getMergeList() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public RelatedChangesInfo related() throws RestApiException {
+  public RelatedChangesInfo related() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public ListMultimap<String, ApprovalInfo> votes() throws RestApiException {
+  public ListMultimap<String, ApprovalInfo> votes() {
     return null;
   }
 
   @Override
-  public BinaryResult getArchive(ArchiveFormat format) throws RestApiException {
+  public BinaryResult getArchive(ArchiveFormat format) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public BinaryResult patch() throws RestApiException {
+  public BinaryResult patch() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public BinaryResult patch(String path) throws RestApiException {
+  public BinaryResult patch(String path) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public RobotCommentApi robotComment(String id) throws RestApiException {
+  public RobotCommentApi robotComment(String id) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public String etag() throws RestApiException {
+  public String etag() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, List<RobotCommentInfo>> robotComments() throws RestApiException {
+  public Map<String, List<RobotCommentInfo>> robotComments() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public List<RobotCommentInfo> robotCommentsAsList() throws RestApiException {
+  public List<RobotCommentInfo> robotCommentsAsList() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public EditInfo applyFix(String fixId) throws RestApiException {
+  public EditInfo applyFix(String fixId) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public Map<String, DiffInfo> getFixPreview(String fixId) throws RestApiException {
+  public Map<String, DiffInfo> getFixPreview(String fixId) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public BinaryResult submitPreview() throws RestApiException {
+  public BinaryResult submitPreview() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public BinaryResult submitPreview(String format) throws RestApiException {
+  public BinaryResult submitPreview(String format) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public SubmitType submitType() throws RestApiException {
+  public SubmitType submitType() {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public SubmitType testSubmitType(TestSubmitRuleInput in) throws RestApiException {
+  public SubmitType testSubmitType(TestSubmitRuleInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 
   @Override
-  public TestSubmitRuleInfo testSubmitRule(TestSubmitRuleInput in) throws RestApiException {
+  public TestSubmitRuleInfo testSubmitRule(TestSubmitRuleInput in) {
     throw new UnsupportedOperationException("This is a dummy test class");
   }
 }

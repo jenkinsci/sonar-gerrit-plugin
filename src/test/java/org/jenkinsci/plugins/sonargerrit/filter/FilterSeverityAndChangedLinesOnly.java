@@ -58,7 +58,7 @@ public abstract class FilterSeverityAndChangedLinesOnly
     super.resetFilter();
     String severity = IssueFilterConfig.DescriptorImpl.SEVERITY;
     Boolean changedOnly = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
-    setFilter(new Pair<String, Boolean>(severity, changedOnly));
+    setFilter(new Pair<>(severity, changedOnly));
   }
 
   @Override
@@ -78,8 +78,7 @@ public abstract class FilterSeverityAndChangedLinesOnly
 
   private void doCheckSeverityAndChanged(
       Severity severity, boolean changedLinesOnly, int expectedCount) {
-    Pair<String, Boolean> severityAndChanged =
-        new Pair<String, Boolean>(severity.name(), changedLinesOnly);
+    Pair<String, Boolean> severityAndChanged = new Pair<>(severity.name(), changedLinesOnly);
     setFilter(severityAndChanged);
     doFilterIssues(getFilterConfig());
 

@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import org.jenkinsci.plugins.sonargerrit.filter.util.DummyRevision;
 import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
@@ -25,7 +26,7 @@ public class ReportBasedTest {
       throws IOException, InterruptedException, URISyntaxException {
     URL url = getClass().getClassLoader().getResource(file);
 
-    File path = new File(url.toURI());
+    File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
     return new SonarReportBuilder().fromJson(json);
@@ -35,7 +36,7 @@ public class ReportBasedTest {
       throws IOException, InterruptedException, URISyntaxException {
     URL url = getClass().getClassLoader().getResource(file);
 
-    File path = new File(url.toURI());
+    File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
 

@@ -74,7 +74,7 @@ public abstract class FilterSeverityNewChangedOnly
     String severity = IssueFilterConfig.DescriptorImpl.SEVERITY;
     Boolean newOnly = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
     Boolean changedOnly = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
-    setFilter(new Triple<String, Boolean, Boolean>(severity, newOnly, changedOnly));
+    setFilter(new Triple<>(severity, newOnly, changedOnly));
   }
 
   @Override
@@ -97,7 +97,7 @@ public abstract class FilterSeverityNewChangedOnly
   private void doCheckSeverityNewAndChanged(
       Severity severity, boolean newOnly, boolean changedLinesOnly, int expectedCount) {
     Triple<String, Boolean, Boolean> severityNewChanged =
-        new Triple<String, Boolean, Boolean>(severity.name(), newOnly, changedLinesOnly);
+        new Triple<>(severity.name(), newOnly, changedLinesOnly);
     setFilter(severityNewChanged);
     doFilterIssues(getFilterConfig());
 

@@ -6,11 +6,15 @@ package org.jenkinsci.plugins.sonargerrit.review.notification;
  * <p>$Id$
  */
 public interface GerritReviewNotificationTest {
+  @SuppressWarnings(value = "unused")
   void testNone();
 
+  @SuppressWarnings(value = "unused")
   void testOwner();
 
+  @SuppressWarnings(value = "unused")
   void testOwnerReviewers();
 
+  @SuppressWarnings(value = "unused")
   void testAll();
 }

@@ -24,7 +24,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
   private SubJobConfig baseConfig;
 
-  @Nonnull private Collection<SubJobConfig> subJobConfigs;
+  @Nonnull private Collection<SubJobConfig> subJobConfigs = new LinkedList<>();
 
   private String type;
 
@@ -58,7 +58,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
   }
 
   @DataBoundSetter
-  public void setServerURL(@Nonnull String serverURL) {
+  public void setServerURL(String serverURL) {
     this.serverURL =
         MoreObjects.firstNonNull(Util.fixEmptyAndTrim(serverURL), DescriptorImpl.SONAR_URL);
   }

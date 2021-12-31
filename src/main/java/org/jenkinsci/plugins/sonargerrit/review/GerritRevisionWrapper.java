@@ -19,7 +19,7 @@ import java.util.Set;
  * <p>$Id$
  */
 public class GerritRevisionWrapper implements RevisionAdapter {
-  private RevisionApi revision;
+  private final RevisionApi revision;
   protected Set<String> changedFiles;
   protected boolean dataLoaded;
   private Map<String, Set<Integer>> file2changedLines;

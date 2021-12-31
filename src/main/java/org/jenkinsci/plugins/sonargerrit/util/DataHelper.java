@@ -12,7 +12,7 @@ import java.net.URL;
 public final class DataHelper {
   private DataHelper() {}
 
-  public static <T extends Enum> String checkEnumValueCorrect(Class<T> clazz, String value) {
+  public static <T extends Enum<T>> String checkEnumValueCorrect(Class<T> clazz, String value) {
     if (Util.fixEmptyAndTrim(value) == null) {
       return null;
     }

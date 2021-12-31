@@ -10,23 +10,16 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:17 */
 public class CustomReportFormatter implements TagFormatter<CustomReportFormatter.Tag> {
 
-  private String successMessage;
-  private String failMessage;
+  private final String successMessage;
+  private final String failMessage;
 
-  private Iterable<IssueAdapter> issues;
+  private final Iterable<IssueAdapter> issues;
 
   public CustomReportFormatter(
       Iterable<IssueAdapter> issues, String failMessage, String successMessage) {
     this.issues = issues;
     this.failMessage = failMessage;
     this.successMessage = successMessage;
-    //        this.failMessage = prepareText(failMessage, DefaultPluginSettings.SOME_ISSUES_TEXT);
-    //        this.successMessage = prepareText(successMessage,
-    // DefaultPluginSettings.NO_ISSUES_TEXT);
-  }
-
-  private static String prepareText(String text, String defaultValue) {
-    return text != null && !text.trim().isEmpty() ? text.trim() : defaultValue;
   }
 
   @Override

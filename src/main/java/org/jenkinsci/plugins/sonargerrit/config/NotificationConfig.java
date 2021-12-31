@@ -8,6 +8,7 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
@@ -40,9 +41,9 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
       DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE.name();
 
   public NotificationConfig(
-      @Nonnull String noIssuesNotificationRecipient,
-      @Nonnull String commentedIssuesNotificationRecipient,
-      @Nonnull String negativeScoreNotificationRecipient) {
+      String noIssuesNotificationRecipient,
+      String commentedIssuesNotificationRecipient,
+      String negativeScoreNotificationRecipient) {
     setNoIssuesNotificationRecipient(noIssuesNotificationRecipient);
     setCommentedIssuesNotificationRecipient(commentedIssuesNotificationRecipient);
     setNegativeScoreNotificationRecipient(negativeScoreNotificationRecipient);
@@ -72,7 +73,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
   }
 
   @DataBoundSetter
-  public void setNoIssuesNotificationRecipient(@Nonnull String noIssuesNotificationRecipient) {
+  public void setNoIssuesNotificationRecipient(String noIssuesNotificationRecipient) {
     noIssuesNotificationRecipient =
         DataHelper.checkEnumValueCorrect(NotifyHandling.class, noIssuesNotificationRecipient);
     this.noIssuesNotificationRecipient =
@@ -86,8 +87,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
   }
 
   @DataBoundSetter
-  public void setCommentedIssuesNotificationRecipient(
-      @Nonnull String commentedIssuesNotificationRecipient) {
+  public void setCommentedIssuesNotificationRecipient(String commentedIssuesNotificationRecipient) {
     commentedIssuesNotificationRecipient =
         DataHelper.checkEnumValueCorrect(
             NotifyHandling.class, commentedIssuesNotificationRecipient);
@@ -103,8 +103,7 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
   }
 
   @DataBoundSetter
-  public void setNegativeScoreNotificationRecipient(
-      @Nonnull String negativeScoreNotificationRecipient) {
+  public void setNegativeScoreNotificationRecipient(String negativeScoreNotificationRecipient) {
     negativeScoreNotificationRecipient =
         DataHelper.checkEnumValueCorrect(NotifyHandling.class, negativeScoreNotificationRecipient);
     this.negativeScoreNotificationRecipient =
@@ -175,11 +174,18 @@ public class NotificationConfig extends AbstractDescribableImpl<NotificationConf
     }
 
     private FormValidation checkNotificationType(@QueryParameter String value) {
-      if (value == null || NotifyHandling.valueOf(value) == null) {
+      if (value == null) {
         return FormValidation.error(
             getLocalized("jenkins.plugin.error.review.notification.recipient.unknown"));
       }
-      return FormValidation.ok();
+      return Stream.of(NotifyHandling.values())
+          .filter(handling -> value.equals(handling.name()))
+          .findFirst()
+          .map(handling -> FormValidation.ok())
+          .orElseGet(
+              () ->
+                  FormValidation.error(
+                      getLocalized("jenkins.plugin.error.review.notification.recipient.unknown")));
     }
 
     public String getDisplayName() {

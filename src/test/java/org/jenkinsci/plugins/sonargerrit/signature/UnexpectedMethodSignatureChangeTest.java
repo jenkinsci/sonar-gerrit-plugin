@@ -31,7 +31,7 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     Object config1 = invokeConstructor(configClassName, configParamClasses, config1Params);
     Object config2 = invokeConstructor(configClassName, configParamClasses, config2Params);
     Object config3 = invokeConstructor(configClassName, configParamClasses, config3Params);
-    Collection configs = Arrays.asList(config2, config3);
+    Collection<Object> configs = Arrays.asList(config2, config3);
 
     String className = "org.jenkinsci.plugins.sonargerrit.config.InspectionConfig";
     String[] paramClasses = {};
@@ -163,12 +163,6 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     Object[] params = {"BLOCKER", true, true};
 
     Object c1 = invokeConstructor(className, paramClasses, params);
-    //        Assert.assertNotSame(invokeGetter(c1, "severity"), invokeGetter(p, "scoreConfig",
-    // "issueFilterConfig", "severity"));
-    //        Assert.assertNotSame(invokeGetter(c1, "newIssuesOnly"), invokeGetter(p, "scoreConfig",
-    // "issueFilterConfig", "newIssuesOnly"));
-    //        Assert.assertNotSame(invokeGetter(c1, "changedLinesOnly"), invokeGetter(p,
-    // "scoreConfig", "issueFilterConfig", "changedLinesOnly"));
 
     String className2 = "org.jenkinsci.plugins.sonargerrit.config.ScoreConfig";
 
@@ -178,12 +172,6 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     Object c2 = invokeConstructor(className2, paramClasses2, params2);
 
     Assert.assertNull(invokeGetter(p, "scoreConfig"));
-    //        Assert.assertNotSame(invokeGetter(c2, "category"), invokeGetter(p, "scoreConfig",
-    // "category"));
-    //        Assert.assertNotSame(invokeGetter(c2, "noIssuesScore"), invokeGetter(p, "scoreConfig",
-    // "noIssuesScore"));
-    //        Assert.assertNotSame(invokeGetter(c2, "issuesScore"), invokeGetter(p, "scoreConfig",
-    // "issuesScore"));
 
     invokeSetter(p, "scoreConfig", c2);
     Assert.assertEquals(

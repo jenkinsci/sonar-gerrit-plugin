@@ -9,9 +9,9 @@ public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
 
   private String filepath;
 
-  private ComponentPathBuilder pathBuilder;
+  private final ComponentPathBuilder pathBuilder;
 
-  private SubJobConfig config;
+  private final SubJobConfig config;
 
   public SonarQubeIssueAdapter(Issue issue, ComponentPathBuilder pathBuilder, SubJobConfig config) {
     super(issue);

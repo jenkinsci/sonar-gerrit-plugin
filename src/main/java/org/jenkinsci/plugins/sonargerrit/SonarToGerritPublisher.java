@@ -57,7 +57,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
   private GerritAuthenticationConfig authConfig = null;
 
-  private BackCompatibilityHelper backCompatibilityHelper = new BackCompatibilityHelper(this);
+  private final BackCompatibilityHelper backCompatibilityHelper = new BackCompatibilityHelper(this);
 
   @DataBoundConstructor
   public SonarToGerritPublisher() {}
@@ -329,18 +329,18 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
   }
 
   @DataBoundSetter
-  public void setInspectionConfig(@Nonnull InspectionConfig inspectionConfig) {
+  public void setInspectionConfig(InspectionConfig inspectionConfig) {
     this.inspectionConfig = MoreObjects.firstNonNull(inspectionConfig, new InspectionConfig());
   }
 
   @DataBoundSetter
-  public void setNotificationConfig(@Nonnull NotificationConfig notificationConfig) {
+  public void setNotificationConfig(NotificationConfig notificationConfig) {
     this.notificationConfig =
         MoreObjects.firstNonNull(notificationConfig, new NotificationConfig());
   }
 
   @DataBoundSetter
-  public void setReviewConfig(@Nonnull ReviewConfig reviewConfig) {
+  public void setReviewConfig(ReviewConfig reviewConfig) {
     this.reviewConfig = MoreObjects.firstNonNull(reviewConfig, new ReviewConfig());
   }
 

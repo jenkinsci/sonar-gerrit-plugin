@@ -39,25 +39,22 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
   @Test
   public void testSetChangedLinesOnly() throws ReflectiveOperationException {
     SonarToGerritPublisher p = invokeConstructor();
-    boolean changedLinesOnly = true;
     Assert.assertNotSame(
-        changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        true, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
     Assert.assertNull(invokeGetter(p, "scoreConfig")); //
-    invokeSetter(p, "changedLinesOnly", changedLinesOnly);
+    invokeSetter(p, "changedLinesOnly", true);
     Assert.assertEquals(
-        changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        true, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
     Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
-    changedLinesOnly = false;
     Assert.assertNotSame(
-        changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        false, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
     invokeSetter(p, "postScore", true);
-    invokeSetter(p, "changedLinesOnly", changedLinesOnly);
+    invokeSetter(p, "changedLinesOnly", false);
     Assert.assertEquals(
-        changedLinesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
+        false, invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
     Assert.assertEquals(
-        changedLinesOnly,
-        invokeGetter(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly")); //
+        false, invokeGetter(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly")); //
   }
 
   @Test
@@ -65,22 +62,22 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
     SonarToGerritPublisher p = invokeConstructor();
     boolean newIssuesOnly = true;
     Assert.assertNotSame(
-        newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        true, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Assert.assertNull(invokeGetter(p, "scoreConfig")); //
-    invokeSetter(p, "newIssuesOnly", newIssuesOnly);
+    invokeSetter(p, "newIssuesOnly", true);
     Assert.assertEquals(
-        newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        true, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Assert.assertNull(invokeGetter(p, "scoreConfig"));
 
     newIssuesOnly = false;
     Assert.assertNotSame(
-        newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        false, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     invokeSetter(p, "postScore", true);
-    invokeSetter(p, "newIssuesOnly", newIssuesOnly);
+    invokeSetter(p, "newIssuesOnly", false);
     Assert.assertEquals(
-        newIssuesOnly, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
+        false, invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Assert.assertEquals(
-        newIssuesOnly, invokeGetter(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly")); //
+        false, invokeGetter(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly")); //
   }
 
   @Test
@@ -284,7 +281,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
         invokeGetter(c, "sonarReportPath"),
         invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
 
-    List value = new LinkedList<>();
+    List<Object> value = new LinkedList<>();
     value.add(c);
     //        next string doesn't work because value type is LinkedList, but setter parameter type
     // is List.
@@ -326,7 +323,7 @@ public class BackCompatibilityConfigurationTest extends ConfigurationUpdateTest 
   private Object invokeDeprecatedGetter(Object obj, boolean isBool, String field)
       throws ReflectiveOperationException {
     try {
-      Object val = super.invokeGetter(obj, field);
+      super.invokeGetter(obj, field);
     } catch (NoSuchFieldException ex) {
       // that's normal: we are testing back compatibility, so there should no field be left
 

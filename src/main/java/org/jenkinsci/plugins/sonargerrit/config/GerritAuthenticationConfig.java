@@ -67,8 +67,14 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
         @QueryParameter("secretPassword") final Secret password,
         @QueryParameter("serverName") final String serverName)
         throws IOException, ServletException {
-      doCheckUsername(username);
-      doCheckSecretPassword(password);
+      FormValidation usernameValidation = doCheckUsername(username);
+      if (usernameValidation.kind == FormValidation.Kind.ERROR) {
+        return usernameValidation;
+      }
+      FormValidation passwordValidation = doCheckSecretPassword(password);
+      if (passwordValidation.kind == FormValidation.Kind.ERROR) {
+        return passwordValidation;
+      }
 
       IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(serverName);
       if (gerritConfig == null) {

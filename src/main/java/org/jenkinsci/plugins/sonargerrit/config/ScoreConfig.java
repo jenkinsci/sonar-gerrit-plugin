@@ -72,7 +72,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
   }
 
   @DataBoundSetter
-  public void setNoIssuesScore(@Nonnull Integer noIssuesScore) {
+  public void setNoIssuesScore(Integer noIssuesScore) {
     this.noIssuesScore = MoreObjects.firstNonNull(noIssuesScore, DescriptorImpl.NO_ISSUES_SCORE);
   }
 
@@ -82,7 +82,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
   }
 
   @DataBoundSetter
-  public void setIssuesScore(@Nonnull Integer issuesScore) {
+  public void setIssuesScore(Integer issuesScore) {
     this.issuesScore = MoreObjects.firstNonNull(issuesScore, DescriptorImpl.SOME_ISSUES_SCORE);
   }
 
@@ -92,7 +92,7 @@ public class ScoreConfig extends AbstractDescribableImpl<ScoreConfig> {
   }
 
   @DataBoundSetter
-  public void setCategory(@Nonnull String category) {
+  public void setCategory(String category) {
     this.category =
         MoreObjects.firstNonNull(Util.fixEmptyAndTrim(category), DescriptorImpl.CATEGORY);
   }

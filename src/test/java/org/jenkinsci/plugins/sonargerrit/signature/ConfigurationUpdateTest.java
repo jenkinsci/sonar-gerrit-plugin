@@ -42,7 +42,7 @@ public class ConfigurationUpdateTest {
       wm.setAccessible(true);
       res = wm.get(object);
       if (res instanceof Collection) {
-        res = ((Collection) res).toArray()[0];
+        res = ((Collection<?>) res).toArray()[0];
       }
       object = res;
     }
@@ -92,7 +92,7 @@ public class ConfigurationUpdateTest {
 
   protected Object invokeConstructor(String className, String[] paramClasses, Object[] params)
       throws ReflectiveOperationException {
-    Class[] classes = new Class[paramClasses.length];
+    Class<?>[] classes = new Class[paramClasses.length];
     for (int i = 0; i < paramClasses.length; i++) {
       String paramClass = paramClasses[i];
       if (paramClass.contains(".")) {
@@ -104,7 +104,7 @@ public class ConfigurationUpdateTest {
       }
     }
 
-    Constructor c = Class.forName(className).getConstructor(classes);
+    Constructor<?> c = Class.forName(className).getConstructor(classes);
     // Assert.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
     return c.newInstance(params);
   }
@@ -114,7 +114,7 @@ public class ConfigurationUpdateTest {
       throws ReflectiveOperationException {
     Class<?> aClass = obj.getClass();
     Method declaredMethod = aClass.getDeclaredMethod(methodName);
-    for (Class a : annotations) {
+    for (Class<? extends Annotation> a : annotations) {
       Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
     }
     return declaredMethod.invoke(obj);
@@ -124,22 +124,21 @@ public class ConfigurationUpdateTest {
       Object obj, String methodName, Object parameter, Class<? extends Annotation>... annotations)
       throws ReflectiveOperationException {
     Method declaredMethod = getDeclaredMethod(obj.getClass(), methodName, parameter.getClass());
-    for (Class a : annotations) {
+    for (Class<? extends Annotation> a : annotations) {
       Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
     }
     return declaredMethod.invoke(obj, parameter);
   }
 
-  private Method getDeclaredMethod(Class aClass, String methodName, Class paramClass)
-      throws NoSuchMethodException {
+  private Method getDeclaredMethod(Class<?> aClass, String methodName, Class<?> paramClass) {
     Method declaredMethod = tryGetDeclaredMethod(aClass, methodName, paramClass);
     if (declaredMethod == null) {
-      Class superclass = paramClass.getSuperclass();
+      Class<?> superclass = paramClass.getSuperclass();
       if (superclass != null) {
         declaredMethod = getDeclaredMethod(aClass, methodName, superclass);
       }
       if (declaredMethod == null) {
-        for (Class anInterface : paramClass.getInterfaces()) {
+        for (Class<?> anInterface : paramClass.getInterfaces()) {
           declaredMethod = getDeclaredMethod(aClass, methodName, anInterface);
           if (declaredMethod != null) {
             return declaredMethod;
@@ -150,7 +149,7 @@ public class ConfigurationUpdateTest {
     return declaredMethod;
   }
 
-  private Method tryGetDeclaredMethod(Class aClass, String methodName, Class paramClass) {
+  private Method tryGetDeclaredMethod(Class<?> aClass, String methodName, Class<?> paramClass) {
     try {
       return aClass.getDeclaredMethod(methodName, paramClass);
     } catch (NoSuchMethodException e) {

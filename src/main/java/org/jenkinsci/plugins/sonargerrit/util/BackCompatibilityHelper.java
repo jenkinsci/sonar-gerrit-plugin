@@ -9,11 +9,11 @@ import org.jenkinsci.plugins.sonargerrit.config.*;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 30.01.2018 13:04 */
 public final class BackCompatibilityHelper {
-  private SonarToGerritPublisher publisher;
+  private final SonarToGerritPublisher publisher;
 
   // optional properties to be populated if it is not yet known if they are needed
-  private ScoreConfig tempScoreConfig;
-  private GerritAuthenticationConfig tempAuthConfig;
+  private final ScoreConfig tempScoreConfig;
+  private final GerritAuthenticationConfig tempAuthConfig;
 
   public BackCompatibilityHelper(SonarToGerritPublisher publisher) {
     this.publisher = publisher;
@@ -47,10 +47,10 @@ public final class BackCompatibilityHelper {
     InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
     if (subJobConfigs == null || subJobConfigs.size() == 0) {
       inspectionConfig.setBaseConfig(new SubJobConfig());
-      inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
+      inspectionConfig.setSubJobConfigs(new LinkedList<>());
     } else if (subJobConfigs.size() == 1) {
       inspectionConfig.setBaseConfig(subJobConfigs.get(0));
-      inspectionConfig.setSubJobConfigs(new LinkedList<SubJobConfig>());
+      inspectionConfig.setSubJobConfigs(new LinkedList<>());
     } else {
       inspectionConfig.setBaseConfig(null);
       inspectionConfig.setSubJobConfigs(subJobConfigs);
@@ -178,32 +178,23 @@ public final class BackCompatibilityHelper {
 
   // @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private InspectionConfig getOrCreateInspectionConfig() {
-    //        if (getInspectionConfig() == null) {
-    //            publisher.setInspectionConfig(new InspectionConfig());
-    //        }
     return getInspectionConfig();
   }
 
   //    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private ReviewConfig getOrCreateReviewConfig() {
-    //        if (getReviewConfig() == null) {
-    //            publisher.setReviewConfig(new ReviewConfig());
-    //        }
     return getReviewConfig();
   }
 
   //    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private NotificationConfig getOrCreateNotificationConfig() {
-    //        if (getNotificationConfig() == null) {
-    //            publisher.setNotificationConfig(new NotificationConfig());
-    //        }
     return getNotificationConfig();
   }
 
   /*
    * Use temporary variables for optional properties so their parameters to be saved if passed before the flag that creates them
    * */
-  protected ScoreConfig getOrCreateScoreConfig() {
+  ScoreConfig getOrCreateScoreConfig() {
     return MoreObjects.firstNonNull(getScoreConfig(), tempScoreConfig);
   }
 
@@ -289,7 +280,7 @@ public final class BackCompatibilityHelper {
     return getNull(String.class);
   }
 
-  private <V extends Object> V getNull(Class<V> clazz) {
+  private <V> V getNull(Class<V> clazz) {
     return null;
   }
 

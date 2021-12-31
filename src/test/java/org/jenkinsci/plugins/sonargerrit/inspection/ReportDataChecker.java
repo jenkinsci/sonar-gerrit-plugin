@@ -211,7 +211,7 @@ public class ReportDataChecker {
     Assert.assertEquals(Severity.MINOR, i.getSeverity());
     Assert.assertEquals("squid:UselessImportCheck", i.getRule());
     Assert.assertEquals("OPEN", i.getStatus());
-    Assert.assertEquals(false, i.isNew());
+    Assert.assertFalse(i.isNew());
     Calendar c = Calendar.getInstance();
     c.setTimeZone(TimeZone.getTimeZone("GMT+3:00"));
     c.set(2015, Calendar.MAY, 10, 0, 46, 9);
@@ -255,7 +255,7 @@ public class ReportDataChecker {
     Assert.assertEquals(Severity.MINOR, i.getSeverity());
     Assert.assertEquals("squid:UselessImportCheck", i.getRule());
     Assert.assertEquals("OPEN", i.getStatus());
-    Assert.assertEquals(false, i.isNew());
+    Assert.assertFalse(i.isNew());
 
     Component c1 = rep.getComponents().get(0);
     Assert.assertEquals("com.megaproject.juice:juice-bootstrap", c1.getKey());
@@ -292,7 +292,7 @@ public class ReportDataChecker {
     Assert.assertEquals(Severity.INFO, i.getSeverity());
     Assert.assertEquals("squid:S1133", i.getRule());
     Assert.assertEquals("OPEN", i.getStatus());
-    Assert.assertEquals(false, i.isNew());
+    Assert.assertFalse(i.isNew());
 
     Component c1 = rep.getComponents().get(0);
     Assert.assertEquals("com.megaproject.juice:juice-jpa", c1.getKey());
@@ -329,7 +329,7 @@ public class ReportDataChecker {
     Assert.assertEquals(Severity.MAJOR, i.getSeverity());
     Assert.assertEquals("squid:S1118", i.getRule());
     Assert.assertEquals("OPEN", i.getStatus());
-    Assert.assertEquals(true, i.isNew());
+    Assert.assertTrue(i.isNew());
 
     Component c1 = rep.getComponents().get(0);
     Assert.assertEquals(

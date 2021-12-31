@@ -12,8 +12,8 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 29.11.2017 14:57 $Id$ */
 public class InspectionReport {
-  private List<IssueAdapter> issuesList;
-  private List<SonarConnector.ReportInfo> reportInfos;
+  private final List<IssueAdapter> issuesList;
+  private final List<SonarConnector.ReportInfo> reportInfos;
 
   public InspectionReport(List<SonarConnector.ReportInfo> issueInfos) {
     this.reportInfos = issueInfos;

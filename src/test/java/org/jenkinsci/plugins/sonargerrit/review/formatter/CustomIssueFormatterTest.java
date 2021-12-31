@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
@@ -39,7 +40,7 @@ public class CustomIssueFormatterTest {
   private IssueAdapter getIssue() throws URISyntaxException, IOException, InterruptedException {
     URL url = getClass().getClassLoader().getResource("filter.json");
 
-    File path = new File(url.toURI());
+    File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
     Report rep = new SonarReportBuilder().fromJson(json);

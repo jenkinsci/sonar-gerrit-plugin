@@ -100,7 +100,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
 
   protected GerritRevisionWrapper getRevisionAdapter(String... additionalFiles)
       throws RestApiException {
-    final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
+    final Map<String, FileInfo> files = new HashMap<>();
     FileInfo fileInfo = new FileInfo();
     fileInfo.status = 'A';
     fileInfo.linesInserted = 1;
@@ -119,7 +119,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
         new DummyRevisionApi(null) {
 
           @Override
-          public Map<String, FileInfo> files() throws RestApiException {
+          public Map<String, FileInfo> files() {
             return files;
           }
 
@@ -144,7 +144,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
     Report report = readreport(getReportFilename());
     Assert.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
-    InspectionReport inspectionReport = new InspectionReport(Arrays.asList(info));
+    InspectionReport inspectionReport = new InspectionReport(Collections.singletonList(info));
     if (manuallyCorrected) {
       Assert.assertFalse(
           isFilterResultContainsFile(getSonarFilename(), inspectionReport.getIssuesList()));

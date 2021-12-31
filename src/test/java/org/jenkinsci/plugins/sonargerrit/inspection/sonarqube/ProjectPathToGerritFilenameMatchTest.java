@@ -31,7 +31,7 @@ public class ProjectPathToGerritFilenameMatchTest
         new SubJobConfig(
             SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH,
             SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
-    final InspectionReport r = getReport(config, false);
+    getReport(config, false);
     performTest(config, false, false);
   }
 

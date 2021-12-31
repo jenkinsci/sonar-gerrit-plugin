@@ -62,9 +62,6 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
     publisher.setSonarURL(SonarToGerritPublisher.DescriptorImpl.SONAR_URL);
 
-    //        publisher.setSubJobConfigs(SonarToGerritPublisher.DescriptorImpl.JOB_CONFIGS);
-    //        Assert.assertEquals(1, publisher.getSubJobConfigs().size());
-
     publisher.setAuthConfig(null);
 
     publisher.setReviewConfig(new ReviewConfig());
@@ -97,8 +94,7 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
     Map<String, Set<Integer>> changed = new HashMap<>();
     if (diffInfo != null) {
       for (String s : diffInfo.keySet()) {
-        GerritRevisionWrapper w = null;
-        w = new GerritRevisionWrapper(null);
+        GerritRevisionWrapper w = new GerritRevisionWrapper(null);
         changed.put(s, w.getChangedLines(diffInfo.get(s)));
       }
     }

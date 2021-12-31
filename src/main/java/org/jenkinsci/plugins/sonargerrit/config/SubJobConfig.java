@@ -13,9 +13,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 02.12.2015 12:11 */
 public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
 
-  @Nonnull private String projectPath;
+  @Nonnull private String projectPath = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
 
-  @Nonnull private String sonarReportPath;
+  @Nonnull private String sonarReportPath = SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
 
   private boolean autoMatch;
 
@@ -73,33 +73,6 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
     public static final String PROJECT_PATH = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
     public static final String SONAR_REPORT_PATH =
         SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
-
-    //        /**
-    //         * Performs on-the-fly validation of the form field 'serverURL'.
-    //         *
-    //         * @param value This parameter receives the value that the user has typed.
-    //         *
-    //         * @return Indicates the outcome of the validation. This is sent to the browser.
-    //         * <p>
-    //         * Note that returning {@link FormValidation#error(String)} does not
-    //         * prevent the form from being saved. It just means that a message
-    //         * will be displayed to the user.
-    //         */
-    //        @SuppressWarnings(value = "unused")
-    //        public FormValidation doCheckServerURL(@QueryParameter String value) {
-    //            if (Util.fixEmptyAndTrim(value) == null) {
-    //                return
-    // FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.empty"));
-    //            }
-    //            try {
-    //                new URL(value);
-    //            } catch (MalformedURLException e) {
-    //                return
-    // FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.invalid"));
-    //            }
-    //            return FormValidation.ok();
-    //
-    //        }
 
     public String getDisplayName() {
       return "SubJobConfig";

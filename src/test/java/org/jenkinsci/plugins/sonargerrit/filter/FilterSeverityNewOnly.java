@@ -57,7 +57,7 @@ public abstract class FilterSeverityNewOnly extends BaseFilterTest<Pair<String, 
     super.resetFilter();
     String severity = IssueFilterConfig.DescriptorImpl.SEVERITY;
     Boolean newOnly = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
-    setFilter(new Pair<String, Boolean>(severity, newOnly));
+    setFilter(new Pair<>(severity, newOnly));
   }
 
   @Override
@@ -76,7 +76,7 @@ public abstract class FilterSeverityNewOnly extends BaseFilterTest<Pair<String, 
   }
 
   private void doCheckSeverityNew(Severity severity, boolean newOnly, int expectedCount) {
-    Pair<String, Boolean> severityAndNew = new Pair<String, Boolean>(severity.name(), newOnly);
+    Pair<String, Boolean> severityAndNew = new Pair<>(severity.name(), newOnly);
     setFilter(severityAndNew);
     doFilterIssues(getFilterConfig());
 

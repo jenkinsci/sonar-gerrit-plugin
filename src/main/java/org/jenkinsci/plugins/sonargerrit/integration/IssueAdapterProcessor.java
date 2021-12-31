@@ -17,7 +17,7 @@ public class IssueAdapterProcessor {
   protected InspectionReportAdapter inspectionReport;
   protected RevisionAdapter revisionAdapter;
   protected Map<String, String> inspection2revisionFilepaths;
-  private TaskListener listener;
+  private final TaskListener listener;
 
   private static final Logger LOGGER = Logger.getLogger(IssueAdapterProcessor.class.getName());
 

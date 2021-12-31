@@ -20,7 +20,7 @@ import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 public class GerritConnector {
 
   private GerritApi gerritApi;
-  private ConnectionInfo connectionInfo;
+  private final ConnectionInfo connectionInfo;
 
   public GerritConnector(GerritConnectionInfo connectionInfo) {
     this.connectionInfo = connectionInfo;
@@ -38,8 +38,7 @@ public class GerritConnector {
 
     String gerritFrontEndUrl = gerritConfig.getGerritFrontEndUrl();
 
-    boolean useRestApi = gerritConfig.isUseRestApi();
-    checkRestApiAllowed(useRestApi);
+    checkRestApiAllowed(gerritConfig.isUseRestApi());
 
     String username = getUsername(connectionInfo.getUsername(), gerritConfig);
     String password = getPassword(connectionInfo.getPassword(), gerritConfig);
@@ -47,7 +46,7 @@ public class GerritConnector {
 
     GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
     GerritAuthData.Basic authData =
-        new GerritAuthData.Basic(gerritFrontEndUrl, username, password, useRestApi);
+        new GerritAuthData.Basic(gerritFrontEndUrl, username, password, true);
     gerritApi = gerritRestApiFactory.create(authData);
   }
 

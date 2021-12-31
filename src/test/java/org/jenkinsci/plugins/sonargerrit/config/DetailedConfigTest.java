@@ -31,43 +31,59 @@ public interface DetailedConfigTest extends BaseConfigTest {
   boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
 
   // IssueFilterConfig
+  @SuppressWarnings(value = "unused")
   void testSeverity();
 
+  @SuppressWarnings(value = "unused")
   void testNewOnly();
 
+  @SuppressWarnings(value = "unused")
   void testChangedLinesOnly();
 
   // ReviewConfig
 
+  @SuppressWarnings(value = "unused")
   void testNoIssuesTitleTemplate();
 
+  @SuppressWarnings(value = "unused")
   void testSomeIssuesTitleTemplate();
 
+  @SuppressWarnings(value = "unused")
   void testIssuesCommentTemplate();
 
   // ScoreConfig
 
+  @SuppressWarnings(value = "unused")
   void testCategory();
 
+  @SuppressWarnings(value = "unused")
   void testNoIssuesScoreScore();
 
+  @SuppressWarnings(value = "unused")
   void testSomeIssuesScoreScore();
 
   // NotificationConfig
 
+  @SuppressWarnings(value = "unused")
   void testNoIssuesNotificationRecipient();
 
+  @SuppressWarnings(value = "unused")
   void testIssuesNotificationRecipient();
 
+  @SuppressWarnings(value = "unused")
   void testNegativeScoreNotificationRecipient();
 
   // Sonar config
 
+  @SuppressWarnings(value = "unused")
   void testSubJobConfig();
 
+  @SuppressWarnings(value = "unused")
   void testSonarUrl();
 
+  @SuppressWarnings(value = "unused")
   void testSonarReportPath();
 
+  @SuppressWarnings(value = "unused")
   void testProjectConfig();
 }

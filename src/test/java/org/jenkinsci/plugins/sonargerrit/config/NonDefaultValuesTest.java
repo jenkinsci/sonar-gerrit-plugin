@@ -158,7 +158,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     config.setNoIssuesScore(2);
 
     Assert.assertEquals(CATEGORY, config.getCategory());
-    Assert.assertEquals(new Integer(2), config.getNoIssuesScore());
+    Assert.assertEquals(Integer.valueOf(2), config.getNoIssuesScore());
     Assert.assertEquals(SOME_ISSUES_SCORE, config.getIssuesScore());
   }
 
@@ -174,7 +174,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
 
     Assert.assertEquals(CATEGORY, config.getCategory());
     Assert.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
-    Assert.assertEquals(new Integer(-2), config.getIssuesScore());
+    Assert.assertEquals(Integer.valueOf(-2), config.getIssuesScore());
   }
 
   @Test
@@ -193,8 +193,8 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
     config.setIssuesScore(-3);
 
     Assert.assertEquals("Testo", config.getCategory());
-    Assert.assertEquals(new Integer(3), config.getNoIssuesScore());
-    Assert.assertEquals(new Integer(-3), config.getIssuesScore());
+    Assert.assertEquals(Integer.valueOf(3), config.getNoIssuesScore());
+    Assert.assertEquals(Integer.valueOf(-3), config.getIssuesScore());
   }
 
   @Test

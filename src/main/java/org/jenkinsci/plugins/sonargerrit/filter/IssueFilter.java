@@ -21,9 +21,9 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
  * <p>$Id$
  */
 public class IssueFilter {
-  private IssueFilterConfig filterConfig;
-  private List<IssueAdapter> issues;
-  private Map<String, Set<Integer>> changedLines;
+  private final IssueFilterConfig filterConfig;
+  private final List<IssueAdapter> issues;
+  private final Map<String, Set<Integer>> changedLines;
 
   public IssueFilter(
       IssueFilterConfig filterConfig,

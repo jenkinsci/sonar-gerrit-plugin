@@ -22,7 +22,7 @@ public class ReviewResultTest extends ReportBasedTest {
 
   @Before
   public void initialize() {
-    publisher = buildPublisher(Severity.INFO);
+    publisher = buildPublisher();
   }
 
   @Test
@@ -48,7 +48,7 @@ public class ReviewResultTest extends ReportBasedTest {
     return publisher.getReviewConfig();
   }
 
-  public class DummyIssue extends Issue implements IssueAdapter {
+  public static class DummyIssue extends Issue implements IssueAdapter {
     @Override
     public Severity getSeverity() {
       return Severity.CRITICAL;
@@ -73,7 +73,7 @@ public class ReviewResultTest extends ReportBasedTest {
     public void setFilepath(String path) {}
   }
 
-  protected SonarToGerritPublisher buildPublisher(Severity severity) {
+  protected SonarToGerritPublisher buildPublisher() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
     publisher.setScoreConfig(new ScoreConfig());
     return publisher;

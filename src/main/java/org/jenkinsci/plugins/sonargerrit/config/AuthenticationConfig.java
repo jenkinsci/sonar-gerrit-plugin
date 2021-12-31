@@ -107,12 +107,14 @@ public abstract class AuthenticationConfig extends AbstractDescribableImpl<Authe
       return FormValidation.validateRequired(value.getPlainText());
     }
 
+    @SuppressWarnings(value = "unused")
     public abstract FormValidation doTestConnection(
         @QueryParameter("username") final String username,
         @QueryParameter("secretPassword") final Secret password,
         @QueryParameter("serverName") final String serverName)
         throws IOException, ServletException;
 
+    @SuppressWarnings(value = "unused")
     public abstract List<String> getServerNames();
 
     public String getDisplayName() {
