@@ -19,7 +19,7 @@ import org.kohsuke.stapler.DataBoundSetter;
  * Reflection methods for tests to be triggered on plugin signature changes
  * */
 
-public class ConfigurationUpdateTest {
+public abstract class ConfigurationUpdateTest {
 
   protected Object invokeGetter(Object obj, String... field) throws ReflectiveOperationException {
     Object res = null;

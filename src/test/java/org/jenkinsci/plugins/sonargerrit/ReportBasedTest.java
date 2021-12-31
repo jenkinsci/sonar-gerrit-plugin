@@ -21,7 +21,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder
  *
  * <p>$Id$
  */
-public class ReportBasedTest {
+public abstract class ReportBasedTest {
   protected Report readreport(String file)
       throws IOException, InterruptedException, URISyntaxException {
     URL url = getClass().getClassLoader().getResource(file);
