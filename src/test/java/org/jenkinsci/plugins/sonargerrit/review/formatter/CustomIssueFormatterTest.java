@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
-import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:05 */

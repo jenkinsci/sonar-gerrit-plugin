@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.review;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

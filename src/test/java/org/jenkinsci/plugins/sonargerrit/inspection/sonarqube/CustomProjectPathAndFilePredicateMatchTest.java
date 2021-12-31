@@ -8,7 +8,6 @@ import com.google.gerrit.extensions.restapi.RestApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import junit.framework.Assert;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
@@ -19,6 +18,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
+import org.junit.Assert;
 
 public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportBasedTest {
 
