@@ -31,6 +31,13 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.249.x</artifactId>
+        <version>984.vb5eaac999a7e</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
         <version>4.5.13</version>
@@ -47,7 +54,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>structs</artifactId>
-      <version>1.9</version>
     </dependency>
     <dependency>
       <groupId>com.sonyericsson.hudson.plugins.gerrit</groupId>
