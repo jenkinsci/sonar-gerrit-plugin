@@ -30,6 +30,7 @@ public class ReviewWithCommentAndScoreIssuesTest extends ReviewResultTest
   }
 
   @Override
+  @Test
   public void testOverrideReviewHeader() {
     getReviewConfig().setSomeIssuesTitleTemplate("Some Issues Header");
     ReviewInput reviewResult = getReviewResult();
@@ -45,6 +46,7 @@ public class ReviewWithCommentAndScoreIssuesTest extends ReviewResultTest
   }
 
   @Override
+  @Test
   public void testOverrideReviewComment() {
     getReviewConfig().setIssueCommentTemplate("That's an Issue!");
     ReviewInput reviewResult = getReviewResult();
@@ -71,6 +73,7 @@ public class ReviewWithCommentAndScoreIssuesTest extends ReviewResultTest
   }
 
   @Override
+  @Test
   public void testCategory() {
     ReviewInput reviewResult = getReviewResult();
     Assertions.assertEquals(1, reviewResult.labels.size());
@@ -89,6 +92,7 @@ public class ReviewWithCommentAndScoreIssuesTest extends ReviewResultTest
   }
 
   @Override
+  @Test
   public void testOverrideScoreAndCategory() {
     publisher.getScoreConfig().setCategory("Other");
     publisher.getScoreConfig().setIssuesScore(-2);

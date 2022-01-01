@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
+import org.jenkinsci.plugins.sonargerrit.JsonReports;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * <p>$Id$
  */
-public abstract class BaseFilterTest<A> extends ReportBasedTest {
+public abstract class BaseFilterTest<A> {
   protected Report report;
   protected SonarToGerritPublisher publisher;
 
@@ -45,11 +45,11 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
   public final void initialize() throws InterruptedException, IOException, URISyntaxException {
     loadReport();
     buildPublisher(); // todo check all issues read correctly?
-    diffInfo = readChange("diff_info.json");
+    diffInfo = JsonReports.readChange("diff_info.json");
   }
 
   protected void loadReport() throws InterruptedException, IOException, URISyntaxException {
-    report = readreport("filter.json");
+    report = JsonReports.readReport("filter.json");
     Assertions.assertEquals(19, report.getIssues().size());
   }
 

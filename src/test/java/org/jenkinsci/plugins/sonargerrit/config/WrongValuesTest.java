@@ -19,11 +19,13 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testNewOnly() {
     // nothing to check here
   }
 
   @Override
+  @Test
   public void testChangedLinesOnly() {
     // nothing to check here
   }
@@ -128,26 +130,31 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testFilterConfig() {
     // nope
   }
 
   @Override
+  @Test
   public void testReviewConfig() {
     // nope
   }
 
   @Override
+  @Test
   public void testScoreConfig() {
     // nope
   }
 
   @Override
+  @Test
   public void testNotificationConfig() {
     // nope
   }
 
   @Override
+  @Test
   public void testAuthenticationConfig() {
     // nope
   }
@@ -168,6 +175,7 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testSubJobConfig() {}
 
   @Override

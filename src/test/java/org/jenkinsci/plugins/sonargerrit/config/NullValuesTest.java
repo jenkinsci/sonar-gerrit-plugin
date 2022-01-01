@@ -21,11 +21,13 @@ public class NullValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testNewOnly() {
     // boolean doesn't allow null
   }
 
   @Override
+  @Test
   public void testChangedLinesOnly() {
     // boolean doesn't allow null
   }
@@ -61,6 +63,7 @@ public class NullValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testIssuesCommentTemplate() {
     ReviewConfig config = new ReviewConfig();
     config.setIssueCommentTemplate(null);
@@ -236,7 +239,7 @@ public class NullValuesTest implements DetailedConfigTest {
     Assertions.assertEquals(PROJECT_PATH, config.getProjectPath());
   }
 
-  // @Test
   @Override
+  @Test
   public void testAuthenticationConfig() {}
 }

@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
-import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
+import org.jenkinsci.plugins.sonargerrit.JsonReports;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
@@ -24,7 +24,7 @@ import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
 import org.junit.jupiter.api.Assertions;
 
-public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportBasedTest {
+public abstract class CustomProjectPathAndFilePredicateMatchTest {
 
   public static final String FILENAME_IN_SONAR =
       "testcontext-viewstore-persistence/src/main/java/com/example/testcontext/persistence/entity/User.java";
@@ -145,7 +145,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
 
   protected InspectionReport getReport(SubJobConfig config, boolean manuallyCorrected)
       throws IOException, InterruptedException, URISyntaxException {
-    Report report = readreport(getReportFilename());
+    Report report = JsonReports.readReport(getReportFilename());
     Assertions.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
     InspectionReport inspectionReport = new InspectionReport(Collections.singletonList(info));

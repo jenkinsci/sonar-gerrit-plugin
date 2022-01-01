@@ -157,6 +157,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testNoIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
     Assertions.assertEquals(CATEGORY, config.getCategory());
@@ -378,6 +379,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
+  @Test
   public void testSubJobConfig() {
     SubJobConfig config = new SubJobConfig();
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());

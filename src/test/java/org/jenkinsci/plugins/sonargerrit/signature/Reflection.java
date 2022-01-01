@@ -13,15 +13,11 @@ import org.junit.jupiter.api.Assertions;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 17.11.2017 13:20 $Id$ */
+/** @author Réda Housni Alaoui */
+class Reflection {
 
-/*
- * Reflection methods for tests to be triggered on plugin signature changes
- * */
-
-public abstract class ConfigurationUpdateTest {
-
-  protected Object invokeGetter(Object obj, String... field) throws ReflectiveOperationException {
+  public static Object invokeGetter(Object obj, String... field)
+      throws ReflectiveOperationException {
     Object res = null;
     Object object = obj;
     for (String f : field) {
@@ -49,12 +45,12 @@ public abstract class ConfigurationUpdateTest {
     return res;
   }
 
-  protected void invokeSetter(SonarToGerritPublisher obj, String field, Object value)
+  public static void invokeSetter(SonarToGerritPublisher obj, String field, Object value)
       throws ReflectiveOperationException {
-    this.invokeSetter(obj, field, value, false);
+    invokeSetter(obj, field, value, false);
   }
 
-  protected void invokeSetter(Object obj, String field, Object value, boolean deprecated)
+  public static void invokeSetter(Object obj, String field, Object value, boolean deprecated)
       throws ReflectiveOperationException {
     PropertyDescriptor e1 = PropertyUtils.getPropertyDescriptor(obj, field);
     Assertions.assertNotNull(
@@ -78,7 +74,7 @@ public abstract class ConfigurationUpdateTest {
     wm1.invoke(obj, value);
   }
 
-  protected void invokeSetter(
+  public static void invokeSetter(
       SonarToGerritPublisher obj, Object value, boolean deprecated, String... fields)
       throws ReflectiveOperationException {
     if (fields.length == 1) {
@@ -89,13 +85,13 @@ public abstract class ConfigurationUpdateTest {
     invokeSetter(object, fields[fields.length - 1], value, deprecated);
   }
 
-  protected SonarToGerritPublisher invokeConstructor() throws ReflectiveOperationException {
+  public static SonarToGerritPublisher invokeConstructor() throws ReflectiveOperationException {
     Constructor<SonarToGerritPublisher> c = SonarToGerritPublisher.class.getConstructor();
     Assertions.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
     return c.newInstance();
   }
 
-  protected Object invokeConstructor(String className, String[] paramClasses, Object[] params)
+  public static Object invokeConstructor(String className, String[] paramClasses, Object[] params)
       throws ReflectiveOperationException {
     Class<?>[] classes = new Class[paramClasses.length];
     for (int i = 0; i < paramClasses.length; i++) {
@@ -113,7 +109,7 @@ public abstract class ConfigurationUpdateTest {
     return c.newInstance(params);
   }
 
-  protected Object invokeMethod(
+  public static Object invokeMethod(
       Object obj, String methodName, Class<? extends Annotation>... annotations)
       throws ReflectiveOperationException {
     Class<?> aClass = obj.getClass();
@@ -124,7 +120,7 @@ public abstract class ConfigurationUpdateTest {
     return declaredMethod.invoke(obj);
   }
 
-  protected Object invokeMethod(
+  public static Object invokeMethod(
       Object obj, String methodName, Object parameter, Class<? extends Annotation>... annotations)
       throws ReflectiveOperationException {
     Method declaredMethod = getDeclaredMethod(obj.getClass(), methodName, parameter.getClass());
@@ -134,7 +130,7 @@ public abstract class ConfigurationUpdateTest {
     return declaredMethod.invoke(obj, parameter);
   }
 
-  private Method getDeclaredMethod(Class<?> aClass, String methodName, Class<?> paramClass) {
+  private static Method getDeclaredMethod(Class<?> aClass, String methodName, Class<?> paramClass) {
     Method declaredMethod = tryGetDeclaredMethod(aClass, methodName, paramClass);
     if (declaredMethod == null) {
       Class<?> superclass = paramClass.getSuperclass();
@@ -153,7 +149,8 @@ public abstract class ConfigurationUpdateTest {
     return declaredMethod;
   }
 
-  private Method tryGetDeclaredMethod(Class<?> aClass, String methodName, Class<?> paramClass) {
+  private static Method tryGetDeclaredMethod(
+      Class<?> aClass, String methodName, Class<?> paramClass) {
     try {
       return aClass.getDeclaredMethod(methodName, paramClass);
     } catch (NoSuchMethodException e) {

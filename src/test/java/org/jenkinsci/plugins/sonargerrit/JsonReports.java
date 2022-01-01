@@ -16,15 +16,12 @@ import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 
-/**
- * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 14.11.2017 17:31
- *
- * <p>$Id$
- */
-public abstract class ReportBasedTest {
-  protected Report readreport(String file)
+/** @author Réda Housni Alaoui */
+public class JsonReports {
+
+  public static Report readReport(String file)
       throws IOException, InterruptedException, URISyntaxException {
-    URL url = getClass().getClassLoader().getResource(file);
+    URL url = JsonReports.class.getClassLoader().getResource(file);
 
     File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
@@ -32,9 +29,9 @@ public abstract class ReportBasedTest {
     return new SonarReportBuilder().fromJson(json);
   }
 
-  protected Map<String, DiffInfo> readChange(String file)
+  public static Map<String, DiffInfo> readChange(String file)
       throws IOException, InterruptedException, URISyntaxException {
-    URL url = getClass().getClassLoader().getResource(file);
+    URL url = JsonReports.class.getClassLoader().getResource(file);
 
     File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);

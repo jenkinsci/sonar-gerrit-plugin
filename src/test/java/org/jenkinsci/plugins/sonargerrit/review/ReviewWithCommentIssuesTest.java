@@ -30,6 +30,7 @@ public class ReviewWithCommentIssuesTest extends ReviewResultTest implements Ger
   }
 
   @Override
+  @Test
   public void testOverrideReviewHeader() {
     getReviewConfig().setSomeIssuesTitleTemplate("Some Issues Header");
     ReviewInput reviewResult = getReviewResult();
@@ -45,6 +46,7 @@ public class ReviewWithCommentIssuesTest extends ReviewResultTest implements Ger
   }
 
   @Override
+  @Test
   public void testOverrideReviewComment() {
     getReviewConfig().setIssueCommentTemplate("That's an Issue!");
     ReviewInput reviewResult = getReviewResult();

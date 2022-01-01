@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.sonargerrit.review;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
-import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
@@ -15,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 12:41 $Id$ */
-public class ReviewResultTest extends ReportBasedTest {
+public class ReviewResultTest {
   protected Multimap<String, IssueAdapter> scoreIssues = LinkedListMultimap.create();
   protected Multimap<String, IssueAdapter> commentIssues = LinkedListMultimap.create();
   protected SonarToGerritPublisher publisher;

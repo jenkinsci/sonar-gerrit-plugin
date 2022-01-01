@@ -15,6 +15,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
   }
 
   @Override
+  @Test
   public void testOverrideReviewHeader() {
     getReviewConfig().setNoIssuesTitleTemplate("No Issues Header");
     ReviewInput reviewResult = getReviewResult();
@@ -29,6 +30,7 @@ public class ReviewWithNoIssuesTest extends ReviewResultTest implements GerritRe
   }
 
   @Override
+  @Test
   public void testOverrideReviewComment() {
     getReviewConfig().setIssueCommentTemplate("No Issues Comment");
     ReviewInput reviewResult = getReviewResult();

@@ -28,6 +28,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
   }
 
   @Override
+  @Test
   public void testOverrideReviewHeader() {
     getReviewConfig().setNoIssuesTitleTemplate("No Issues Header");
     ReviewInput reviewResult = getReviewResult();
@@ -42,6 +43,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
   }
 
   @Override
+  @Test
   public void testOverrideReviewComment() {
     getReviewConfig().setIssueCommentTemplate("No Issues Comment");
     ReviewInput reviewResult = getReviewResult();
@@ -69,6 +71,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
   }
 
   @Override
+  @Test
   public void testCategory() {
     ReviewInput reviewResult = getReviewResult();
     Assertions.assertEquals(1, reviewResult.labels.size());
@@ -87,6 +90,7 @@ public class ReviewWithScoreIssuesTest extends ReviewResultTest implements Gerri
   }
 
   @Override
+  @Test
   public void testOverrideScoreAndCategory() {
     publisher.getScoreConfig().setCategory("Other");
     publisher.getScoreConfig().setIssuesScore(-2);
