@@ -22,7 +22,7 @@ A place to start with (for getting a json report): https://community.sonarsource
 
 ### Jenkins
 
-Jenkins version 1.625.3 or newer is required.
+Jenkins version 2.249.3 or newer is required.
 
 ### SonarQube
 
