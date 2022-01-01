@@ -2,7 +2,9 @@ package org.jenkinsci.plugins.sonargerrit.signature;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -13,6 +15,7 @@ import org.kohsuke.stapler.DataBoundSetter;
  * This class checks if it is still possible to keep configuration settings from previous plugin version
  * Methods left for back compatibility purposes should be @Deprecated
  */
+@EnableJenkinsRule
 public class BackCompatibilityConfigurationTest {
 
   @Test
@@ -198,29 +201,6 @@ public class BackCompatibilityConfigurationTest {
   }
 
   @Test
-  public void testGetter() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
-    Assertions.assertNull(invokeGetter(p, true, "severity"));
-    Assertions.assertFalse((boolean) invokeGetter(p, true, true, "newIssuesOnly"));
-    Assertions.assertFalse((boolean) invokeGetter(p, true, true, "changedLinesOnly"));
-    Assertions.assertNull(invokeGetter(p, true, "noIssuesToPostText"));
-    Assertions.assertNull(invokeGetter(p, true, "someIssuesToPostText"));
-    Assertions.assertNull(invokeGetter(p, true, "issueComment"));
-    Assertions.assertFalse((boolean) invokeGetter(p, true, true, "overrideCredentials"));
-    Assertions.assertNull(invokeGetter(p, true, "httpUsername"));
-    Assertions.assertNull(invokeGetter(p, true, "httpPassword"));
-    Assertions.assertFalse((boolean) invokeGetter(p, true, true, "postScore"));
-    Assertions.assertNull(invokeGetter(p, true, "category"));
-    Assertions.assertNull(invokeGetter(p, true, "noIssuesScore"));
-    Assertions.assertNull(invokeGetter(p, true, "issuesScore"));
-    Assertions.assertNull(invokeGetter(p, true, "subJobConfigs"));
-    Assertions.assertNull(invokeGetter(p, true, "projectPath"));
-    Assertions.assertNull(invokeGetter(p, true, "path"));
-    Assertions.assertNull(invokeGetter(p, true, "noIssuesNotification"));
-    Assertions.assertNull(invokeGetter(p, true, "issuesNotification"));
-  }
-
-  @Test
   public void testSetNoIssuesNotification() throws ReflectiveOperationException {
     SonarToGerritPublisher p = Reflection.invokeConstructor();
     String noIssuesNotification = "ALL";
@@ -271,10 +251,10 @@ public class BackCompatibilityConfigurationTest {
   @Test
   public void testSetSonarURL() throws ReflectiveOperationException {
     SonarToGerritPublisher p = Reflection.invokeConstructor();
-    String sonarURL = "test";
+    String sonarURL = UUID.randomUUID().toString();
     Assertions.assertNotSame(sonarURL, Reflection.invokeGetter(p, "inspectionConfig", "serverURL"));
-    Reflection.invokeSetter(p, "sonarURL", "test");
-    Assertions.assertEquals("test", Reflection.invokeGetter(p, "inspectionConfig", "serverURL"));
+    Reflection.invokeSetter(p, "sonarURL", sonarURL);
+    Assertions.assertEquals(sonarURL, Reflection.invokeGetter(p, "inspectionConfig", "serverURL"));
   }
 
   @Test
