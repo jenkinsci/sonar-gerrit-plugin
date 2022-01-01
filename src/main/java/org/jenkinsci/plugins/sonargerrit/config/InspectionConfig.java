@@ -3,16 +3,28 @@ package org.jenkinsci.plugins.sonargerrit.config;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.google.common.base.MoreObjects;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.plugins.sonar.SonarGlobalConfiguration;
+import hudson.plugins.sonar.SonarInstallation;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -20,7 +32,11 @@ import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 07.12.2017 13:45 $Id$ */
 public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> {
-  @Nonnull private String serverURL = DescriptorImpl.SONAR_URL;
+
+  // Only kept for backward compatibility purpose
+  private transient String serverURL;
+
+  private String sonarQubeInstallationName;
 
   private SubJobConfig baseConfig;
 
@@ -30,21 +46,9 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
   @DataBoundConstructor
   public InspectionConfig() {
-    this(DescriptorImpl.SONAR_URL, null, null, DescriptorImpl.BASE_TYPE); // set default values
-  }
-
-  @SuppressFBWarnings(
-      value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR") // subJobConfigs is initialized in
-  // setter
-  private InspectionConfig(
-      @Nonnull String serverURL,
-      SubJobConfig baseConfig,
-      List<SubJobConfig> subJobConfigs,
-      String type) {
-    setServerURL(serverURL);
-    setBaseConfig(baseConfig);
-    setSubJobConfigs(subJobConfigs);
-    setType(type);
+    setBaseConfig(null);
+    setSubJobConfigs(null);
+    setType(DescriptorImpl.BASE_TYPE);
   }
 
   @Override
@@ -52,15 +56,35 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     return new DescriptorImpl();
   }
 
-  @Nonnull
-  public String getServerURL() {
-    return serverURL;
+  @Nullable
+  public String getSonarQubeInstallationName() {
+    return sonarQubeInstallationName;
   }
 
   @DataBoundSetter
+  public void setSonarQubeInstallationName(String name) {
+    this.sonarQubeInstallationName = StringUtils.defaultIfBlank(name, null);
+  }
+
+  /** @deprecated Use {@link #getSonarQubeInstallationName()} */
+  @Deprecated
+  @Nonnull
+  public String getServerURL() {
+    return Optional.ofNullable(sonarQubeInstallationName)
+        .flatMap(name -> SonarQubeInstallations.get().byName(name))
+        .map(SonarInstallation::getServerUrl)
+        .orElse(DescriptorImpl.SONAR_URL);
+  }
+
+  /** @deprecated Use {@link #setSonarQubeInstallationName(String)} */
+  @DataBoundSetter
   public void setServerURL(String serverURL) {
-    this.serverURL =
-        MoreObjects.firstNonNull(Util.fixEmptyAndTrim(serverURL), DescriptorImpl.SONAR_URL);
+    this.sonarQubeInstallationName =
+        Optional.ofNullable(serverURL)
+            .filter(StringUtils::isNotBlank)
+            .map(name -> SonarQubeInstallations.get().findOrCreate(name))
+            .map(SonarInstallation::getName)
+            .orElse(null);
   }
 
   public SubJobConfig getBaseConfig() {
@@ -124,6 +148,13 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     return isAutoMatch();
   }
 
+  protected Object readResolve() {
+    if (serverURL != null) {
+      sonarQubeInstallationName = SonarQubeInstallations.get().findOrCreate(serverURL).getName();
+    }
+    return this;
+  }
+
   @Extension
   public static class DescriptorImpl extends Descriptor<InspectionConfig> {
     public static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
@@ -137,14 +168,8 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     private static final Set<String> ALLOWED_TYPES =
         new HashSet<>(Arrays.asList(BASE_TYPE, MULTI_TYPE));
 
-    /**
-     * Performs on-the-fly validation of the form field 'serverURL'.
-     *
-     * @param value This parameter receives the value that the user has typed.
-     * @return Indicates the outcome of the validation. This is sent to the browser.
-     *     <p>Note that returning {@link FormValidation#error(String)} does not prevent the form
-     *     from being saved. It just means that a message will be displayed to the user.
-     */
+    /** @deprecated Replaced with "sonar installation name" */
+    @Deprecated
     @SuppressWarnings(value = "unused")
     public FormValidation doCheckServerURL(@QueryParameter String value) {
       if (Util.fixEmptyAndTrim(value) == null) {
@@ -156,6 +181,19 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
         return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.invalid"));
       }
       return FormValidation.ok();
+    }
+
+    @SuppressWarnings(value = "unused")
+    public FormValidation doCheckSonarQubeInstallationName(@QueryParameter String value) {
+      return FormValidation.validateRequired(value);
+    }
+
+    @SuppressWarnings("unused")
+    public ListBoxModel doFillSonarQubeInstallationNameItems() {
+      return Stream.of(SonarGlobalConfiguration.get().getInstallations())
+          .map(SonarInstallation::getName)
+          .map(ListBoxModel.Option::new)
+          .collect(Collectors.collectingAndThen(Collectors.toList(), ListBoxModel::new));
     }
 
     @Override

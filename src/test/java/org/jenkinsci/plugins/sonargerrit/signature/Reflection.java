@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.sonargerrit.signature;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,33 +15,17 @@ import org.kohsuke.stapler.DataBoundSetter;
 /** @author Réda Housni Alaoui */
 class Reflection {
 
-  public static Object invokeGetter(Object obj, String... field)
+  public static Object invokeGetter(Object obj, String... fields)
       throws ReflectiveOperationException {
-    Object res = null;
-    Object object = obj;
-    for (String f : field) {
-      Field wm = null;
-      Class<?> aClass = object.getClass();
-      do {
-        try {
-          wm = aClass.getDeclaredField(f);
-        } catch (NoSuchFieldException e) {
-          Class<?> superclass = aClass.getSuperclass();
-          if (superclass != null && superclass.getPackage().toString().contains("sonargerrit")) {
-            aClass = superclass;
-          } else {
-            throw e;
-          }
-        }
-      } while (wm == null);
-      wm.setAccessible(true);
-      res = wm.get(object);
-      if (res instanceof Collection) {
-        res = ((Collection<?>) res).toArray()[0];
+    Object currentObj = obj;
+    for (String field : fields) {
+      if (currentObj instanceof Collection<?>) {
+        currentObj =
+            ((Collection<?>) currentObj).stream().findFirst().orElseThrow(RuntimeException::new);
       }
-      object = res;
+      currentObj = PropertyUtils.getProperty(currentObj, field);
     }
-    return res;
+    return currentObj;
   }
 
   public static void invokeSetter(SonarToGerritPublisher obj, String field, Object value)

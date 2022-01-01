@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
  *
  * <p>$Id$
  */
+@EnableJenkinsRule
 public abstract class BaseConfigTest {
 
   @Test

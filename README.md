@@ -74,9 +74,9 @@ There are the next sections:
 
 #### SonarQube Settings
 
-![alt text](doc/sonar-url-conf.png "Sonar URL configuration")
+![alt text](doc/sonar-qube-installation.png "SonarQube installation")
 
-1. Server URL - URL of SonarQube instance used for analysis. It is also used to provide a link to a SonarQube rule in Gerrit comments. Default value: http://localhost:9000
+1. SonarQube installation - The SonarQube installation (see https://plugins.jenkins.io/sonar/) to be used for analysis. It is also used to provide a link to a SonarQube rule in Gerrit comments.
 
 #### Project Settings
 
@@ -136,7 +136,7 @@ This section allows user to customise text, intended to use as review title and 
    3. \<message> - will be replaced with issue message;
    4. \<severity> - will be replaced with issue severity;
    5. \<rule> - will be replaced with issue rule name;
-   6. \<rule_url> - will be replaced with link to rule description on SonarQube if SonarQube URL is provided in SonarQube settings section or rule name if URL is not provided;
+   6. \<rule_url> - will be replaced with link to rule description on SonarQube;
    7. \<status> - will be replaced with issue status;
    8. \<creation_date> - will be replaced with issue creation date.
 
@@ -236,7 +236,7 @@ node {
 ```groovy
 sonarToGerrit (
         inspectionConfig: [
-            serverURL: 'http://localhost:9000',
+            sonarQubeInstallationName: 'My SonarQube Installation',
             baseConfig: [
                 projectPath: '',
                 sonarReportPath: 'target/sonar/sonar-report.json',
