@@ -10,10 +10,7 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
  */
 public interface GerritReviewTest {
   String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
-  Integer NO_ISSUES_SCORE = ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE;
-  Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
   String NO_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE;
-  String SOME_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
 
   @SuppressWarnings(value = "unused")
   void testReviewHeader();

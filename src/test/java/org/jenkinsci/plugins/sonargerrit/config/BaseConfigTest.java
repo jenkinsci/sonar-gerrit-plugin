@@ -1,26 +1,53 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
+import org.junit.jupiter.api.Test;
+
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 21:47
  *
  * <p>$Id$
  */
-public interface BaseConfigTest {
-  @SuppressWarnings(value = "unused")
-  void testFilterConfig();
+public abstract class BaseConfigTest {
 
-  @SuppressWarnings(value = "unused")
-  void testReviewConfig();
+  @Test
+  public final void testFilterConfig() {
+    doTestFilterConfig();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testScoreConfig();
+  protected abstract void doTestFilterConfig();
 
-  @SuppressWarnings(value = "unused")
-  void testNotificationConfig();
+  @Test
+  public final void testReviewConfig() {
+    doTestReviewConfig();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testAuthenticationConfig();
+  protected abstract void doTestReviewConfig();
 
-  @SuppressWarnings(value = "unused")
-  void testInspectionConfig();
+  @Test
+  public final void testScoreConfig() {
+    doTestScoreConfig();
+  }
+
+  protected abstract void doTestScoreConfig();
+
+  @Test
+  public final void testNotificationConfig() {
+    doTestNotificationConfig();
+  }
+
+  protected abstract void doTestNotificationConfig();
+
+  @Test
+  public final void testAuthenticationConfig() {
+    doTestAuthenticationConfig();
+  }
+
+  protected abstract void doTestAuthenticationConfig();
+
+  @Test
+  public final void testInspectionConfig() {
+    doTestInspectionConfig();
+  }
+
+  protected abstract void doTestInspectionConfig();
 }

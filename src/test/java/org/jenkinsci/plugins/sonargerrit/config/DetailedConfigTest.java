@@ -1,89 +1,160 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 21:35
  *
  * <p>$Id$
  */
-public interface DetailedConfigTest extends BaseConfigTest {
-  String NO_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE;
-  Integer NO_ISSUES_SCORE = ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE;
-  Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
-  String ISSUE_COMMENT_TEMPLATE = ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
-  String SOME_ISSUES_TITLE_TEMPLATE = ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
-  String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
-  String NO_ISSUES_NOTIFICATION =
+public abstract class DetailedConfigTest extends BaseConfigTest {
+  protected static final String NO_ISSUES_TITLE_TEMPLATE =
+      ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE;
+  protected static final Integer NO_ISSUES_SCORE = ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE;
+  protected static final Integer SOME_ISSUES_SCORE = ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE;
+  protected static final String ISSUE_COMMENT_TEMPLATE =
+      ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
+  protected static final String SOME_ISSUES_TITLE_TEMPLATE =
+      ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE;
+  protected static final String CATEGORY = ScoreConfig.DescriptorImpl.CATEGORY;
+  protected static final String NO_ISSUES_NOTIFICATION =
       NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES.name();
-  String ISSUES_NOTIFICATION =
+  protected static final String ISSUES_NOTIFICATION =
       NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES.name();
-  String SCORE_NOTIFICATION =
+  protected static final String SCORE_NOTIFICATION =
       NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE.name();
-  String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
-  String SONAR_REPORT_PATH = SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
-  String PROJECT_PATH = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
-  String SEVERITY = IssueFilterConfig.DescriptorImpl.SEVERITY;
-  String DEFAULT_INSPECTION_CONFIG_TYPE =
+  protected static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
+  protected static final String SONAR_REPORT_PATH =
+      SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH;
+  protected static final String PROJECT_PATH = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
+  protected static final String SEVERITY = IssueFilterConfig.DescriptorImpl.SEVERITY;
+  protected static final String DEFAULT_INSPECTION_CONFIG_TYPE =
       InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
-  boolean NEW_ISSUES_ONLY = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
-  boolean CHANGED_LINES_ONLY = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
-  boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
+  protected static final boolean NEW_ISSUES_ONLY = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
+  protected static final boolean CHANGED_LINES_ONLY =
+      IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
+  protected static final boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
 
   // IssueFilterConfig
-  @SuppressWarnings(value = "unused")
-  void testSeverity();
 
-  @SuppressWarnings(value = "unused")
-  void testNewOnly();
+  @Test
+  public final void testSeverity() {
+    doTestSeverity();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testChangedLinesOnly();
+  protected abstract void doTestSeverity();
+
+  @Test
+  public final void testNewOnly() {
+    doTestNewOnly();
+  }
+
+  protected abstract void doTestNewOnly();
+
+  @Test
+  public final void testChangedLinesOnly() {
+    doTestChangedLinesOnly();
+  }
+
+  protected abstract void doTestChangedLinesOnly();
 
   // ReviewConfig
 
-  @SuppressWarnings(value = "unused")
-  void testNoIssuesTitleTemplate();
+  @Test
+  public final void testNoIssuesTitleTemplate() {
+    doTestNoIssuesTitleTemplate();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testSomeIssuesTitleTemplate();
+  protected abstract void doTestNoIssuesTitleTemplate();
 
-  @SuppressWarnings(value = "unused")
-  void testIssuesCommentTemplate();
+  @Test
+  public final void testSomeIssuesTitleTemplate() {
+    doTestSomeIssuesTitleTemplate();
+  }
+
+  protected abstract void doTestSomeIssuesTitleTemplate();
+
+  @Test
+  public final void testIssuesCommentTemplate() {
+    doTestIssuesCommentTemplate();
+  }
+
+  protected abstract void doTestIssuesCommentTemplate();
 
   // ScoreConfig
 
-  @SuppressWarnings(value = "unused")
-  void testCategory();
+  @Test
+  public final void testCategory() {
+    doTestCategory();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testNoIssuesScoreScore();
+  protected abstract void doTestCategory();
 
-  @SuppressWarnings(value = "unused")
-  void testSomeIssuesScoreScore();
+  @Test
+  public final void testNoIssuesScoreScore() {
+    doTestNoIssuesScoreScore();
+  }
+
+  protected abstract void doTestNoIssuesScoreScore();
+
+  @Test
+  public final void testSomeIssuesScoreScore() {
+    doTestSomeIssuesScoreScore();
+  }
+
+  protected abstract void doTestSomeIssuesScoreScore();
 
   // NotificationConfig
 
-  @SuppressWarnings(value = "unused")
-  void testNoIssuesNotificationRecipient();
+  @Test
+  public final void testNoIssuesNotificationRecipient() {
+    doTestNoIssuesNotificationRecipient();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testIssuesNotificationRecipient();
+  protected abstract void doTestNoIssuesNotificationRecipient();
 
-  @SuppressWarnings(value = "unused")
-  void testNegativeScoreNotificationRecipient();
+  @Test
+  public final void testIssuesNotificationRecipient() {
+    doTestIssuesNotificationRecipient();
+  }
+
+  protected abstract void doTestIssuesNotificationRecipient();
+
+  @Test
+  public final void testNegativeScoreNotificationRecipient() {
+    doTestNegativeScoreNotificationRecipient();
+  }
+
+  protected abstract void doTestNegativeScoreNotificationRecipient();
 
   // Sonar config
 
-  @SuppressWarnings(value = "unused")
-  void testSubJobConfig();
+  @Test
+  public final void testSubJobConfig() {
+    doTestSubJobConfig();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testSonarUrl();
+  protected abstract void doTestSubJobConfig();
 
-  @SuppressWarnings(value = "unused")
-  void testSonarReportPath();
+  @Test
+  public final void testSonarUrl() {
+    doTestSonarUrl();
+  }
 
-  @SuppressWarnings(value = "unused")
-  void testProjectConfig();
+  protected abstract void doTestSonarUrl();
+
+  @Test
+  public final void testSonarReportPath() {
+    doTestSonarReportPath();
+  }
+
+  protected abstract void doTestSonarReportPath();
+
+  @Test
+  public final void testProjectConfig() {
+    doTestProjectConfig();
+  }
+
+  protected abstract void doTestProjectConfig();
 }

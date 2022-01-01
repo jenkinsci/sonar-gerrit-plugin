@@ -2,14 +2,13 @@ package org.jenkinsci.plugins.sonargerrit.config;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.11.2017 14:09
  *
  * <p>$Id$
  */
-public class DefaultValuesTest implements BaseConfigTest {
+public class DefaultValuesTest extends BaseConfigTest {
 
   public static final String SEVERITY = "INFO";
   public static final boolean NEW_ONLY = false;
@@ -29,12 +28,9 @@ public class DefaultValuesTest implements BaseConfigTest {
   public static final String PROJECT_PATH = "";
   public static final String DEFAULT_INSPECTION_CONFIG_TYPE = "base";
   public static final boolean PATH_AUTO_MATCH = false;
-  public static final String MULTI_TYPE = "multi";
-  public static final String BASE_TYPE = "base";
 
   @Override
-  @Test
-  public void testFilterConfig() {
+  protected void doTestFilterConfig() {
     Assertions.assertEquals(SEVERITY, IssueFilterConfig.DescriptorImpl.SEVERITY);
     Assertions.assertEquals(NEW_ONLY, IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY);
     Assertions.assertEquals(CHANGED_ONLY, IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY);
@@ -46,8 +42,7 @@ public class DefaultValuesTest implements BaseConfigTest {
   }
 
   @Override
-  @Test
-  public void testReviewConfig() {
+  protected void doTestReviewConfig() {
     Assertions.assertEquals(COMMENT, ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
     Assertions.assertEquals(TITLE_NO_ISSUES, ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE);
     Assertions.assertEquals(TITLE_ISSUES, ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE);
@@ -64,8 +59,7 @@ public class DefaultValuesTest implements BaseConfigTest {
   }
 
   @Override
-  @Test
-  public void testScoreConfig() {
+  protected void doTestScoreConfig() {
     Assertions.assertEquals(CATEGORY, ScoreConfig.DescriptorImpl.CATEGORY);
     Assertions.assertEquals(SCORE_NO_ISSUES, ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE.intValue());
     Assertions.assertEquals(SCORE_ISSUES, ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE.intValue());
@@ -82,8 +76,7 @@ public class DefaultValuesTest implements BaseConfigTest {
   }
 
   @Override
-  @Test
-  public void testNotificationConfig() {
+  protected void doTestNotificationConfig() {
     Assertions.assertEquals(
         NOTIFICATION_NO_ISSUES,
         NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES.name());
@@ -101,16 +94,14 @@ public class DefaultValuesTest implements BaseConfigTest {
   }
 
   @Override
-  @Test
-  public void testAuthenticationConfig() {
+  protected void doTestAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
     Assertions.assertNull(config.getUsername());
     Assertions.assertNull(config.getPassword());
   }
 
   @Override
-  @Test
-  public void testInspectionConfig() {
+  protected void doTestInspectionConfig() {
     Assertions.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
     Assertions.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
     Assertions.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);

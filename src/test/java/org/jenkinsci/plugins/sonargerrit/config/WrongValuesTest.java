@@ -2,72 +2,60 @@ package org.jenkinsci.plugins.sonargerrit.config;
 
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 19.11.2017 22:15
  *
  * <p>$Id$
  */
-public class WrongValuesTest implements DetailedConfigTest {
+public class WrongValuesTest extends DetailedConfigTest {
   @Override
-  @Test
-  public void testSeverity() {
+  protected void doTestSeverity() {
     IssueFilterConfig config = new IssueFilterConfig();
     config.setSeverity("Test");
     Assertions.assertEquals(SEVERITY, config.getSeverity());
   }
 
   @Override
-  @Test
-  public void testNewOnly() {
+  protected void doTestNewOnly() {
     // nothing to check here
   }
 
   @Override
-  @Test
-  public void testChangedLinesOnly() {
+  protected void doTestChangedLinesOnly() {
     // nothing to check here
   }
 
   @Override
-  @Test
-  public void testNoIssuesTitleTemplate() {
+  protected void doTestNoIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
     config.setNoIssuesTitleTemplate("");
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
   }
 
   @Override
-  @Test
-  public void testSomeIssuesTitleTemplate() {
+  protected void doTestSomeIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
     config.setSomeIssuesTitleTemplate("");
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
   }
 
   @Override
-  @Test
-  public void testIssuesCommentTemplate() {
+  protected void doTestIssuesCommentTemplate() {
     ReviewConfig config = new ReviewConfig();
     config.setIssueCommentTemplate("");
     Assertions.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
   }
 
   @Override
-  @Test
-  public void testCategory() {
+  protected void doTestCategory() {
     ScoreConfig config = new ScoreConfig();
     config.setCategory("");
     Assertions.assertEquals(CATEGORY, config.getCategory());
   }
 
   @Override
-  @Test
-  public void testNoIssuesScoreScore() {
-    //        ScoreConfig config = new ScoreConfig();
-    //        config.setNoIssuesScore(-50); ?
-
+  protected void doTestNoIssuesScoreScore() {
     SonarToGerritPublisher p = new SonarToGerritPublisher();
     p.setPostScore(true);
     p.setNoIssuesScore("test");
@@ -75,11 +63,7 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSomeIssuesScoreScore() {
-    //        ScoreConfig config = new ScoreConfig();
-    //        config.setIssuesScore(-50); ?
-
+  protected void doTestSomeIssuesScoreScore() {
     SonarToGerritPublisher p = new SonarToGerritPublisher();
     p.setPostScore(true);
     p.setIssuesScore("test");
@@ -87,40 +71,35 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNoIssuesNotificationRecipient() {
+  protected void doTestNoIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     config.setNoIssuesNotificationRecipient("");
     Assertions.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
   }
 
   @Override
-  @Test
-  public void testIssuesNotificationRecipient() {
+  protected void doTestIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     config.setCommentedIssuesNotificationRecipient("");
     Assertions.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
   }
 
   @Override
-  @Test
-  public void testNegativeScoreNotificationRecipient() {
+  protected void doTestNegativeScoreNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     config.setNegativeScoreNotificationRecipient("");
     Assertions.assertEquals(SCORE_NOTIFICATION, config.getNegativeScoreNotificationRecipient());
   }
 
   @Override
-  @Test
-  public void testSonarUrl() {
+  protected void doTestSonarUrl() {
     InspectionConfig config = new InspectionConfig();
     config.setServerURL("");
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
   }
 
   @Override
-  @Test
-  public void testSonarReportPath() {
+  protected void doTestSonarReportPath() {
     SubJobConfig config = new SubJobConfig();
     config.setSonarReportPath("fghdfh^%&$(&*IOUM V");
     Assertions.assertEquals("fghdfh^%&$(&*IOUM V", config.getSonarReportPath());
@@ -130,38 +109,32 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testFilterConfig() {
+  protected void doTestFilterConfig() {
     // nope
   }
 
   @Override
-  @Test
-  public void testReviewConfig() {
+  protected void doTestReviewConfig() {
     // nope
   }
 
   @Override
-  @Test
-  public void testScoreConfig() {
+  protected void doTestScoreConfig() {
     // nope
   }
 
   @Override
-  @Test
-  public void testNotificationConfig() {
+  protected void doTestNotificationConfig() {
     // nope
   }
 
   @Override
-  @Test
-  public void testAuthenticationConfig() {
+  protected void doTestAuthenticationConfig() {
     // nope
   }
 
   @Override
-  @Test
-  public void testInspectionConfig() {
+  protected void doTestInspectionConfig() {
     InspectionConfig config = new InspectionConfig();
     config.setType("test");
     Assertions.assertFalse(config.isType("test"));
@@ -175,12 +148,10 @@ public class WrongValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSubJobConfig() {}
+  protected void doTestSubJobConfig() {}
 
   @Override
-  @Test
-  public void testProjectConfig() {
+  protected void doTestProjectConfig() {
     SubJobConfig config = new SubJobConfig();
     config.setProjectPath("fghdfh^%&$(&*IOUM V");
     Assertions.assertEquals("fghdfh^%&$(&*IOUM V", config.getProjectPath());

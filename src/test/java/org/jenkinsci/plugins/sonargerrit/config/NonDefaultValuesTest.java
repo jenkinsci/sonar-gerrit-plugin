@@ -9,11 +9,10 @@ import org.junit.jupiter.api.Test;
  *
  * <p>$Id$
  */
-public class NonDefaultValuesTest implements DetailedConfigTest {
+public class NonDefaultValuesTest extends DetailedConfigTest {
 
   @Override
-  @Test
-  public void testSeverity() {
+  protected void doTestSeverity() {
     IssueFilterConfig config = new IssueFilterConfig();
     Assertions.assertEquals(SEVERITY, config.getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.isNewIssuesOnly());
@@ -27,8 +26,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNewOnly() {
+  protected void doTestNewOnly() {
     IssueFilterConfig config = new IssueFilterConfig();
     Assertions.assertEquals(SEVERITY, config.getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.isNewIssuesOnly());
@@ -42,8 +40,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testChangedLinesOnly() {
+  protected void doTestChangedLinesOnly() {
     IssueFilterConfig config = new IssueFilterConfig();
     Assertions.assertEquals(SEVERITY, config.getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.isNewIssuesOnly());
@@ -57,8 +54,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testFilterConfig() {
+  protected void doTestFilterConfig() {
     IssueFilterConfig config = new IssueFilterConfig();
     Assertions.assertEquals(SEVERITY, config.getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.isNewIssuesOnly());
@@ -78,8 +74,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNoIssuesTitleTemplate() {
+  protected void doTestNoIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
@@ -92,8 +87,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSomeIssuesTitleTemplate() {
+  protected void doTestSomeIssuesTitleTemplate() {
     ReviewConfig config = new ReviewConfig();
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
@@ -106,8 +100,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testIssuesCommentTemplate() {
+  protected void doTestIssuesCommentTemplate() {
     ReviewConfig config = new ReviewConfig();
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
@@ -120,8 +113,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testReviewConfig() {
+  protected void doTestReviewConfig() {
     ReviewConfig config = new ReviewConfig();
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
@@ -141,8 +133,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testCategory() {
+  protected void doTestCategory() {
     ScoreConfig config = new ScoreConfig();
     Assertions.assertEquals(CATEGORY, config.getCategory());
     Assertions.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
@@ -157,8 +148,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNoIssuesScoreScore() {
+  protected void doTestNoIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
     Assertions.assertEquals(CATEGORY, config.getCategory());
     Assertions.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
@@ -173,8 +163,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSomeIssuesScoreScore() {
+  protected void doTestSomeIssuesScoreScore() {
     ScoreConfig config = new ScoreConfig();
     Assertions.assertEquals(CATEGORY, config.getCategory());
     Assertions.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
@@ -189,8 +178,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testScoreConfig() {
+  protected void doTestScoreConfig() {
     ScoreConfig config = new ScoreConfig();
     Assertions.assertEquals(CATEGORY, config.getCategory());
     Assertions.assertEquals(NO_ISSUES_SCORE, config.getNoIssuesScore());
@@ -210,8 +198,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNoIssuesNotificationRecipient() {
+  protected void doTestNoIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     Assertions.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
     Assertions.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
@@ -226,8 +213,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testIssuesNotificationRecipient() {
+  protected void doTestIssuesNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     Assertions.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
     Assertions.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
@@ -242,8 +228,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNegativeScoreNotificationRecipient() {
+  protected void doTestNegativeScoreNotificationRecipient() {
     NotificationConfig config = new NotificationConfig();
     Assertions.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
     Assertions.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
@@ -258,8 +243,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testNotificationConfig() {
+  protected void doTestNotificationConfig() {
     NotificationConfig config = new NotificationConfig();
     Assertions.assertEquals(NO_ISSUES_NOTIFICATION, config.getNoIssuesNotificationRecipient());
     Assertions.assertEquals(ISSUES_NOTIFICATION, config.getCommentedIssuesNotificationRecipient());
@@ -279,7 +263,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Test
-  public void testUsername() {
+  void testUsername() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
     Assertions.assertNull(config.getUsername());
     Assertions.assertNull(config.getPassword());
@@ -291,8 +275,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testAuthenticationConfig() {
+  protected void doTestAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
     Assertions.assertNull(config.getUsername());
     Assertions.assertNull(config.getPassword());
@@ -303,8 +286,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSonarUrl() {
+  protected void doTestSonarUrl() {
     InspectionConfig config = new InspectionConfig();
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertNotSame("Test", SONAR_URL);
@@ -313,8 +295,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSonarReportPath() {
+  protected void doTestSonarReportPath() {
     SubJobConfig config = new SubJobConfig();
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
     Assertions.assertNotSame("Test", SONAR_REPORT_PATH);
@@ -323,8 +304,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testProjectConfig() {
+  protected void doTestProjectConfig() {
     SubJobConfig config = new SubJobConfig();
     Assertions.assertEquals(PROJECT_PATH, config.getProjectPath());
     Assertions.assertNotSame("Test", PROJECT_PATH);
@@ -333,8 +313,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testInspectionConfig() {
+  protected void doTestInspectionConfig() {
     InspectionConfig config = new InspectionConfig();
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
@@ -379,8 +358,7 @@ public class NonDefaultValuesTest implements DetailedConfigTest {
   }
 
   @Override
-  @Test
-  public void testSubJobConfig() {
+  protected void doTestSubJobConfig() {
     SubJobConfig config = new SubJobConfig();
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getSonarReportPath());
     Assertions.assertEquals(PROJECT_PATH, config.getProjectPath());
