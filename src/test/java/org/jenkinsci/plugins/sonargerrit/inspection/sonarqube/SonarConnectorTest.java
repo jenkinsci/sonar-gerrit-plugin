@@ -7,8 +7,8 @@ import java.util.Arrays;
 import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.ReportDataChecker;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 30.11.2017 15:10
@@ -24,9 +24,9 @@ public class SonarConnectorTest {
     SubJobConfig config = createConfig("", "one_issue.json");
 
     SonarConnector connector = readSonarReport(config);
-    Assert.assertNotNull(connector);
-    Assert.assertNotNull(connector.getIssues());
-    Assert.assertEquals(1, connector.getIssues().size());
+    Assertions.assertNotNull(connector);
+    Assertions.assertNotNull(connector.getIssues());
+    Assertions.assertEquals(1, connector.getIssues().size());
     ReportDataChecker.checkFile(filename, connector.getRawReport(config));
   }
 
@@ -38,9 +38,9 @@ public class SonarConnectorTest {
     SubJobConfig config2 = createConfig("", filename2);
 
     SonarConnector connector = readSonarReport(config1, config2);
-    Assert.assertNotNull(connector);
-    Assert.assertNotNull(connector.getIssues());
-    Assert.assertEquals(2, connector.getIssues().size());
+    Assertions.assertNotNull(connector);
+    Assertions.assertNotNull(connector.getIssues());
+    Assertions.assertEquals(2, connector.getIssues().size());
     ReportDataChecker.checkFile(filename1, connector.getRawReport(config1));
     ReportDataChecker.checkFile(filename2, connector.getRawReport(config2));
   }
@@ -55,9 +55,9 @@ public class SonarConnectorTest {
     SubJobConfig config3 = createConfig("", filename3);
 
     SonarConnector connector = readSonarReport(config1, config2, config3);
-    Assert.assertNotNull(connector);
-    Assert.assertNotNull(connector.getIssues());
-    Assert.assertEquals(3, connector.getIssues().size());
+    Assertions.assertNotNull(connector);
+    Assertions.assertNotNull(connector.getIssues());
+    Assertions.assertEquals(3, connector.getIssues().size());
     ReportDataChecker.checkFile(filename1, connector.getRawReport(config1));
     ReportDataChecker.checkFile(filename2, connector.getRawReport(config2));
     ReportDataChecker.checkFile(filename3, connector.getRawReport(config3));

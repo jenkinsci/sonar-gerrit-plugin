@@ -7,8 +7,8 @@ package org.jenkinsci.plugins.sonargerrit.review.notification;
  */
 public class ReviewCommentAndScoreNotificationTest extends ReviewNegativeScoreNotificationTest {
   @Override
-  public void initialize() {
-    super.initialize();
+  protected void doInitialize() {
+    super.doInitialize();
     commentIssues.put(
         "juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
         new DummyIssue());

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -57,17 +57,22 @@ public abstract class ConfigurationUpdateTest {
   protected void invokeSetter(Object obj, String field, Object value, boolean deprecated)
       throws ReflectiveOperationException {
     PropertyDescriptor e1 = PropertyUtils.getPropertyDescriptor(obj, field);
-    Assert.assertNotNull(
-        String.format("There is no public setter for field %s", field),
-        e1); // check setter method exists
+    Assertions.assertNotNull(
+        e1,
+        String.format(
+            "There is no public setter for field %s", field)); // check setter method exists
     Method wm1 = e1.getWriteMethod();
-    Assert.assertNotNull(
-        String.format("There is no annotation @DataBoundSetter for setter for field %s", field),
-        wm1.getAnnotation(DataBoundSetter.class)); // check setter method annotated
+    Assertions.assertNotNull(
+        wm1.getAnnotation(DataBoundSetter.class),
+        String.format(
+            "There is no annotation @DataBoundSetter for setter for field %s",
+            field)); // check setter method annotated
     if (deprecated) {
-      Assert.assertNotNull(
-          String.format("Setter for field %s should be marked as @deprecated", field),
-          wm1.getAnnotation(Deprecated.class)); // check setter method deprecated
+      Assertions.assertNotNull(
+          wm1.getAnnotation(Deprecated.class),
+          String.format(
+              "Setter for field %s should be marked as @deprecated",
+              field)); // check setter method deprecated
     }
     wm1.setAccessible(true);
     wm1.invoke(obj, value);
@@ -86,7 +91,7 @@ public abstract class ConfigurationUpdateTest {
 
   protected SonarToGerritPublisher invokeConstructor() throws ReflectiveOperationException {
     Constructor<SonarToGerritPublisher> c = SonarToGerritPublisher.class.getConstructor();
-    Assert.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
+    Assertions.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
     return c.newInstance();
   }
 
@@ -105,7 +110,6 @@ public abstract class ConfigurationUpdateTest {
     }
 
     Constructor<?> c = Class.forName(className).getConstructor(classes);
-    // Assert.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
     return c.newInstance(params);
   }
 
@@ -115,7 +119,7 @@ public abstract class ConfigurationUpdateTest {
     Class<?> aClass = obj.getClass();
     Method declaredMethod = aClass.getDeclaredMethod(methodName);
     for (Class<? extends Annotation> a : annotations) {
-      Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
+      Assertions.assertTrue(declaredMethod.isAnnotationPresent(a));
     }
     return declaredMethod.invoke(obj);
   }
@@ -125,7 +129,7 @@ public abstract class ConfigurationUpdateTest {
       throws ReflectiveOperationException {
     Method declaredMethod = getDeclaredMethod(obj.getClass(), methodName, parameter.getClass());
     for (Class<? extends Annotation> a : annotations) {
-      Assert.assertTrue(declaredMethod.isAnnotationPresent(a));
+      Assertions.assertTrue(declaredMethod.isAnnotationPresent(a));
     }
     return declaredMethod.invoke(obj, parameter);
   }

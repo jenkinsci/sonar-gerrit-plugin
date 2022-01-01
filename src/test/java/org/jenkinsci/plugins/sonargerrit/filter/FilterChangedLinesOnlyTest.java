@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.sonargerrit.filter;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 15.11.2017 15:28 $Id$ */
 public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean> {
@@ -21,12 +21,12 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
   @Override
   public void setFilter(Boolean changedOnly) {
     setChangedOnly(getFilterConfig(), changedOnly);
-    Assert.assertEquals(changedOnly, getFilterConfig().isChangedLinesOnly());
+    Assertions.assertEquals(changedOnly, getFilterConfig().isChangedLinesOnly());
   }
 
   @Override
-  public void resetFilter() {
-    super.resetFilter();
+  protected void doResetFilter() {
+    super.doResetFilter();
     setFilter(IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY);
   }
 
@@ -35,7 +35,7 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
-        Assert.assertFalse(isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
+        Assertions.assertFalse(isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
       }
     }
   }

@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.sonargerrit.signature;
 import java.util.Arrays;
 import java.util.Collection;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 17.11.2017 20:56 $Id$ */
 
@@ -42,19 +42,20 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     invokeSetter(p, config1, false, "inspectionConfig", "baseConfig");
     invokeSetter(p, configs, false, "inspectionConfig", "subJobConfigs");
 
-    Assert.assertEquals("http://localhost:9000", invokeGetter(p, "inspectionConfig", "serverURL"));
+    Assertions.assertEquals(
+        "http://localhost:9000", invokeGetter(p, "inspectionConfig", "serverURL"));
 
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(config1, "projectPath"),
         invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(config1, "sonarReportPath"),
         invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
 
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(config2, "projectPath"),
         invokeGetter(p, "inspectionConfig", "subJobConfigs", "projectPath"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(config2, "sonarReportPath"),
         invokeGetter(p, "inspectionConfig", "subJobConfigs", "sonarReportPath"));
   }
@@ -69,24 +70,24 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     String[] params = {"ALL", "OWNER_REVIEWERS", "NONE"};
 
     Object c = invokeConstructor(className, paramClasses, params);
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c, "noIssuesNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "noIssuesNotificationRecipient"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c, "commentedIssuesNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c, "negativeScoreNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "negativeScoreNotificationRecipient"));
 
     invokeSetter(p, "notificationConfig", c);
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c, "noIssuesNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "noIssuesNotificationRecipient"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c, "commentedIssuesNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "commentedIssuesNotificationRecipient"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c, "negativeScoreNotificationRecipient"),
         invokeGetter(p, "notificationConfig", "negativeScoreNotificationRecipient"));
   }
@@ -103,13 +104,13 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     Object[] params = {"BLOCKER", true, true};
 
     Object c1 = invokeConstructor(className, paramClasses, params);
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c1, "severity"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c1, "newIssuesOnly"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c1, "changedLinesOnly"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
 
@@ -119,33 +120,33 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
     Object[] params2 = {c1, "Test", "Test", "Test"};
 
     Object c2 = invokeConstructor(className2, paramClasses2, params2);
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c2, "noIssuesTitleTemplate"),
         invokeGetter(p, "reviewConfig", "noIssuesTitleTemplate"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c2, "someIssuesTitleTemplate"),
         invokeGetter(p, "reviewConfig", "someIssuesTitleTemplate"));
-    Assert.assertNotSame(
+    Assertions.assertNotSame(
         invokeGetter(c2, "issueCommentTemplate"),
         invokeGetter(p, "reviewConfig", "issueCommentTemplate"));
 
     invokeSetter(p, "reviewConfig", c2);
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "severity"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "newIssuesOnly"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "changedLinesOnly"),
         invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c2, "noIssuesTitleTemplate"),
         invokeGetter(p, "reviewConfig", "noIssuesTitleTemplate"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c2, "someIssuesTitleTemplate"),
         invokeGetter(p, "reviewConfig", "someIssuesTitleTemplate"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c2, "issueCommentTemplate"),
         invokeGetter(p, "reviewConfig", "issueCommentTemplate"));
   }
@@ -171,22 +172,23 @@ public class UnexpectedMethodSignatureChangeTest extends ConfigurationUpdateTest
 
     Object c2 = invokeConstructor(className2, paramClasses2, params2);
 
-    Assert.assertNull(invokeGetter(p, "scoreConfig"));
+    Assertions.assertNull(invokeGetter(p, "scoreConfig"));
 
     invokeSetter(p, "scoreConfig", c2);
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "severity"),
         invokeGetter(p, "scoreConfig", "issueFilterConfig", "severity"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "newIssuesOnly"),
         invokeGetter(p, "scoreConfig", "issueFilterConfig", "newIssuesOnly"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c1, "changedLinesOnly"),
         invokeGetter(p, "scoreConfig", "issueFilterConfig", "changedLinesOnly"));
-    Assert.assertEquals(invokeGetter(c2, "category"), invokeGetter(p, "scoreConfig", "category"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
+        invokeGetter(c2, "category"), invokeGetter(p, "scoreConfig", "category"));
+    Assertions.assertEquals(
         invokeGetter(c2, "noIssuesScore"), invokeGetter(p, "scoreConfig", "noIssuesScore"));
-    Assert.assertEquals(
+    Assertions.assertEquals(
         invokeGetter(c2, "issuesScore"), invokeGetter(p, "scoreConfig", "issuesScore"));
   }
 }

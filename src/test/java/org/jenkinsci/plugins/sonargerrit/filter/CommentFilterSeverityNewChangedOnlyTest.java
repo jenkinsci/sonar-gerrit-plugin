@@ -7,7 +7,7 @@ import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
  *
  * <p>$Id$
  */
-public class CommentFilterSeverityNewChangedOnly extends FilterSeverityNewChangedOnly {
+public class CommentFilterSeverityNewChangedOnlyTest extends FilterSeverityNewChangedOnlyTest {
   @Override
   protected IssueFilterConfig getFilterConfig() {
     return publisher.getReviewConfig().getIssueFilterConfig();

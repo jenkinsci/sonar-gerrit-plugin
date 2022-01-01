@@ -5,11 +5,11 @@ import org.jenkinsci.plugins.sonargerrit.filter.util.Pair;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 15.11.2017 20:41 $Id$ */
-public abstract class FilterSeverityAndChangedLinesOnly
+public abstract class FilterSeverityAndChangedLinesOnlyTest
     extends BaseFilterTest<Pair<String, Boolean>> {
 
   @Test
@@ -46,16 +46,16 @@ public abstract class FilterSeverityAndChangedLinesOnly
   public void setFilter(Pair<String, Boolean> severityAndChanged) {
     String severity = severityAndChanged.getFirst();
     setSeverity(getFilterConfig(), severity);
-    Assert.assertEquals(severity, getFilterConfig().getSeverity());
+    Assertions.assertEquals(severity, getFilterConfig().getSeverity());
 
     Boolean changedOnly = severityAndChanged.getSecond();
     setChangedOnly(getFilterConfig(), changedOnly);
-    Assert.assertEquals(changedOnly, getFilterConfig().isChangedLinesOnly());
+    Assertions.assertEquals(changedOnly, getFilterConfig().isChangedLinesOnly());
   }
 
   @Override
-  public void resetFilter() {
-    super.resetFilter();
+  protected void doResetFilter() {
+    super.doResetFilter();
     String severity = IssueFilterConfig.DescriptorImpl.SEVERITY;
     Boolean changedOnly = IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
     setFilter(new Pair<>(severity, changedOnly));
@@ -69,7 +69,7 @@ public abstract class FilterSeverityAndChangedLinesOnly
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
-        Assert.assertFalse(
+        Assertions.assertFalse(
             isSeverityCriteriaSatisfied(severity, issue)
                 && isChangedLinesOnlyCriteriaSatisfied(changedOnly, issue));
       }

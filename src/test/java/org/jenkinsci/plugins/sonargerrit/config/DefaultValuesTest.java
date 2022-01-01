@@ -1,8 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import java.util.ArrayList;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.11.2017 14:09
@@ -35,104 +35,104 @@ public class DefaultValuesTest implements BaseConfigTest {
   @Override
   @Test
   public void testFilterConfig() {
-    Assert.assertEquals(SEVERITY, IssueFilterConfig.DescriptorImpl.SEVERITY);
-    Assert.assertEquals(NEW_ONLY, IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY);
-    Assert.assertEquals(CHANGED_ONLY, IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY);
+    Assertions.assertEquals(SEVERITY, IssueFilterConfig.DescriptorImpl.SEVERITY);
+    Assertions.assertEquals(NEW_ONLY, IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY);
+    Assertions.assertEquals(CHANGED_ONLY, IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY);
 
     IssueFilterConfig config = new IssueFilterConfig();
-    Assert.assertEquals(SEVERITY, config.getSeverity());
-    Assert.assertEquals(NEW_ONLY, config.isNewIssuesOnly());
-    Assert.assertEquals(CHANGED_ONLY, config.isChangedLinesOnly());
+    Assertions.assertEquals(SEVERITY, config.getSeverity());
+    Assertions.assertEquals(NEW_ONLY, config.isNewIssuesOnly());
+    Assertions.assertEquals(CHANGED_ONLY, config.isChangedLinesOnly());
   }
 
   @Override
   @Test
   public void testReviewConfig() {
-    Assert.assertEquals(COMMENT, ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
-    Assert.assertEquals(TITLE_NO_ISSUES, ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE);
-    Assert.assertEquals(TITLE_ISSUES, ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE);
+    Assertions.assertEquals(COMMENT, ReviewConfig.DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
+    Assertions.assertEquals(TITLE_NO_ISSUES, ReviewConfig.DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE);
+    Assertions.assertEquals(TITLE_ISSUES, ReviewConfig.DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE);
 
     ReviewConfig config = new ReviewConfig();
-    Assert.assertEquals(COMMENT, config.getIssueCommentTemplate());
-    Assert.assertEquals(TITLE_NO_ISSUES, config.getNoIssuesTitleTemplate());
-    Assert.assertEquals(TITLE_ISSUES, config.getSomeIssuesTitleTemplate());
+    Assertions.assertEquals(COMMENT, config.getIssueCommentTemplate());
+    Assertions.assertEquals(TITLE_NO_ISSUES, config.getNoIssuesTitleTemplate());
+    Assertions.assertEquals(TITLE_ISSUES, config.getSomeIssuesTitleTemplate());
 
     IssueFilterConfig filterConfig = config.getIssueFilterConfig();
-    Assert.assertEquals(SEVERITY, filterConfig.getSeverity());
-    Assert.assertEquals(NEW_ONLY, filterConfig.isNewIssuesOnly());
-    Assert.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
+    Assertions.assertEquals(SEVERITY, filterConfig.getSeverity());
+    Assertions.assertEquals(NEW_ONLY, filterConfig.isNewIssuesOnly());
+    Assertions.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
   }
 
   @Override
   @Test
   public void testScoreConfig() {
-    Assert.assertEquals(CATEGORY, ScoreConfig.DescriptorImpl.CATEGORY);
-    Assert.assertEquals(SCORE_NO_ISSUES, ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE.intValue());
-    Assert.assertEquals(SCORE_ISSUES, ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE.intValue());
+    Assertions.assertEquals(CATEGORY, ScoreConfig.DescriptorImpl.CATEGORY);
+    Assertions.assertEquals(SCORE_NO_ISSUES, ScoreConfig.DescriptorImpl.NO_ISSUES_SCORE.intValue());
+    Assertions.assertEquals(SCORE_ISSUES, ScoreConfig.DescriptorImpl.SOME_ISSUES_SCORE.intValue());
 
     ScoreConfig config = new ScoreConfig();
-    Assert.assertEquals(CATEGORY, config.getCategory());
-    Assert.assertEquals(SCORE_NO_ISSUES, config.getNoIssuesScore().intValue());
-    Assert.assertEquals(SCORE_ISSUES, config.getIssuesScore().intValue());
+    Assertions.assertEquals(CATEGORY, config.getCategory());
+    Assertions.assertEquals(SCORE_NO_ISSUES, config.getNoIssuesScore().intValue());
+    Assertions.assertEquals(SCORE_ISSUES, config.getIssuesScore().intValue());
 
     IssueFilterConfig filterConfig = config.getIssueFilterConfig();
-    Assert.assertEquals(SEVERITY, filterConfig.getSeverity());
-    Assert.assertEquals(NEW_ONLY, filterConfig.isNewIssuesOnly());
-    Assert.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
+    Assertions.assertEquals(SEVERITY, filterConfig.getSeverity());
+    Assertions.assertEquals(NEW_ONLY, filterConfig.isNewIssuesOnly());
+    Assertions.assertEquals(CHANGED_ONLY, filterConfig.isChangedLinesOnly());
   }
 
   @Override
   @Test
   public void testNotificationConfig() {
-    Assert.assertEquals(
+    Assertions.assertEquals(
         NOTIFICATION_NO_ISSUES,
         NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NO_ISSUES.name());
-    Assert.assertEquals(
+    Assertions.assertEquals(
         NOTIFICATION_ISSUES,
         NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_COMMENTED_ISSUES.name());
-    Assert.assertEquals(
+    Assertions.assertEquals(
         NOTIFICATION_SCORE,
         NotificationConfig.DescriptorImpl.NOTIFICATION_RECIPIENT_NEGATIVE_SCORE.name());
 
     NotificationConfig config = new NotificationConfig();
-    Assert.assertEquals(NOTIFICATION_NO_ISSUES, config.getNoIssuesNotificationRecipient());
-    Assert.assertEquals(NOTIFICATION_ISSUES, config.getCommentedIssuesNotificationRecipient());
-    Assert.assertEquals(NOTIFICATION_SCORE, config.getNegativeScoreNotificationRecipient());
+    Assertions.assertEquals(NOTIFICATION_NO_ISSUES, config.getNoIssuesNotificationRecipient());
+    Assertions.assertEquals(NOTIFICATION_ISSUES, config.getCommentedIssuesNotificationRecipient());
+    Assertions.assertEquals(NOTIFICATION_SCORE, config.getNegativeScoreNotificationRecipient());
   }
 
   @Override
   @Test
   public void testAuthenticationConfig() {
     GerritAuthenticationConfig config = new GerritAuthenticationConfig();
-    Assert.assertNull(config.getUsername());
-    Assert.assertNull(config.getPassword());
+    Assertions.assertNull(config.getUsername());
+    Assertions.assertNull(config.getPassword());
   }
 
   @Override
   @Test
   public void testInspectionConfig() {
-    Assert.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
-    Assert.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
-    Assert.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
-    Assert.assertEquals(
+    Assertions.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
+    Assertions.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
+    Assertions.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
+    Assertions.assertEquals(
         DEFAULT_INSPECTION_CONFIG_TYPE,
         InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
-    Assert.assertEquals(PATH_AUTO_MATCH, InspectionConfig.DescriptorImpl.AUTO_MATCH);
-    Assert.assertEquals(
+    Assertions.assertEquals(PATH_AUTO_MATCH, InspectionConfig.DescriptorImpl.AUTO_MATCH);
+    Assertions.assertEquals(
         DEFAULT_INSPECTION_CONFIG_TYPE,
         InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
 
     InspectionConfig config = new InspectionConfig();
-    Assert.assertEquals(SONAR_URL, config.getServerURL());
-    Assert.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
-    Assert.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
-    Assert.assertFalse(config.isMultiConfigMode());
-    Assert.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
+    Assertions.assertEquals(SONAR_URL, config.getServerURL());
+    Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
+    Assertions.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
+    Assertions.assertFalse(config.isMultiConfigMode());
+    Assertions.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
 
-    Assert.assertNotNull(config.getSubJobConfigs());
-    Assert.assertEquals(1, config.getSubJobConfigs().size());
+    Assertions.assertNotNull(config.getSubJobConfigs());
+    Assertions.assertEquals(1, config.getSubJobConfigs().size());
     SubJobConfig sConfig = new ArrayList<>(config.getSubJobConfigs()).get(0);
-    Assert.assertEquals(SONAR_REPORT_PATH, sConfig.getSonarReportPath());
-    Assert.assertEquals(PROJECT_PATH, sConfig.getProjectPath());
+    Assertions.assertEquals(SONAR_REPORT_PATH, sConfig.getSonarReportPath());
+    Assertions.assertEquals(PROJECT_PATH, sConfig.getProjectPath());
   }
 }

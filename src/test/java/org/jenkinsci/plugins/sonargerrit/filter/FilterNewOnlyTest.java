@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.sonargerrit.filter;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 15.11.2017 14:10 $Id$ */
 public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
@@ -21,12 +21,12 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
   @Override
   public void setFilter(Boolean newOnly) {
     setNewOnly(getFilterConfig(), newOnly);
-    Assert.assertEquals(newOnly, getFilterConfig().isNewIssuesOnly());
+    Assertions.assertEquals(newOnly, getFilterConfig().isNewIssuesOnly());
   }
 
   @Override
-  public void resetFilter() {
-    super.resetFilter();
+  protected void doResetFilter() {
+    super.doResetFilter();
     setFilter(IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY);
   }
 
@@ -35,7 +35,7 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
-        Assert.assertFalse(isNewOnlyCriteriaSatisfied(newOnly, issue));
+        Assertions.assertFalse(isNewOnlyCriteriaSatisfied(newOnly, issue));
       }
     }
   }

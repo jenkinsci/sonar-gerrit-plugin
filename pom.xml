@@ -22,6 +22,7 @@
          ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
          ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
     -->
+    <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
   </properties>
 
@@ -75,8 +76,16 @@
       <version>0.9.3</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+<!-- Needed to keep jenkins-test-assertion working (see https://github.com/jenkinsci/jenkins-test-harness/pull/375) -->
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -10,9 +10,9 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 12:41 $Id$ */
 public class ReviewResultTest extends ReportBasedTest {
@@ -20,8 +20,12 @@ public class ReviewResultTest extends ReportBasedTest {
   protected Multimap<String, IssueAdapter> commentIssues = LinkedListMultimap.create();
   protected SonarToGerritPublisher publisher;
 
-  @Before
-  public void initialize() {
+  @BeforeEach
+  public final void initialize() {
+    doInitialize();
+  }
+
+  protected void doInitialize() {
     publisher = buildPublisher();
   }
 
@@ -29,7 +33,7 @@ public class ReviewResultTest extends ReportBasedTest {
   public void testNoScoreConfig() {
     publisher.setScoreConfig(null);
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertNull(reviewResult.labels);
+    Assertions.assertNull(reviewResult.labels);
   }
 
   protected ReviewInput getReviewResult() {

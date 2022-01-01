@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Objects;
-import org.jenkinsci.plugins.sonargerrit.inspection.entity.*;
+import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.06.2015 13:52 */
 public class SonarReportBuilderTest {
@@ -22,15 +22,15 @@ public class SonarReportBuilderTest {
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
     Report rep = new SonarReportBuilder().fromJson(json);
-    Assert.assertNotNull(rep);
-    Assert.assertNotNull(rep.getComponents());
-    Assert.assertNotNull(rep.getIssues());
-    Assert.assertNotNull(rep.getRules());
-    Assert.assertNotNull(rep.getUsers());
-    Assert.assertEquals(169, rep.getComponents().size());
-    Assert.assertEquals(177, rep.getIssues().size());
-    Assert.assertEquals(27, rep.getRules().size());
-    Assert.assertEquals(0, rep.getUsers().size());
+    Assertions.assertNotNull(rep);
+    Assertions.assertNotNull(rep.getComponents());
+    Assertions.assertNotNull(rep.getIssues());
+    Assertions.assertNotNull(rep.getRules());
+    Assertions.assertNotNull(rep.getUsers());
+    Assertions.assertEquals(169, rep.getComponents().size());
+    Assertions.assertEquals(177, rep.getIssues().size());
+    Assertions.assertEquals(27, rep.getRules().size());
+    Assertions.assertEquals(0, rep.getUsers().size());
   }
 
   @Test

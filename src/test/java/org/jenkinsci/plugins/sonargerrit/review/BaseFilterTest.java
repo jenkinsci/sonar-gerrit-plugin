@@ -4,19 +4,28 @@ import com.google.common.collect.Sets;
 import com.google.gerrit.extensions.common.DiffInfo;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.config.*;
+import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 10.11.2017 21:47
@@ -32,8 +41,8 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
   protected Map<String, DiffInfo> diffInfo;
 
-  @Before
-  public void initialize() throws InterruptedException, IOException, URISyntaxException {
+  @BeforeEach
+  public final void initialize() throws InterruptedException, IOException, URISyntaxException {
     loadReport();
     buildPublisher(); // todo check all issues read correctly?
     diffInfo = readChange("diff_info.json");
@@ -41,20 +50,24 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
   protected void loadReport() throws InterruptedException, IOException, URISyntaxException {
     report = readreport("filter.json");
-    Assert.assertEquals(19, report.getIssues().size());
+    Assertions.assertEquals(19, report.getIssues().size());
   }
 
-  @After
-  public void resetFilter() {}
+  @AfterEach
+  public final void resetFilter() {
+    doResetFilter();
+  }
 
-  @After
-  public void reset() {
+  protected void doResetFilter() {}
+
+  @AfterEach
+  public final void reset() {
     filteredIssues = null;
     filteredOutIssues = null;
     diffInfo = null;
   }
 
-  //    @Before
+  //    @BeforeEach
   public void setFilter(A a) {}
 
   protected void buildPublisher() {
@@ -104,21 +117,21 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
   protected void doCheckSeverity(Severity severity) {
     // check that all remaining issues have severity higher or equal to criteria
     for (IssueAdapter issue : filteredIssues) {
-      Assert.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
+      Assertions.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
     }
   }
 
   protected void doCheckNewOnly(boolean isNewOnly) {
     // check that all remaining issues are new
     for (IssueAdapter issue : filteredIssues) {
-      Assert.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
+      Assertions.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
     }
   }
 
   protected void doCheckChangedLinesOnly(boolean isChangesLinesOnly) {
     // check that all remaining issues are in changed lines
     for (IssueAdapter issue : filteredIssues) {
-      Assert.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
+      Assertions.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
     }
   }
 
@@ -167,28 +180,28 @@ public abstract class BaseFilterTest<A> extends ReportBasedTest {
 
   protected void doCheckCount(int expectedFilteredIssuesCount) {
     // check that amount of filtered issues is equal to expected amount
-    Assert.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
+    Assertions.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
 
     // get amount of issues that are expected to be filtered out and check it
     List<Issue> allIssues = report.getIssues();
     int expectedFilteredOutCount = allIssues.size() - expectedFilteredIssuesCount;
-    Assert.assertEquals(expectedFilteredOutCount, filteredOutIssues.size());
+    Assertions.assertEquals(expectedFilteredOutCount, filteredOutIssues.size());
   }
 
   protected abstract IssueFilterConfig getFilterConfig();
 
   protected void setSeverity(IssueFilterConfig config, String severity) {
     config.setSeverity(severity);
-    Assert.assertEquals(severity, config.getSeverity());
+    Assertions.assertEquals(severity, config.getSeverity());
   }
 
   protected void setNewOnly(IssueFilterConfig config, Boolean newOnly) {
     config.setNewIssuesOnly(newOnly);
-    Assert.assertEquals(newOnly, config.isNewIssuesOnly());
+    Assertions.assertEquals(newOnly, config.isNewIssuesOnly());
   }
 
   protected void setChangedOnly(IssueFilterConfig config, Boolean changedOnly) {
     config.setChangedLinesOnly(changedOnly);
-    Assert.assertEquals(changedOnly, config.isChangedLinesOnly());
+    Assertions.assertEquals(changedOnly, config.isChangedLinesOnly());
   }
 }

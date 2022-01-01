@@ -7,7 +7,11 @@ import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.ReportBasedTest;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
@@ -18,7 +22,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportBasedTest {
 
@@ -66,7 +70,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
     Iterable<IssueAdapter> filtered = f.filter();
 
     boolean contains = isFilterResultContainsFile(getGerritFilename(), filtered);
-    Assert.assertEquals(expectedResult, contains);
+    Assertions.assertEquals(expectedResult, contains);
   }
 
   protected void performAutoPathCorrection(final InspectionReport r, GerritRevisionWrapper w) {
@@ -142,18 +146,18 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest extends ReportB
   protected InspectionReport getReport(SubJobConfig config, boolean manuallyCorrected)
       throws IOException, InterruptedException, URISyntaxException {
     Report report = readreport(getReportFilename());
-    Assert.assertEquals(getCompCount(), report.getComponents().size());
+    Assertions.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
     InspectionReport inspectionReport = new InspectionReport(Collections.singletonList(info));
     if (manuallyCorrected) {
-      Assert.assertFalse(
+      Assertions.assertFalse(
           isFilterResultContainsFile(getSonarFilename(), inspectionReport.getIssuesList()));
-      Assert.assertTrue(
+      Assertions.assertTrue(
           isFilterResultContainsFile(getGerritFilename(), inspectionReport.getIssuesList()));
     } else {
-      Assert.assertTrue(
+      Assertions.assertTrue(
           isFilterResultContainsFile(getSonarFilename(), inspectionReport.getIssuesList()));
-      Assert.assertFalse(
+      Assertions.assertFalse(
           isFilterResultContainsFile(getGerritFilename(), inspectionReport.getIssuesList()));
     }
     return inspectionReport;

@@ -14,9 +14,9 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 14:13 */
 public class CustomReportFormatterTest {
@@ -38,7 +38,7 @@ public class CustomReportFormatterTest {
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter =
         new CustomReportFormatter(i, FAIL_TEXT, SUCCESS_TEXT);
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
   @Test
@@ -56,29 +56,29 @@ public class CustomReportFormatterTest {
             + "Critical or harder: 2";
     CustomReportFormatter basicIssueConverter =
         new CustomReportFormatter(i, FAIL_TEXT, SUCCESS_TEXT);
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testSuccessEmpty() {
     List<IssueAdapter> i = new ArrayList<>();
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
     basicIssueConverter = new CustomReportFormatter(i, null, null);
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
-  @Ignore
+  @Disabled
   @Test
   public void testFailEmpty() throws IOException, InterruptedException, URISyntaxException {
     List<IssueAdapter> i = getIssues();
     String expectedResult = "19 SonarQube violations have been found.";
     CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
     basicIssueConverter = new CustomReportFormatter(i, null, null);
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
   private List<IssueAdapter> getIssues()

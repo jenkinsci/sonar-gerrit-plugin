@@ -11,8 +11,8 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:05 */
 public class CustomIssueFormatterTest {
@@ -24,7 +24,7 @@ public class CustomIssueFormatterTest {
         "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: http://localhost:9000/coding_rules#rule_key=squid%3AUselessImportCheck";
     CustomIssueFormatter basicIssueConverter =
         new CustomIssueFormatter(i, text, "http://localhost:9000");
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
   @Test
@@ -34,7 +34,7 @@ public class CustomIssueFormatterTest {
     String expectedResult =
         "MINOR SonarQube violation:\n\n\nRemove this unused import 'com.turquoise.juice.property.PropertiesHandler'.\n\n\nRead more: squid:UselessImportCheck";
     CustomIssueFormatter basicIssueConverter = new CustomIssueFormatter(i, text, null);
-    Assert.assertEquals(expectedResult, basicIssueConverter.getMessage());
+    Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
   private IssueAdapter getIssue() throws URISyntaxException, IOException, InterruptedException {

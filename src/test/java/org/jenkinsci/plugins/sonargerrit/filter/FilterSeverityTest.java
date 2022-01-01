@@ -4,8 +4,8 @@ import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.review.BaseFilterTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 15.11.2017 14:01
@@ -42,12 +42,12 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
   @Override
   public void setFilter(String severity) {
     setSeverity(getFilterConfig(), severity);
-    Assert.assertEquals(severity, getFilterConfig().getSeverity());
+    Assertions.assertEquals(severity, getFilterConfig().getSeverity());
   }
 
   @Override
-  public void resetFilter() {
-    super.resetFilter();
+  protected void doResetFilter() {
+    super.doResetFilter();
     setFilter(IssueFilterConfig.DescriptorImpl.SEVERITY);
   }
 
@@ -57,7 +57,7 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
-        Assert.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
+        Assertions.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
       }
     }
   }

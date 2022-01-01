@@ -2,16 +2,15 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 17:33 $Id$ */
-public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements GerritReviewTest {
+public class ReviewWithCommentAndScoreIssuesTest extends ReviewResultTest
+    implements GerritReviewTest {
   @Override
-  @Before
-  public void initialize() {
-    super.initialize();
+  public void doInitialize() {
+    super.doInitialize();
     commentIssues.put(
         "juice-bootstrap/src/main/java/com/turquoise/juice/bootstrap/plugins/PluginsManager.java",
         new DummyIssue());
@@ -27,29 +26,29 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
   @Test
   public void testReviewHeader() {
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals("2 SonarQube violations have been found.", reviewResult.message);
+    Assertions.assertEquals("2 SonarQube violations have been found.", reviewResult.message);
   }
 
   @Override
   public void testOverrideReviewHeader() {
     getReviewConfig().setSomeIssuesTitleTemplate("Some Issues Header");
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals("Some Issues Header", reviewResult.message);
+    Assertions.assertEquals("Some Issues Header", reviewResult.message);
   }
 
   @Override
   @Test
   public void testReviewComment() {
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(2, reviewResult.comments.size());
-    // todo check comment >?        Assert.assertEquals("", reviewResult.robotComments.get(0).);
+    Assertions.assertEquals(2, reviewResult.comments.size());
+    // todo check comment >?        Assertions.assertEquals("", reviewResult.robotComments.get(0).);
   }
 
   @Override
   public void testOverrideReviewComment() {
     getReviewConfig().setIssueCommentTemplate("That's an Issue!");
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(2, reviewResult.comments.size());
+    Assertions.assertEquals(2, reviewResult.comments.size());
     // todo check text
   }
 
@@ -57,8 +56,8 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
   @Test
   public void testScore() {
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(1, reviewResult.labels.size());
-    Assert.assertEquals(
+    Assertions.assertEquals(1, reviewResult.labels.size());
+    Assertions.assertEquals(
         -1, reviewResult.labels.get(ScoreConfig.DescriptorImpl.CATEGORY).intValue());
   }
 
@@ -67,16 +66,16 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
   public void testOverrideScore() {
     publisher.getScoreConfig().setIssuesScore(-2);
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(1, reviewResult.labels.size());
-    Assert.assertEquals(-2, reviewResult.labels.get(CATEGORY).intValue());
+    Assertions.assertEquals(1, reviewResult.labels.size());
+    Assertions.assertEquals(-2, reviewResult.labels.get(CATEGORY).intValue());
   }
 
   @Override
   public void testCategory() {
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(1, reviewResult.labels.size());
-    Assert.assertNotNull(reviewResult.labels.get(CATEGORY));
-    Assert.assertEquals(-1, reviewResult.labels.get(CATEGORY).intValue());
+    Assertions.assertEquals(1, reviewResult.labels.size());
+    Assertions.assertNotNull(reviewResult.labels.get(CATEGORY));
+    Assertions.assertEquals(-1, reviewResult.labels.get(CATEGORY).intValue());
   }
 
   @Override
@@ -84,9 +83,9 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
   public void testOverrideCategory() {
     publisher.getScoreConfig().setCategory("Other");
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(1, reviewResult.labels.size());
-    Assert.assertNull(reviewResult.labels.get(ScoreConfig.DescriptorImpl.CATEGORY));
-    Assert.assertEquals(-1, reviewResult.labels.get("Other").intValue());
+    Assertions.assertEquals(1, reviewResult.labels.size());
+    Assertions.assertNull(reviewResult.labels.get(ScoreConfig.DescriptorImpl.CATEGORY));
+    Assertions.assertEquals(-1, reviewResult.labels.get("Other").intValue());
   }
 
   @Override
@@ -94,9 +93,9 @@ public class ReviewWithCommentAndScoreIssues extends ReviewResultTest implements
     publisher.getScoreConfig().setCategory("Other");
     publisher.getScoreConfig().setIssuesScore(-2);
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(1, reviewResult.labels.size());
-    Assert.assertNull(reviewResult.labels.get(CATEGORY));
-    Assert.assertNotNull(reviewResult.labels.get("Other"));
-    Assert.assertEquals(-2, reviewResult.labels.get("Other").intValue());
+    Assertions.assertEquals(1, reviewResult.labels.size());
+    Assertions.assertNull(reviewResult.labels.get(CATEGORY));
+    Assertions.assertNotNull(reviewResult.labels.get("Other"));
+    Assertions.assertEquals(-2, reviewResult.labels.get("Other").intValue());
   }
 }

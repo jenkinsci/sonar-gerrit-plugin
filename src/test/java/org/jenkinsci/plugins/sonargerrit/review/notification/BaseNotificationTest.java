@@ -3,8 +3,8 @@ package org.jenkinsci.plugins.sonargerrit.review.notification;
 import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.review.ReviewResultTest;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 14:57
@@ -16,7 +16,7 @@ public abstract class BaseNotificationTest extends ReviewResultTest
   @Test
   public void testDefaultNotification() {
     ReviewInput reviewResult = getReviewResult();
-    Assert.assertEquals(getDefault(), reviewResult.notify);
+    Assertions.assertEquals(getDefault(), reviewResult.notify);
   }
 
   @Override
