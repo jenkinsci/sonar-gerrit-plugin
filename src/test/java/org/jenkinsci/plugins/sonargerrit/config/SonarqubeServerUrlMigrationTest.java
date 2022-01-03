@@ -7,9 +7,14 @@ import hudson.plugins.sonar.SonarGlobalConfiguration;
 import hudson.plugins.sonar.SonarInstallation;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +26,11 @@ import org.jvnet.hudson.test.JenkinsRule;
 class SonarqubeServerUrlMigrationTest {
 
   @Test
-  @DisplayName("Migration")
+  @DisplayName("Given a unknown url, the migration should use a new sonarqube installation")
   void test1(JenkinsRule jenkinsRule) throws IOException {
     FreeStyleProject project = jenkinsRule.createFreeStyleProject();
-    try (InputStream inputStream = openFile("legacy-config.xml")) {
-      project.updateByXml((Source) new StreamSource(inputStream));
-    }
+    String legacyServerUrl = UUID.randomUUID().toString();
+    project.updateByXml(loadLegacyJobConfig(legacyServerUrl));
     project.doReload();
 
     SonarToGerritPublisher publisher =
@@ -41,16 +45,61 @@ class SonarqubeServerUrlMigrationTest {
         .filteredOn(installation -> sonarInstallationName.equals(installation.getName()))
         .hasSize(1)
         .map(SonarInstallation::getServerUrl)
-        .contains("https://sonarqube.example.org");
+        .contains(legacyServerUrl);
 
-    assertThat(inspectionConfig.getServerURL()).isEqualTo("https://sonarqube.example.org");
+    assertThat(inspectionConfig.getServerURL()).isEqualTo(legacyServerUrl);
   }
 
   @Test
-  @DisplayName("setServerURL")
-  void test2() {
+  @DisplayName("Given a known url, the migration should use an existing sonarqube installation")
+  void test2(JenkinsRule jenkinsRule) throws IOException {
+    String legacyServerUrl = UUID.randomUUID().toString();
+    String installationName = SonarQubeInstallations.get().create(legacyServerUrl).getName();
+
+    FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+    project.updateByXml(loadLegacyJobConfig(legacyServerUrl));
+    project.doReload();
+
+    SonarToGerritPublisher publisher =
+        project.getPublishersList().get(SonarToGerritPublisher.class);
+    InspectionConfig inspectionConfig = publisher.getInspectionConfig();
+    assertThat(inspectionConfig.getSonarQubeInstallationName()).isEqualTo(installationName);
+  }
+
+  @Test
+  @DisplayName("serverURL field is transient")
+  void test3(JenkinsRule jenkinsRule) throws IOException {
+    String legacyServerUrl = UUID.randomUUID().toString();
+    FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+    project.updateByXml(loadLegacyJobConfig(legacyServerUrl));
+    project.doReload();
+
+    String newServerUrl = UUID.randomUUID().toString();
+    String installationName = SonarQubeInstallations.get().create(newServerUrl).getName();
+    project
+        .getPublishersList()
+        .get(SonarToGerritPublisher.class)
+        .getInspectionConfig()
+        .setSonarQubeInstallationName(installationName);
+    project.save();
+
+    project.doReload();
+    assertThat(
+            project
+                .getPublishersList()
+                .get(SonarToGerritPublisher.class)
+                .getInspectionConfig()
+                .getServerURL())
+        .isEqualTo(newServerUrl);
+  }
+
+  @Test
+  @DisplayName(
+      "Setting the serverURL with an unknown url should create a new sonarqube installation")
+  void test4() {
+    String url = UUID.randomUUID().toString();
     InspectionConfig inspectionConfig = new InspectionConfig();
-    inspectionConfig.setServerURL("https://sonarqube.example.com");
+    inspectionConfig.setServerURL(url);
 
     String sonarInstallationName = inspectionConfig.getSonarQubeInstallationName();
     assertThat(sonarInstallationName).isNotNull();
@@ -58,12 +107,18 @@ class SonarqubeServerUrlMigrationTest {
         .filteredOn(installation -> sonarInstallationName.equals(installation.getName()))
         .hasSize(1)
         .map(SonarInstallation::getServerUrl)
-        .contains("https://sonarqube.example.com");
-    assertThat(inspectionConfig.getServerURL()).isEqualTo("https://sonarqube.example.com");
+        .contains(url);
+    assertThat(inspectionConfig.getServerURL()).isEqualTo(url);
   }
 
-  private InputStream openFile(String name) {
-    return getClass()
-        .getResourceAsStream(SonarqubeServerUrlMigrationTest.class.getSimpleName() + "/" + name);
+  private Source loadLegacyJobConfig(String serverUrl) throws IOException {
+    String xml;
+    try (InputStream inputStream =
+        getClass()
+            .getResourceAsStream(
+                SonarqubeServerUrlMigrationTest.class.getSimpleName() + "/legacy-job-config.xml")) {
+      xml = IOUtils.toString(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
+    }
+    return new StreamSource(new StringReader(String.format(xml, serverUrl)));
   }
 }

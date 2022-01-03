@@ -14,7 +14,7 @@
   <publishers>
     <org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher plugin="sonar-gerrit@2.4.6">
       <inspectionConfig>
-        <serverURL>https://sonarqube.example.org</serverURL>
+        <serverURL>%s</serverURL>
         <baseConfig>
           <projectPath></projectPath>
           <sonarReportPath>target/sonar/sonar-report.json</sonarReportPath>
