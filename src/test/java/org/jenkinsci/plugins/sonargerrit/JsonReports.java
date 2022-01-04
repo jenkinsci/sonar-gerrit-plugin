@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit;
 
-import com.google.gerrit.extensions.common.DiffInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import hudson.FilePath;
@@ -11,6 +10,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.filter.util.DummyRevision;
 import org.jenkinsci.plugins.sonargerrit.inspection.converter.DateTypeConverter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;

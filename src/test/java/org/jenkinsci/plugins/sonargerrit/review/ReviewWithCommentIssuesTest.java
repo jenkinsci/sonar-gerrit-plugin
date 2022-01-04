@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
-import com.google.gerrit.extensions.api.changes.ReviewInput;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

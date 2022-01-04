@@ -3,13 +3,13 @@ package org.jenkinsci.plugins.sonargerrit.config;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.google.common.base.MoreObjects;
-import com.google.gerrit.extensions.api.changes.NotifyHandling;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.NotifyHandling;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.stapler.DataBoundConstructor;

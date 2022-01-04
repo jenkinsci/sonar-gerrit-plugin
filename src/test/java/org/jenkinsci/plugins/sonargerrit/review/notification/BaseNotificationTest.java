@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.review.notification;
 
-import com.google.gerrit.extensions.api.changes.NotifyHandling;
-import com.google.gerrit.extensions.api.changes.ReviewInput;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.NotifyHandling;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.review.ReviewResultTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

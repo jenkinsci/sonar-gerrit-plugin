@@ -1,10 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import com.google.common.collect.Multimap;
-import com.google.gerrit.extensions.api.changes.RevisionApi;
-import com.google.gerrit.extensions.common.DiffInfo;
-import com.google.gerrit.extensions.common.FileInfo;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -12,6 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.RevisionApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.DiffInfo;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.FileInfo;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.JsonReports;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;

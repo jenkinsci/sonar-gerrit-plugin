@@ -1,8 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
-import com.google.gerrit.extensions.restapi.RestApiException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
