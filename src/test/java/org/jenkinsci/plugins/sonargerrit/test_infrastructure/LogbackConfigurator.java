@@ -15,5 +15,6 @@ public class LogbackConfigurator extends BasicConfigurator {
             .map(Level::valueOf)
             .orElse(Level.OFF);
     lc.getLogger("ROOT").setLevel(rootLevel);
+    lc.getLogger("com.sonyericsson.hudson").setLevel(Level.WARN);
   }
 }

@@ -5,6 +5,7 @@ import hudson.plugins.sonar.SonarRunnerInstaller;
 import hudson.tools.InstallSourceProperty;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -17,9 +18,10 @@ public class SonarScannerConfiguration {
     this.jenkins = jenkins;
   }
 
-  public void addInstallation(String name) throws IOException {
+  public String addInstallation() throws IOException {
     SonarRunnerInstaller installer = new SonarRunnerInstaller("4.6.2.2472");
 
+    String name = UUID.randomUUID().toString();
     SonarRunnerInstallation installation =
         new SonarRunnerInstallation(
             name,
@@ -30,5 +32,7 @@ public class SonarScannerConfiguration {
     SonarRunnerInstallation.DescriptorImpl descriptor =
         jenkins.getDescriptorByType(SonarRunnerInstallation.DescriptorImpl.class);
     descriptor.setInstallations(ArrayUtils.add(descriptor.getInstallations(), installation));
+
+    return name;
   }
 }

@@ -5,6 +5,7 @@ import hudson.tools.InstallSourceProperty;
 import hudson.tools.ZipExtractionInstaller;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -17,13 +18,14 @@ public class MavenConfiguration {
     this.jenkins = jenkins;
   }
 
-  public void addInstallation(String name) throws IOException {
+  public String addInstallation() throws IOException {
     ZipExtractionInstaller installer =
         new ZipExtractionInstaller(
             null,
             "https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz",
             "apache-maven-3.8.4");
 
+    String name = UUID.randomUUID().toString();
     Maven.MavenInstallation mavenInstallation =
         new Maven.MavenInstallation(
             name,
@@ -34,5 +36,7 @@ public class MavenConfiguration {
     Maven.DescriptorImpl mavenDescriptor = jenkins.getDescriptorByType(Maven.DescriptorImpl.class);
     mavenDescriptor.setInstallations(
         ArrayUtils.add(mavenDescriptor.getInstallations(), mavenInstallation));
+
+    return name;
   }
 }

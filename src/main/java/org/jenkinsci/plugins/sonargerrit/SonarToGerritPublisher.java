@@ -5,6 +5,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Multimap;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
@@ -117,6 +118,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
   public void perform(
       @Nonnull Run<?, ?> run,
       @Nonnull FilePath filePath,
+      @NonNull EnvVars env,
       @Nonnull Launcher launcher,
       @Nonnull TaskListener listener)
       throws InterruptedException, IOException {
@@ -126,8 +128,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
     // load revision info
     GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-    Map<String, String> envVars = getEnvVars(run, listener, GerritConnectionInfo.REQUIRED_VARS);
-    GerritConnectionInfo connectionInfo = new GerritConnectionInfo(envVars, trigger, authConfig);
+    GerritConnectionInfo connectionInfo = new GerritConnectionInfo(env, trigger, authConfig);
     try {
       GerritConnector connector = new GerritConnector(connectionInfo);
       connector.connect();
@@ -197,37 +198,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
         new IssueFilter(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
     Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
     return sonarConnector.getReportData(issuesToComment);
-  }
-
-  private Map<String, String> getEnvVars(
-      Run<?, ?> run, TaskListener listener, List<String> varNames)
-      throws IOException, InterruptedException {
-    Map<String, String> envVars = new HashMap<>();
-    for (String varName : varNames) {
-      envVars.put(varName, getEnvVar(run, listener, varName));
-    }
-    return envVars;
-  }
-
-  private String getEnvVar(Run<?, ?> run, TaskListener listener, String name)
-      throws IOException, InterruptedException {
-    EnvVars envVars = run.getEnvironment(listener);
-    String value = envVars.get(name);
-    // due to JENKINS-30910 old versions of workflow-job-plugin do not have code copying
-    // ParameterAction values to Environment Variables in pipeline jobs.
-    if (value == null) {
-      ParametersAction action = run.getAction(ParametersAction.class);
-      if (action != null) {
-        ParameterValue parameter = action.getParameter(name);
-        if (parameter != null) {
-          Object parameterValue = parameter.getValue();
-          if (parameterValue != null) {
-            value = parameterValue.toString();
-          }
-        }
-      }
-    }
-    return value;
   }
 
   // Overridden for better type safety.
