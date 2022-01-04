@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>4.32</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <artifactId>sonar-gerrit</artifactId>
@@ -31,7 +32,6 @@
     <gerrit-rest-java-client.version>0.9.4.0</gerrit-rest-java-client.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <testcontainers.version>1.16.2</testcontainers.version>
-    <jgit.version>5.13.0.202109080827-r</jgit.version>
     <okhttp.version>4.9.2</okhttp.version>
     <jackson.version>2.13.0</jackson.version>
     <sonar.version>2.13.1</sonar.version>
@@ -78,6 +78,16 @@
         <artifactId>kotlin-stdlib-common</artifactId>
         <version>1.4.10</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>3.11.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.9</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -117,7 +127,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-<!-- Needed to keep jenkins-test-assertion working (see https://github.com/jenkinsci/jenkins-test-harness/pull/375) -->
+      <!-- Needed to keep jenkins-test-assertion working (see https://github.com/jenkinsci/jenkins-test-harness/pull/375) -->
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junit.jupiter.version}</version>
@@ -130,9 +140,34 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>${jgit.version}</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>git</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-definition</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>pipeline-maven</artifactId>
+      <version>3.10.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-durable-task-step</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.Config;
+import java.util.UUID;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
@@ -16,14 +17,16 @@ public class GerritTriggerConfiguration {
     this.jenkins = jenkins;
   }
 
-  public void addServer(String url, String username, String password) {
+  public String addServer(String url, String username, String password) {
     PluginImpl gerritTriggerPlugin =
         jenkins.getDescriptorList(GlobalConfiguration.class).get(PluginImpl.class);
     requireNonNull(gerritTriggerPlugin, "No gerrit trigger plugin instance found");
     gerritTriggerPlugin.load();
 
+    String name = UUID.randomUUID().toString();
+
     com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer server =
-        new com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer("Gerrit");
+        new com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer(name);
     Config config = new Config();
     config.setGerritHostName("localhost");
     config.setGerritFrontEndURL(url);
@@ -36,5 +39,7 @@ public class GerritTriggerConfiguration {
     gerritTriggerPlugin.save();
 
     gerritTriggerPlugin.getServer(server.getName()).start();
+
+    return name;
   }
 }

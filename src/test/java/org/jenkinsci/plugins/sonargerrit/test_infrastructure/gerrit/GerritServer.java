@@ -1,12 +1,11 @@
 package org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritAuthData;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritRestApiFactory;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.GerritApi;
@@ -37,10 +36,7 @@ public class GerritServer {
   private static final String NETWORK_ALIAS = "gerrit";
   private static final String USERNAME = "admin";
   private static final String PASSWORD = "secret";
-  private static final String AUTHORIZATION =
-      "Basic "
-          + Base64.getEncoder()
-              .encodeToString((USERNAME + ":" + PASSWORD).getBytes(StandardCharsets.UTF_8));
+  public static final String CODE_QUALITY_LABEL = "Code-Quality";
 
   private final GenericContainer<?> container;
   private final String url;
@@ -98,7 +94,7 @@ public class GerritServer {
     labelDefinition.defaultValue = 0;
 
     allProjects.label("Verified").create(labelDefinition);
-    allProjects.label("Code-Quality").create(labelDefinition);
+    allProjects.label(CODE_QUALITY_LABEL).create(labelDefinition);
 
     String adminGroupId = gerritApi.groups().id("1").get().id;
 
@@ -115,9 +111,9 @@ public class GerritServer {
     verifiedPermission.rules = rules;
     accessSection.permissions.put("label-Verified", verifiedPermission);
 
-    PermissionInfo codeQualityPermission = new PermissionInfo("Code-Quality", false);
+    PermissionInfo codeQualityPermission = new PermissionInfo(CODE_QUALITY_LABEL, false);
     codeQualityPermission.rules = rules;
-    accessSection.permissions.put("label-Code-Quality", codeQualityPermission);
+    accessSection.permissions.put("label-" + CODE_QUALITY_LABEL, codeQualityPermission);
 
     ProjectAccessInput access = new ProjectAccessInput();
     access.add = Collections.singletonMap("refs/heads/*", accessSection);
@@ -172,9 +168,11 @@ public class GerritServer {
     return gerritApi;
   }
 
-  public void createProject(String projectName) {
+  public String createProject() {
     try {
+      String projectName = UUID.randomUUID().toString();
       gerritApi.projects().create(projectName);
+      return projectName;
     } catch (RestApiException e) {
       throw new RuntimeException(e);
     }

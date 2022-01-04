@@ -24,7 +24,7 @@ public class SonarqubeConfiguration {
     this.jenkins = jenkins;
   }
 
-  public void addInstallation(String name, String url, String token) throws IOException {
+  public String addInstallation(String url, String token) throws IOException {
     SystemCredentialsProvider credentialsProvider =
         jenkins
             .getExtensionList(SystemCredentialsProvider.class)
@@ -42,9 +42,13 @@ public class SonarqubeConfiguration {
         jenkins.getDescriptorList(GlobalConfiguration.class).get(SonarGlobalConfiguration.class);
     requireNonNull(globalConfiguration);
     globalConfiguration.setBuildWrapperEnabled(true);
+
+    String name = UUID.randomUUID().toString();
     SonarInstallation sonarInstallation =
         new SonarInstallation(name, url, credentialsId, null, null, null, null, null, null);
     globalConfiguration.setInstallations(
         ArrayUtils.add(globalConfiguration.getInstallations(), sonarInstallation));
+
+    return name;
   }
 }
