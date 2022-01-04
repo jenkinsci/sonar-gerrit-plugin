@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.review;
 
 import com.google.common.collect.Sets;
-import com.google.gerrit.extensions.common.DiffInfo;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.JsonReports;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;

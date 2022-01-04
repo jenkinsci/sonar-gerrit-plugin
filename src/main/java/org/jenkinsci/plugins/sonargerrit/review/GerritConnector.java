@@ -3,13 +3,13 @@ package org.jenkinsci.plugins.sonargerrit.review;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.google.common.base.MoreObjects;
-import com.google.gerrit.extensions.api.GerritApi;
-import com.google.gerrit.extensions.api.changes.RevisionApi;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
-import com.urswolfer.gerrit.client.rest.GerritAuthData;
-import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
+import me.redaalaoui.gerrit_rest_java_client.rest.GerritAuthData;
+import me.redaalaoui.gerrit_rest_java_client.rest.GerritRestApiFactory;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.GerritApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.RevisionApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 
 /**
