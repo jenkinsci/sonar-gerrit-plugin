@@ -19,7 +19,7 @@ public class UnexpectedMethodSignatureChangeTest {
 
   @Test
   public void testInspectionConfig() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
 
     String configClassName = "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig";
     String stringType = "java.lang.String";
@@ -65,7 +65,7 @@ public class UnexpectedMethodSignatureChangeTest {
 
   @Test
   public void testSetNotificationConfig() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
 
     String className = "org.jenkinsci.plugins.sonargerrit.config.NotificationConfig";
     String paramsType = "java.lang.String";
@@ -97,7 +97,7 @@ public class UnexpectedMethodSignatureChangeTest {
 
   @Test
   public void testSetReviewConfig() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
 
     String className = "org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig";
     String stringType = "java.lang.String";
@@ -156,7 +156,7 @@ public class UnexpectedMethodSignatureChangeTest {
 
   @Test
   public void testSetScoreConfig() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
 
     String className = "org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig";
     String stringType = "java.lang.String";

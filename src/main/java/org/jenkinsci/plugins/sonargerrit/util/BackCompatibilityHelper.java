@@ -4,8 +4,16 @@ import com.google.common.base.MoreObjects;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.UnaryOperator;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.config.*;
+import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 30.01.2018 13:04 */
 public final class BackCompatibilityHelper {
@@ -13,7 +21,7 @@ public final class BackCompatibilityHelper {
 
   // optional properties to be populated if it is not yet known if they are needed
   private final ScoreConfig tempScoreConfig;
-  private final GerritAuthenticationConfig tempAuthConfig;
+  private GerritAuthenticationConfig tempAuthConfig;
 
   public BackCompatibilityHelper(SonarToGerritPublisher publisher) {
     this.publisher = publisher;
@@ -45,7 +53,7 @@ public final class BackCompatibilityHelper {
 
   public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
     InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
-    if (subJobConfigs == null || subJobConfigs.size() == 0) {
+    if (subJobConfigs == null || subJobConfigs.isEmpty()) {
       inspectionConfig.setBaseConfig(new SubJobConfig());
       inspectionConfig.setSubJobConfigs(new LinkedList<>());
     } else if (subJobConfigs.size() == 1) {
@@ -59,7 +67,7 @@ public final class BackCompatibilityHelper {
 
   // set up Score Config
   public void setPostScore(Boolean postScore) {
-    if (postScore) {
+    if (BooleanUtils.toBoolean(postScore)) {
       if (getScoreConfig() == null) {
         publisher.setScoreConfig(tempScoreConfig);
       }
@@ -142,8 +150,8 @@ public final class BackCompatibilityHelper {
   // set up Authentication Context
 
   public void setOverrideCredentials(Boolean overrideCredentials) {
-    if (overrideCredentials) {
-      if (getAuthConfig() == null) {
+    if (BooleanUtils.toBoolean(overrideCredentials)) {
+      if (publisher.getAuthConfig() == null) {
         publisher.setAuthConfig(tempAuthConfig);
       }
     } else {
@@ -151,14 +159,8 @@ public final class BackCompatibilityHelper {
     }
   }
 
-  public void setHttpUsername(String overrideHttpUsername) {
-    GerritAuthenticationConfig config = getOrCreateAuthenticationConfig();
-    config.setUsername(overrideHttpUsername);
-  }
-
-  public void setHttpPassword(String overrideHttpPassword) {
-    GerritAuthenticationConfig config = getOrCreateAuthenticationConfig();
-    config.setPassword(overrideHttpPassword);
+  public void setHttpUsernamePassword(String httpUsername, String httpPassword) {
+    alterAuthenticationConfig(config -> config.withUsernamePassword(httpUsername, httpPassword));
   }
 
   // set up Notification Config
@@ -176,17 +178,14 @@ public final class BackCompatibilityHelper {
   // helper methods
   // mandatory properties - should be created anyway
 
-  // @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private InspectionConfig getOrCreateInspectionConfig() {
     return getInspectionConfig();
   }
 
-  //    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private ReviewConfig getOrCreateReviewConfig() {
     return getReviewConfig();
   }
 
-  //    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
   private NotificationConfig getOrCreateNotificationConfig() {
     return getNotificationConfig();
   }
@@ -198,8 +197,19 @@ public final class BackCompatibilityHelper {
     return MoreObjects.firstNonNull(getScoreConfig(), tempScoreConfig);
   }
 
-  private GerritAuthenticationConfig getOrCreateAuthenticationConfig() {
-    return MoreObjects.firstNonNull(getAuthConfig(), tempAuthConfig);
+  private void alterAuthenticationConfig(UnaryOperator<GerritAuthenticationConfig> mutator) {
+    boolean tempConfig = false;
+    GerritAuthenticationConfig oldConfig = publisher.getAuthConfig();
+    if (oldConfig == null) {
+      tempConfig = true;
+      oldConfig = tempAuthConfig;
+    }
+    GerritAuthenticationConfig newConfig = mutator.apply(oldConfig);
+    if (tempConfig) {
+      tempAuthConfig = newConfig;
+    } else {
+      publisher.setAuthConfig(newConfig);
+    }
   }
 
   // getters returning null - support for pipeline snippet generator
@@ -304,9 +314,5 @@ public final class BackCompatibilityHelper {
 
   private NotificationConfig getNotificationConfig() {
     return publisher.getNotificationConfig();
-  }
-
-  private GerritAuthenticationConfig getAuthConfig() {
-    return publisher.getAuthConfig();
   }
 }

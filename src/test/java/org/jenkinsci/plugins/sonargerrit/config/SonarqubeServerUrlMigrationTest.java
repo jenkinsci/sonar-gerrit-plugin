@@ -114,9 +114,7 @@ class SonarqubeServerUrlMigrationTest {
   private Source loadLegacyJobConfig(String serverUrl) throws IOException {
     String xml;
     try (InputStream inputStream =
-        getClass()
-            .getResourceAsStream(
-                SonarqubeServerUrlMigrationTest.class.getSimpleName() + "/legacy-job-config.xml")) {
+        getClass().getResourceAsStream(getClass().getSimpleName() + "/legacy-job-config.xml")) {
       xml = IOUtils.toString(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
     }
     return new StreamSource(new StringReader(String.format(xml, serverUrl)));

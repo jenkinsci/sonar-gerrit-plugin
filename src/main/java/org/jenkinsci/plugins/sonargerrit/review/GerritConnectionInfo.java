@@ -2,7 +2,12 @@ package org.jenkinsci.plugins.sonargerrit.review;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
+import com.cloudbees.plugins.credentials.common.PasswordCredentials;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.cloudbees.plugins.credentials.common.UsernameCredentials;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
+import hudson.model.Item;
+import hudson.util.Secret;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,20 +37,24 @@ public class GerritConnectionInfo implements ConnectionInfo {
   private final String serverName;
   private final String changeNumber;
   private final String patchsetNumber;
-  private final String username;
-  private final String password;
+  private final StandardUsernamePasswordCredentials httpCredentials;
 
   public GerritConnectionInfo(
       Map<String, String> envVars,
       GerritTrigger trigger,
-      GerritAuthenticationConfig authenticationConfig) {
+      GerritAuthenticationConfig authenticationConfig,
+      Item context) {
     serverName = retrieveServerName(envVars, trigger);
 
     changeNumber = retrieveChangeNumber(envVars);
     patchsetNumber = retrievePatchsetNumber(envVars);
 
-    username = authenticationConfig != null ? authenticationConfig.getUsername() : null;
-    password = authenticationConfig != null ? authenticationConfig.getPassword() : null;
+    httpCredentials =
+        Optional.ofNullable(authenticationConfig)
+            .flatMap(
+                gerritAuthenticationConfig ->
+                    gerritAuthenticationConfig.getHttpCredentials(context))
+            .orElse(null);
   }
 
   @Override
@@ -65,12 +74,15 @@ public class GerritConnectionInfo implements ConnectionInfo {
 
   @Override
   public String getUsername() {
-    return username;
+    return Optional.ofNullable(httpCredentials).map(UsernameCredentials::getUsername).orElse(null);
   }
 
   @Override
   public String getPassword() {
-    return password;
+    return Optional.ofNullable(httpCredentials)
+        .map(PasswordCredentials::getPassword)
+        .map(Secret::getPlainText)
+        .orElse(null);
   }
 
   private String retrieveServerName(Map<String, String> envVars, GerritTrigger trigger) {

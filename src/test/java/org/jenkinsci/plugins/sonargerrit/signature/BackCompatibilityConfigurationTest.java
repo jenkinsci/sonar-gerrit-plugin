@@ -20,7 +20,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetSeverity() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String severity = "BLOCKER";
     Assertions.assertNotSame(
         severity, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "severity"));
@@ -44,7 +44,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetChangedLinesOnly() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     Assertions.assertNotSame(
         true, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "changedLinesOnly"));
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig")); //
@@ -66,7 +66,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetNewIssuesOnly() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     boolean newIssuesOnly = true;
     Assertions.assertNotSame(
         true, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
@@ -89,7 +89,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetNoIssuesToPostText() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String noIssuesToPostText = "Test";
     Assertions.assertNotSame(
         noIssuesToPostText, Reflection.invokeGetter(p, "reviewConfig", "noIssuesTitleTemplate"));
@@ -100,7 +100,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetSomeIssuesToPostText() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String someIssuesToPostText = "Test";
     Assertions.assertNotSame(
         someIssuesToPostText,
@@ -113,7 +113,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetIssueComment() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String issueComment = "Test";
     Assertions.assertNotSame(
         issueComment, Reflection.invokeGetter(p, "reviewConfig", "issueCommentTemplate"));
@@ -124,7 +124,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetOverrideCredentials() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     boolean overrideCredentials = true;
     Assertions.assertNull(Reflection.invokeGetter(p, "authConfig"));
     Reflection.invokeSetter(p, "overrideCredentials", overrideCredentials);
@@ -135,21 +135,18 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetHttpUsername() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
     String httpUsername = "Test";
-    Assertions.assertNull(Reflection.invokeGetter(p, "authConfig"));
-    Reflection.invokeSetter(p, "httpUsername", httpUsername);
+    SonarToGerritPublisher p = new SonarToGerritPublisher(httpUsername, null);
     Assertions.assertNull(Reflection.invokeGetter(p, "authConfig"));
 
     Reflection.invokeSetter(p, "overrideCredentials", true);
-    //        invokeSetter(p, "httpUsername", httpUsername);
     Assertions.assertNotNull(Reflection.invokeGetter(p, "authConfig"));
     Assertions.assertEquals(httpUsername, Reflection.invokeGetter(p, "authConfig", "username"));
   }
 
   @Test
   public void testSetPostScore() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     boolean postScore = true;
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig"));
     Reflection.invokeSetter(p, "postScore", postScore);
@@ -158,7 +155,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetCategory() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String category = "Test";
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig"));
     Reflection.invokeSetter(p, "category", category);
@@ -172,7 +169,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetNoIssuesScore() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String noIssuesScore = "2";
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig"));
     Reflection.invokeSetter(p, "noIssuesScore", noIssuesScore);
@@ -187,7 +184,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetIssuesScore() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String issuesScore = "-2";
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig"));
     Reflection.invokeSetter(p, "issuesScore", issuesScore);
@@ -202,7 +199,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetNoIssuesNotification() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String noIssuesNotification = "ALL";
     Assertions.assertNotSame(
         noIssuesNotification,
@@ -215,7 +212,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetIssuesNotification() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String issuesNotification = "ALL";
     Assertions.assertNotSame(
         issuesNotification,
@@ -228,7 +225,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetProjectPath() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String path = "Test";
     Assertions.assertNotSame(
         path, Reflection.invokeGetter(p, "inspectionConfig", "baseConfig", "projectPath"));
@@ -239,7 +236,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetPath() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String path = "Test";
     Assertions.assertNotSame(
         path, Reflection.invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
@@ -250,7 +247,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSetSonarURL() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
     String sonarURL = UUID.randomUUID().toString();
     Assertions.assertNotSame(sonarURL, Reflection.invokeGetter(p, "inspectionConfig", "serverURL"));
     Reflection.invokeSetter(p, "sonarURL", sonarURL);
@@ -259,7 +256,7 @@ public class BackCompatibilityConfigurationTest {
 
   @Test
   public void testSubJobConfig() throws ReflectiveOperationException {
-    SonarToGerritPublisher p = Reflection.invokeConstructor();
+    SonarToGerritPublisher p = new SonarToGerritPublisher();
 
     String className = "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig";
     String paramsType = "java.lang.String";

@@ -11,95 +11,97 @@ import org.junit.jupiter.api.Test;
  *
  * <p>$Id$
  */
-public class GerritConnectionInfoTest {
+class GerritConnectionInfoTest {
   @Test
-  public void testNullServerName() {
+  void testNullServerName() {
     Map<String, String> envVars = createEnvVarsMap(null, "1", "1");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testTriggerServerName() {
+  void testTriggerServerName() {
     Map<String, String> envVars = createEnvVarsMap(null, "1", "1");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, createDummyTrigger("test"), null);
+    GerritConnectionInfo info =
+        new GerritConnectionInfo(envVars, createDummyTrigger("test"), null, null);
     Assertions.assertEquals("test", info.getServerName());
   }
 
   @Test
-  public void testEmptyServerName() {
+  void testEmptyServerName() {
     Map<String, String> envVars = createEnvVarsMap("", "1", "1");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testServerName() {
+  void testServerName() {
     Map<String, String> envVars = createEnvVarsMap("testo", "1", "1");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, createDummyTrigger("test"), null);
+    GerritConnectionInfo info =
+        new GerritConnectionInfo(envVars, createDummyTrigger("test"), null, null);
     Assertions.assertEquals("testo", info.getServerName());
   }
 
   @Test
-  public void testNullChangeNum() {
+  void testNullChangeNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", null, "1");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testEmptyChangeNum() {
+  void testEmptyChangeNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "", "1");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testWrongChangeNum() {
+  void testWrongChangeNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "test", "1");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testChangeNum() {
+  void testChangeNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "2", "1");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null, null);
     Assertions.assertEquals("2", info.getChangeNumber());
   }
 
   @Test
-  public void testNullPatchsetNum() {
+  void testNullPatchsetNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "1", null);
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testEmptyPatchsetNum() {
+  void testEmptyPatchsetNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "1", "");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testWrongPatchsetNum() {
+  void testWrongPatchsetNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "1", "test");
     Assertions.assertThrows(
-        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null));
+        IllegalArgumentException.class, () -> new GerritConnectionInfo(envVars, null, null, null));
   }
 
   @Test
-  public void testPatchsetNum() {
+  void testPatchsetNum() {
     Map<String, String> envVars = createEnvVarsMap("Test", "1", "3");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null, null);
     Assertions.assertEquals("3", info.getPatchsetNumber());
   }
 
   @Test
-  public void testNullAuthConfig() {
+  void testNullAuthConfig() {
     Map<String, String> envVars = createEnvVarsMap("Test", "1", "1");
-    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null);
+    GerritConnectionInfo info = new GerritConnectionInfo(envVars, null, null, null);
     Assertions.assertNull(info.getUsername());
     Assertions.assertNull(info.getPassword());
   }

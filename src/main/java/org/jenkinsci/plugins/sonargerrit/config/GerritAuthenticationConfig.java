@@ -2,111 +2,155 @@ package org.jenkinsci.plugins.sonargerrit.config;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
+import com.cloudbees.plugins.credentials.common.PasswordCredentials;
+import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.cloudbees.plugins.credentials.common.UsernameCredentials;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritManagement;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import java.util.List;
-import org.kohsuke.stapler.DataBoundSetter;
+import java.util.Optional;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:43 $Id$ */
 public class GerritAuthenticationConfig
     extends AbstractDescribableImpl<GerritAuthenticationConfig> {
 
-  /*
-   * Gerrit http username if overridden (the original one is in Gerrit Trigger settings)
-   * */
-  private String username;
+  // Only kept for backward compatibility purpose
+  private transient String username;
 
-  /*
-   * Gerrit http password if overridden (the original one is in Gerrit Trigger settings)
-   * */
-  private Secret password;
+  // Only kept for backward compatibility purpose
+  private transient Secret password;
 
-  public String getUsername() {
-    return username;
+  private String httpCredentialsId;
+
+  public GerritAuthenticationConfig() {
+    this(null);
   }
 
-  @DataBoundSetter
-  public void setUsername(String username) {
-    this.username = username;
+  public GerritAuthenticationConfig(@Nullable String httpCredentialsId) {
+    this.httpCredentialsId = httpCredentialsId;
+    this.username = null;
+    this.password = null;
   }
 
-  /** @deprecated Use {@link #getSecretPassword()} */
+  /** @deprecated Use {@link #GerritAuthenticationConfig(String)} instead */
   @Deprecated
-  public String getPassword() {
-    Secret pass = getSecretPassword();
-    if (pass == null) {
-      return null;
+  @DataBoundConstructor
+  public GerritAuthenticationConfig(
+      @Nullable String httpCredentialsId,
+      @Nullable String username,
+      @Nullable Secret secretPassword,
+      @Nullable String password) {
+
+    this.username = null;
+    this.password = null;
+
+    if (Util.fixEmpty(username) == null
+        && secretPassword == null
+        && Util.fixEmpty(password) == null) {
+      this.httpCredentialsId = httpCredentialsId;
+      return;
     }
-    return pass.getPlainText();
+
+    Secret passwordToUse =
+        Optional.ofNullable(secretPassword).orElseGet(() -> Secret.fromString(password));
+
+    this.httpCredentialsId =
+        GerritHttpCredentials.get().migrate(username, passwordToUse).orElse(null);
   }
 
-  /** @deprecated Use {@link #setSecretPassword(Secret)} */
+  @SuppressWarnings("unused")
+  protected Object readResolve() {
+    if (username != null || password != null) {
+      httpCredentialsId = GerritHttpCredentials.get().migrate(username, password).orElse(null);
+      this.username = null;
+      this.password = null;
+    }
+    return this;
+  }
+
+  @SuppressWarnings("unused")
+  @Nullable
+  public String getHttpCredentialsId() {
+    return httpCredentialsId;
+  }
+
+  @Restricted(NoExternalUse.class)
+  public GerritAuthenticationConfig withUsernamePassword(
+      @Nullable String username, @Nullable String password) {
+    return new GerritAuthenticationConfig(
+        httpCredentialsId, username, Secret.fromString(password), null);
+  }
+
+  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
   @Deprecated
-  @DataBoundSetter
-  public void setPassword(String password) {
-    setSecretPassword(Secret.fromString(password));
+  @Nullable
+  public String getUsername() {
+    return getHttpCredentials(null).map(UsernameCredentials::getUsername).orElse(null);
   }
 
+  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
+  @Deprecated
+  @Nullable
+  public String getPassword() {
+    return getHttpCredentials(null)
+        .map(PasswordCredentials::getPassword)
+        .map(Secret::getPlainText)
+        .map(Util::fixEmpty)
+        .orElse(null);
+  }
+
+  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
+  @Deprecated
   public Secret getSecretPassword() {
-    return password;
+    return getHttpCredentials(null).map(PasswordCredentials::getPassword).orElse(null);
   }
 
-  @DataBoundSetter
-  public void setSecretPassword(Secret password) {
-    this.password = password;
+  public Optional<StandardUsernamePasswordCredentials> getHttpCredentials(
+      @Nullable Item requester) {
+    return GerritHttpCredentials.get().findById(requester, httpCredentialsId);
   }
 
   @Extension
   public static class DescriptorImpl extends Descriptor<GerritAuthenticationConfig> {
-    /**
-     * Performs on-the-fly validation of the form field 'username'.
-     *
-     * @param value This parameter receives the value that the user has typed.
-     * @return Indicates the outcome of the validation. This is sent to the browser.
-     *     <p>Note that returning {@link FormValidation#error(String)} does not prevent the form
-     *     from being saved. It just means that a message will be displayed to the user.
-     */
-    @SuppressWarnings(value = "unused")
-    public FormValidation doCheckUsername(@QueryParameter String value) {
-      return FormValidation.validateRequired(value);
-    }
 
-    /**
-     * Performs on-the-fly validation of the form field 'secretPassword'.
-     *
-     * @param value This parameter receives the value that the user has typed.
-     * @return Indicates the outcome of the validation. This is sent to the browser.
-     *     <p>Note that returning {@link FormValidation#error(String)} does not prevent the form
-     *     from being saved. It just means that a message will be displayed to the user.
-     */
     @SuppressWarnings(value = "unused")
-    public FormValidation doCheckSecretPassword(@QueryParameter Secret value) {
-      if (value == null) {
-        return FormValidation.validateRequired(null);
-      }
-      return FormValidation.validateRequired(value.getPlainText());
+    public ListBoxModel doFillHttpCredentialsIdItems(
+        @AncestorInPath Item item, @QueryParameter String credentialsId) {
+      return GerritHttpCredentials.get().listCredentials(item, credentialsId);
     }
 
     @SuppressWarnings(value = "unused")
     public FormValidation doTestConnection(
-        @QueryParameter("username") final String username,
-        @QueryParameter("secretPassword") final Secret password,
+        @AncestorInPath Item item,
+        @QueryParameter("httpCredentialsId") final String httpCredentialsId,
         @QueryParameter("serverName") final String serverName) {
-      FormValidation usernameValidation = doCheckUsername(username);
-      if (usernameValidation.kind == FormValidation.Kind.ERROR) {
-        return usernameValidation;
+      FormValidation credentialsIdRequiredValidation =
+          FormValidation.validateRequired(httpCredentialsId);
+      if (credentialsIdRequiredValidation.kind == FormValidation.Kind.ERROR) {
+        return credentialsIdRequiredValidation;
       }
-      FormValidation passwordValidation = doCheckSecretPassword(password);
-      if (passwordValidation.kind == FormValidation.Kind.ERROR) {
-        return passwordValidation;
+
+      StandardUsernamePasswordCredentials credentials =
+          GerritHttpCredentials.get().findById(item, httpCredentialsId).orElse(null);
+      if (credentials == null) {
+        return FormValidation.error(
+            getLocalized("jenkins.plugin.error.gerrit.http.credentials.id.not-found"));
       }
 
       IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(serverName);
@@ -122,12 +166,13 @@ public class GerritAuthenticationConfig
       if (server == null) {
         return FormValidation.error(getLocalized("jenkins.plugin.error.gerrit.server.empty"));
       }
+
       return server
           .getDescriptor()
           .doTestRestConnection(
               gerritConfig.getGerritFrontEndUrl(),
-              username,
-              password.getPlainText() /*, gerritConfig.isUseRestApi()*/);
+              credentials.getUsername(),
+              credentials.getPassword().getPlainText());
     }
 
     @SuppressWarnings(value = "unused")
