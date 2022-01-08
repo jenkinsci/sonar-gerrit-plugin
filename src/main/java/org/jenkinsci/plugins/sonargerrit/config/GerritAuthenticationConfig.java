@@ -7,67 +7,99 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
 import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
-import java.io.IOException;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:53 $Id$ */
-public class GerritAuthenticationConfig extends AuthenticationConfig {
-  /** @deprecated Use {@link #GerritAuthenticationConfig(String, Secret)} */
+/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:43 $Id$ */
+public class GerritAuthenticationConfig
+    extends AbstractDescribableImpl<GerritAuthenticationConfig> {
+
+  /*
+   * Gerrit http username if overridden (the original one is in Gerrit Trigger settings)
+   * */
+  private String username;
+
+  /*
+   * Gerrit http password if overridden (the original one is in Gerrit Trigger settings)
+   * */
+  private Secret password;
+
+  public String getUsername() {
+    return username;
+  }
+
+  @DataBoundSetter
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  /** @deprecated Use {@link #getSecretPassword()} */
   @Deprecated
-  public GerritAuthenticationConfig(@Nonnull String username, @Nonnull String password) {
-    super(username, password);
-  }
-
-  public GerritAuthenticationConfig(@Nonnull String username, @Nonnull Secret password) {
-    super(username, password);
-  }
-
-  @DataBoundConstructor
-  public GerritAuthenticationConfig() {
-    super();
+  public String getPassword() {
+    Secret pass = getSecretPassword();
+    if (pass == null) {
+      return null;
+    }
+    return pass.getPlainText();
   }
 
   /** @deprecated Use {@link #setSecretPassword(Secret)} */
   @Deprecated
-  @Override
   @DataBoundSetter
-  public void setPassword(@Nonnull String password) {
-    super.setPassword(password);
+  public void setPassword(String password) {
+    setSecretPassword(Secret.fromString(password));
   }
 
-  @Override
-  @DataBoundSetter
-  public void setSecretPassword(@Nonnull Secret password) {
-    super.setSecretPassword(password);
+  public Secret getSecretPassword() {
+    return password;
   }
 
-  @Override
   @DataBoundSetter
-  public void setUsername(@Nonnull String username) {
-    super.setUsername(username);
-  }
-
-  @Override
-  public DescriptorImpl getDescriptor() {
-    return new DescriptorImpl();
+  public void setSecretPassword(Secret password) {
+    this.password = password;
   }
 
   @Extension
-  public static class DescriptorImpl extends AuthenticationConfig.DescriptorImpl {
+  public static class DescriptorImpl extends Descriptor<GerritAuthenticationConfig> {
+    /**
+     * Performs on-the-fly validation of the form field 'username'.
+     *
+     * @param value This parameter receives the value that the user has typed.
+     * @return Indicates the outcome of the validation. This is sent to the browser.
+     *     <p>Note that returning {@link FormValidation#error(String)} does not prevent the form
+     *     from being saved. It just means that a message will be displayed to the user.
+     */
+    @SuppressWarnings(value = "unused")
+    public FormValidation doCheckUsername(@QueryParameter String value) {
+      return FormValidation.validateRequired(value);
+    }
 
-    @Override
+    /**
+     * Performs on-the-fly validation of the form field 'secretPassword'.
+     *
+     * @param value This parameter receives the value that the user has typed.
+     * @return Indicates the outcome of the validation. This is sent to the browser.
+     *     <p>Note that returning {@link FormValidation#error(String)} does not prevent the form
+     *     from being saved. It just means that a message will be displayed to the user.
+     */
+    @SuppressWarnings(value = "unused")
+    public FormValidation doCheckSecretPassword(@QueryParameter Secret value) {
+      if (value == null) {
+        return FormValidation.validateRequired(null);
+      }
+      return FormValidation.validateRequired(value.getPlainText());
+    }
+
+    @SuppressWarnings(value = "unused")
     public FormValidation doTestConnection(
         @QueryParameter("username") final String username,
         @QueryParameter("secretPassword") final Secret password,
-        @QueryParameter("serverName") final String serverName)
-        throws IOException, ServletException {
+        @QueryParameter("serverName") final String serverName) {
       FormValidation usernameValidation = doCheckUsername(username);
       if (usernameValidation.kind == FormValidation.Kind.ERROR) {
         return usernameValidation;
@@ -98,7 +130,7 @@ public class GerritAuthenticationConfig extends AuthenticationConfig {
               password.getPlainText() /*, gerritConfig.isUseRestApi()*/);
     }
 
-    @Override
+    @SuppressWarnings(value = "unused")
     public List<String> getServerNames() {
       return PluginImpl.getServerNames_();
     }

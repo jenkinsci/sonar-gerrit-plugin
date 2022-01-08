@@ -152,12 +152,12 @@ public final class BackCompatibilityHelper {
   }
 
   public void setHttpUsername(String overrideHttpUsername) {
-    AuthenticationConfig config = getOrCreateAuthenticationConfig();
+    GerritAuthenticationConfig config = getOrCreateAuthenticationConfig();
     config.setUsername(overrideHttpUsername);
   }
 
   public void setHttpPassword(String overrideHttpPassword) {
-    AuthenticationConfig config = getOrCreateAuthenticationConfig();
+    GerritAuthenticationConfig config = getOrCreateAuthenticationConfig();
     config.setPassword(overrideHttpPassword);
   }
 

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.jenkinsci.plugins.sonargerrit.config.AuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 
 /**
@@ -38,7 +38,7 @@ public class GerritConnectionInfo implements ConnectionInfo {
   public GerritConnectionInfo(
       Map<String, String> envVars,
       GerritTrigger trigger,
-      AuthenticationConfig authenticationConfig) {
+      GerritAuthenticationConfig authenticationConfig) {
     serverName = retrieveServerName(envVars, trigger);
 
     changeNumber = retrieveChangeNumber(envVars);

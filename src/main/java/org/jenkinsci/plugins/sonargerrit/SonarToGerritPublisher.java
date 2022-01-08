@@ -10,6 +10,7 @@ import hudson.*;
 import hudson.model.*;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import java.io.IOException;
 import java.util.*;
@@ -37,7 +38,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
-public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep {
+public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep {
 
   private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
   public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
@@ -62,57 +63,6 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
   @DataBoundConstructor
   public SonarToGerritPublisher() {}
-
-  //    @DataBoundConstructor
-  @Deprecated // since 2.0. Left here for Jenkins version < 1.625.3
-  public SonarToGerritPublisher(
-      String sonarURL,
-      List<SubJobConfig> subJobConfigs,
-      String severity,
-      boolean changedLinesOnly,
-      boolean newIssuesOnly,
-      String noIssuesToPostText,
-      String someIssuesToPostText,
-      String issueComment,
-      boolean overrideCredentials,
-      String httpUsername,
-      String httpPassword,
-      boolean postScore,
-      String category,
-      String noIssuesScore,
-      String issuesScore,
-      String noIssuesNotification,
-      String issuesNotification) {
-    setSonarURL(sonarURL);
-    setSubJobConfigs(subJobConfigs);
-
-    if (overrideCredentials) {
-      setAuthConfig(new GerritAuthenticationConfig(httpUsername, httpPassword));
-    }
-
-    IssueFilterConfig issueFilterConfig =
-        new IssueFilterConfig(severity, newIssuesOnly, changedLinesOnly);
-
-    ReviewConfig reviewConfig =
-        new ReviewConfig(issueFilterConfig, noIssuesToPostText, someIssuesToPostText, issueComment);
-    setReviewConfig(reviewConfig);
-
-    if (postScore) {
-      ScoreConfig scoreConfig =
-          new ScoreConfig(
-              issueFilterConfig,
-              category,
-              Integer.parseInt(noIssuesScore),
-              Integer.parseInt(issuesScore));
-      setScoreConfig(scoreConfig);
-    } else {
-      setScoreConfig(null);
-    }
-
-    NotificationConfig notificationConfig =
-        new NotificationConfig(noIssuesNotification, issuesNotification, issuesNotification);
-    setNotificationConfig(notificationConfig);
-  }
 
   @Override
   public void perform(
@@ -183,7 +133,7 @@ public class SonarToGerritPublisher extends Publisher implements SimpleBuildStep
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
     } catch (RestApiException e) {
-      LOGGER.log(Level.SEVERE, "Unable to post review: " + e.getMessage(), e);
+      LOGGER.log(Level.SEVERE, e, () -> "Unable to post review: " + e.getMessage());
       throw new AbortException("Unable to post review: " + e.getMessage());
     } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
       throw new AbortException(e.getMessage());
