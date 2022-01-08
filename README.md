@@ -172,16 +172,15 @@ And access rights:
     label-Sonar-Verified = -1..+1 group Non-Interactive Users
 ```
 
-#### Credentials
+#### Credentials override
 
 To override the credentials used to post comments on the job level set up section "Override default HTTP credentials". (Global credentials on the Gerrit Trigger Server level should be set up as well for Gerrit Trigger needs.)
 
 ![alt text](doc/credentials-settings.png "Credentials settings")
 
 1. Override default HTTP credentials? - This setting describes whether it is necessary to override Gerrit credentials from the Gerrit Trigger Server settings or not.
-2. HTTP Username - Username to be used to post review result to Gerrit.
-3. HTTP Password - Password to be used to post review result to Gerrit.
-4. Gerrit Server - The server used to check connection with overridden credentials. The value *does not* affect plugin settings and only used to verify credentials.
+2. HTTP credentials - Credentials to be used to post review result to Gerrit.
+3. Gerrit Server - The server used to check connection with overridden credentials. The value *does not* affect plugin settings and only used to verify credentials.
 
 #### Notification Settings
 
@@ -280,8 +279,7 @@ sonarToGerrit (
             negativeScoreNotificationRecipient: 'OWNER'
         ],
         authConfig: [
-            username: 'Jenkins',
-            password: 'HTTP Password of user called Jenkins'
+            httpCredentialsId: 'b948c0ba-51a2-4eb7-b42b-71e6a77d7d34'
         ]
     )
 ```

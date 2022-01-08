@@ -6,14 +6,23 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.Multimap;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.*;
-import hudson.model.*;
+import hudson.AbortException;
+import hudson.EnvVars;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -22,7 +31,13 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.Symbol;
-import org.jenkinsci.plugins.sonargerrit.config.*;
+import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
@@ -61,8 +76,16 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
   private final BackCompatibilityHelper backCompatibilityHelper = new BackCompatibilityHelper(this);
 
-  @DataBoundConstructor
   public SonarToGerritPublisher() {}
+
+  /** @deprecated Use {@link #SonarToGerritPublisher()} instead */
+  @Deprecated
+  @DataBoundConstructor
+  public SonarToGerritPublisher(String httpUsername, String httpPassword) {
+    if (httpUsername != null || httpPassword != null) {
+      backCompatibilityHelper.setHttpUsernamePassword(httpUsername, httpPassword);
+    }
+  }
 
   @Override
   public void perform(
@@ -78,7 +101,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
     // load revision info
     GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
-    GerritConnectionInfo connectionInfo = new GerritConnectionInfo(env, trigger, authConfig);
+    GerritConnectionInfo connectionInfo =
+        new GerritConnectionInfo(env, trigger, authConfig, run.getParent());
     try {
       GerritConnector connector = new GerritConnector(connectionInfo);
       connector.connect();
@@ -328,18 +352,6 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   @DataBoundSetter
   public void setOverrideCredentials(boolean overrideCredentials) {
     backCompatibilityHelper.setOverrideCredentials(overrideCredentials);
-  }
-
-  @Deprecated
-  @DataBoundSetter
-  public void setHttpUsername(String overrideHttpUsername) {
-    backCompatibilityHelper.setHttpUsername(overrideHttpUsername);
-  }
-
-  @Deprecated
-  @DataBoundSetter
-  public void setHttpPassword(String overrideHttpPassword) {
-    backCompatibilityHelper.setHttpPassword(overrideHttpPassword);
   }
 
   @Deprecated
