@@ -8,7 +8,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 29.11.2017 15:21 $Id$ */
 @Restricted(NoExternalUse.class)
-public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
+public class SonarQubeIssue extends Issue implements IssueAdapter {
 
   private String filepath;
 
@@ -16,7 +16,7 @@ public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
 
   private final SubJobConfig config;
 
-  public SonarQubeIssueAdapter(Issue issue, ComponentPathBuilder pathBuilder, SubJobConfig config) {
+  public SonarQubeIssue(Issue issue, ComponentPathBuilder pathBuilder, SubJobConfig config) {
     super(issue);
     this.pathBuilder = pathBuilder;
     this.config = config;
@@ -37,7 +37,6 @@ public class SonarQubeIssueAdapter extends Issue implements IssueAdapter {
     return filepath;
   }
 
-  @Override
   public void setFilepath(String filepath) {
     this.filepath = filepath;
   }

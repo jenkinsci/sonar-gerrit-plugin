@@ -43,7 +43,6 @@ import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
-import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
@@ -93,23 +92,18 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       @Nonnull Launcher launcher,
       @Nonnull TaskListener listener)
       throws InterruptedException, IOException {
-    // load inspection report
-    InspectionReportAdapter report =
-        new SonarConnector().readSonarReports(listener, inspectionConfig, filePath);
 
-    // load revision info
     GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());
     GerritConnectionInfo connectionInfo =
         new GerritConnectionInfo(env, trigger, authConfig, run.getParent());
     try {
       GerritRevision revision = GerritConnector.connect(connectionInfo).fetchRevision();
 
-      Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
+      // load inspection report
+      InspectionReportAdapter report =
+          new SonarConnector().readSonarReports(listener, inspectionConfig, revision, filePath);
 
-      // match inspection report and revision info
-      if (inspectionConfig.isPathCorrectionNeeded()) {
-        new IssueAdapterProcessor(listener, report, revision).process();
-      }
+      Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
 
       // generate review output
       // get issues to be commented

@@ -17,7 +17,7 @@ public class ProjectPathToGerritChangedLinesMatchTest
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
     SubJobConfig config =
         new SubJobConfig("", SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
-    performTest(config, false, false);
+    performTest(config, false);
   }
 
   @Test
@@ -26,7 +26,7 @@ public class ProjectPathToGerritChangedLinesMatchTest
     SubJobConfig config =
         new SubJobConfig("", SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
     config.setAutoMatch(true);
-    performTest(config, false, true);
+    performTest(config, true);
   }
 
   @Test
@@ -34,7 +34,7 @@ public class ProjectPathToGerritChangedLinesMatchTest
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
     SubJobConfig config =
         new SubJobConfig(PREFIX, SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
-    performTest(config, true, true);
+    performTest(config, true);
   }
 
   @Override

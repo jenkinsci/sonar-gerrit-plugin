@@ -318,7 +318,7 @@ public class ComponentPathBuilderTest {
       SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
     return new SonarConnector(reportRecorder)
-        .readSonarReports(null, buildInspectionConfig(configs), new FilePath(new File("")));
+        .readSonarReports(null, buildInspectionConfig(configs), null, new FilePath(new File("")));
   }
 
   private InspectionConfig buildInspectionConfig(SubJobConfig... configs) {

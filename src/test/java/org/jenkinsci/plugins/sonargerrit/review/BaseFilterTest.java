@@ -22,7 +22,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssue;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -86,7 +86,7 @@ public abstract class BaseFilterTest<A> {
     List<Issue> allIssues = report.getIssues();
     List<IssueAdapter> allIssuesAdp = new ArrayList<>();
     for (Issue i : allIssues) {
-      allIssuesAdp.add(new SonarQubeIssueAdapter(i, null, new SubJobConfig()));
+      allIssuesAdp.add(new SonarQubeIssue(i, null, new SubJobConfig()));
     }
 
     // todo temporary - should be realized in publisher

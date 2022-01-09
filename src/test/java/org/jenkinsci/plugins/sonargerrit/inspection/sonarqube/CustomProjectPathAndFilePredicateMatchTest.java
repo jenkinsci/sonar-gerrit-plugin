@@ -12,12 +12,12 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.JsonReports;
+import org.jenkinsci.plugins.sonargerrit.config.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritRevision;
 import org.junit.jupiter.api.Assertions;
 
@@ -49,30 +49,19 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
   protected abstract IssueFilterConfig createFilterConfig();
 
   protected void performTest(
-      SubJobConfig config,
-      boolean manuallyCorrected,
-      boolean expectedResult,
-      String... additionalFilenames)
+      SubJobConfig config, boolean expectedResult, String... additionalFilenames)
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
-    SonarConnector.ReportRecorder r = getReport(config, manuallyCorrected);
 
-    GerritRevision w = getRevisionAdapter(additionalFilenames);
-
-    if (config.isAutoMatch()) {
-      performAutoPathCorrection(r, w);
-    }
+    GerritRevision revision = getRevisionAdapter(additionalFilenames);
+    SonarConnector.ReportRecorder reportRecorder = getReport(config, revision);
 
     IssueFilter f =
-        new IssueFilter(createFilterConfig(), r.getIssuesList(), w.getFileToChangedLines());
+        new IssueFilter(
+            createFilterConfig(), reportRecorder.getIssuesList(), revision.getFileToChangedLines());
     Iterable<IssueAdapter> filtered = f.filter();
 
     boolean contains = isFilterResultContainsFile(getGerritFilename(), filtered);
     Assertions.assertEquals(expectedResult, contains);
-  }
-
-  protected void performAutoPathCorrection(
-      final SonarConnector.ReportRecorder r, GerritRevision w) {
-    new IssueAdapterProcessor(null, r::getIssuesList, w).process();
   }
 
   protected boolean isFilterResultContainsFile(String file, Iterable<IssueAdapter> filtered) {
@@ -122,25 +111,18 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     return GerritRevision.load(revInfo);
   }
 
-  protected SonarConnector.ReportRecorder getReport(SubJobConfig config, boolean manuallyCorrected)
+  protected SonarConnector.ReportRecorder getReport(SubJobConfig config, GerritRevision revision)
       throws IOException, InterruptedException, URISyntaxException {
     Report report = JsonReports.readReport(getReportFilename());
     Assertions.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
     SonarConnector.ReportRecorder reportRecorder = new ReportRecorderMock();
     SonarConnector sonarConnector = new SonarConnector(reportRecorder);
-    sonarConnector.readSonarReports(Collections.singletonList(info));
-    if (manuallyCorrected) {
-      Assertions.assertFalse(
-          isFilterResultContainsFile(getSonarFilename(), reportRecorder.getIssuesList()));
-      Assertions.assertTrue(
-          isFilterResultContainsFile(getGerritFilename(), reportRecorder.getIssuesList()));
-    } else {
-      Assertions.assertTrue(
-          isFilterResultContainsFile(getSonarFilename(), reportRecorder.getIssuesList()));
-      Assertions.assertFalse(
-          isFilterResultContainsFile(getGerritFilename(), reportRecorder.getIssuesList()));
-    }
+
+    InspectionConfig inspectionConfig = new InspectionConfig();
+    inspectionConfig.setAutoMatch(config.isAutoMatch());
+    sonarConnector.readSonarReports(
+        null, inspectionConfig, revision, Collections.singletonList(info));
     return reportRecorder;
   }
 

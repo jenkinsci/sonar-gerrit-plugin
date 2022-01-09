@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.integration;
+package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import hudson.model.TaskListener;
 import java.util.HashMap;
@@ -8,39 +8,33 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByFilenameEndPredicate;
-import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.Revision;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 19.12.2017 21:16 */
-@Restricted(NoExternalUse.class)
-public class IssueAdapterProcessor {
-  private final InspectionReportAdapter inspectionReport;
-  private final Revision revision;
-  private final Map<String, String> inspection2revisionFilepaths;
+/** @author Réda Housni Alaoui */
+class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(SonarQubeIssuePathCorrector.class.getName());
+
   private final TaskListener listener;
+  private final Revision revision;
 
-  private static final Logger LOGGER = Logger.getLogger(IssueAdapterProcessor.class.getName());
+  private final Map<String, String> inspection2revisionFilepaths;
 
-  public IssueAdapterProcessor(
-      TaskListener listener, InspectionReportAdapter inspectionReport, Revision revision) {
+  public SonarQubeIssuePathCorrector(TaskListener listener, Revision revision) {
     this.listener = listener;
-    this.inspectionReport = inspectionReport;
     this.revision = revision;
-    this.inspection2revisionFilepaths = new HashMap<>();
+    inspection2revisionFilepaths = new HashMap<>();
   }
 
-  public void process() {
-    Iterable<IssueAdapter> issues = inspectionReport.getIssues();
-    Set<String> changedFiles = revision.getChangedFiles();
-    for (IssueAdapter issue : issues) {
-      String reviewSystemFilePath = findReviewSystemFilepath(issue, changedFiles);
-      if (reviewSystemFilePath != null) {
-        issue.setFilepath(reviewSystemFilePath);
-      }
+  @Override
+  public SonarQubeIssue decorate(SonarQubeIssue issue) {
+    String reviewSystemFilePath = findReviewSystemFilepath(issue, revision.getChangedFiles());
+    if (reviewSystemFilePath != null) {
+      issue.setFilepath(reviewSystemFilePath);
     }
+    return issue;
   }
 
   private String findReviewSystemFilepath(IssueAdapter i, Set<String> files) {

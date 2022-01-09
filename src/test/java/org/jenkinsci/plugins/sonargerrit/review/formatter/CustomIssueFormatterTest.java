@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssue;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,6 +45,6 @@ public class CustomIssueFormatterTest {
     String json = filePath.readToString();
     Report rep = new SonarReportBuilder().fromJson(json);
 
-    return new SonarQubeIssueAdapter(rep.getIssues().get(0), null, new SubJobConfig());
+    return new SonarQubeIssue(rep.getIssues().get(0), null, new SubJobConfig());
   }
 }

@@ -70,7 +70,8 @@ public class SonarConnectorTest {
       SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
     SonarConnector connector = new SonarConnector(reportRecorder);
-    connector.readSonarReports(null, buildInspectionConfig(configs), new FilePath(new File("")));
+    connector.readSonarReports(
+        null, buildInspectionConfig(configs), null, new FilePath(new File("")));
     return connector;
   }
 

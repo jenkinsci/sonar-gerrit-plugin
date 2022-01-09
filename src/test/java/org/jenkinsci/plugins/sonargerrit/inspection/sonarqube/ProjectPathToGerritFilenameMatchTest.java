@@ -31,8 +31,8 @@ public class ProjectPathToGerritFilenameMatchTest
         new SubJobConfig(
             SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH,
             SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
-    getReport(config, false);
-    performTest(config, false, false);
+    getReport(config, null);
+    performTest(config, false);
   }
 
   @Test
@@ -43,7 +43,7 @@ public class ProjectPathToGerritFilenameMatchTest
             SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH,
             SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
     config.setAutoMatch(true);
-    performTest(config, false, true);
+    performTest(config, true);
   }
 
   @Test
@@ -52,7 +52,7 @@ public class ProjectPathToGerritFilenameMatchTest
 
     SubJobConfig config =
         new SubJobConfig(PREFIX, SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
-    performTest(config, true, true);
+    performTest(config, true);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class ProjectPathToGerritFilenameMatchTest
             SonarToGerritPublisher.DescriptorImpl.SONAR_REPORT_PATH);
     config.setAutoMatch(true);
 
-    performTest(config, false, false, EXTRA_FILENAME_IN_GERRIT);
+    performTest(config, false, EXTRA_FILENAME_IN_GERRIT);
   }
 
   @Override
