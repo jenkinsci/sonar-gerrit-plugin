@@ -24,12 +24,13 @@ public class ComponentPathBuilderTest {
     String filename = "sc-rep1.json";
     SubJobConfig config = createConfig("", filename);
 
-    SonarConnector connector = readSonarReport(config);
+    ReportRecorderMock recordedReports = new ReportRecorderMock();
+    SonarConnector connector = readSonarReport(recordedReports, config);
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(1, issues.size());
     IssueAdapter issue = issues.get(0);
 
-    Report report = connector.getRawReport(config);
+    Report report = recordedReports.getRawReport(config);
     ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
     String issueComponent = issue.getComponent();
     String realFileName =
@@ -49,11 +50,12 @@ public class ComponentPathBuilderTest {
   public void testSuperNestedComponent() throws IOException, InterruptedException {
     String filename = "report3_with-nested-subprojects.json";
     SubJobConfig config = createConfig("testfolder", filename);
-    SonarConnector connector = readSonarReport(config);
+    ReportRecorderMock recordedReports = new ReportRecorderMock();
+    SonarConnector connector = readSonarReport(recordedReports, config);
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(8, issues.size());
 
-    Report report = connector.getRawReport(config);
+    Report report = recordedReports.getRawReport(config);
     ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
     testIssue(
         builder,
@@ -125,7 +127,7 @@ public class ComponentPathBuilderTest {
     String filename = "filter.json";
     SubJobConfig config = createConfig("", filename);
 
-    SonarConnector connector = readSonarReport(config);
+    SonarConnector connector = readSonarReport(null, config);
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
@@ -177,7 +179,7 @@ public class ComponentPathBuilderTest {
     String filename = "filter.json";
     SubJobConfig config = createConfig("testfolder", filename);
 
-    SonarConnector connector = readSonarReport(config);
+    SonarConnector connector = readSonarReport(null, config);
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
@@ -236,7 +238,7 @@ public class ComponentPathBuilderTest {
   public void testTwoProjectPaths() throws IOException, InterruptedException {
     SubJobConfig config1 = createConfig("testfolder1", "report1.json");
     SubJobConfig config2 = createConfig("testfolder2", "report2.json");
-    SonarConnector connector = readSonarReport(config1, config2);
+    SonarConnector connector = readSonarReport(null, config1, config2);
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
@@ -312,11 +314,11 @@ public class ComponentPathBuilderTest {
     Assertions.assertEquals(expectedFilename, issue.getFilepath());
   }
 
-  protected SonarConnector readSonarReport(SubJobConfig... configs)
+  protected SonarConnector readSonarReport(
+      SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
-    SonarConnector connector = new SonarConnector(null, buildInspectionConfig(configs));
-    connector.readSonarReports(new FilePath(new File("")));
-    return connector;
+    return new SonarConnector(reportRecorder)
+        .readSonarReports(null, buildInspectionConfig(configs), new FilePath(new File("")));
   }
 
   private InspectionConfig buildInspectionConfig(SubJobConfig... configs) {
