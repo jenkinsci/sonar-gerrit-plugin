@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
-import com.google.common.collect.Multimap;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.TaskListener;
@@ -39,8 +38,8 @@ public class SonarConnector implements InspectionReportAdapter {
   public void readSonarReports(FilePath workspace) throws IOException, InterruptedException {
     List<ReportInfo> reports = new ArrayList<>();
     for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
-      Report report = readSonarReport(workspace, subJobConfig.getSonarReportPath());
-      if (report == null) { // todo fail all? skip errors?
+      Report subReport = readSonarReport(workspace, subJobConfig.getSonarReportPath());
+      if (subReport == null) {
         TaskListenerLogger.logMessage(
             listener,
             LOGGER,
@@ -49,18 +48,9 @@ public class SonarConnector implements InspectionReportAdapter {
         throw new AbortException(
             getLocalized("jenkins.plugin.error.path.no.project.config.available"));
       }
-      reports.add(new ReportInfo(subJobConfig, report));
+      reports.add(new ReportInfo(subJobConfig, subReport));
     }
     report = new InspectionReport(reports);
-  }
-
-  @Override
-  public Multimap<String, IssueAdapter> getReportData() {
-    return report.asMultimap(getIssues());
-  }
-
-  public Multimap<String, IssueAdapter> getReportData(Iterable<IssueAdapter> issues) {
-    return report.asMultimap(issues);
   }
 
   @Override
@@ -102,15 +92,15 @@ public class SonarConnector implements InspectionReportAdapter {
 
     SonarReportBuilder builder = new SonarReportBuilder();
     String reportJson = reportPath.readToString();
-    Report report = builder.fromJson(reportJson);
+    Report subReport = builder.fromJson(reportJson);
 
     TaskListenerLogger.logMessage(
         listener,
         LOGGER,
         Level.INFO,
         "jenkins.plugin.inspection.report.loaded",
-        report.getIssues().size());
-    return report;
+        subReport.getIssues().size());
+    return subReport;
   }
 
   static class ReportInfo {

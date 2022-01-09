@@ -6,20 +6,6 @@ import java.util.Date;
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
 public class Issue {
 
-  public Issue() {}
-
-  public Issue(Issue issue) {
-    this.key = issue.key;
-    this.component = issue.component;
-    this.line = issue.line;
-    this.message = issue.message;
-    this.severity = issue.severity;
-    this.rule = issue.rule;
-    this.status = issue.status;
-    this.isNew = issue.isNew;
-    this.creationDate = issue.creationDate;
-  }
-
   @SuppressWarnings("unused")
   @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
   private String key;
@@ -55,6 +41,20 @@ public class Issue {
   @SuppressWarnings("unused")
   @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
   private Date creationDate;
+
+  public Issue() {}
+
+  public Issue(Issue issue) {
+    this.key = issue.key;
+    this.component = issue.component;
+    this.line = issue.line;
+    this.message = issue.message;
+    this.severity = issue.severity;
+    this.rule = issue.rule;
+    this.status = issue.status;
+    this.isNew = issue.isNew;
+    this.creationDate = issue.creationDate;
+  }
 
   public String getKey() {
     return key;

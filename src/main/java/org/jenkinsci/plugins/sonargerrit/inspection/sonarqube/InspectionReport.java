@@ -1,8 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.List;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
@@ -25,20 +23,8 @@ public class InspectionReport {
     }
   }
 
-  private String getFilepath(IssueAdapter i) {
-    return i.getFilepath();
-  }
-
   public List<IssueAdapter> getIssuesList() {
     return new ArrayList<>(issuesList);
-  }
-
-  public Multimap<String, IssueAdapter> asMultimap(Iterable<IssueAdapter> issues) {
-    final Multimap<String, IssueAdapter> multimap = LinkedListMultimap.create();
-    for (IssueAdapter i : issues) {
-      multimap.put(getFilepath(i), i);
-    }
-    return multimap;
   }
 
   /** Generates issues wrapper consisting corrected filepath */

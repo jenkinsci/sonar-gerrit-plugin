@@ -34,10 +34,10 @@ public class IssueAdapterProcessor {
   public void process() {
     Iterable<IssueAdapter> issues = inspectionReport.getIssues();
     Set<String> changedFiles = revisionAdapter.getChangedFiles();
-    for (IssueAdapter i : issues) {
-      String reviewSystemFilePath = findReviewSystemFilepath(i, changedFiles);
+    for (IssueAdapter issue : issues) {
+      String reviewSystemFilePath = findReviewSystemFilepath(issue, changedFiles);
       if (reviewSystemFilePath != null) {
-        i.setFilepath(reviewSystemFilePath);
+        issue.setFilepath(reviewSystemFilePath);
       }
     }
   }
