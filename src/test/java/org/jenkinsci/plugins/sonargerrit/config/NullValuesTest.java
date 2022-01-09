@@ -5,9 +5,9 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -167,7 +167,7 @@ public class NullValuesTest extends DetailedConfigTest {
 
   @Override
   protected void doTestSonarUrl() {
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     config.setServerURL(null);
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
   }
@@ -184,7 +184,7 @@ public class NullValuesTest extends DetailedConfigTest {
   protected void doTestInspectionConfig() {
     SonarToGerritPublisher publisher = new SonarToGerritPublisher();
     publisher.setInspectionConfig(null);
-    InspectionConfig config = publisher.getInspectionConfig();
+    Inspection config = publisher.getInspectionConfig();
     Assertions.assertNotNull(config);
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
@@ -192,15 +192,11 @@ public class NullValuesTest extends DetailedConfigTest {
     Assertions.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
     Assertions.assertNotNull(config.getSubJobConfigs());
     Assertions.assertEquals(1, config.getSubJobConfigs().size());
-    SubJobConfig subJobConfig = new ArrayList<>(config.getAllSubJobConfigs()).get(0);
-    Assertions.assertEquals(SONAR_REPORT_PATH, subJobConfig.getSonarReportPath());
-    Assertions.assertEquals(PROJECT_PATH, subJobConfig.getProjectPath());
-    Assertions.assertFalse(subJobConfig.isAutoMatch());
   }
 
   @Override
   protected void doTestSubJobConfig() {
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     config.setBaseConfig(null);
     Assertions.assertNotNull(config.getBaseConfig());
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());

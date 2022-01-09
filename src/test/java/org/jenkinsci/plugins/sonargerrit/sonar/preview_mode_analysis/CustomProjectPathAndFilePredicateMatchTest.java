@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,6 +12,9 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.gerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritRevision;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilter;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Assertions;
 
@@ -48,7 +51,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
 
     GerritRevision revision = getRevisionAdapter(additionalFilenames);
-    SonarConnector.ReportRecorder reportRecorder = getReport(config, revision);
+    ReportRecorder reportRecorder = getReport(config, revision);
 
     IssueFilter f =
         new IssueFilter(
@@ -106,18 +109,18 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     return GerritRevision.load(revInfo);
   }
 
-  protected SonarConnector.ReportRecorder getReport(SubJobConfig config, GerritRevision revision)
+  protected ReportRecorder getReport(SubJobConfig config, GerritRevision revision)
       throws IOException, InterruptedException, URISyntaxException {
     ReportRepresentation report = JsonReports.readReport(getReportFilename());
     Assertions.assertEquals(getCompCount(), report.getComponents().size());
-    SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
-    SonarConnector.ReportRecorder reportRecorder = new ReportRecorderMock();
-    SonarConnector sonarConnector = new SonarConnector(reportRecorder);
+    ReportInfo info = new ReportInfo(config, report);
+    ReportRecorder reportRecorder = new ReportRecorderMock();
 
-    InspectionConfig inspectionConfig = new InspectionConfig();
-    inspectionConfig.setAutoMatch(config.isAutoMatch());
-    sonarConnector.readSonarReports(
-        null, inspectionConfig, revision, Collections.singletonList(info));
+    PreviewModeAnalysisStrategy strategy = new PreviewModeAnalysisStrategy();
+    strategy.setAutoMatch(config.isAutoMatch());
+    SonarConnector sonarConnector = new SonarConnector(null, strategy, revision, null);
+
+    sonarConnector.readSonarReports(Collections.singletonList(info), reportRecorder);
     return reportRecorder;
   }
 

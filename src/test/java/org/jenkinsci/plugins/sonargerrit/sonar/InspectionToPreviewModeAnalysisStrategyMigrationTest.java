@@ -13,6 +13,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Test;
@@ -20,30 +21,40 @@ import org.jvnet.hudson.test.JenkinsRule;
 
 /** @author Réda Housni Alaoui */
 @EnableJenkinsRule
-class SubJobConfigPackageRenameMigrationTest {
+class InspectionToPreviewModeAnalysisStrategyMigrationTest {
 
   @Test
   void test(JenkinsRule jenkinsRule) throws IOException {
     FreeStyleProject project = jenkinsRule.createFreeStyleProject();
+
+    String legacyProjectPath = UUID.randomUUID().toString();
     String legacySonarReportPath = UUID.randomUUID().toString();
-    project.updateByXml(loadLegacyJobConfig(legacySonarReportPath));
+    boolean autoMatch = true;
+
+    project.updateByXml(loadLegacyJobConfig(legacyProjectPath, legacySonarReportPath, autoMatch));
     project.doReload();
 
     SonarToGerritPublisher publisher =
         project.getPublishersList().get(SonarToGerritPublisher.class);
 
-    assertThat(publisher.getInspectionConfig().getSubJobConfigs())
-        .hasSize(1)
-        .map(SubJobConfig::getSonarReportPath)
-        .contains(legacySonarReportPath);
+    AnalysisStrategy analysisStrategy = publisher.getInspectionConfig().getAnalysisStrategy();
+    assertThat(analysisStrategy).isInstanceOf(PreviewModeAnalysisStrategy.class);
+    PreviewModeAnalysisStrategy strategy = (PreviewModeAnalysisStrategy) analysisStrategy;
+
+    SubJobConfig baseConfig = strategy.getBaseConfig();
+    assertThat(baseConfig.getProjectPath()).isEqualTo(legacyProjectPath);
+    assertThat(baseConfig.getSonarReportPath()).isEqualTo(legacySonarReportPath);
+    assertThat(baseConfig.isAutoMatch()).isTrue();
   }
 
-  private Source loadLegacyJobConfig(String sonarReportPath) throws IOException {
+  private Source loadLegacyJobConfig(String projectPath, String sonarReportPath, boolean autoMatch)
+      throws IOException {
     String xml;
     try (InputStream inputStream =
         getClass().getResourceAsStream(getClass().getSimpleName() + "/legacy-job-config.xml")) {
       xml = IOUtils.toString(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8);
     }
-    return new StreamSource(new StringReader(String.format(xml, sonarReportPath)));
+    return new StreamSource(
+        new StringReader(String.format(xml, projectPath, sonarReportPath, autoMatch)));
   }
 }

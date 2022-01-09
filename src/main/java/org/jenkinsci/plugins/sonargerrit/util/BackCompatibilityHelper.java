@@ -11,9 +11,9 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -34,12 +34,12 @@ public final class BackCompatibilityHelper {
 
   // set up Inspection Config
   public void setSonarURL(String sonarURL) {
-    InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
+    Inspection inspectionConfig = getOrCreateInspectionConfig();
     inspectionConfig.setServerURL(sonarURL);
   }
 
   public void setProjectPath(String path) {
-    InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
+    Inspection inspectionConfig = getOrCreateInspectionConfig();
     if (inspectionConfig.getBaseConfig() == null) {
       inspectionConfig.setBaseConfig(new SubJobConfig());
     }
@@ -47,7 +47,7 @@ public final class BackCompatibilityHelper {
   }
 
   public void setPath(String path) {
-    InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
+    Inspection inspectionConfig = getOrCreateInspectionConfig();
     if (inspectionConfig.getBaseConfig() == null) {
       inspectionConfig.setBaseConfig(new SubJobConfig());
     }
@@ -55,7 +55,7 @@ public final class BackCompatibilityHelper {
   }
 
   public void setSubJobConfigs(List<SubJobConfig> subJobConfigs) {
-    InspectionConfig inspectionConfig = getOrCreateInspectionConfig();
+    Inspection inspectionConfig = getOrCreateInspectionConfig();
     if (subJobConfigs == null || subJobConfigs.isEmpty()) {
       inspectionConfig.setBaseConfig(new SubJobConfig());
       inspectionConfig.setSubJobConfigs(new LinkedList<>());
@@ -181,7 +181,7 @@ public final class BackCompatibilityHelper {
   // helper methods
   // mandatory properties - should be created anyway
 
-  private InspectionConfig getOrCreateInspectionConfig() {
+  private Inspection getOrCreateInspectionConfig() {
     return getInspectionConfig();
   }
 
@@ -295,7 +295,7 @@ public final class BackCompatibilityHelper {
 
   // simple getters
 
-  private InspectionConfig getInspectionConfig() {
+  private Inspection getInspectionConfig() {
     return publisher.getInspectionConfig();
   }
 

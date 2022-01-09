@@ -1,5 +1,6 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
+import static java.util.Objects.requireNonNull;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import hudson.AbortException;
@@ -14,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -23,28 +26,35 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  * <p>$Id$
  */
 @Restricted(NoExternalUse.class)
-public class SonarConnector implements InspectionReportAdapter {
+class SonarConnector {
 
   private static final Logger LOGGER = Logger.getLogger(SonarConnector.class.getName());
 
-  private final ReportRecorder reportRecorder;
+  private final TaskListener listener;
+  private final PreviewModeAnalysisStrategy strategy;
+  private final Revision revision;
+  private final SonarInstallation sonarQubeInstallation;
 
-  public SonarConnector() {
-    this(null);
-  }
-
-  public SonarConnector(ReportRecorder reportRecorder) {
-    this.reportRecorder = Optional.ofNullable(reportRecorder).orElseGet(SimpleReportRecorder::new);
-  }
-
-  public SonarConnector readSonarReports(
+  public SonarConnector(
       TaskListener listener,
-      InspectionConfig inspectionConfig,
+      PreviewModeAnalysisStrategy strategy,
       Revision revision,
-      FilePath workspace)
+      SonarInstallation sonarQubeInstallation) {
+    this.listener = listener;
+    this.strategy = requireNonNull(strategy);
+    this.revision = revision;
+    this.sonarQubeInstallation = sonarQubeInstallation;
+  }
+
+  public InspectionReport readSonarReports(FilePath workspace)
+      throws IOException, InterruptedException {
+    return readSonarReports(workspace, new SimpleReportRecorder());
+  }
+
+  public InspectionReport readSonarReports(FilePath workspace, ReportRecorder reportRecorder)
       throws IOException, InterruptedException {
     List<ReportInfo> reports = new ArrayList<>();
-    for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
+    for (SubJobConfig subJobConfig : strategy.getAllSubJobConfigs()) {
       ReportRepresentation subReport =
           readSonarReport(listener, workspace, subJobConfig.getSonarReportPath());
       if (subReport == null) {
@@ -59,29 +69,24 @@ public class SonarConnector implements InspectionReportAdapter {
       reports.add(new ReportInfo(subJobConfig, subReport));
     }
 
-    readSonarReports(listener, inspectionConfig, revision, reports);
+    readSonarReports(reports, reportRecorder);
 
-    return this;
+    return new InspectionReport(reportRecorder.getIssuesList());
   }
 
-  public void readSonarReports(
-      TaskListener listener,
-      InspectionConfig inspectionConfig,
-      Revision revision,
-      List<ReportInfo> reports) {
+  public void readSonarReports(List<ReportInfo> reports, ReportRecorder reportRecorder) {
     reportRecorder.reset();
     reportRecorder.recordReportInfos(reports);
 
     SonarQubeIssueDecorator decorator;
-    if (inspectionConfig.isPathCorrectionNeeded()) {
+    if (strategy.isPathCorrectionNeeded()) {
       decorator = new SonarQubeIssuePathCorrector(listener, revision);
     } else {
       decorator = SonarQubeIssueDecorator.Noop.INSTANCE;
     }
 
     String sonarQubeUrl =
-        inspectionConfig
-            .getSonarQubeInstallation()
+        Optional.ofNullable(sonarQubeInstallation)
             .map(SonarInstallation::getServerUrl)
             .orElse(null);
 
@@ -95,11 +100,6 @@ public class SonarConnector implements InspectionReportAdapter {
         reportRecorder.recordIssue(issueToRecord);
       }
     }
-  }
-
-  @Override
-  public List<Issue> getIssues() {
-    return reportRecorder.getIssuesList();
   }
 
   private ReportRepresentation readSonarReport(
@@ -144,17 +144,6 @@ public class SonarConnector implements InspectionReportAdapter {
     return subReport;
   }
 
-  public interface ReportRecorder {
-
-    void reset();
-
-    void recordReportInfos(List<ReportInfo> reportInfos);
-
-    void recordIssue(Issue issue);
-
-    List<Issue> getIssuesList();
-  }
-
   private static class SimpleReportRecorder implements ReportRecorder {
     private final List<Issue> issuesList = new ArrayList<>();
 
@@ -176,17 +165,6 @@ public class SonarConnector implements InspectionReportAdapter {
     @Override
     public List<Issue> getIssuesList() {
       return new ArrayList<>(issuesList);
-    }
-  }
-
-  public static class ReportInfo {
-
-    public final SubJobConfig config;
-    public final ReportRepresentation report;
-
-    public ReportInfo(SubJobConfig config, ReportRepresentation report) {
-      this.config = config;
-      this.report = report;
     }
   }
 }

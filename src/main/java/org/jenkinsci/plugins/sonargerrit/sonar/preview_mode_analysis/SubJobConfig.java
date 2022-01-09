@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -28,7 +28,7 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
   public SubJobConfig(String projectPath, String sonarReportPath) {
     setProjectPath(projectPath);
     setSonarReportPath(sonarReportPath);
-    setAutoMatch(InspectionConfig.DescriptorImpl.AUTO_MATCH);
+    setAutoMatch(PreviewModeAnalysisStrategy.DescriptorImpl.AUTO_MATCH);
   }
 
   @DataBoundConstructor

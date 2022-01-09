@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import java.util.List;
 import org.kohsuke.accmod.Restricted;

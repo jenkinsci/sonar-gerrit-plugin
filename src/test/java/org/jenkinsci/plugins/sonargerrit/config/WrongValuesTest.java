@@ -4,9 +4,9 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -99,7 +99,7 @@ public class WrongValuesTest extends DetailedConfigTest {
 
   @Override
   protected void doTestSonarUrl() {
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     config.setServerURL("");
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
   }
@@ -140,18 +140,7 @@ public class WrongValuesTest extends DetailedConfigTest {
   }
 
   @Override
-  protected void doTestInspectionConfig() {
-    InspectionConfig config = new InspectionConfig();
-    config.setType("test");
-    Assertions.assertFalse(config.isType("test"));
-    Assertions.assertTrue(config.isType(DEFAULT_INSPECTION_CONFIG_TYPE));
-
-    config.setType("multi");
-    Assertions.assertTrue(config.isType("multi"));
-    config.setType("test");
-    Assertions.assertFalse(config.isType("test"));
-    Assertions.assertTrue(config.isType("multi"));
-  }
+  protected void doTestInspectionConfig() {}
 
   @Override
   protected void doTestSubJobConfig() {}

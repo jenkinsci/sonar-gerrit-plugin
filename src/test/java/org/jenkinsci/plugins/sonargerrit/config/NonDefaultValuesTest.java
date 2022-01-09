@@ -5,9 +5,9 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -294,7 +294,7 @@ public class NonDefaultValuesTest extends DetailedConfigTest {
 
   @Override
   protected void doTestSonarUrl() {
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertNotSame("Test", SONAR_URL);
     config.setServerURL("Test");
@@ -321,22 +321,17 @@ public class NonDefaultValuesTest extends DetailedConfigTest {
 
   @Override
   protected void doTestInspectionConfig() {
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
     Assertions.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
     Assertions.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
-    Assertions.assertTrue(config.isType(DEFAULT_INSPECTION_CONFIG_TYPE));
     Assertions.assertEquals(1, config.getSubJobConfigs().size());
     SubJobConfig subJobConfig = new ArrayList<>(config.getSubJobConfigs()).get(0);
     Assertions.assertEquals(SONAR_REPORT_PATH, subJobConfig.getSonarReportPath());
     Assertions.assertEquals(PROJECT_PATH, subJobConfig.getProjectPath());
     Assertions.assertEquals(PATH_AUTO_MATCH, subJobConfig.isAutoMatch());
     Assertions.assertEquals(config.isAutoMatch(), config.getBaseConfig().isAutoMatch());
-    Assertions.assertFalse(config.isMultiConfigMode());
-    Assertions.assertEquals(
-        config.getBaseConfig(), new ArrayList<>(config.getAllSubJobConfigs()).get(0));
-
     Assertions.assertNotSame("Test1", SONAR_URL);
     Assertions.assertNotSame("Test2", SONAR_REPORT_PATH);
     Assertions.assertNotSame("Test3", PROJECT_PATH);
@@ -356,12 +351,6 @@ public class NonDefaultValuesTest extends DetailedConfigTest {
     Assertions.assertEquals("Test1", config.getServerURL());
     Assertions.assertEquals("Test2", config.getBaseConfig().getSonarReportPath());
     Assertions.assertEquals("Test3", config.getBaseConfig().getProjectPath());
-    Assertions.assertTrue(config.isMultiConfigMode());
-    Assertions.assertNotSame(
-        config.getBaseConfig(), new ArrayList<>(config.getAllSubJobConfigs()).get(0));
-    Assertions.assertEquals(
-        new ArrayList<>(config.getSubJobConfigs()).get(0),
-        new ArrayList<>(config.getAllSubJobConfigs()).get(0));
   }
 
   @Override

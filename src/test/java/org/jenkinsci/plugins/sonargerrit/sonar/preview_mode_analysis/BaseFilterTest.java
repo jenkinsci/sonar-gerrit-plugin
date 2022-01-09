@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import com.google.common.collect.Sets;
 import java.io.IOException;
@@ -14,6 +14,10 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilter;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

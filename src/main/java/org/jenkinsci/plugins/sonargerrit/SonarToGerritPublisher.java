@@ -39,14 +39,14 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.GerritRevision;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReportAdapter;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
-import org.jenkinsci.plugins.sonargerrit.sonar.SonarConnector;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.util.BackCompatibilityHelper;
 import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -61,7 +61,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   /*
    * The URL of SonarQube server to be used for comments
    * */
-  @Nonnull private InspectionConfig inspectionConfig = new InspectionConfig();
+  @Nonnull private Inspection inspectionConfig = new Inspection();
 
   @Nonnull private NotificationConfig notificationConfig = new NotificationConfig();
 
@@ -100,8 +100,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       GerritRevision revision = GerritConnector.connect(connectionInfo).fetchRevision();
 
       // load inspection report
-      InspectionReportAdapter report =
-          new SonarConnector().readSonarReports(listener, inspectionConfig, revision, filePath);
+      InspectionReport report = inspectionConfig.analyse(listener, revision, filePath);
 
       Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
 
@@ -154,7 +153,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
   private Multimap<String, Issue> getFilteredFileToIssueMultimap(
       IssueFilterConfig filterConfig,
-      InspectionReportAdapter report,
+      InspectionReport report,
       Map<String, Set<Integer>> fileToChangedLines) {
     IssueFilter commentFilter =
         new IssueFilter(filterConfig, report.getIssues(), fileToChangedLines);
@@ -194,7 +193,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     public static final String SONAR_REPORT_PATH = "target/sonar/sonar-report.json";
     public static final String SONAR_URL = "http://localhost:9000";
     public static final String DEFAULT_INSPECTION_CONFIG_TYPE =
-        InspectionConfig.DescriptorImpl.BASE_TYPE;
+        PreviewModeAnalysisStrategy.DescriptorImpl.BASE_TYPE;
     public static final boolean AUTO_MATCH_INSPECTION_AND_REVISION_PATHS = false;
 
     public static final String NO_ISSUES_TEXT =
@@ -235,7 +234,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   }
 
   @Nonnull
-  public InspectionConfig getInspectionConfig() {
+  public Inspection getInspectionConfig() {
     return inspectionConfig;
   }
 
@@ -258,8 +257,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   }
 
   @DataBoundSetter
-  public void setInspectionConfig(InspectionConfig inspectionConfig) {
-    this.inspectionConfig = MoreObjects.firstNonNull(inspectionConfig, new InspectionConfig());
+  public void setInspectionConfig(Inspection inspectionConfig) {
+    this.inspectionConfig = MoreObjects.firstNonNull(inspectionConfig, new Inspection());
   }
 
   @DataBoundSetter

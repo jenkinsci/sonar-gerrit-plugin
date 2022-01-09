@@ -36,7 +36,7 @@ class SonarqubeServerUrlMigrationTest {
     SonarToGerritPublisher publisher =
         project.getPublishersList().get(SonarToGerritPublisher.class);
 
-    InspectionConfig inspectionConfig = publisher.getInspectionConfig();
+    Inspection inspectionConfig = publisher.getInspectionConfig();
 
     String sonarInstallationName = inspectionConfig.getSonarQubeInstallationName();
     assertThat(sonarInstallationName).isNotNull();
@@ -62,7 +62,7 @@ class SonarqubeServerUrlMigrationTest {
 
     SonarToGerritPublisher publisher =
         project.getPublishersList().get(SonarToGerritPublisher.class);
-    InspectionConfig inspectionConfig = publisher.getInspectionConfig();
+    Inspection inspectionConfig = publisher.getInspectionConfig();
     assertThat(inspectionConfig.getSonarQubeInstallationName()).isEqualTo(installationName);
   }
 
@@ -98,7 +98,7 @@ class SonarqubeServerUrlMigrationTest {
       "Setting the serverURL with an unknown url should create a new sonarqube installation")
   void test4() {
     String url = UUID.randomUUID().toString();
-    InspectionConfig inspectionConfig = new InspectionConfig();
+    Inspection inspectionConfig = new Inspection();
     inspectionConfig.setServerURL(url);
 
     String sonarInstallationName = inspectionConfig.getSonarQubeInstallationName();

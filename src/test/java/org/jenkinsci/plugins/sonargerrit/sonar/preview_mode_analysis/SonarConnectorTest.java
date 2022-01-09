@@ -1,9 +1,10 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import hudson.FilePath;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +22,10 @@ public class SonarConnectorTest {
     SubJobConfig config = createConfig("", "one_issue.json");
 
     ReportRecorderMock recordedReports = new ReportRecorderMock();
-    SonarConnector connector = readSonarReport(recordedReports, config);
-    Assertions.assertNotNull(connector);
-    Assertions.assertNotNull(connector.getIssues());
-    Assertions.assertEquals(1, connector.getIssues().size());
+    InspectionReport inspectionReport = readSonarReport(recordedReports, config);
+    Assertions.assertNotNull(inspectionReport);
+    Assertions.assertNotNull(inspectionReport.getIssues());
+    Assertions.assertEquals(1, inspectionReport.getIssues().size());
     ReportDataChecker.checkFile(filename, recordedReports.getRawReport(config));
   }
 
@@ -36,10 +37,10 @@ public class SonarConnectorTest {
     SubJobConfig config2 = createConfig("", filename2);
 
     ReportRecorderMock recordedReports = new ReportRecorderMock();
-    SonarConnector connector = readSonarReport(recordedReports, config1, config2);
-    Assertions.assertNotNull(connector);
-    Assertions.assertNotNull(connector.getIssues());
-    Assertions.assertEquals(2, connector.getIssues().size());
+    InspectionReport inspectionReport = readSonarReport(recordedReports, config1, config2);
+    Assertions.assertNotNull(inspectionReport);
+    Assertions.assertNotNull(inspectionReport.getIssues());
+    Assertions.assertEquals(2, inspectionReport.getIssues().size());
     ReportDataChecker.checkFile(filename1, recordedReports.getRawReport(config1));
     ReportDataChecker.checkFile(filename2, recordedReports.getRawReport(config2));
   }
@@ -54,29 +55,26 @@ public class SonarConnectorTest {
     SubJobConfig config3 = createConfig("", filename3);
 
     ReportRecorderMock recordedReports = new ReportRecorderMock();
-    SonarConnector connector = readSonarReport(recordedReports, config1, config2, config3);
-    Assertions.assertNotNull(connector);
-    Assertions.assertNotNull(connector.getIssues());
-    Assertions.assertEquals(3, connector.getIssues().size());
+    InspectionReport inspectionReport = readSonarReport(recordedReports, config1, config2, config3);
+    Assertions.assertNotNull(inspectionReport);
+    Assertions.assertNotNull(inspectionReport.getIssues());
+    Assertions.assertEquals(3, inspectionReport.getIssues().size());
     ReportDataChecker.checkFile(filename1, recordedReports.getRawReport(config1));
     ReportDataChecker.checkFile(filename2, recordedReports.getRawReport(config2));
     ReportDataChecker.checkFile(filename3, recordedReports.getRawReport(config3));
   }
 
-  protected SonarConnector readSonarReport(
-      SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
+  protected InspectionReport readSonarReport(ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
-    SonarConnector connector = new SonarConnector(reportRecorder);
-    connector.readSonarReports(
-        null, buildInspectionConfig(configs), null, new FilePath(new File("")));
-    return connector;
+    SonarConnector connector = new SonarConnector(null, buildStrategy(configs), null, null);
+    return connector.readSonarReports(new FilePath(new File("")), reportRecorder);
   }
 
-  private InspectionConfig buildInspectionConfig(SubJobConfig... configs) {
-    InspectionConfig config = new InspectionConfig();
-    config.setType(InspectionConfig.DescriptorImpl.MULTI_TYPE);
-    config.setSubJobConfigs(Arrays.asList(configs));
-    return config;
+  private PreviewModeAnalysisStrategy buildStrategy(SubJobConfig... configs) {
+    PreviewModeAnalysisStrategy strategy = new PreviewModeAnalysisStrategy();
+    strategy.setType(PreviewModeAnalysisStrategy.DescriptorImpl.MULTI_TYPE);
+    strategy.setSubJobConfigs(Arrays.asList(configs));
+    return strategy;
   }
 
   private SubJobConfig createConfig(String ppath, String spath) {

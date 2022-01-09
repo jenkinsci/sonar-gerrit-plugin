@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import com.google.common.collect.Multimap;
 import hudson.FilePath;
@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +23,8 @@ public class ComponentPathBuilderTest {
     SubJobConfig config = createConfig("", filename);
 
     ReportRecorderMock recordedReports = new ReportRecorderMock();
-    SonarConnector connector = readSonarReport(recordedReports, config);
-    List<Issue> issues = connector.getIssues();
+    InspectionReport inspectionReport = readSonarReport(recordedReports, config);
+    List<Issue> issues = inspectionReport.getIssues();
     Assertions.assertEquals(1, issues.size());
     Issue issue = issues.get(0);
 
@@ -47,8 +49,8 @@ public class ComponentPathBuilderTest {
     String filename = "report3_with-nested-subprojects.json";
     SubJobConfig config = createConfig("testfolder", filename);
     ReportRecorderMock recordedReports = new ReportRecorderMock();
-    SonarConnector connector = readSonarReport(recordedReports, config);
-    List<Issue> issues = connector.getIssues();
+    InspectionReport inspectionReport = readSonarReport(recordedReports, config);
+    List<Issue> issues = inspectionReport.getIssues();
     Assertions.assertEquals(8, issues.size());
 
     ReportRepresentation report = recordedReports.getRawReport(config);
@@ -94,7 +96,7 @@ public class ComponentPathBuilderTest {
         config.getProjectPath(),
         "testfolder/com.acme.app/src/main/java/com/acme/app/App.java");
 
-    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(inspectionReport.getIssues());
     Assertions.assertEquals(8, multimap.size());
     Assertions.assertEquals(
         3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
@@ -123,11 +125,11 @@ public class ComponentPathBuilderTest {
     String filename = "filter.json";
     SubJobConfig config = createConfig("", filename);
 
-    SonarConnector connector = readSonarReport(null, config);
-    List<Issue> issues = connector.getIssues();
+    InspectionReport report = readSonarReport(new ReportRecorderMock(), config);
+    List<Issue> issues = report.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(report.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -175,11 +177,11 @@ public class ComponentPathBuilderTest {
     String filename = "filter.json";
     SubJobConfig config = createConfig("testfolder", filename);
 
-    SonarConnector connector = readSonarReport(null, config);
-    List<Issue> issues = connector.getIssues();
+    InspectionReport report = readSonarReport(new ReportRecorderMock(), config);
+    List<Issue> issues = report.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(report.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -234,11 +236,11 @@ public class ComponentPathBuilderTest {
   public void testTwoProjectPaths() throws IOException, InterruptedException {
     SubJobConfig config1 = createConfig("testfolder1", "report1.json");
     SubJobConfig config2 = createConfig("testfolder2", "report2.json");
-    SonarConnector connector = readSonarReport(null, config1, config2);
-    List<Issue> issues = connector.getIssues();
+    InspectionReport report = readSonarReport(new ReportRecorderMock(), config1, config2);
+    List<Issue> issues = report.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(report.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(9, multimap.keySet().size());
     Assertions.assertEquals(
@@ -307,18 +309,17 @@ public class ComponentPathBuilderTest {
     Assertions.assertEquals(expectedFilename, issue.getFilepath());
   }
 
-  protected SonarConnector readSonarReport(
-      SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
+  protected InspectionReport readSonarReport(ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
-    return new SonarConnector(reportRecorder)
-        .readSonarReports(null, buildInspectionConfig(configs), null, new FilePath(new File("")));
+    return new SonarConnector(null, buildStrategy(configs), null, null)
+        .readSonarReports(new FilePath(new File("")), reportRecorder);
   }
 
-  private InspectionConfig buildInspectionConfig(SubJobConfig... configs) {
-    InspectionConfig config = new InspectionConfig();
-    config.setType(InspectionConfig.DescriptorImpl.MULTI_TYPE);
-    config.setSubJobConfigs(Arrays.asList(configs));
-    return config;
+  private PreviewModeAnalysisStrategy buildStrategy(SubJobConfig... configs) {
+    PreviewModeAnalysisStrategy strategy = new PreviewModeAnalysisStrategy();
+    strategy.setType(PreviewModeAnalysisStrategy.DescriptorImpl.MULTI_TYPE);
+    strategy.setSubJobConfigs(Arrays.asList(configs));
+    return strategy;
   }
 
   private SubJobConfig createConfig(String ppath, String spath) {

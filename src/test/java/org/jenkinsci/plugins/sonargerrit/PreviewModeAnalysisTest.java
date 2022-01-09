@@ -19,8 +19,9 @@ import jenkins.model.ParameterizedJobMixIn;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.cluster.Cluster;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.cluster.EnableCluster;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit.GerritChange;
@@ -154,9 +155,11 @@ class PreviewModeAnalysisTest {
     job.getBuildersList().add(new Maven(MAVEN_TARGET, cluster.jenkinsMavenInstallationName()));
 
     SonarToGerritPublisher sonarToGerrit = new SonarToGerritPublisher();
-    InspectionConfig inspectionConfig = sonarToGerrit.getInspectionConfig();
+    Inspection inspectionConfig = sonarToGerrit.getInspectionConfig();
     inspectionConfig.setSonarQubeInstallationName(cluster.jenkinsSonarqubeInstallationName());
-    inspectionConfig.getBaseConfig().setAutoMatch(true);
+    PreviewModeAnalysisStrategy analysisStrategy = new PreviewModeAnalysisStrategy();
+    analysisStrategy.setAutoMatch(true);
+    inspectionConfig.setAnalysisStrategy(analysisStrategy);
     IssueFilterConfig issueFilterConfig = sonarToGerrit.getReviewConfig().getIssueFilterConfig();
     issueFilterConfig.setSeverity("MINOR");
     issueFilterConfig.setChangedLinesOnly(true);
@@ -204,9 +207,7 @@ class PreviewModeAnalysisTest {
             + "inspectionConfig: [\n"
             + String.format(
                 "sonarQubeInstallationName: '%s',\n", cluster.jenkinsSonarqubeInstallationName())
-            + "baseConfig: [\n"
-            + "autoMatch: true\n"
-            + "]\n" // baseConfig
+            + "analysisStrategy: previewMode(baseConfig: [autoMatch: true])\n"
             + "],\n" // inspectionConfig
             + "reviewConfig: [\n"
             + "issueFilterConfig: [\n"
