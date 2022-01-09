@@ -1,18 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
-import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
-
 import com.google.common.base.MoreObjects;
 import hudson.Extension;
-import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.plugins.sonar.SonarGlobalConfiguration;
 import hudson.plugins.sonar.SonarInstallation;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -136,7 +131,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
   @DataBoundSetter
   public void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
-    if (subJobConfigs != null && subJobConfigs.size() > 0) {
+    if (subJobConfigs != null && !subJobConfigs.isEmpty()) {
       this.subJobConfigs = new LinkedList<>(subJobConfigs);
     } else {
       this.subJobConfigs = new LinkedList<>();
@@ -148,6 +143,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     return isAutoMatch();
   }
 
+  @SuppressWarnings("unused")
   protected Object readResolve() {
     if (serverURL != null) {
       sonarQubeInstallationName = SonarQubeInstallations.get().findOrCreate(serverURL).getName();
@@ -167,21 +163,6 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
 
     private static final Set<String> ALLOWED_TYPES =
         new HashSet<>(Arrays.asList(BASE_TYPE, MULTI_TYPE));
-
-    /** @deprecated Replaced with "sonar installation name" */
-    @Deprecated
-    @SuppressWarnings(value = "unused")
-    public FormValidation doCheckServerURL(@QueryParameter String value) {
-      if (Util.fixEmptyAndTrim(value) == null) {
-        return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.empty"));
-      }
-      try {
-        new URL(value);
-      } catch (MalformedURLException e) {
-        return FormValidation.warning(getLocalized("jenkins.plugin.error.sonar.url.invalid"));
-      }
-      return FormValidation.ok();
-    }
 
     @SuppressWarnings(value = "unused")
     public FormValidation doCheckSonarQubeInstallationName(@QueryParameter String value) {

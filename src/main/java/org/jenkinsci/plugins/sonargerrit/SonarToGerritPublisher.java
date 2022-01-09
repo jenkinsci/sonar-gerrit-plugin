@@ -171,7 +171,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     IssueFilter commentFilter =
         new IssueFilter(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
     Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
-    return sonarConnector.getReportData(issuesToComment);
+    return IssueAdapter.asMultimap(issuesToComment);
   }
 
   // Overridden for better type safety.

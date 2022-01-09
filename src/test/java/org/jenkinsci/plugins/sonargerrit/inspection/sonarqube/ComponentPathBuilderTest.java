@@ -96,7 +96,7 @@ public class ComponentPathBuilderTest {
         config.getProjectPath(),
         "testfolder/com.acme.app/src/main/java/com/acme/app/App.java");
 
-    Multimap<String, IssueAdapter> multimap = connector.getReportData();
+    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
     Assertions.assertEquals(8, multimap.size());
     Assertions.assertEquals(
         3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
@@ -129,7 +129,7 @@ public class ComponentPathBuilderTest {
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = connector.getReportData();
+    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -181,7 +181,7 @@ public class ComponentPathBuilderTest {
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = connector.getReportData();
+    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -240,7 +240,7 @@ public class ComponentPathBuilderTest {
     List<IssueAdapter> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = connector.getReportData();
+    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(9, multimap.keySet().size());
     Assertions.assertEquals(

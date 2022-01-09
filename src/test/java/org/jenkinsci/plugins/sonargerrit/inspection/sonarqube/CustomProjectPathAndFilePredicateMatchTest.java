@@ -1,10 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.sonarqube;
 
-import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +15,6 @@ import org.jenkinsci.plugins.sonargerrit.JsonReports;
 import org.jenkinsci.plugins.sonargerrit.config.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
-import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
@@ -74,23 +71,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
   }
 
   protected void performAutoPathCorrection(final InspectionReport r, GerritRevisionWrapper w) {
-    // if (inspectionConfig.isPathCorrectionNeeded()) {
-    new IssueAdapterProcessor(
-            null,
-            new InspectionReportAdapter() {
-              @Override
-              public Collection<IssueAdapter> getIssues() {
-                return r.getIssuesList();
-              }
-
-              @Override
-              public Multimap<String, IssueAdapter> getReportData() {
-                return null;
-              }
-            },
-            w)
-        .process();
-    // }
+    new IssueAdapterProcessor(null, r::getIssuesList, w).process();
   }
 
   protected boolean isFilterResultContainsFile(String file, Iterable<IssueAdapter> filtered) {
