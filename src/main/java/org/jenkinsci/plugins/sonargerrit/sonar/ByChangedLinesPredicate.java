@@ -13,7 +13,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  * <p>$Id$
  */
 @Restricted(NoExternalUse.class)
-public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
+public class ByChangedLinesPredicate implements Predicate<Issue> {
   private final Map<String, Set<Integer>> allowedFilesAndLines;
 
   private ByChangedLinesPredicate(Map<String, Set<Integer>> allowedFilesAndLines) {
@@ -26,7 +26,7 @@ public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
   }
 
   @Override
-  public boolean apply(IssueAdapter issue) {
+  public boolean apply(Issue issue) {
     String filepath = issue.getFilepath();
     return allowedFilesAndLines == null // no filename restriction or
         || allowedFilesAndLines.containsKey(filepath) // this file was changed and

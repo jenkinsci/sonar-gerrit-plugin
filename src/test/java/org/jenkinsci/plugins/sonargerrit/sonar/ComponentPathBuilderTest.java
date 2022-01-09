@@ -22,11 +22,11 @@ public class ComponentPathBuilderTest {
 
     ReportRecorderMock recordedReports = new ReportRecorderMock();
     SonarConnector connector = readSonarReport(recordedReports, config);
-    List<IssueAdapter> issues = connector.getIssues();
+    List<Issue> issues = connector.getIssues();
     Assertions.assertEquals(1, issues.size());
-    IssueAdapter issue = issues.get(0);
+    Issue issue = issues.get(0);
 
-    Report report = recordedReports.getRawReport(config);
+    ReportRepresentation report = recordedReports.getRawReport(config);
     ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
     String issueComponent = issue.getComponent();
     String realFileName =
@@ -48,10 +48,10 @@ public class ComponentPathBuilderTest {
     SubJobConfig config = createConfig("testfolder", filename);
     ReportRecorderMock recordedReports = new ReportRecorderMock();
     SonarConnector connector = readSonarReport(recordedReports, config);
-    List<IssueAdapter> issues = connector.getIssues();
+    List<Issue> issues = connector.getIssues();
     Assertions.assertEquals(8, issues.size());
 
-    Report report = recordedReports.getRawReport(config);
+    ReportRepresentation report = recordedReports.getRawReport(config);
     ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
     testIssue(
         builder,
@@ -94,7 +94,7 @@ public class ComponentPathBuilderTest {
         config.getProjectPath(),
         "testfolder/com.acme.app/src/main/java/com/acme/app/App.java");
 
-    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
     Assertions.assertEquals(8, multimap.size());
     Assertions.assertEquals(
         3, multimap.get("testfolder/base/core/proj1/src/main/java/proj1/Proj1.java").size());
@@ -124,10 +124,10 @@ public class ComponentPathBuilderTest {
     SubJobConfig config = createConfig("", filename);
 
     SonarConnector connector = readSonarReport(null, config);
-    List<IssueAdapter> issues = connector.getIssues();
+    List<Issue> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -176,10 +176,10 @@ public class ComponentPathBuilderTest {
     SubJobConfig config = createConfig("testfolder", filename);
 
     SonarConnector connector = readSonarReport(null, config);
-    List<IssueAdapter> issues = connector.getIssues();
+    List<Issue> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(8, multimap.keySet().size());
     Assertions.assertEquals(
@@ -235,10 +235,10 @@ public class ComponentPathBuilderTest {
     SubJobConfig config1 = createConfig("testfolder1", "report1.json");
     SubJobConfig config2 = createConfig("testfolder2", "report2.json");
     SonarConnector connector = readSonarReport(null, config1, config2);
-    List<IssueAdapter> issues = connector.getIssues();
+    List<Issue> issues = connector.getIssues();
     Assertions.assertEquals(19, issues.size());
 
-    Multimap<String, IssueAdapter> multimap = IssueAdapter.asMultimap(connector.getIssues());
+    Multimap<String, Issue> multimap = Issue.asMultimap(connector.getIssues());
     Assertions.assertEquals(19, multimap.size());
     Assertions.assertEquals(9, multimap.keySet().size());
     Assertions.assertEquals(
@@ -296,10 +296,7 @@ public class ComponentPathBuilderTest {
   }
 
   private void testIssue(
-      ComponentPathBuilder builder,
-      IssueAdapter issue,
-      String projectPath,
-      String expectedFilename) {
+      ComponentPathBuilder builder, Issue issue, String projectPath, String expectedFilename) {
     String issueComponent = issue.getComponent();
     String realFileName =
         builder

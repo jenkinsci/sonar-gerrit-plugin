@@ -27,7 +27,7 @@ class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
   }
 
   @Override
-  public SonarQubeIssue decorate(SonarQubeIssue issue) {
+  public SimpleIssue decorate(SimpleIssue issue) {
     String reviewSystemFilePath = findReviewSystemFilepath(issue, revision.getChangedFiles());
     if (reviewSystemFilePath != null) {
       issue.setFilepath(reviewSystemFilePath);
@@ -35,7 +35,7 @@ class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
     return issue;
   }
 
-  private String findReviewSystemFilepath(IssueAdapter i, Set<String> files) {
+  private String findReviewSystemFilepath(Issue i, Set<String> files) {
     String filepath = i.getFilepath();
     if (inspection2revisionFilepaths.containsKey(filepath)) {
       return inspection2revisionFilepaths.get(filepath);
@@ -65,7 +65,7 @@ class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
     return found;
   }
 
-  private boolean namesMatch(IssueAdapter issue, String reviewFilepath) {
+  private boolean namesMatch(Issue issue, String reviewFilepath) {
     return ByFilenameEndPredicate.apply(reviewFilepath).apply(issue);
   }
 }

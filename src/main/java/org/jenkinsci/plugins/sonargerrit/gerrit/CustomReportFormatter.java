@@ -4,7 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.jenkinsci.plugins.sonargerrit.sonar.ByExactSeverityPredicate;
 import org.jenkinsci.plugins.sonargerrit.sonar.ByMinSeverityPredicate;
-import org.jenkinsci.plugins.sonargerrit.sonar.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -16,10 +16,9 @@ class CustomReportFormatter {
   private final String successMessage;
   private final String failMessage;
 
-  private final Iterable<IssueAdapter> issues;
+  private final Iterable<Issue> issues;
 
-  public CustomReportFormatter(
-      Iterable<IssueAdapter> issues, String failMessage, String successMessage) {
+  public CustomReportFormatter(Iterable<Issue> issues, String failMessage, String successMessage) {
     this.issues = issues;
     this.failMessage = failMessage;
     this.successMessage = successMessage;
@@ -58,11 +57,11 @@ class CustomReportFormatter {
     return Lists.newArrayList(i).size();
   }
 
-  private Iterable<IssueAdapter> filterByExactSeverityPredicate(Severity s) {
+  private Iterable<Issue> filterByExactSeverityPredicate(Severity s) {
     return Iterables.filter(issues, ByExactSeverityPredicate.apply(s));
   }
 
-  private Iterable<IssueAdapter> filterByMinSeverityPredicate(Severity s) {
+  private Iterable<Issue> filterByMinSeverityPredicate(Severity s) {
     return Iterables.filter(issues, ByMinSeverityPredicate.apply(s));
   }
 

@@ -19,7 +19,7 @@ public class SonarReportBuilderTest {
     File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
-    Report rep = new SonarReportBuilder().fromJson(json);
+    ReportRepresentation rep = new SonarReportBuilder().fromJson(json);
     Assertions.assertNotNull(rep);
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
@@ -34,7 +34,7 @@ public class SonarReportBuilderTest {
     File path = new File(Objects.requireNonNull(url).toURI());
     FilePath filePath = new FilePath(path);
     String json = filePath.readToString();
-    Report report = new SonarReportBuilder().fromJson(json);
+    ReportRepresentation report = new SonarReportBuilder().fromJson(json);
     ReportDataChecker.checkFile(filename, report);
   }
 }

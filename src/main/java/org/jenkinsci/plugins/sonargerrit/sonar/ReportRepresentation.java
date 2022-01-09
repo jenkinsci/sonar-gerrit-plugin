@@ -6,21 +6,21 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
 @Restricted(NoExternalUse.class)
-class Report {
+class ReportRepresentation {
   @SuppressWarnings(value = "unused")
   private String version;
 
   @SuppressWarnings(value = "unused")
-  private List<Issue> issues;
+  private List<IssueRepresentation> issues;
 
   @SuppressWarnings(value = "unused")
-  private List<Component> components;
+  private List<ComponentRepresentation> components;
 
-  public List<Issue> getIssues() {
+  public List<IssueRepresentation> getIssues() {
     return issues;
   }
 
-  public List<Component> getComponents() {
+  public List<ComponentRepresentation> getComponents() {
     return components;
   }
 

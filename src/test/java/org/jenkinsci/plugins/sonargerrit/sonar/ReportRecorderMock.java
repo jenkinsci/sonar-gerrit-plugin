@@ -7,7 +7,7 @@ import java.util.List;
 public class ReportRecorderMock implements SonarConnector.ReportRecorder {
 
   private final List<SonarConnector.ReportInfo> reportInfos = new ArrayList<>();
-  private final List<IssueAdapter> issuesList = new ArrayList<>();
+  private final List<Issue> issuesList = new ArrayList<>();
 
   @Override
   public void reset() {
@@ -21,16 +21,16 @@ public class ReportRecorderMock implements SonarConnector.ReportRecorder {
   }
 
   @Override
-  public void recordIssue(IssueAdapter issue) {
+  public void recordIssue(Issue issue) {
     this.issuesList.add(issue);
   }
 
   @Override
-  public List<IssueAdapter> getIssuesList() {
+  public List<Issue> getIssuesList() {
     return issuesList;
   }
 
-  public Report getRawReport(SubJobConfig config) {
+  public ReportRepresentation getRawReport(SubJobConfig config) {
     if (config == null || config.getProjectPath() == null || config.getSonarReportPath() == null) {
       return null;
     }

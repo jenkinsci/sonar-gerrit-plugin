@@ -12,8 +12,10 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.gerrit.DummyRevisionApi;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritRevision;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Assertions;
 
+@EnableJenkinsRule
 public abstract class CustomProjectPathAndFilePredicateMatchTest {
 
   public static final String FILENAME_IN_SONAR =
@@ -51,15 +53,15 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     IssueFilter f =
         new IssueFilter(
             createFilterConfig(), reportRecorder.getIssuesList(), revision.getFileToChangedLines());
-    Iterable<IssueAdapter> filtered = f.filter();
+    Iterable<Issue> filtered = f.filter();
 
     boolean contains = isFilterResultContainsFile(getGerritFilename(), filtered);
     Assertions.assertEquals(expectedResult, contains);
   }
 
-  protected boolean isFilterResultContainsFile(String file, Iterable<IssueAdapter> filtered) {
-    for (IssueAdapter issueAdapter : filtered) {
-      if (issueAdapter.getFilepath().equals(file)) {
+  protected boolean isFilterResultContainsFile(String file, Iterable<Issue> filtered) {
+    for (Issue issue : filtered) {
+      if (issue.getFilepath().equals(file)) {
         return true;
       }
     }
@@ -106,7 +108,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
 
   protected SonarConnector.ReportRecorder getReport(SubJobConfig config, GerritRevision revision)
       throws IOException, InterruptedException, URISyntaxException {
-    Report report = JsonReports.readReport(getReportFilename());
+    ReportRepresentation report = JsonReports.readReport(getReportFilename());
     Assertions.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
     SonarConnector.ReportRecorder reportRecorder = new ReportRecorderMock();

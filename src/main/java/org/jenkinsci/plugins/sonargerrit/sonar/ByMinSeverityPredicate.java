@@ -6,7 +6,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:24 */
 @Restricted(NoExternalUse.class)
-public class ByMinSeverityPredicate implements Predicate<IssueAdapter> {
+public class ByMinSeverityPredicate implements Predicate<Issue> {
 
   private final Severity severity;
 
@@ -15,7 +15,7 @@ public class ByMinSeverityPredicate implements Predicate<IssueAdapter> {
   }
 
   @Override
-  public boolean apply(IssueAdapter issue) {
+  public boolean apply(Issue issue) {
     return issue.getSeverity().equals(severity)
         || issue.getSeverity().ordinal() >= severity.ordinal();
   }

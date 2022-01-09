@@ -32,9 +32,9 @@ class ComponentPathBuilder {
 
   private final Map<String, Node> nodes = Maps.newHashMap();
 
-  public ComponentPathBuilder(final List<Component> components) {
+  public ComponentPathBuilder(final List<ComponentRepresentation> components) {
     checkNotNull(components);
-    for (final Component c : components) {
+    for (final ComponentRepresentation c : components) {
       nodes.put(c.getKey(), new Node(c));
     }
   }
@@ -109,11 +109,11 @@ class ComponentPathBuilder {
   private static class Node {
     private static final String GERRIT_FILE_DELIMITER = "/";
 
-    private final Component component;
+    private final ComponentRepresentation component;
 
     private Node parent;
 
-    public Node(final Component c) {
+    public Node(final ComponentRepresentation c) {
       checkNotNull(c);
       this.component = c;
     }
@@ -154,7 +154,7 @@ class ComponentPathBuilder {
       }
     }
 
-    public Component getComponent() {
+    public ComponentRepresentation getComponent() {
       return component;
     }
 

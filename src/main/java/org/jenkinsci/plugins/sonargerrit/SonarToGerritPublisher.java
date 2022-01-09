@@ -41,7 +41,7 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReportAdapter;
-import org.jenkinsci.plugins.sonargerrit.sonar.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
@@ -107,7 +107,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
       // generate review output
       // get issues to be commented
-      Multimap<String, IssueAdapter> file2issuesToComment =
+      Multimap<String, Issue> file2issuesToComment =
           getFilteredFileToIssueMultimap(
               reviewConfig.getIssueFilterConfig(), report, fileToChangedLines);
       TaskListenerLogger.logMessage(
@@ -118,7 +118,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
           file2issuesToComment.entries().size());
 
       // get issues to be scored
-      Multimap<String, IssueAdapter> file2issuesToScore = null;
+      Multimap<String, Issue> file2issuesToScore = null;
       boolean postScore = scoreConfig != null;
       if (postScore) {
         file2issuesToScore =
@@ -139,8 +139,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
                   file2issuesToScore,
                   reviewConfig,
                   scoreConfig,
-                  notificationConfig,
-                  inspectionConfig)
+                  notificationConfig)
               .buildReview();
       revision.sendReview(reviewInput);
 
@@ -153,14 +152,14 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     }
   }
 
-  private Multimap<String, IssueAdapter> getFilteredFileToIssueMultimap(
+  private Multimap<String, Issue> getFilteredFileToIssueMultimap(
       IssueFilterConfig filterConfig,
       InspectionReportAdapter report,
       Map<String, Set<Integer>> fileToChangedLines) {
     IssueFilter commentFilter =
         new IssueFilter(filterConfig, report.getIssues(), fileToChangedLines);
-    Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
-    return IssueAdapter.asMultimap(issuesToComment);
+    Iterable<Issue> issuesToComment = commentFilter.filter();
+    return Issue.asMultimap(issuesToComment);
   }
 
   // Overridden for better type safety.

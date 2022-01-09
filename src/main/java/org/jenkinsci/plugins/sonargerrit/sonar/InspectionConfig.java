@@ -57,6 +57,11 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     return sonarQubeInstallationName;
   }
 
+  public Optional<SonarInstallation> getSonarQubeInstallation() {
+    return Optional.ofNullable(sonarQubeInstallationName)
+        .flatMap(name -> SonarQubeInstallations.get().byName(name));
+  }
+
   @DataBoundSetter
   public void setSonarQubeInstallationName(String name) {
     this.sonarQubeInstallationName = StringUtils.defaultIfBlank(name, null);

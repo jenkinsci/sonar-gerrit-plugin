@@ -16,7 +16,7 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.DummyRevision;
 /** @author Réda Housni Alaoui */
 public class JsonReports {
 
-  public static Report readReport(String file)
+  public static ReportRepresentation readReport(String file)
       throws IOException, InterruptedException, URISyntaxException {
     URL url = JsonReports.class.getClassLoader().getResource(file);
 

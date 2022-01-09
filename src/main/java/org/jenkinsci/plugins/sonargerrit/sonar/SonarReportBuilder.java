@@ -11,7 +11,7 @@ class SonarReportBuilder {
   private final Gson gson =
       new GsonBuilder().registerTypeAdapter(Date.class, new DateTypeConverter()).create();
 
-  public Report fromJson(String json) {
-    return gson.fromJson(json, Report.class);
+  public ReportRepresentation fromJson(String json) {
+    return gson.fromJson(json, ReportRepresentation.class);
   }
 }

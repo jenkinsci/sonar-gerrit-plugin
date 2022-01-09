@@ -8,19 +8,19 @@ public class Reports {
 
   private Reports() {}
 
-  public static List<IssueAdapter> loadIssues(String json) {
-    Report rep = new SonarReportBuilder().fromJson(json);
+  public static List<Issue> loadIssues(String json) {
+    ReportRepresentation rep = new SonarReportBuilder().fromJson(json);
 
-    List<IssueAdapter> adapters = new ArrayList<>();
-    for (Issue issue : rep.getIssues()) {
-      adapters.add(new SonarQubeIssue(issue, null, new SubJobConfig()));
+    List<Issue> adapters = new ArrayList<>();
+    for (IssueRepresentation issue : rep.getIssues()) {
+      adapters.add(new SimpleIssue(issue, null, new SubJobConfig(), null));
     }
     return adapters;
   }
 
-  public static IssueAdapter loadFirstIssue(String json) {
-    Report rep = new SonarReportBuilder().fromJson(json);
+  public static Issue loadFirstIssue(String json, String sonarQubeUrl) {
+    ReportRepresentation rep = new SonarReportBuilder().fromJson(json);
 
-    return new SonarQubeIssue(rep.getIssues().get(0), null, new SubJobConfig());
+    return new SimpleIssue(rep.getIssues().get(0), null, new SubJobConfig(), sonarQubeUrl);
   }
 }

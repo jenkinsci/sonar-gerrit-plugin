@@ -18,21 +18,19 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 @Restricted(NoExternalUse.class)
 public class IssueFilter {
   private final IssueFilterConfig filterConfig;
-  private final List<IssueAdapter> issues;
+  private final List<Issue> issues;
   private final Map<String, Set<Integer>> changedLines;
 
   public IssueFilter(
-      IssueFilterConfig filterConfig,
-      List<IssueAdapter> issues,
-      Map<String, Set<Integer>> changedLines) {
+      IssueFilterConfig filterConfig, List<Issue> issues, Map<String, Set<Integer>> changedLines) {
     this.filterConfig = filterConfig;
     this.issues = issues;
     this.changedLines = changedLines;
   }
 
-  public Iterable<IssueAdapter> filter() {
+  public Iterable<Issue> filter() {
 
-    List<Predicate<IssueAdapter>> toBeApplied = new ArrayList<>();
+    List<Predicate<Issue>> toBeApplied = new ArrayList<>();
     if (filterConfig.isChangedLinesOnly()) {
       toBeApplied.add(ByChangedLinesPredicate.apply(changedLines));
     } else {
