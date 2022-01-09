@@ -12,7 +12,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  * <p>$Id$
  */
 @Restricted(NoExternalUse.class)
-public class ByFilenamesPredicate implements Predicate<IssueAdapter> {
+public class ByFilenamesPredicate implements Predicate<Issue> {
   private final Set<String> allowedComponents;
 
   private ByFilenamesPredicate(Set<String> allowedComponents) {
@@ -23,7 +23,7 @@ public class ByFilenamesPredicate implements Predicate<IssueAdapter> {
   }
 
   @Override
-  public boolean apply(IssueAdapter issue) {
+  public boolean apply(Issue issue) {
     return allowedComponents != null && allowedComponents.contains(issue.getFilepath());
   }
 

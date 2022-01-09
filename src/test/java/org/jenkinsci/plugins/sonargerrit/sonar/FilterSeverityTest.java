@@ -49,7 +49,7 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
   private void doCheckFilteredOutByCriteria(String severityStr) {
     Severity severity = Severity.valueOf(severityStr);
     // check that all filtered out issues have severity lower than criteria
-    for (IssueAdapter issue : filteredOutIssues) {
+    for (Issue issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
         Assertions.assertFalse(isSeverityCriteriaSatisfied(severity, issue));
       }

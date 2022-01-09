@@ -5,6 +5,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 import hudson.AbortException;
 import hudson.FilePath;
 import hudson.model.TaskListener;
+import hudson.plugins.sonar.SonarInstallation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,8 @@ public class SonarConnector implements InspectionReportAdapter {
       throws IOException, InterruptedException {
     List<ReportInfo> reports = new ArrayList<>();
     for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
-      Report subReport = readSonarReport(listener, workspace, subJobConfig.getSonarReportPath());
+      ReportRepresentation subReport =
+          readSonarReport(listener, workspace, subJobConfig.getSonarReportPath());
       if (subReport == null) {
         TaskListenerLogger.logMessage(
             listener,
@@ -77,24 +79,31 @@ public class SonarConnector implements InspectionReportAdapter {
       decorator = SonarQubeIssueDecorator.Noop.INSTANCE;
     }
 
+    String sonarQubeUrl =
+        inspectionConfig
+            .getSonarQubeInstallation()
+            .map(SonarInstallation::getServerUrl)
+            .orElse(null);
+
     // multimap file-to-issues generation for each report
     for (ReportInfo info : reports) {
-      Report report = info.report;
+      ReportRepresentation report = info.report;
       final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
-      for (Issue issue : report.getIssues()) {
-        IssueAdapter issueToRecord =
-            decorator.decorate(new SonarQubeIssue(issue, pathBuilder, info.config));
+      for (IssueRepresentation issue : report.getIssues()) {
+        Issue issueToRecord =
+            decorator.decorate(new SimpleIssue(issue, pathBuilder, info.config, sonarQubeUrl));
         reportRecorder.recordIssue(issueToRecord);
       }
     }
   }
 
   @Override
-  public List<IssueAdapter> getIssues() {
+  public List<Issue> getIssues() {
     return reportRecorder.getIssuesList();
   }
 
-  private Report readSonarReport(TaskListener listener, FilePath workspace, String sonarReportPath)
+  private ReportRepresentation readSonarReport(
+      TaskListener listener, FilePath workspace, String sonarReportPath)
       throws IOException, InterruptedException {
     FilePath reportPath = workspace.child(sonarReportPath);
 
@@ -124,7 +133,7 @@ public class SonarConnector implements InspectionReportAdapter {
 
     SonarReportBuilder builder = new SonarReportBuilder();
     String reportJson = reportPath.readToString();
-    Report subReport = builder.fromJson(reportJson);
+    ReportRepresentation subReport = builder.fromJson(reportJson);
 
     TaskListenerLogger.logMessage(
         listener,
@@ -141,13 +150,13 @@ public class SonarConnector implements InspectionReportAdapter {
 
     void recordReportInfos(List<ReportInfo> reportInfos);
 
-    void recordIssue(IssueAdapter issue);
+    void recordIssue(Issue issue);
 
-    List<IssueAdapter> getIssuesList();
+    List<Issue> getIssuesList();
   }
 
   private static class SimpleReportRecorder implements ReportRecorder {
-    private final List<IssueAdapter> issuesList = new ArrayList<>();
+    private final List<Issue> issuesList = new ArrayList<>();
 
     @Override
     public void reset() {
@@ -160,12 +169,12 @@ public class SonarConnector implements InspectionReportAdapter {
     }
 
     @Override
-    public void recordIssue(IssueAdapter issue) {
+    public void recordIssue(Issue issue) {
       this.issuesList.add(issue);
     }
 
     @Override
-    public List<IssueAdapter> getIssuesList() {
+    public List<Issue> getIssuesList() {
       return new ArrayList<>(issuesList);
     }
   }
@@ -173,9 +182,9 @@ public class SonarConnector implements InspectionReportAdapter {
   public static class ReportInfo {
 
     public final SubJobConfig config;
-    public final Report report;
+    public final ReportRepresentation report;
 
-    public ReportInfo(SubJobConfig config, Report report) {
+    public ReportInfo(SubJobConfig config, ReportRepresentation report) {
       this.config = config;
       this.report = report;
     }

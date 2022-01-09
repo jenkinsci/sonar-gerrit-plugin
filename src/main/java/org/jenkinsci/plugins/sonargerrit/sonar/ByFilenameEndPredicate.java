@@ -6,7 +6,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 19.12.2017 22:06 */
 @Restricted(NoExternalUse.class)
-public class ByFilenameEndPredicate implements Predicate<IssueAdapter> {
+public class ByFilenameEndPredicate implements Predicate<Issue> {
 
   private final String filename;
 
@@ -15,7 +15,7 @@ public class ByFilenameEndPredicate implements Predicate<IssueAdapter> {
   }
 
   @Override
-  public boolean apply(IssueAdapter issue) {
+  public boolean apply(Issue issue) {
     return filename.endsWith(issue.getFilepath());
   }
 

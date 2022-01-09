@@ -1,126 +1,41 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 import java.util.Date;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
+/** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 03.12.2017 14:00 $Id$ */
 @Restricted(NoExternalUse.class)
-class Issue {
+public interface Issue {
+  String getFilepath();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private String key;
+  String getKey();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private String component;
+  String getComponent();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private Integer line;
+  Integer getLine();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private String message;
+  String getMessage();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private Severity severity;
+  Severity getSeverity();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private String rule;
+  String getRule();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private String status;
+  String getRuleLink();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private Boolean isNew;
+  String getStatus();
 
-  @SuppressWarnings("unused")
-  @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
-  private Date creationDate;
+  boolean isNew();
 
-  @SuppressWarnings("unused")
-  public Issue() {}
+  Date getCreationDate();
 
-  public Issue(Issue issue) {
-    this.key = issue.key;
-    this.component = issue.component;
-    this.line = issue.line;
-    this.message = issue.message;
-    this.severity = issue.severity;
-    this.rule = issue.rule;
-    this.status = issue.status;
-    this.isNew = issue.isNew;
-    this.creationDate = issue.creationDate;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public String getComponent() {
-    return component;
-  }
-
-  public Integer getLine() {
-    return line;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public Severity getSeverity() {
-    return severity;
-  }
-
-  public String getRule() {
-    return rule;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public boolean isNew() {
-    return isNew != null && isNew;
-  }
-
-  public Date getCreationDate() {
-    return new Date(creationDate.getTime());
-  }
-
-  @Override
-  public String toString() {
-    return "Issue{"
-        + "key='"
-        + key
-        + '\''
-        + ", component='"
-        + component
-        + '\''
-        + ", line="
-        + line
-        + ", message='"
-        + message
-        + '\''
-        + ", severity='"
-        + severity
-        + '\''
-        + ", rule='"
-        + rule
-        + '\''
-        + ", status='"
-        + status
-        + '\''
-        + ", isNew="
-        + isNew
-        + '}';
+  static Multimap<String, Issue> asMultimap(Iterable<Issue> issues) {
+    final Multimap<String, Issue> multimap = LinkedListMultimap.create();
+    for (Issue issue : issues) {
+      multimap.put(issue.getFilepath(), issue);
+    }
+    return multimap;
   }
 }

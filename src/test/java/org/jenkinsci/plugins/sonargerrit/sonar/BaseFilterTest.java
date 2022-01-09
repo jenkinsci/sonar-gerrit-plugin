@@ -26,11 +26,11 @@ import org.junit.jupiter.api.BeforeEach;
  */
 @EnableJenkinsRule
 public abstract class BaseFilterTest<A> {
-  protected Report report;
+  protected ReportRepresentation report;
   protected SonarToGerritPublisher publisher;
 
-  protected Set<IssueAdapter> filteredIssues;
-  protected Set<IssueAdapter> filteredOutIssues;
+  protected Set<Issue> filteredIssues;
+  protected Set<Issue> filteredOutIssues;
 
   protected Map<String, DiffInfo> diffInfo;
 
@@ -74,10 +74,10 @@ public abstract class BaseFilterTest<A> {
 
   protected void doFilterIssues(IssueFilterConfig config) {
     // filter issues
-    List<Issue> allIssues = report.getIssues();
-    List<IssueAdapter> allIssuesAdp = new ArrayList<>();
-    for (Issue i : allIssues) {
-      allIssuesAdp.add(new SonarQubeIssue(i, null, new SubJobConfig()));
+    List<IssueRepresentation> allIssues = report.getIssues();
+    List<Issue> allIssuesAdp = new ArrayList<>();
+    for (IssueRepresentation i : allIssues) {
+      allIssuesAdp.add(new SimpleIssue(i, null, new SubJobConfig(), null));
     }
 
     // todo temporary - should be realized in publisher
@@ -123,39 +123,38 @@ public abstract class BaseFilterTest<A> {
 
   protected void doCheckSeverity(Severity severity) {
     // check that all remaining issues have severity higher or equal to criteria
-    for (IssueAdapter issue : filteredIssues) {
+    for (Issue issue : filteredIssues) {
       Assertions.assertTrue(isSeverityCriteriaSatisfied(severity, issue));
     }
   }
 
   protected void doCheckNewOnly(boolean isNewOnly) {
     // check that all remaining issues are new
-    for (IssueAdapter issue : filteredIssues) {
+    for (Issue issue : filteredIssues) {
       Assertions.assertTrue(isNewOnlyCriteriaSatisfied(isNewOnly, issue));
     }
   }
 
   protected void doCheckChangedLinesOnly(boolean isChangesLinesOnly) {
     // check that all remaining issues are in changed lines
-    for (IssueAdapter issue : filteredIssues) {
+    for (Issue issue : filteredIssues) {
       Assertions.assertTrue(isChangedLinesOnlyCriteriaSatisfied(isChangesLinesOnly, issue));
     }
   }
 
-  protected boolean isSeverityCriteriaSatisfied(Severity severity, IssueAdapter issue) {
+  protected boolean isSeverityCriteriaSatisfied(Severity severity, Issue issue) {
     return issue.getSeverity().ordinal() >= severity.ordinal();
   }
 
-  protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, IssueAdapter issue) {
+  protected boolean isNewOnlyCriteriaSatisfied(Boolean isNewOnly, Issue issue) {
     return !isNewOnly || issue.isNew();
   }
 
-  protected boolean isChangedLinesOnlyCriteriaSatisfied(
-      Boolean isChangesLinesOnly, IssueAdapter issue) {
+  protected boolean isChangedLinesOnlyCriteriaSatisfied(Boolean isChangesLinesOnly, Issue issue) {
     return !isChangesLinesOnly || isChanged(issue.getFilepath(), issue.getLine());
   }
 
-  protected boolean isFileChanged(IssueAdapter issue) {
+  protected boolean isFileChanged(Issue issue) {
     String filename = issue.getFilepath();
     DiffInfo diffInfo = this.diffInfo.get(filename);
     return diffInfo != null;
@@ -188,7 +187,7 @@ public abstract class BaseFilterTest<A> {
     Assertions.assertEquals(expectedFilteredIssuesCount, filteredIssues.size());
 
     // get amount of issues that are expected to be filtered out and check it
-    List<Issue> allIssues = report.getIssues();
+    List<IssueRepresentation> allIssues = report.getIssues();
     int expectedFilteredOutCount = allIssues.size() - expectedFilteredIssuesCount;
     Assertions.assertEquals(expectedFilteredOutCount, filteredOutIssues.size());
   }

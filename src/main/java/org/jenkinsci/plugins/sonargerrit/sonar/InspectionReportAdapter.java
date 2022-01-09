@@ -8,5 +8,5 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 @Restricted(NoExternalUse.class)
 public interface InspectionReportAdapter {
 
-  List<IssueAdapter> getIssues();
+  List<Issue> getIssues();
 }

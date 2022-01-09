@@ -60,7 +60,7 @@ public abstract class FilterSeverityNewOnlyTest extends BaseFilterTest<Pair<Stri
     Boolean newOnly = severityAndNew.getSecond();
 
     // check that all filtered out issues have severity lower than criteria
-    for (IssueAdapter issue : filteredOutIssues) {
+    for (Issue issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
         Assertions.assertFalse(
             isSeverityCriteriaSatisfied(severity, issue)

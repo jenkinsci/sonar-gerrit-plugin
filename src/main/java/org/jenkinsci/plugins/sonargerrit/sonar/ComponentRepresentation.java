@@ -7,7 +7,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
 @Restricted(NoExternalUse.class)
-class Component {
+class ComponentRepresentation {
   @SuppressWarnings("unused")
   @SuppressFBWarnings("UWF_UNWRITTEN_FIELD")
   private String key;

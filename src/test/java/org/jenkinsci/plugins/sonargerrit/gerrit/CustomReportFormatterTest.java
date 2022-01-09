@@ -8,7 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.jenkinsci.plugins.sonargerrit.sonar.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Reports;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -30,7 +30,7 @@ public class CustomReportFormatterTest {
 
   @Test
   public void testSuccess() {
-    List<IssueAdapter> i = new ArrayList<>();
+    List<Issue> i = new ArrayList<>();
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter =
         new CustomReportFormatter(i, FAIL_TEXT, SUCCESS_TEXT);
@@ -39,7 +39,7 @@ public class CustomReportFormatterTest {
 
   @Test
   public void testFail() throws IOException, InterruptedException, URISyntaxException {
-    List<IssueAdapter> i = getIssues();
+    List<Issue> i = getIssues();
     String expectedResult =
         "19 SonarQube violations have been found.\n"
             + "Info: 1\n"
@@ -58,7 +58,7 @@ public class CustomReportFormatterTest {
   @Disabled
   @Test
   public void testSuccessEmpty() {
-    List<IssueAdapter> i = new ArrayList<>();
+    List<Issue> i = new ArrayList<>();
     String expectedResult = "SonarQube violations have not been found.";
     CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
     Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
@@ -69,7 +69,7 @@ public class CustomReportFormatterTest {
   @Disabled
   @Test
   public void testFailEmpty() throws IOException, InterruptedException, URISyntaxException {
-    List<IssueAdapter> i = getIssues();
+    List<Issue> i = getIssues();
     String expectedResult = "19 SonarQube violations have been found.";
     CustomReportFormatter basicIssueConverter = new CustomReportFormatter(i, "", "");
     Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
@@ -77,8 +77,7 @@ public class CustomReportFormatterTest {
     Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
   }
 
-  private List<IssueAdapter> getIssues()
-      throws URISyntaxException, IOException, InterruptedException {
+  private List<Issue> getIssues() throws URISyntaxException, IOException, InterruptedException {
     URL url = getClass().getClassLoader().getResource("filter.json");
 
     File path = new File(Objects.requireNonNull(url).toURI());

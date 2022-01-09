@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.sonar;
 /** @author Réda Housni Alaoui */
 interface SonarQubeIssueDecorator {
 
-  SonarQubeIssue decorate(SonarQubeIssue issue);
+  SimpleIssue decorate(SimpleIssue issue);
 
   class Noop implements SonarQubeIssueDecorator {
 
@@ -12,7 +12,7 @@ interface SonarQubeIssueDecorator {
     private Noop() {}
 
     @Override
-    public SonarQubeIssue decorate(SonarQubeIssue issue) {
+    public SimpleIssue decorate(SimpleIssue issue) {
       return issue;
     }
   }

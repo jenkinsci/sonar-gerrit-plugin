@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
  * <p>$Id$
  */
 public class ReportDataChecker {
-  public static void checkFile(String filename, Report rep) {
+  public static void checkFile(String filename, ReportRepresentation rep) {
     switch (filename) {
       case "one_issue.json":
         checkOneIssueFile(rep);
@@ -27,14 +27,14 @@ public class ReportDataChecker {
     }
   }
 
-  private static void checkOneIssueFile(Report rep) {
+  private static void checkOneIssueFile(ReportRepresentation rep) {
     Assertions.assertNotNull(rep);
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
 
-    Issue i = rep.getIssues().get(0);
+    IssueRepresentation i = rep.getIssues().get(0);
     Assertions.assertEquals("c48d7f88-64bb-45ec-b64d-b5a536384183", i.getKey());
     Assertions.assertEquals(
         "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
@@ -53,11 +53,11 @@ public class ReportDataChecker {
     c.set(Calendar.MILLISECOND, 0);
     Assertions.assertEquals(c.getTime(), i.getCreationDate());
 
-    Component c1 = rep.getComponents().get(0);
+    ComponentRepresentation c1 = rep.getComponents().get(0);
     Assertions.assertEquals("com.megaproject.juice:juice-mbean", c1.getKey());
     Assertions.assertEquals("juice-mbean", c1.getPath());
 
-    Component c2 = rep.getComponents().get(1);
+    ComponentRepresentation c2 = rep.getComponents().get(1);
     Assertions.assertEquals(
         "com.megaproject.juice:juice-mbean:src/main/java/com/turquoise/juice/mbean/MBeanManagerModule.java",
         c2.getKey());
@@ -67,14 +67,14 @@ public class ReportDataChecker {
     Assertions.assertEquals("SAME", c2.getStatus());
   }
 
-  private static void checkSCRep1(Report rep) {
+  private static void checkSCRep1(ReportRepresentation rep) {
     Assertions.assertNotNull(rep);
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
 
-    Issue i = rep.getIssues().get(0);
+    IssueRepresentation i = rep.getIssues().get(0);
     Assertions.assertEquals("c48d7f88-64bb-45ec-b64d-b5a536384183", i.getKey());
     Assertions.assertEquals(
         "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
@@ -88,11 +88,11 @@ public class ReportDataChecker {
     Assertions.assertEquals("OPEN", i.getStatus());
     Assertions.assertFalse(i.isNew());
 
-    Component c1 = rep.getComponents().get(0);
+    ComponentRepresentation c1 = rep.getComponents().get(0);
     Assertions.assertEquals("com.megaproject.juice:juice-bootstrap", c1.getKey());
     Assertions.assertEquals("juice-bootstrap", c1.getPath());
 
-    Component c2 = rep.getComponents().get(1);
+    ComponentRepresentation c2 = rep.getComponents().get(1);
     Assertions.assertEquals(
         "com.megaproject.juice:juice-bootstrap:src/main/java/com/turquoise/juice/bootstrap/plugins/ChildModule.java",
         c2.getKey());
@@ -102,14 +102,14 @@ public class ReportDataChecker {
     Assertions.assertEquals("SAME", c2.getStatus());
   }
 
-  private static void checkSCRep2(Report rep) {
+  private static void checkSCRep2(ReportRepresentation rep) {
     Assertions.assertNotNull(rep);
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
 
-    Issue i = rep.getIssues().get(0);
+    IssueRepresentation i = rep.getIssues().get(0);
     Assertions.assertEquals("6b8a2d04-e126-481d-83ef-5719e3c470ea", i.getKey());
     Assertions.assertEquals(
         "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
@@ -122,11 +122,11 @@ public class ReportDataChecker {
     Assertions.assertEquals("OPEN", i.getStatus());
     Assertions.assertFalse(i.isNew());
 
-    Component c1 = rep.getComponents().get(0);
+    ComponentRepresentation c1 = rep.getComponents().get(0);
     Assertions.assertEquals("com.megaproject.juice:juice-jpa", c1.getKey());
     Assertions.assertEquals("juice-jpa", c1.getPath());
 
-    Component c2 = rep.getComponents().get(1);
+    ComponentRepresentation c2 = rep.getComponents().get(1);
     Assertions.assertEquals(
         "com.megaproject.juice:juice-jpa:src/main/java/com/turquoise/juice/jpa/DBInterceptor.java",
         c2.getKey());
@@ -136,14 +136,14 @@ public class ReportDataChecker {
     Assertions.assertEquals("SAME", c2.getStatus());
   }
 
-  private static void checkSCRep3(Report rep) {
+  private static void checkSCRep3(ReportRepresentation rep) {
     Assertions.assertNotNull(rep);
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertEquals(1, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
 
-    Issue i = rep.getIssues().get(0);
+    IssueRepresentation i = rep.getIssues().get(0);
     Assertions.assertEquals("81c5c4f8-08c9-4340-861e-8491c9f4666a", i.getKey());
     Assertions.assertEquals(
         "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
@@ -156,7 +156,7 @@ public class ReportDataChecker {
     Assertions.assertEquals("OPEN", i.getStatus());
     Assertions.assertTrue(i.isNew());
 
-    Component c1 = rep.getComponents().get(0);
+    ComponentRepresentation c1 = rep.getComponents().get(0);
     Assertions.assertEquals(
         "com.aquarellian:sonar-gerrit:src/main/java/com/aquarellian/sonar-gerrit/ObjectHelper.java",
         c1.getKey());

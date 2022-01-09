@@ -78,7 +78,7 @@ public abstract class FilterSeverityNewChangedOnlyTest
     Boolean changedOnly = severityNewChanged.getThird();
 
     // check that all filtered out issues have severity lower than criteria
-    for (IssueAdapter issue : filteredOutIssues) {
+    for (Issue issue : filteredOutIssues) {
       if (isFileChanged(issue)) {
         Assertions.assertFalse(
             isSeverityCriteriaSatisfied(severity, issue)

@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap;
 import java.util.Date;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
-import org.jenkinsci.plugins.sonargerrit.sonar.IssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 18.11.2017 12:41 $Id$ */
 @EnableJenkinsRule
 public class ReviewResultTest {
-  protected Multimap<String, IssueAdapter> scoreIssues = LinkedListMultimap.create();
-  protected Multimap<String, IssueAdapter> commentIssues = LinkedListMultimap.create();
+  protected Multimap<String, Issue> scoreIssues = LinkedListMultimap.create();
+  protected Multimap<String, Issue> commentIssues = LinkedListMultimap.create();
   protected SonarToGerritPublisher publisher;
 
   @BeforeEach
@@ -42,8 +42,7 @@ public class ReviewResultTest {
             scoreIssues,
             publisher.getReviewConfig(),
             publisher.getScoreConfig(),
-            publisher.getNotificationConfig(),
-            publisher.getInspectionConfig());
+            publisher.getNotificationConfig());
     return builder.buildReview();
   }
 
@@ -51,7 +50,7 @@ public class ReviewResultTest {
     return publisher.getReviewConfig();
   }
 
-  public static class DummyIssue implements IssueAdapter {
+  public static class DummyIssue implements Issue {
     @Override
     public Severity getSeverity() {
       return Severity.CRITICAL;
@@ -60,6 +59,11 @@ public class ReviewResultTest {
     @Override
     public String getRule() {
       return "rule";
+    }
+
+    @Override
+    public String getRuleLink() {
+      return getRule();
     }
 
     @Override
