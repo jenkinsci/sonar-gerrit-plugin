@@ -10,30 +10,31 @@ import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByFilenameEndPredicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
-import org.jenkinsci.plugins.sonargerrit.review.RevisionAdapter;
+import org.jenkinsci.plugins.sonargerrit.review.Revision;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 19.12.2017 21:16 */
+@Restricted(NoExternalUse.class)
 public class IssueAdapterProcessor {
-  protected InspectionReportAdapter inspectionReport;
-  protected RevisionAdapter revisionAdapter;
-  protected Map<String, String> inspection2revisionFilepaths;
+  private final InspectionReportAdapter inspectionReport;
+  private final Revision revision;
+  private final Map<String, String> inspection2revisionFilepaths;
   private final TaskListener listener;
 
   private static final Logger LOGGER = Logger.getLogger(IssueAdapterProcessor.class.getName());
 
   public IssueAdapterProcessor(
-      TaskListener listener,
-      InspectionReportAdapter inspectionReport,
-      RevisionAdapter revisionAdapter) {
+      TaskListener listener, InspectionReportAdapter inspectionReport, Revision revision) {
     this.listener = listener;
     this.inspectionReport = inspectionReport;
-    this.revisionAdapter = revisionAdapter;
+    this.revision = revision;
     this.inspection2revisionFilepaths = new HashMap<>();
   }
 
   public void process() {
     Iterable<IssueAdapter> issues = inspectionReport.getIssues();
-    Set<String> changedFiles = revisionAdapter.getChangedFiles();
+    Set<String> changedFiles = revision.getChangedFiles();
     for (IssueAdapter issue : issues) {
       String reviewSystemFilePath = findReviewSystemFilepath(issue, changedFiles);
       if (reviewSystemFilePath != null) {
@@ -42,7 +43,7 @@ public class IssueAdapterProcessor {
     }
   }
 
-  protected String findReviewSystemFilepath(IssueAdapter i, Set<String> files) {
+  private String findReviewSystemFilepath(IssueAdapter i, Set<String> files) {
     String filepath = i.getFilepath();
     if (inspection2revisionFilepaths.containsKey(filepath)) {
       return inspection2revisionFilepaths.get(filepath);
@@ -72,7 +73,7 @@ public class IssueAdapterProcessor {
     return found;
   }
 
-  protected boolean namesMatch(IssueAdapter issue, String reviewFilepath) {
+  private boolean namesMatch(IssueAdapter issue, String reviewFilepath) {
     return ByFilenameEndPredicate.apply(reviewFilepath).apply(issue);
   }
 }

@@ -3,10 +3,12 @@ package org.jenkinsci.plugins.sonargerrit.review.formatter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 12:51 */
-public class CustomIssueFormatter
-    implements IssueFormatter, TagFormatter<CustomIssueFormatter.Tag> {
+@Restricted(NoExternalUse.class)
+public class CustomIssueFormatter {
 
   private final IssueAdapter issue;
   private final String text;
@@ -14,12 +16,10 @@ public class CustomIssueFormatter
 
   public CustomIssueFormatter(IssueAdapter issue, String text, String host) {
     this.issue = issue;
-    //        this.text = prepareText(text, DefaultPluginSettings.ISSUE_COMMENT_TEXT);
     this.host = host;
     this.text = text;
   }
 
-  @Override
   public String getMessage() {
     String res = text;
     for (Tag tag : Tag.values()) {
@@ -30,8 +30,7 @@ public class CustomIssueFormatter
     return res;
   }
 
-  @Override
-  public String getValueToReplace(Tag tag) {
+  private String getValueToReplace(Tag tag) {
     switch (tag) {
       case KEY:
         return issue.getKey();
@@ -50,11 +49,11 @@ public class CustomIssueFormatter
       case CREATION_DATE:
         return issue.getCreationDate().toString();
       default:
-        return null;
+        throw new IllegalArgumentException("Unexpected tag " + tag);
     }
   }
 
-  protected String getRuleLink(String rule) {
+  private String getRuleLink(String rule) {
     if (host != null) {
       StringBuilder sb = new StringBuilder();
       String url = host.trim();
@@ -72,9 +71,7 @@ public class CustomIssueFormatter
     return rule;
   }
 
-  protected String escapeHttp(String query) {
-    //        return StringEscapeUtils.escapeHtml(query);     // todo this method does not escape
-    // semicolon. but is URLEncoder.encode a correct way to do so?
+  private String escapeHttp(String query) {
     try {
       return URLEncoder.encode(query, "UTF-8");
     } catch (UnsupportedEncodingException e) {

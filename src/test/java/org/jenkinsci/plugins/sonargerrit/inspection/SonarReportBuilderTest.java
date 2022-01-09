@@ -26,11 +26,9 @@ public class SonarReportBuilderTest {
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertNotNull(rep.getRules());
-    Assertions.assertNotNull(rep.getUsers());
     Assertions.assertEquals(169, rep.getComponents().size());
     Assertions.assertEquals(177, rep.getIssues().size());
     Assertions.assertEquals(27, rep.getRules().size());
-    Assertions.assertEquals(0, rep.getUsers().size());
   }
 
   @Test

@@ -6,21 +6,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.RmCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.transport.RefSpec;
 
 /** @author Réda Housni Alaoui */
@@ -56,20 +51,8 @@ public class GerritGit {
     return httpUrl;
   }
 
-  public String projectName() {
-    return projectName;
-  }
-
   public Path workTree() {
     return git.getRepository().getWorkTree().toPath();
-  }
-
-  public AddCommand add() {
-    return git.add();
-  }
-
-  public RmCommand rm() {
-    return git.rm();
   }
 
   public CommitCommand commit(String message) {
@@ -82,25 +65,6 @@ public class GerritGit {
 
   public GerritGit push() throws GitAPIException {
     git.push().setCredentialsProvider(gerrit.gitAdminCredentialsProvider()).call();
-    return this;
-  }
-
-  public GerritGit pushTags() throws GitAPIException {
-    git.push().setPushTags().setCredentialsProvider(gerrit.gitAdminCredentialsProvider()).call();
-    return this;
-  }
-
-  public GerritGit pull() throws GitAPIException {
-    git.pull().setCredentialsProvider(gerrit.gitAdminCredentialsProvider()).call();
-    return this;
-  }
-
-  public List<Ref> listTags() throws GitAPIException {
-    return git.tagList().call();
-  }
-
-  public GerritGit createGitTag(String name) throws GitAPIException {
-    git.tag().setTagger(agent).setName(name).call();
     return this;
   }
 
@@ -128,24 +92,9 @@ public class GerritGit {
     return new GerritChange(gerrit.api().changes().id(changeNumericId));
   }
 
-  public GerritGit checkoutMaster() throws GitAPIException {
-    git.checkout().setName("master").call();
-    return this;
-  }
-
-  public GerritGit fetchOrigin() throws GitAPIException {
-    git.fetch().setRemote("origin").call();
-    return this;
-  }
-
   public GerritGit resetToOriginMaster() throws GitAPIException {
     git.reset().setMode(ResetCommand.ResetType.HARD).setRef("origin/master").call();
     return this;
-  }
-
-  public GerritGit addAndCommitGroovyFile(String relativePath, String content)
-      throws IOException, GitAPIException {
-    return addAndCommitFile(relativePath, content);
   }
 
   public GerritGit addAndCommitFile(String relativePath, String content)
@@ -161,16 +110,6 @@ public class GerritGit {
     Files.createDirectories(filePath.getParent());
     Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
     git.add().addFilepattern(relativePath).call();
-    return this;
-  }
-
-  public GerritGit checkoutAndPushNewBranch(String name) throws GitAPIException {
-    git.checkout()
-        .setName(name)
-        .setCreateBranch(true)
-        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-        .call();
-    git.push().setCredentialsProvider(gerrit.gitAdminCredentialsProvider()).call();
     return this;
   }
 }

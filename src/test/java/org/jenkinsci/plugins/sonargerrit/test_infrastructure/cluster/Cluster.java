@@ -12,7 +12,6 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit.GerritServer
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.GerritTriggerConfiguration;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.JDKs;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.MavenConfiguration;
-import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.SonarScannerConfiguration;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.SonarqubeConfiguration;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeAccessTokens;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeServer;
@@ -28,7 +27,6 @@ public class Cluster {
   private final String jenkinsGerritCredentialsId;
   private final String jenkinsJdk8InstallationName;
   private final String jenkinsMavenInstallationName;
-  private final String jenkinsSonarScannerInstallationName;
   private final String jenkinsSonarqubeInstallationName;
   private final String jenkinsGerritTriggerServerName;
 
@@ -56,9 +54,6 @@ public class Cluster {
     jenkinsGerritTriggerServerName =
         new GerritTriggerConfiguration(jenkinsRule.jenkins)
             .addServer(gerrit.url(), gerrit.adminUsername(), gerrit.adminPassword());
-
-    jenkinsSonarScannerInstallationName =
-        new SonarScannerConfiguration(jenkinsRule.jenkins).addInstallation();
 
     String sonarqubeToken =
         new SonarqubeAccessTokens(sonarqube).createAdminAccessToken(UUID.randomUUID().toString());
@@ -90,10 +85,6 @@ public class Cluster {
 
   public String jenkinsMavenInstallationName() {
     return jenkinsMavenInstallationName;
-  }
-
-  public String jenkinsSonarScannerInstallationName() {
-    return jenkinsSonarScannerInstallationName;
   }
 
   public String jenkinsSonarqubeInstallationName() {

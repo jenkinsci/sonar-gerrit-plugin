@@ -19,8 +19,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 import jenkins.model.Jenkins;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** @author Réda Housni Alaoui */
+@Restricted(NoExternalUse.class)
 class GerritHttpCredentials {
 
   private static final String PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX = "sonar-gerrit:";

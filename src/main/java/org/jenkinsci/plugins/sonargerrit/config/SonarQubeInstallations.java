@@ -6,8 +6,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** @author Réda Housni Alaoui */
+@Restricted(NoExternalUse.class)
 class SonarQubeInstallations {
 
   private SonarQubeInstallations() {}

@@ -1,14 +1,15 @@
 package org.jenkinsci.plugins.sonargerrit.util;
 
 import hudson.Util;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 19.11.2017 22:11
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public final class DataHelper {
   private DataHelper() {}
 
@@ -22,18 +23,6 @@ public final class DataHelper {
       return null;
     }
     return value;
-  }
-
-  public static String checkUrl(String value) {
-    if (Util.fixEmptyAndTrim(value) == null) {
-      return null;
-    }
-    try {
-      new URL(value);
-      return value;
-    } catch (MalformedURLException e) {
-      return null;
-    }
   }
 
   public static Integer parseNumber(String value) {

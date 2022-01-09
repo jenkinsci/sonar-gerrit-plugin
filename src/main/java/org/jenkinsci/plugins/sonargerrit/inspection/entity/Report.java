@@ -1,8 +1,11 @@
 package org.jenkinsci.plugins.sonargerrit.inspection.entity;
 
 import java.util.List;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
+@Restricted(NoExternalUse.class)
 public class Report {
   @SuppressWarnings(value = "unused")
   private String version;
@@ -16,13 +19,6 @@ public class Report {
   @SuppressWarnings(value = "unused")
   private List<Rule> rules;
 
-  @SuppressWarnings(value = "unused")
-  private List<User> users;
-
-  public String getVersion() {
-    return version;
-  }
-
   public List<Issue> getIssues() {
     return issues;
   }
@@ -33,10 +29,6 @@ public class Report {
 
   public List<Rule> getRules() {
     return rules;
-  }
-
-  public List<User> getUsers() {
-    return users;
   }
 
   @Override
@@ -51,8 +43,6 @@ public class Report {
         + components
         + ", rules="
         + rules
-        + ", users="
-        + users
-        + '}';
+        + "}";
   }
 }

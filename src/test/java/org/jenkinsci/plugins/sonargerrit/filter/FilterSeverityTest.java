@@ -39,8 +39,7 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
     doCheckSeverity(Severity.BLOCKER, 1);
   }
 
-  @Override
-  public void setFilter(String severity) {
+  private void setFilter(String severity) {
     setSeverity(getFilterConfig(), severity);
     Assertions.assertEquals(severity, getFilterConfig().getSeverity());
   }
@@ -51,8 +50,7 @@ public abstract class FilterSeverityTest extends BaseFilterTest<String> {
     setFilter(IssueFilterConfig.DescriptorImpl.SEVERITY);
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(String severityStr) {
+  private void doCheckFilteredOutByCriteria(String severityStr) {
     Severity severity = Severity.valueOf(severityStr);
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {

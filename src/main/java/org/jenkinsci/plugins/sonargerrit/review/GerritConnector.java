@@ -8,29 +8,25 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritAuthData;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritRestApiFactory;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.GerritApi;
-import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.RevisionApi;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 20.11.2017 16:19
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class GerritConnector {
 
-  private GerritApi gerritApi;
   private final ConnectionInfo connectionInfo;
+  private final GerritApi gerritApi;
 
-  public GerritConnector(GerritConnectionInfo connectionInfo) {
+  private GerritConnector(GerritConnectionInfo connectionInfo) {
     this.connectionInfo = connectionInfo;
-  }
 
-  public boolean isConnected() {
-    return gerritApi != null;
-  }
-
-  public void connect() {
     String serverName = connectionInfo.getServerName();
 
     IGerritHudsonTriggerConfig gerritConfig = GerritManagement.getConfig(serverName);
@@ -50,11 +46,16 @@ public class GerritConnector {
     gerritApi = gerritRestApiFactory.create(authData);
   }
 
-  public RevisionApi getRevision() throws RestApiException {
-    return gerritApi
-        .changes()
-        .id(connectionInfo.getChangeNumber())
-        .revision(connectionInfo.getPatchsetNumber());
+  public static GerritConnector connect(GerritConnectionInfo connectionInfo) {
+    return new GerritConnector(connectionInfo);
+  }
+
+  public GerritRevision fetchRevision() throws RestApiException {
+    return GerritRevision.load(
+        gerritApi
+            .changes()
+            .id(connectionInfo.getChangeNumber())
+            .revision(connectionInfo.getPatchsetNumber()));
   }
 
   private void checkRestApiAllowed(boolean useRestApi) {

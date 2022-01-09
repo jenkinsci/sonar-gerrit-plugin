@@ -67,7 +67,6 @@ public class BackCompatibilityConfigurationTest {
   @Test
   public void testSetNewIssuesOnly() throws ReflectiveOperationException {
     SonarToGerritPublisher p = new SonarToGerritPublisher();
-    boolean newIssuesOnly = true;
     Assertions.assertNotSame(
         true, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig")); //
@@ -76,7 +75,6 @@ public class BackCompatibilityConfigurationTest {
         true, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Assertions.assertNull(Reflection.invokeGetter(p, "scoreConfig"));
 
-    newIssuesOnly = false;
     Assertions.assertNotSame(
         false, Reflection.invokeGetter(p, "reviewConfig", "issueFilterConfig", "newIssuesOnly"));
     Reflection.invokeSetter(p, "postScore", true);
@@ -283,43 +281,5 @@ public class BackCompatibilityConfigurationTest {
     Assertions.assertEquals(
         Reflection.invokeGetter(c, "sonarReportPath"),
         Reflection.invokeGetter(p, "inspectionConfig", "baseConfig", "sonarReportPath"));
-  }
-
-  protected void invokeSetter(SonarToGerritPublisher obj, String field, Object value)
-      throws ReflectiveOperationException {
-    Reflection.invokeSetter(obj, field, value, true);
-  }
-
-  protected Object invokeGetter(Object obj, String... field) throws ReflectiveOperationException {
-    return invokeGetter(obj, false, false, field);
-  }
-
-  protected Object invokeGetter(Object obj, boolean deprecated, String... field)
-      throws ReflectiveOperationException {
-    return invokeGetter(obj, deprecated, false, field);
-  }
-
-  protected Object invokeGetter(Object obj, boolean deprecated, boolean isBool, String... field)
-      throws ReflectiveOperationException {
-    if (deprecated) {
-      return invokeDeprecatedGetter(obj, isBool, field[0]);
-    } else {
-      return Reflection.invokeGetter(obj, field);
-    }
-  }
-
-  private Object invokeDeprecatedGetter(Object obj, boolean isBool, String field)
-      throws ReflectiveOperationException {
-    try {
-      Reflection.invokeGetter(obj, field);
-    } catch (NoSuchFieldException ex) {
-      // that's normal: we are testing back compatibility, so there should no field be left
-
-      String prefix = isBool ? "is" : "get";
-      String methodName = prefix + field.substring(0, 1).toUpperCase() + field.substring(1);
-      // back compatibility getters should be deprecated
-      return Reflection.invokeMethod(obj, methodName, Deprecated.class);
-    }
-    throw new AssertionError("NoSuchFieldException was expected: there should be no field left");
   }
 }

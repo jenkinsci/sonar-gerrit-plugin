@@ -14,8 +14,11 @@ import org.jenkinsci.plugins.sonargerrit.config.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 30.01.2018 13:04 */
+@Restricted(NoExternalUse.class)
 public final class BackCompatibilityHelper {
   private final SonarToGerritPublisher publisher;
 
@@ -215,87 +218,79 @@ public final class BackCompatibilityHelper {
   // getters returning null - support for pipeline snippet generator
 
   public String getSonarURL() {
-    return getNull(String.class);
-  }
-
-  public Collection<SubJobConfig> getSubJobConfigs() {
-    return getNull(Collection.class);
-  }
-
-  public String getSeverity() {
-    return getNull(String.class);
-  }
-
-  public boolean isNewIssuesOnly() {
-    return getNull();
-  }
-
-  public boolean isChangedLinesOnly() {
-    return getNull();
-  }
-
-  public String getNoIssuesToPostText() {
-    return getNull(String.class);
-  }
-
-  public String getSomeIssuesToPostText() {
-    return getNull(String.class);
-  }
-
-  public String getIssueComment() {
-    return getNull(String.class);
-  }
-
-  public boolean isOverrideCredentials() {
-    return getNull();
-  }
-
-  public String getHttpUsername() {
-    return getNull(String.class);
-  }
-
-  public String getHttpPassword() {
-    return getNull(String.class);
-  }
-
-  public boolean isPostScore() {
-    return getNull();
-  }
-
-  public String getCategory() {
-    return getNull(String.class);
-  }
-
-  public String getNoIssuesScore() {
-    return getNull(String.class);
-  }
-
-  public String getIssuesScore() {
-    return getNull(String.class);
-  }
-
-  public String getNoIssuesNotification() {
-    return getNull(String.class);
-  }
-
-  public String getIssuesNotification() {
-    return getNull(String.class);
-  }
-
-  public String getProjectPath() {
-    return getNull(String.class);
-  }
-
-  public String getPath() {
-    return getNull(String.class);
-  }
-
-  private <V> V getNull(Class<V> clazz) {
     return null;
   }
 
-  private boolean getNull() {
+  public Collection<SubJobConfig> getSubJobConfigs() {
+    return null;
+  }
+
+  public String getSeverity() {
+    return null;
+  }
+
+  public boolean isNewIssuesOnly() {
     return false;
+  }
+
+  public boolean isChangedLinesOnly() {
+    return false;
+  }
+
+  public String getNoIssuesToPostText() {
+    return null;
+  }
+
+  public String getSomeIssuesToPostText() {
+    return null;
+  }
+
+  public String getIssueComment() {
+    return null;
+  }
+
+  public boolean isOverrideCredentials() {
+    return false;
+  }
+
+  public String getHttpUsername() {
+    return null;
+  }
+
+  public String getHttpPassword() {
+    return null;
+  }
+
+  public boolean isPostScore() {
+    return false;
+  }
+
+  public String getCategory() {
+    return null;
+  }
+
+  public String getNoIssuesScore() {
+    return null;
+  }
+
+  public String getIssuesScore() {
+    return null;
+  }
+
+  public String getNoIssuesNotification() {
+    return null;
+  }
+
+  public String getIssuesNotification() {
+    return null;
+  }
+
+  public String getProjectPath() {
+    return null;
+  }
+
+  public String getPath() {
+    return null;
   }
 
   // simple getters

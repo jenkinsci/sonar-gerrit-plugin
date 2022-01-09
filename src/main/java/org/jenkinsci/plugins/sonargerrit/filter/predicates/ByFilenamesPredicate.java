@@ -4,12 +4,15 @@ import com.google.common.base.Predicate;
 import java.util.HashSet;
 import java.util.Set;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 17:43
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class ByFilenamesPredicate implements Predicate<IssueAdapter> {
   private final Set<String> allowedComponents;
 

@@ -55,9 +55,5 @@ public class SonarqubeAccessTokens {
     public AccessToken(@JsonProperty("token") String token) {
       this.token = token;
     }
-
-    public String token() {
-      return token;
-    }
   }
 }

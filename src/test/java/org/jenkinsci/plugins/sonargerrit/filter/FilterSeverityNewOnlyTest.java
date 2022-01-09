@@ -41,8 +41,7 @@ public abstract class FilterSeverityNewOnlyTest extends BaseFilterTest<Pair<Stri
     doCheckSeverityNew(Severity.BLOCKER, false, 1);
   }
 
-  @Override
-  public void setFilter(Pair<String, Boolean> severityAndNew) {
+  private void setFilter(Pair<String, Boolean> severityAndNew) {
     String severity = severityAndNew.getFirst();
     setSeverity(getFilterConfig(), severity);
     Assertions.assertEquals(severity, getFilterConfig().getSeverity());
@@ -60,8 +59,7 @@ public abstract class FilterSeverityNewOnlyTest extends BaseFilterTest<Pair<Stri
     setFilter(new Pair<>(severity, newOnly));
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(Pair<String, Boolean> severityAndNew) {
+  private void doCheckFilteredOutByCriteria(Pair<String, Boolean> severityAndNew) {
     Severity severity = Severity.valueOf(severityAndNew.getFirst());
     Boolean newOnly = severityAndNew.getSecond();
 

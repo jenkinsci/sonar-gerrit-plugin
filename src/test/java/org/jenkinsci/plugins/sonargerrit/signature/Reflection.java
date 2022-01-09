@@ -9,7 +9,6 @@ import java.util.Collection;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.junit.jupiter.api.Assertions;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 /** @author Réda Housni Alaoui */
@@ -68,12 +67,6 @@ class Reflection {
     invokeSetter(object, fields[fields.length - 1], value, deprecated);
   }
 
-  public static SonarToGerritPublisher invokeConstructor() throws ReflectiveOperationException {
-    Constructor<SonarToGerritPublisher> c = SonarToGerritPublisher.class.getConstructor();
-    Assertions.assertNotNull(c.getAnnotation(DataBoundConstructor.class));
-    return c.newInstance();
-  }
-
   public static Object invokeConstructor(String className, String[] paramClasses, Object[] params)
       throws ReflectiveOperationException {
     Class<?>[] classes = new Class[paramClasses.length];
@@ -90,17 +83,6 @@ class Reflection {
 
     Constructor<?> c = Class.forName(className).getConstructor(classes);
     return c.newInstance(params);
-  }
-
-  public static Object invokeMethod(
-      Object obj, String methodName, Class<? extends Annotation>... annotations)
-      throws ReflectiveOperationException {
-    Class<?> aClass = obj.getClass();
-    Method declaredMethod = aClass.getDeclaredMethod(methodName);
-    for (Class<? extends Annotation> a : annotations) {
-      Assertions.assertTrue(declaredMethod.isAnnotationPresent(a));
-    }
-    return declaredMethod.invoke(obj);
   }
 
   public static Object invokeMethod(

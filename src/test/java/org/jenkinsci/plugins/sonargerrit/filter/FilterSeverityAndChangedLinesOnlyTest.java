@@ -42,8 +42,7 @@ public abstract class FilterSeverityAndChangedLinesOnlyTest
     doCheckSeverityAndChanged(Severity.BLOCKER, false, 1);
   }
 
-  @Override
-  public void setFilter(Pair<String, Boolean> severityAndChanged) {
+  private void setFilter(Pair<String, Boolean> severityAndChanged) {
     String severity = severityAndChanged.getFirst();
     setSeverity(getFilterConfig(), severity);
     Assertions.assertEquals(severity, getFilterConfig().getSeverity());
@@ -61,8 +60,7 @@ public abstract class FilterSeverityAndChangedLinesOnlyTest
     setFilter(new Pair<>(severity, changedOnly));
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(Pair<String, Boolean> severityAndChanged) {
+  private void doCheckFilteredOutByCriteria(Pair<String, Boolean> severityAndChanged) {
     Severity severity = Severity.valueOf(severityAndChanged.getFirst());
     Boolean changedOnly = severityAndChanged.getSecond();
 

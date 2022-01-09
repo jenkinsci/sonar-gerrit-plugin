@@ -14,12 +14,15 @@ import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByMinSeverityPredicat
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByNewPredicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 17:29
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class IssueFilter {
   private final IssueFilterConfig filterConfig;
   private final List<IssueAdapter> issues;

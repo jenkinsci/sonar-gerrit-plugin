@@ -6,9 +6,12 @@ import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByExactSeverityPredic
 import org.jenkinsci.plugins.sonargerrit.filter.predicates.ByMinSeverityPredicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:17 */
-public class CustomReportFormatter implements TagFormatter<CustomReportFormatter.Tag> {
+@Restricted(NoExternalUse.class)
+public class CustomReportFormatter {
 
   private final String successMessage;
   private final String failMessage;
@@ -22,7 +25,6 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
     this.successMessage = successMessage;
   }
 
-  @Override
   public String getMessage() {
     String res = getSize(issues) > 0 ? failMessage : successMessage;
     for (Tag tag : Tag.values()) {
@@ -31,8 +33,7 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
     return res;
   }
 
-  @Override
-  public String getValueToReplace(Tag tag) {
+  private String getValueToReplace(Tag tag) {
     int value;
     switch (tag) {
       case INFO_ISSUE_COUNT:
@@ -53,7 +54,7 @@ public class CustomReportFormatter implements TagFormatter<CustomReportFormatter
     }
   }
 
-  private int getSize(Iterable i) {
+  private int getSize(Iterable<?> i) {
     return Lists.newArrayList(i).size();
   }
 
