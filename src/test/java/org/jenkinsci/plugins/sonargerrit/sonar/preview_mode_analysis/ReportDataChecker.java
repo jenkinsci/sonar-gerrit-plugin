@@ -1,7 +1,8 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import java.util.Calendar;
 import java.util.TimeZone;
+import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.junit.jupiter.api.Assertions;
 
 /**

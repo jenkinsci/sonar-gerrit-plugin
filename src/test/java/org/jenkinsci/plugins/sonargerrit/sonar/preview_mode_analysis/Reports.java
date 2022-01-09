@@ -1,7 +1,8 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 
 /** @author Réda Housni Alaoui */
 public class Reports {

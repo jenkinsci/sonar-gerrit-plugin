@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.CustomProjectPathAndFilePredicateMatchTest;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.junit.jupiter.api.Test;
 
 public class ProjectPathToGerritChangedLinesMatchTest

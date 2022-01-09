@@ -31,7 +31,7 @@ This plugin is intended to work with report provided by SonarQube running on a p
 If you use Maven, fill out "Goals and options" field in "Build" section of your Jenkins job:
 
 ```bash
-clean install sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json
+clean verify sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json
 ```
 
 ### Gerrit
@@ -79,6 +79,8 @@ There are the next sections:
 1. SonarQube installation - The SonarQube installation (see https://plugins.jenkins.io/sonar/) to be used for analysis. It is also used to provide a link to a SonarQube rule in Gerrit comments.
 
 #### Project Settings
+
+##### Preview mode analysis
 
 Use setting "Project configuration" if only one SonarQube report is generated and static code analysis of the whole project is required.
 
@@ -220,7 +222,7 @@ node {
     // Mark the code build 'stage'....
     stage 'Build'
     // Run the maven build
-    sh "${mvnHome}/bin/mvn clean install sonar:sonar -Dmaven.test.skip=true -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json"
+    sh "${mvnHome}/bin/mvn clean verify sonar:sonar -Dmaven.test.skip=true -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json"
 
 
     // to run plugin with default settings
@@ -236,22 +238,24 @@ node {
 sonarToGerrit (
         inspectionConfig: [
             sonarQubeInstallationName: 'My SonarQube Installation',
-            baseConfig: [
-                projectPath: '',
-                sonarReportPath: 'target/sonar/sonar-report.json',
-                autoMatch: true
-            ]
-            // OR
-            //subJobConfigs : [
-            //  [
-            //      projectPath: 'module0',
-            //      sonarReportPath: 'target/sonar/sonar-report.json'
-            //  ],
-            //  [
-            //      projectPath: 'module1',
-            //      sonarReportPath: 'target/module1/sonar/sonar-report.json'
-            //  ]
-            //]
+            analysisStrategy: previewMode(
+                    baseConfig: [
+                            projectPath: '',
+                            sonarReportPath: 'target/sonar/sonar-report.json',
+                            autoMatch: true
+                    ]
+                    // OR
+                    //subJobConfigs : [
+                    //  [
+                    //      projectPath: 'module0',
+                    //      sonarReportPath: 'target/sonar/sonar-report.json'
+                    //  ],
+                    //  [
+                    //      projectPath: 'module1',
+                    //      sonarReportPath: 'target/module1/sonar/sonar-report.json'
+                    //  ]
+                    //]
+            )
         ],
         reviewConfig: [ 
             issueFilterConfig: [

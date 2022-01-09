@@ -4,8 +4,8 @@ import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -35,11 +35,12 @@ public abstract class DetailedConfigTest extends BaseConfigTest {
   protected static final String PROJECT_PATH = SonarToGerritPublisher.DescriptorImpl.PROJECT_PATH;
   protected static final String SEVERITY = IssueFilterConfig.DescriptorImpl.SEVERITY;
   protected static final String DEFAULT_INSPECTION_CONFIG_TYPE =
-      InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
+      PreviewModeAnalysisStrategy.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE;
   protected static final boolean NEW_ISSUES_ONLY = IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY;
   protected static final boolean CHANGED_LINES_ONLY =
       IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY;
-  protected static final boolean PATH_AUTO_MATCH = InspectionConfig.DescriptorImpl.AUTO_MATCH;
+  protected static final boolean PATH_AUTO_MATCH =
+      PreviewModeAnalysisStrategy.DescriptorImpl.AUTO_MATCH;
 
   // IssueFilterConfig
 

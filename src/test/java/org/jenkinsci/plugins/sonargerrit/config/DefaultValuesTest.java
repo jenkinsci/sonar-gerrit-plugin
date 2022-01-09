@@ -5,9 +5,10 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -109,22 +110,21 @@ public class DefaultValuesTest extends BaseConfigTest {
 
   @Override
   protected void doTestInspectionConfig() {
-    Assertions.assertEquals(SONAR_URL, InspectionConfig.DescriptorImpl.SONAR_URL);
+    Assertions.assertEquals(SONAR_URL, Inspection.DescriptorImpl.SONAR_URL);
     Assertions.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
     Assertions.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
     Assertions.assertEquals(
         DEFAULT_INSPECTION_CONFIG_TYPE,
-        InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
-    Assertions.assertEquals(PATH_AUTO_MATCH, InspectionConfig.DescriptorImpl.AUTO_MATCH);
+        PreviewModeAnalysisStrategy.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
+    Assertions.assertEquals(PATH_AUTO_MATCH, PreviewModeAnalysisStrategy.DescriptorImpl.AUTO_MATCH);
     Assertions.assertEquals(
         DEFAULT_INSPECTION_CONFIG_TYPE,
-        InspectionConfig.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
+        PreviewModeAnalysisStrategy.DescriptorImpl.DEFAULT_INSPECTION_CONFIG_TYPE);
 
-    InspectionConfig config = new InspectionConfig();
+    Inspection config = new Inspection();
     Assertions.assertEquals(SONAR_URL, config.getServerURL());
     Assertions.assertEquals(SONAR_REPORT_PATH, config.getBaseConfig().getSonarReportPath());
     Assertions.assertEquals(PROJECT_PATH, config.getBaseConfig().getProjectPath());
-    Assertions.assertFalse(config.isMultiConfigMode());
     Assertions.assertEquals(PATH_AUTO_MATCH, config.getBaseConfig().isAutoMatch());
 
     Assertions.assertNotNull(config.getSubJobConfigs());

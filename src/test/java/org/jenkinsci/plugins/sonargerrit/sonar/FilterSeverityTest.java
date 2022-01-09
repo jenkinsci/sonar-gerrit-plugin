@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.BaseFilterTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

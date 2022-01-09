@@ -1,0 +1,64 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders/>
+  <publishers>
+    <org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher plugin="sonar-gerrit@2.4.6">
+      <inspectionConfig>
+        <baseConfig>
+          <projectPath>%s</projectPath>
+          <sonarReportPath>%s</sonarReportPath>
+          <autoMatch>%s</autoMatch>
+        </baseConfig>
+        <subJobConfigs class="linked-list">
+        </subJobConfigs>
+        <type>base</type>
+      </inspectionConfig>
+      <notificationConfig>
+        <noIssuesNotificationRecipient>NONE</noIssuesNotificationRecipient>
+        <commentedIssuesNotificationRecipient>NONE</commentedIssuesNotificationRecipient>
+        <negativeScoreNotificationRecipient>NONE</negativeScoreNotificationRecipient>
+      </notificationConfig>
+      <reviewConfig>
+        <issueFilterConfig>
+          <severity>INFO</severity>
+          <newIssuesOnly>false</newIssuesOnly>
+          <changedLinesOnly>false</changedLinesOnly>
+        </issueFilterConfig>
+        <someIssuesTitleTemplate>&lt;total_count&gt; SonarQube violations have been found.</someIssuesTitleTemplate>
+        <noIssuesTitleTemplate>SonarQube violations have not been found.</noIssuesTitleTemplate>
+        <issueCommentTemplate>&lt;severity&gt; SonarQube violation:
+
+
+          &lt;message&gt;
+
+
+          Read more: &lt;rule_url&gt;</issueCommentTemplate>
+      </reviewConfig>
+      <backCompatibilityHelper>
+        <publisher reference="../.."/>
+        <tempScoreConfig>
+          <issueFilterConfig>
+            <severity>INFO</severity>
+            <newIssuesOnly>false</newIssuesOnly>
+            <changedLinesOnly>false</changedLinesOnly>
+          </issueFilterConfig>
+          <noIssuesScore>1</noIssuesScore>
+          <issuesScore>-1</issuesScore>
+          <category>Code-Review</category>
+        </tempScoreConfig>
+        <tempAuthConfig/>
+      </backCompatibilityHelper>
+    </org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
-import org.jenkinsci.plugins.sonargerrit.sonar.Reports;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.Reports;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

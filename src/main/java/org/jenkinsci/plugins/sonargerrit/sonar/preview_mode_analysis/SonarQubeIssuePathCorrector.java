@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import hudson.model.TaskListener;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
+import org.jenkinsci.plugins.sonargerrit.sonar.ByFilenameEndPredicate;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 
 /** @author Réda Housni Alaoui */
 class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
