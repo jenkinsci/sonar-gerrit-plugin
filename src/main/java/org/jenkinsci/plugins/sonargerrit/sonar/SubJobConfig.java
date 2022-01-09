@@ -3,8 +3,11 @@ package org.jenkinsci.plugins.sonargerrit.sonar;
 import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
+import hudson.init.InitMilestone;
+import hudson.init.Initializer;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Items;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -77,6 +80,12 @@ public class SubJobConfig extends AbstractDescribableImpl<SubJobConfig> {
     @Override
     public String getDisplayName() {
       return "SubJobConfig";
+    }
+
+    @Initializer(before = InitMilestone.PLUGINS_STARTED)
+    public static void addAliases() {
+      Items.XSTREAM2.addCompatibilityAlias(
+          "org.jenkinsci.plugins.sonargerrit.config.SubJobConfig", SubJobConfig.class);
     }
   }
 }
