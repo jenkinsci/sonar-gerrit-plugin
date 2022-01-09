@@ -3,8 +3,11 @@ package org.jenkinsci.plugins.sonargerrit.filter.predicates;
 import com.google.common.base.Predicate;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 16.09.2015 13:25 */
+@Restricted(NoExternalUse.class)
 public class ByExactSeverityPredicate implements Predicate<IssueAdapter> {
 
   private final Severity severity;

@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 20.11.2017 13:47
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class ByChangedLinesPredicate implements Predicate<IssueAdapter> {
   private final Map<String, Set<Integer>> allowedFilesAndLines;
 

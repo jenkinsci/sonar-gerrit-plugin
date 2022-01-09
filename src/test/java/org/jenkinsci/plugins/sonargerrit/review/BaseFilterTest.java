@@ -69,9 +69,6 @@ public abstract class BaseFilterTest<A> {
     diffInfo = null;
   }
 
-  //    @BeforeEach
-  public void setFilter(A a) {}
-
   protected void buildPublisher() {
     publisher = new SonarToGerritPublisher();
 
@@ -109,8 +106,7 @@ public abstract class BaseFilterTest<A> {
     Map<String, Set<Integer>> changed = new HashMap<>();
     if (diffInfo != null) {
       for (String s : diffInfo.keySet()) {
-        GerritRevisionWrapper w = new GerritRevisionWrapper(null);
-        changed.put(s, w.getChangedLines(diffInfo.get(s)));
+        changed.put(s, DiffInfos.toChangedLines(diffInfo.get(s)));
       }
     }
     return changed;
@@ -177,8 +173,6 @@ public abstract class BaseFilterTest<A> {
     }
     return false;
   }
-
-  protected abstract void doCheckFilteredOutByCriteria(A a);
 
   protected void doCheckCount(int expectedFilteredIssuesCount) {
     // check that amount of filtered issues is equal to expected amount

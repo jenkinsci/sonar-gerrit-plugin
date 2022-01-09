@@ -37,11 +37,9 @@ public class ReportDataChecker {
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertNotNull(rep.getRules());
-    Assertions.assertNotNull(rep.getUsers());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
     Assertions.assertEquals(1, rep.getRules().size());
-    Assertions.assertEquals(0, rep.getUsers().size());
 
     Rule r = rep.getRules().get(0);
     Assertions.assertEquals("squid:ModifiersOrderCheck", r.getKey());
@@ -87,11 +85,9 @@ public class ReportDataChecker {
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertNotNull(rep.getRules());
-    Assertions.assertNotNull(rep.getUsers());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
     Assertions.assertEquals(0, rep.getRules().size());
-    Assertions.assertEquals(0, rep.getUsers().size());
 
     Issue i = rep.getIssues().get(0);
     Assertions.assertEquals("c48d7f88-64bb-45ec-b64d-b5a536384183", i.getKey());
@@ -126,11 +122,9 @@ public class ReportDataChecker {
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertNotNull(rep.getRules());
-    Assertions.assertNotNull(rep.getUsers());
     Assertions.assertEquals(2, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
     Assertions.assertEquals(0, rep.getRules().size());
-    Assertions.assertEquals(0, rep.getUsers().size());
 
     Issue i = rep.getIssues().get(0);
     Assertions.assertEquals("6b8a2d04-e126-481d-83ef-5719e3c470ea", i.getKey());
@@ -164,11 +158,9 @@ public class ReportDataChecker {
     Assertions.assertNotNull(rep.getComponents());
     Assertions.assertNotNull(rep.getIssues());
     Assertions.assertNotNull(rep.getRules());
-    Assertions.assertNotNull(rep.getUsers());
     Assertions.assertEquals(1, rep.getComponents().size());
     Assertions.assertEquals(1, rep.getIssues().size());
     Assertions.assertEquals(0, rep.getRules().size());
-    Assertions.assertEquals(0, rep.getUsers().size());
 
     Issue i = rep.getIssues().get(0);
     Assertions.assertEquals("81c5c4f8-08c9-4340-861e-8491c9f4666a", i.getKey());

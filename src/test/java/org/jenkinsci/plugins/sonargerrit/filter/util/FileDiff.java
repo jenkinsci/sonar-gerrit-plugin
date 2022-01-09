@@ -8,6 +8,9 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
  * <p>$Id$
  */
 public class FileDiff {
+  @SuppressWarnings("unused")
   public String filename;
+
+  @SuppressWarnings("unused")
   public DiffInfo diffInfo;
 }

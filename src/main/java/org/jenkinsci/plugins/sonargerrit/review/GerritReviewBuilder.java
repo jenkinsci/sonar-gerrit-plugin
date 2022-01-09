@@ -15,12 +15,15 @@ import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomIssueFormatter;
 import org.jenkinsci.plugins.sonargerrit.review.formatter.CustomReportFormatter;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 14:03
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class GerritReviewBuilder {
   private final Multimap<String, IssueAdapter> finalIssuesToComment;
   private final Multimap<String, IssueAdapter> finalIssuesToScore;
@@ -102,7 +105,7 @@ public class GerritReviewBuilder {
     return file2comments;
   }
 
-  protected ReviewInput.CommentInput createComment(@Nullable IssueAdapter input) {
+  private ReviewInput.CommentInput createComment(@Nullable IssueAdapter input) {
     if (input == null) {
       return null;
     }

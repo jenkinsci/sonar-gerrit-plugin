@@ -10,9 +10,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 11.06.2015 16:54 */
 // todo do something with magical date format
+@Restricted(NoExternalUse.class)
 public class DateTypeConverter implements JsonSerializer<Date>, JsonDeserializer<Date> {
   private static final Logger LOGGER = Logger.getLogger(DateTypeConverter.class.getName());
   // @Override

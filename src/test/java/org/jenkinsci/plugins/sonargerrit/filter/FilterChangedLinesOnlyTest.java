@@ -18,8 +18,7 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
     doCheckChangedLinesOnly(false, 11);
   }
 
-  @Override
-  public void setFilter(Boolean changedOnly) {
+  private void setFilter(Boolean changedOnly) {
     setChangedOnly(getFilterConfig(), changedOnly);
     Assertions.assertEquals(changedOnly, getFilterConfig().isChangedLinesOnly());
   }
@@ -30,8 +29,7 @@ public abstract class FilterChangedLinesOnlyTest extends BaseFilterTest<Boolean>
     setFilter(IssueFilterConfig.DescriptorImpl.CHANGED_LINES_ONLY);
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(Boolean changedOnly) {
+  private void doCheckFilteredOutByCriteria(Boolean changedOnly) {
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {

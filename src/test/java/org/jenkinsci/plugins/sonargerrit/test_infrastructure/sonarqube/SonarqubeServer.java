@@ -59,10 +59,6 @@ public class SonarqubeServer {
     authorizeThirdPartyPlugins(url, adminPassword);
   }
 
-  public String dockerUrl() {
-    return "http://" + NETWORK_ALIAS + ":" + HTTP_PORT;
-  }
-
   public String url() {
     return url;
   }

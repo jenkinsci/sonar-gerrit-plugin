@@ -23,12 +23,6 @@ public class JDKs {
         "jdk8u312-b07");
   }
 
-  public String addJdk17() throws IOException {
-    return addJdk(
-        "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_x64_linux_hotspot_17.0.1_12.tar.gz",
-        "jdk-17.0.1+12");
-  }
-
   private String addJdk(String url, String subdir) throws IOException {
     ZipExtractionInstaller installer = new ZipExtractionInstaller(null, url, subdir);
 

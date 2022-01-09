@@ -39,6 +39,7 @@ import org.jenkinsci.plugins.sonargerrit.config.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.config.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
+import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Severity;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarConnector;
@@ -46,7 +47,7 @@ import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnectionInfo;
 import org.jenkinsci.plugins.sonargerrit.review.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.review.GerritReviewBuilder;
-import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
+import org.jenkinsci.plugins.sonargerrit.review.GerritRevision;
 import org.jenkinsci.plugins.sonargerrit.util.BackCompatibilityHelper;
 import org.jenkinsci.plugins.sonargerrit.util.Localization;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -56,9 +57,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep {
 
   private static final Logger LOGGER = Logger.getLogger(SonarToGerritPublisher.class.getName());
-  public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
-  public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
-  public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
 
   // ------------------ configuration settings
   /*
@@ -96,7 +94,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       @Nonnull TaskListener listener)
       throws InterruptedException, IOException {
     // load inspection report
-    SonarConnector sonarConnector =
+    InspectionReportAdapter report =
         new SonarConnector().readSonarReports(listener, inspectionConfig, filePath);
 
     // load revision info
@@ -104,23 +102,20 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     GerritConnectionInfo connectionInfo =
         new GerritConnectionInfo(env, trigger, authConfig, run.getParent());
     try {
-      GerritConnector connector = new GerritConnector(connectionInfo);
-      connector.connect();
-      GerritRevisionWrapper revisionInfo = new GerritRevisionWrapper(connector.getRevision());
-      revisionInfo.loadData();
+      GerritRevision revision = GerritConnector.connect(connectionInfo).fetchRevision();
 
-      Map<String, Set<Integer>> fileToChangedLines = revisionInfo.getFileToChangedLines();
+      Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
 
       // match inspection report and revision info
       if (inspectionConfig.isPathCorrectionNeeded()) {
-        new IssueAdapterProcessor(listener, sonarConnector, revisionInfo).process();
+        new IssueAdapterProcessor(listener, report, revision).process();
       }
 
       // generate review output
       // get issues to be commented
       Multimap<String, IssueAdapter> file2issuesToComment =
           getFilteredFileToIssueMultimap(
-              reviewConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
+              reviewConfig.getIssueFilterConfig(), report, fileToChangedLines);
       TaskListenerLogger.logMessage(
           listener,
           LOGGER,
@@ -134,7 +129,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       if (postScore) {
         file2issuesToScore =
             getFilteredFileToIssueMultimap(
-                scoreConfig.getIssueFilterConfig(), sonarConnector, fileToChangedLines);
+                scoreConfig.getIssueFilterConfig(), report, fileToChangedLines);
         TaskListenerLogger.logMessage(
             listener,
             LOGGER,
@@ -153,7 +148,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
                   notificationConfig,
                   inspectionConfig)
               .buildReview();
-      revisionInfo.sendReview(reviewInput);
+      revision.sendReview(reviewInput);
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
     } catch (RestApiException e) {
@@ -166,10 +161,10 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
   private Multimap<String, IssueAdapter> getFilteredFileToIssueMultimap(
       IssueFilterConfig filterConfig,
-      SonarConnector sonarConnector,
+      InspectionReportAdapter report,
       Map<String, Set<Integer>> fileToChangedLines) {
     IssueFilter commentFilter =
-        new IssueFilter(filterConfig, sonarConnector.getIssues(), fileToChangedLines);
+        new IssueFilter(filterConfig, report.getIssues(), fileToChangedLines);
     Iterable<IssueAdapter> issuesToComment = commentFilter.filter();
     return IssueAdapter.asMultimap(issuesToComment);
   }
@@ -220,18 +215,15 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     public static final Integer NO_ISSUES_SCORE = 1;
     public static final Integer SOME_ISSUES_SCORE = -1;
 
-    public static final boolean OVERRIDE_CREDENTIALS = false;
-
     public static final String SEVERITY = Severity.INFO.name();
     public static final boolean NEW_ISSUES_ONLY = false;
     public static final boolean CHANGED_LINES_ONLY = false;
-
-    public static final int DEFAULT_SCORE = 0;
 
     /**
      * In order to load the persisted global configuration, you have to call load() in the
      * constructor.
      */
+    @SuppressWarnings("unused")
     public DescriptorImpl() {
       load();
     }

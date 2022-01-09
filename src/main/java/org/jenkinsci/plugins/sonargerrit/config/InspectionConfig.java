@@ -29,6 +29,7 @@ import org.kohsuke.stapler.QueryParameter;
 public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> {
 
   // Only kept for backward compatibility purpose
+  @SuppressWarnings("unused")
   private transient String serverURL;
 
   private String sonarQubeInstallationName;
@@ -110,6 +111,7 @@ public class InspectionConfig extends AbstractDescribableImpl<InspectionConfig> 
     }
   }
 
+  @SuppressWarnings("unused")
   public String getType() {
     return type;
   }

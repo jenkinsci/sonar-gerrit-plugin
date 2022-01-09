@@ -5,12 +5,15 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 import hudson.model.TaskListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 15:08
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class TaskListenerLogger {
 
   public static void logMessage(

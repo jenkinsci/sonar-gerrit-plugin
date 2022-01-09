@@ -18,7 +18,7 @@ import org.jenkinsci.plugins.sonargerrit.filter.IssueFilter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
 import org.jenkinsci.plugins.sonargerrit.integration.IssueAdapterProcessor;
-import org.jenkinsci.plugins.sonargerrit.review.GerritRevisionWrapper;
+import org.jenkinsci.plugins.sonargerrit.review.GerritRevision;
 import org.junit.jupiter.api.Assertions;
 
 public abstract class CustomProjectPathAndFilePredicateMatchTest {
@@ -56,7 +56,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
     SonarConnector.ReportRecorder r = getReport(config, manuallyCorrected);
 
-    GerritRevisionWrapper w = getRevisionAdapter(additionalFilenames);
+    GerritRevision w = getRevisionAdapter(additionalFilenames);
 
     if (config.isAutoMatch()) {
       performAutoPathCorrection(r, w);
@@ -71,7 +71,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
   }
 
   protected void performAutoPathCorrection(
-      final SonarConnector.ReportRecorder r, GerritRevisionWrapper w) {
+      final SonarConnector.ReportRecorder r, GerritRevision w) {
     new IssueAdapterProcessor(null, r::getIssuesList, w).process();
   }
 
@@ -84,8 +84,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     return false;
   }
 
-  protected GerritRevisionWrapper getRevisionAdapter(String... additionalFiles)
-      throws RestApiException {
+  protected GerritRevision getRevisionAdapter(String... additionalFiles) throws RestApiException {
     final Map<String, FileInfo> files = new HashMap<>();
     FileInfo fileInfo = new FileInfo();
     fileInfo.status = 'A';
@@ -120,9 +119,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
             return info;
           }
         };
-    GerritRevisionWrapper gerritRevisionWrapper = new GerritRevisionWrapper(revInfo);
-    gerritRevisionWrapper.loadData();
-    return gerritRevisionWrapper;
+    return GerritRevision.load(revInfo);
   }
 
   protected SonarConnector.ReportRecorder getReport(SubJobConfig config, boolean manuallyCorrected)

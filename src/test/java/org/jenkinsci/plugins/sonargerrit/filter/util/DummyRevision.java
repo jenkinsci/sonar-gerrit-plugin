@@ -7,6 +7,7 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 15.11.2017 22:07 $Id$ */
 public class DummyRevision {
+  @SuppressWarnings("unused")
   public List<FileDiff> diffs;
 
   public Map<String, DiffInfo> toMap() {

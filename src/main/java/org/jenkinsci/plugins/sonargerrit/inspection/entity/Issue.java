@@ -2,8 +2,11 @@ package org.jenkinsci.plugins.sonargerrit.inspection.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Date;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik */
+@Restricted(NoExternalUse.class)
 public class Issue {
 
   @SuppressWarnings("unused")

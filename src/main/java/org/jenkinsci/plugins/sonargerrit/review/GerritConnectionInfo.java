@@ -8,31 +8,24 @@ import com.cloudbees.plugins.credentials.common.UsernameCredentials;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTrigger;
 import hudson.model.Item;
 import hudson.util.Secret;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.jenkinsci.plugins.sonargerrit.config.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 28.11.2017 16:33
  *
  * <p>$Id$
  */
+@Restricted(NoExternalUse.class)
 public class GerritConnectionInfo implements ConnectionInfo {
 
   public static final String GERRIT_NAME_ENV_VAR_NAME = "GERRIT_NAME";
   public static final String GERRIT_CHANGE_NUMBER_ENV_VAR_NAME = "GERRIT_CHANGE_NUMBER";
   public static final String GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME = "GERRIT_PATCHSET_NUMBER";
-
-  public static final List<String> REQUIRED_VARS =
-      Collections.unmodifiableList(
-          Arrays.asList(
-              GERRIT_NAME_ENV_VAR_NAME,
-              GERRIT_CHANGE_NUMBER_ENV_VAR_NAME,
-              GERRIT_PATCHSET_NUMBER_ENV_VAR_NAME));
 
   private final String serverName;
   private final String changeNumber;
@@ -57,7 +50,6 @@ public class GerritConnectionInfo implements ConnectionInfo {
             .orElse(null);
   }
 
-  @Override
   public String getServerName() {
     return serverName;
   }
@@ -72,12 +64,10 @@ public class GerritConnectionInfo implements ConnectionInfo {
     return patchsetNumber;
   }
 
-  @Override
   public String getUsername() {
     return Optional.ofNullable(httpCredentials).map(UsernameCredentials::getUsername).orElse(null);
   }
 
-  @Override
   public String getPassword() {
     return Optional.ofNullable(httpCredentials)
         .map(PasswordCredentials::getPassword)

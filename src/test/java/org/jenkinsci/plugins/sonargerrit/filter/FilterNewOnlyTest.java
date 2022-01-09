@@ -18,8 +18,7 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     doCheckNewOnly(false, 11);
   }
 
-  @Override
-  public void setFilter(Boolean newOnly) {
+  private void setFilter(Boolean newOnly) {
     setNewOnly(getFilterConfig(), newOnly);
     Assertions.assertEquals(newOnly, getFilterConfig().isNewIssuesOnly());
   }
@@ -30,8 +29,7 @@ public abstract class FilterNewOnlyTest extends BaseFilterTest<Boolean> {
     setFilter(IssueFilterConfig.DescriptorImpl.NEW_ISSUES_ONLY);
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(Boolean newOnly) {
+  private void doCheckFilteredOutByCriteria(Boolean newOnly) {
     // check that all filtered out issues have severity lower than criteria
     for (IssueAdapter issue : filteredOutIssues) {
       if (isFileChanged(issue)) {

@@ -53,8 +53,7 @@ public abstract class FilterSeverityNewChangedOnlyTest
     doCheckSeverityNewAndChanged(Severity.BLOCKER, false, false, 1);
   }
 
-  @Override
-  public void setFilter(Triple<String, Boolean, Boolean> severityNewChanged) {
+  private void setFilter(Triple<String, Boolean, Boolean> severityNewChanged) {
     String severity = severityNewChanged.getFirst();
     setSeverity(getFilterConfig(), severity);
     Assertions.assertEquals(severity, getFilterConfig().getSeverity());
@@ -77,8 +76,7 @@ public abstract class FilterSeverityNewChangedOnlyTest
     setFilter(new Triple<>(severity, newOnly, changedOnly));
   }
 
-  @Override
-  protected void doCheckFilteredOutByCriteria(Triple<String, Boolean, Boolean> severityNewChanged) {
+  private void doCheckFilteredOutByCriteria(Triple<String, Boolean, Boolean> severityNewChanged) {
     Severity severity = Severity.valueOf(severityNewChanged.getFirst());
     Boolean newOnly = severityNewChanged.getSecond();
     Boolean changedOnly = severityNewChanged.getThird();

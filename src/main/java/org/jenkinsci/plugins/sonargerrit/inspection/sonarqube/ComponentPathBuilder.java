@@ -8,6 +8,8 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Component;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Processes data like below to build file path of a Sonar component.
@@ -26,6 +28,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.entity.Component;
  * }
  * </pre>
  */
+@Restricted(NoExternalUse.class)
 public class ComponentPathBuilder {
 
   private final Map<String, Node> nodes = Maps.newHashMap();
@@ -141,7 +144,7 @@ public class ComponentPathBuilder {
       return path.toString();
     }
 
-    protected void buildPath(final StringBuilder path) {
+    private void buildPath(final StringBuilder path) {
       if (isParentFound()) {
         getParent().buildPath(path);
       }

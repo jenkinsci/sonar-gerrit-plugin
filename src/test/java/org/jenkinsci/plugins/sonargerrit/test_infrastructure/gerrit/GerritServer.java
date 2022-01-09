@@ -120,24 +120,12 @@ public class GerritServer {
     allProjects.access(access);
   }
 
-  public String dockerHostname() {
-    return NETWORK_ALIAS;
-  }
-
-  public String dockerUrl() {
-    return "http://" + NETWORK_ALIAS + ":" + HTTP_PORT;
-  }
-
   public String url() {
     return "http://localhost:" + container.getMappedPort(HTTP_PORT);
   }
 
   public String getGitRepositoryHttpUrl(String projectName) {
     return "http://localhost:" + container.getMappedPort(HTTP_PORT) + "/" + projectName;
-  }
-
-  public String getGitRepositoryHttpDockerUrl(String projectName) {
-    return "http://" + NETWORK_ALIAS + ":" + HTTP_PORT + "/" + projectName;
   }
 
   public String adminUsername() {
@@ -154,14 +142,6 @@ public class GerritServer {
 
   public CredentialsProvider gitAdminCredentialsProvider() {
     return new UsernamePasswordCredentialsProvider(USERNAME, PASSWORD);
-  }
-
-  public void addSshPublicKeyToAdminUser(String key) {
-    try {
-      gerritApi.accounts().self().addSshKey(key);
-    } catch (RestApiException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   public GerritApi api() {
