@@ -11,8 +11,6 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 public interface IssueAdapter {
   String getFilepath();
 
-  void setFilepath(String path);
-
   String getKey();
 
   String getComponent();

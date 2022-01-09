@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.sonargerrit.inspection.InspectionReportAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
+import org.jenkinsci.plugins.sonargerrit.review.Revision;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -42,7 +43,10 @@ public class SonarConnector implements InspectionReportAdapter {
   }
 
   public SonarConnector readSonarReports(
-      TaskListener listener, InspectionConfig inspectionConfig, FilePath workspace)
+      TaskListener listener,
+      InspectionConfig inspectionConfig,
+      Revision revision,
+      FilePath workspace)
       throws IOException, InterruptedException {
     List<ReportInfo> reports = new ArrayList<>();
     for (SubJobConfig subJobConfig : inspectionConfig.getAllSubJobConfigs()) {
@@ -59,20 +63,34 @@ public class SonarConnector implements InspectionReportAdapter {
       reports.add(new ReportInfo(subJobConfig, subReport));
     }
 
-    readSonarReports(reports);
+    readSonarReports(listener, inspectionConfig, revision, reports);
 
     return this;
   }
 
-  public void readSonarReports(List<ReportInfo> reports) {
+  public void readSonarReports(
+      TaskListener listener,
+      InspectionConfig inspectionConfig,
+      Revision revision,
+      List<ReportInfo> reports) {
     reportRecorder.reset();
     reportRecorder.recordReportInfos(reports);
+
+    SonarQubeIssueDecorator decorator;
+    if (inspectionConfig.isPathCorrectionNeeded()) {
+      decorator = new SonarQubeIssuePathCorrector(listener, revision);
+    } else {
+      decorator = SonarQubeIssueDecorator.Noop.INSTANCE;
+    }
+
     // multimap file-to-issues generation for each report
     for (ReportInfo info : reports) {
       Report report = info.report;
       final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
       for (Issue issue : report.getIssues()) {
-        reportRecorder.recordIssue(new SonarQubeIssueAdapter(issue, pathBuilder, info.config));
+        IssueAdapter issueToRecord =
+            decorator.decorate(new SonarQubeIssue(issue, pathBuilder, info.config));
+        reportRecorder.recordIssue(issueToRecord);
       }
     }
   }

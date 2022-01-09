@@ -12,7 +12,7 @@ import org.jenkinsci.plugins.sonargerrit.config.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Issue;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.IssueAdapter;
 import org.jenkinsci.plugins.sonargerrit.inspection.entity.Report;
-import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssueAdapter;
+import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarQubeIssue;
 import org.jenkinsci.plugins.sonargerrit.inspection.sonarqube.SonarReportBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -92,7 +92,7 @@ public class CustomReportFormatterTest {
 
     List<IssueAdapter> adapters = new ArrayList<>();
     for (Issue issue : rep.getIssues()) {
-      adapters.add(new SonarQubeIssueAdapter(issue, null, new SubJobConfig()));
+      adapters.add(new SonarQubeIssue(issue, null, new SubJobConfig()));
     }
     return adapters;
   }

@@ -73,9 +73,6 @@ public class ReviewResultTest {
     public String getFilepath() {
       return getComponent();
     }
-
-    @Override
-    public void setFilepath(String path) {}
   }
 
   protected SonarToGerritPublisher buildPublisher() {
