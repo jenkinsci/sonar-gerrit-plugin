@@ -1,6 +1,13 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import java.util.ArrayList;
+import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 
 /**

@@ -1,6 +1,12 @@
 package org.jenkinsci.plugins.sonargerrit.config;
 
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.InspectionConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.SubJobConfig;
 import org.junit.jupiter.api.Assertions;
 
 /**
