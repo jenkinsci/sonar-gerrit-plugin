@@ -54,7 +54,7 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
       boolean expectedResult,
       String... additionalFilenames)
       throws URISyntaxException, IOException, InterruptedException, RestApiException {
-    InspectionReport r = getReport(config, manuallyCorrected);
+    SonarConnector.ReportRecorder r = getReport(config, manuallyCorrected);
 
     GerritRevisionWrapper w = getRevisionAdapter(additionalFilenames);
 
@@ -70,7 +70,8 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     Assertions.assertEquals(expectedResult, contains);
   }
 
-  protected void performAutoPathCorrection(final InspectionReport r, GerritRevisionWrapper w) {
+  protected void performAutoPathCorrection(
+      final SonarConnector.ReportRecorder r, GerritRevisionWrapper w) {
     new IssueAdapterProcessor(null, r::getIssuesList, w).process();
   }
 
@@ -124,24 +125,26 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
     return gerritRevisionWrapper;
   }
 
-  protected InspectionReport getReport(SubJobConfig config, boolean manuallyCorrected)
+  protected SonarConnector.ReportRecorder getReport(SubJobConfig config, boolean manuallyCorrected)
       throws IOException, InterruptedException, URISyntaxException {
     Report report = JsonReports.readReport(getReportFilename());
     Assertions.assertEquals(getCompCount(), report.getComponents().size());
     SonarConnector.ReportInfo info = new SonarConnector.ReportInfo(config, report);
-    InspectionReport inspectionReport = new InspectionReport(Collections.singletonList(info));
+    SonarConnector.ReportRecorder reportRecorder = new ReportRecorderMock();
+    SonarConnector sonarConnector = new SonarConnector(reportRecorder);
+    sonarConnector.readSonarReports(Collections.singletonList(info));
     if (manuallyCorrected) {
       Assertions.assertFalse(
-          isFilterResultContainsFile(getSonarFilename(), inspectionReport.getIssuesList()));
+          isFilterResultContainsFile(getSonarFilename(), reportRecorder.getIssuesList()));
       Assertions.assertTrue(
-          isFilterResultContainsFile(getGerritFilename(), inspectionReport.getIssuesList()));
+          isFilterResultContainsFile(getGerritFilename(), reportRecorder.getIssuesList()));
     } else {
       Assertions.assertTrue(
-          isFilterResultContainsFile(getSonarFilename(), inspectionReport.getIssuesList()));
+          isFilterResultContainsFile(getSonarFilename(), reportRecorder.getIssuesList()));
       Assertions.assertFalse(
-          isFilterResultContainsFile(getGerritFilename(), inspectionReport.getIssuesList()));
+          isFilterResultContainsFile(getGerritFilename(), reportRecorder.getIssuesList()));
     }
-    return inspectionReport;
+    return reportRecorder;
   }
 
   protected int getChangedLine() {

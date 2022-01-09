@@ -96,8 +96,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       @Nonnull TaskListener listener)
       throws InterruptedException, IOException {
     // load inspection report
-    SonarConnector sonarConnector = new SonarConnector(listener, inspectionConfig);
-    sonarConnector.readSonarReports(filePath);
+    SonarConnector sonarConnector =
+        new SonarConnector().readSonarReports(listener, inspectionConfig, filePath);
 
     // load revision info
     GerritTrigger trigger = GerritTrigger.getTrigger(run.getParent());

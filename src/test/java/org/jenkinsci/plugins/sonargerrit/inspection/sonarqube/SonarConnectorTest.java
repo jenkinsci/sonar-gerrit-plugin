@@ -23,11 +23,12 @@ public class SonarConnectorTest {
     String filename = "one_issue.json";
     SubJobConfig config = createConfig("", "one_issue.json");
 
-    SonarConnector connector = readSonarReport(config);
+    ReportRecorderMock recordedReports = new ReportRecorderMock();
+    SonarConnector connector = readSonarReport(recordedReports, config);
     Assertions.assertNotNull(connector);
     Assertions.assertNotNull(connector.getIssues());
     Assertions.assertEquals(1, connector.getIssues().size());
-    ReportDataChecker.checkFile(filename, connector.getRawReport(config));
+    ReportDataChecker.checkFile(filename, recordedReports.getRawReport(config));
   }
 
   @Test
@@ -37,12 +38,13 @@ public class SonarConnectorTest {
     SubJobConfig config1 = createConfig("", filename1);
     SubJobConfig config2 = createConfig("", filename2);
 
-    SonarConnector connector = readSonarReport(config1, config2);
+    ReportRecorderMock recordedReports = new ReportRecorderMock();
+    SonarConnector connector = readSonarReport(recordedReports, config1, config2);
     Assertions.assertNotNull(connector);
     Assertions.assertNotNull(connector.getIssues());
     Assertions.assertEquals(2, connector.getIssues().size());
-    ReportDataChecker.checkFile(filename1, connector.getRawReport(config1));
-    ReportDataChecker.checkFile(filename2, connector.getRawReport(config2));
+    ReportDataChecker.checkFile(filename1, recordedReports.getRawReport(config1));
+    ReportDataChecker.checkFile(filename2, recordedReports.getRawReport(config2));
   }
 
   @Test
@@ -54,19 +56,21 @@ public class SonarConnectorTest {
     SubJobConfig config2 = createConfig("", filename2);
     SubJobConfig config3 = createConfig("", filename3);
 
-    SonarConnector connector = readSonarReport(config1, config2, config3);
+    ReportRecorderMock recordedReports = new ReportRecorderMock();
+    SonarConnector connector = readSonarReport(recordedReports, config1, config2, config3);
     Assertions.assertNotNull(connector);
     Assertions.assertNotNull(connector.getIssues());
     Assertions.assertEquals(3, connector.getIssues().size());
-    ReportDataChecker.checkFile(filename1, connector.getRawReport(config1));
-    ReportDataChecker.checkFile(filename2, connector.getRawReport(config2));
-    ReportDataChecker.checkFile(filename3, connector.getRawReport(config3));
+    ReportDataChecker.checkFile(filename1, recordedReports.getRawReport(config1));
+    ReportDataChecker.checkFile(filename2, recordedReports.getRawReport(config2));
+    ReportDataChecker.checkFile(filename3, recordedReports.getRawReport(config3));
   }
 
-  protected SonarConnector readSonarReport(SubJobConfig... configs)
+  protected SonarConnector readSonarReport(
+      SonarConnector.ReportRecorder reportRecorder, SubJobConfig... configs)
       throws IOException, InterruptedException {
-    SonarConnector connector = new SonarConnector(null, buildInspectionConfig(configs));
-    connector.readSonarReports(new FilePath(new File("")));
+    SonarConnector connector = new SonarConnector(reportRecorder);
+    connector.readSonarReports(null, buildInspectionConfig(configs), new FilePath(new File("")));
     return connector;
   }
 
