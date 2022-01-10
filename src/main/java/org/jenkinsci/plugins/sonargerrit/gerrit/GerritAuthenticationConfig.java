@@ -20,10 +20,9 @@ import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import java.util.List;
 import java.util.Optional;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:43 $Id$ */
@@ -38,41 +37,8 @@ public class GerritAuthenticationConfig
 
   private String httpCredentialsId;
 
-  public GerritAuthenticationConfig() {
-    this(null);
-  }
-
-  public GerritAuthenticationConfig(@Nullable String httpCredentialsId) {
-    this.httpCredentialsId = httpCredentialsId;
-    this.username = null;
-    this.password = null;
-  }
-
-  /** @deprecated Use {@link #GerritAuthenticationConfig(String)} instead */
-  @Deprecated
   @DataBoundConstructor
-  public GerritAuthenticationConfig(
-      @Nullable String httpCredentialsId,
-      @Nullable String username,
-      @Nullable Secret secretPassword,
-      @Nullable String password) {
-
-    this.username = null;
-    this.password = null;
-
-    if (Util.fixEmpty(username) == null
-        && secretPassword == null
-        && Util.fixEmpty(password) == null) {
-      this.httpCredentialsId = httpCredentialsId;
-      return;
-    }
-
-    Secret passwordToUse =
-        Optional.ofNullable(secretPassword).orElseGet(() -> Secret.fromString(password));
-
-    this.httpCredentialsId =
-        GerritHttpCredentials.get().migrate(username, passwordToUse).orElse(null);
-  }
+  public GerritAuthenticationConfig() {}
 
   @SuppressWarnings("unused")
   protected Object readResolve() {
@@ -84,17 +50,38 @@ public class GerritAuthenticationConfig
     return this;
   }
 
+  @DataBoundSetter
+  public void setHttpCredentialsId(String httpCredentialsId) {
+    this.httpCredentialsId = httpCredentialsId;
+  }
+
   @SuppressWarnings("unused")
   @Nullable
   public String getHttpCredentialsId() {
     return httpCredentialsId;
   }
 
-  @Restricted(NoExternalUse.class)
-  public GerritAuthenticationConfig withUsernamePassword(
-      @Nullable String username, @Nullable String password) {
-    return new GerritAuthenticationConfig(
-        httpCredentialsId, username, Secret.fromString(password), null);
+  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  @Deprecated
+  @DataBoundSetter
+  public void setUsername(String username) {
+    httpCredentialsId =
+        GerritHttpCredentials.get().migrate(username, getSecretPassword()).orElse(null);
+  }
+
+  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  @Deprecated
+  @DataBoundSetter
+  public void setPassword(String password) {
+    setSecretPassword(Secret.fromString(password));
+  }
+
+  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  @Deprecated
+  @DataBoundSetter
+  public void setSecretPassword(Secret secretPassword) {
+    httpCredentialsId =
+        GerritHttpCredentials.get().migrate(getUsername(), secretPassword).orElse(null);
   }
 
   /** @deprecated Use {@link #getHttpCredentialsId()} instead */

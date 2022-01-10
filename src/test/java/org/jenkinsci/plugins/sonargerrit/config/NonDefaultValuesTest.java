@@ -275,7 +275,8 @@ public class NonDefaultValuesTest extends DetailedConfigTest {
     Assertions.assertNull(config.getUsername());
     Assertions.assertNull(config.getPassword());
 
-    config = new GerritAuthenticationConfig(null, "Test", null, null);
+    config = new GerritAuthenticationConfig();
+    config.setUsername("Test");
 
     Assertions.assertEquals("Test", config.getUsername());
     Assertions.assertNull(config.getPassword());
@@ -287,7 +288,8 @@ public class NonDefaultValuesTest extends DetailedConfigTest {
     Assertions.assertNull(config.getUsername());
     Assertions.assertNull(config.getPassword());
 
-    config = new GerritAuthenticationConfig(null, "TestUsr", null, null);
+    config = new GerritAuthenticationConfig();
+    config.setUsername("TestUsr");
 
     Assertions.assertEquals("TestUsr", config.getUsername());
   }
