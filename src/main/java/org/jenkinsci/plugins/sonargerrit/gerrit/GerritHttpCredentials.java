@@ -10,6 +10,7 @@ import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.Util;
 import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
@@ -36,7 +37,7 @@ class GerritHttpCredentials {
 
   /** @return Empty if username and password are null */
   public Optional<String> migrate(String username, Secret password) {
-    if (username == null && password == null) {
+    if (Util.fixEmpty(username) == null && password == null) {
       return Optional.empty();
     }
     StandardUsernamePasswordCredentials credentials =

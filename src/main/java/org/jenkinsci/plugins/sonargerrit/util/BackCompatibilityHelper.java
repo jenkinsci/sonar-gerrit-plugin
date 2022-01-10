@@ -162,8 +162,20 @@ public final class BackCompatibilityHelper {
     }
   }
 
-  public void setHttpUsernamePassword(String httpUsername, String httpPassword) {
-    alterAuthenticationConfig(config -> config.withUsernamePassword(httpUsername, httpPassword));
+  public void setHttpUsername(String httpUsername) {
+    alterAuthenticationConfig(
+        config -> {
+          config.setUsername(httpUsername);
+          return config;
+        });
+  }
+
+  public void setHttpPassword(String httpPassword) {
+    alterAuthenticationConfig(
+        config -> {
+          config.setPassword(httpPassword);
+          return config;
+        });
   }
 
   // set up Notification Config

@@ -73,16 +73,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
 
   private final BackCompatibilityHelper backCompatibilityHelper = new BackCompatibilityHelper(this);
 
-  public SonarToGerritPublisher() {}
-
-  /** @deprecated Use {@link #SonarToGerritPublisher()} instead */
-  @Deprecated
   @DataBoundConstructor
-  public SonarToGerritPublisher(String httpUsername, String httpPassword) {
-    if (httpUsername != null || httpPassword != null) {
-      backCompatibilityHelper.setHttpUsernamePassword(httpUsername, httpPassword);
-    }
-  }
+  public SonarToGerritPublisher() {}
 
   @Override
   public void perform(
@@ -432,8 +424,20 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   }
 
   @Deprecated
+  @DataBoundSetter
+  public void setHttpUsername(String httpUsername) {
+    backCompatibilityHelper.setHttpUsername(httpUsername);
+  }
+
+  @Deprecated
   public String getHttpUsername() {
     return backCompatibilityHelper.getHttpUsername();
+  }
+
+  @Deprecated
+  @DataBoundSetter
+  public void setHttpPassword(String httpPassword) {
+    backCompatibilityHelper.setHttpPassword(httpPassword);
   }
 
   @Deprecated

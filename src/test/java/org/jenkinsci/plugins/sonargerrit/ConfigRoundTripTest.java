@@ -46,8 +46,10 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setCommentedIssuesNotificationRecipient("bar");
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
-    before.setAuthConfig(
-        new GerritAuthenticationConfig(null, "john.doe", Secret.fromString("secret"), null));
+    GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
+    authenticationConfig.setUsername("john.doe");
+    authenticationConfig.setSecretPassword(Secret.fromString("secret"));
+    before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
         jenkinsRule.createWebClient().getPage(project, "configure").getFormByName("config"));
@@ -108,7 +110,9 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setCommentedIssuesNotificationRecipient("bar");
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
-    before.setAuthConfig(new GerritAuthenticationConfig(UUID.randomUUID().toString()));
+    GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
+    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
         jenkinsRule.createWebClient().getPage(project, "configure").getFormByName("config"));
@@ -170,7 +174,9 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setCommentedIssuesNotificationRecipient("bar");
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
-    before.setAuthConfig(new GerritAuthenticationConfig(UUID.randomUUID().toString()));
+    GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
+    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
         jenkinsRule.createWebClient().getPage(project, "configure").getFormByName("config"));
