@@ -110,7 +110,7 @@ public class DefaultValuesTest extends BaseConfigTest {
 
   @Override
   protected void doTestInspectionConfig() {
-    Assertions.assertEquals(SONAR_URL, Inspection.DescriptorImpl.SONAR_URL);
+    Assertions.assertEquals(SONAR_URL, PreviewModeAnalysisStrategy.DescriptorImpl.SONAR_URL);
     Assertions.assertEquals(SONAR_REPORT_PATH, SubJobConfig.DescriptorImpl.SONAR_REPORT_PATH);
     Assertions.assertEquals(PROJECT_PATH, SubJobConfig.DescriptorImpl.PROJECT_PATH);
     Assertions.assertEquals(

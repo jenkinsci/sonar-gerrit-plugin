@@ -16,6 +16,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SonarQubeInstallations;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
