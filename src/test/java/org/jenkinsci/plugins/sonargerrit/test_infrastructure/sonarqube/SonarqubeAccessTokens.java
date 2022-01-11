@@ -12,19 +12,21 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.ObjectMappers;
 /** @author Réda Housni Alaoui */
 public class SonarqubeAccessTokens {
 
-  private final SonarqubeServer sonarqubeServer;
+  private final String sonarqubeUrl;
+  private final String adminAuthorization;
 
-  public SonarqubeAccessTokens(SonarqubeServer sonarqubeServer) {
-    this.sonarqubeServer = sonarqubeServer;
+  public SonarqubeAccessTokens(String sonarqubeUrl, String adminAuthorization) {
+    this.sonarqubeUrl = sonarqubeUrl;
+    this.adminAuthorization = adminAuthorization;
   }
 
   public String createAdminAccessToken(String name) {
     RequestBody requestBody =
-        RequestBody.create("", MediaType.get("application/x-www-form-urlencoded"));
+        RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), "");
     Request request =
         new Request.Builder()
-            .url(sonarqubeServer.url() + "/api/user_tokens/generate?name=" + name)
-            .header("Authorization", sonarqubeServer.adminAuthorization())
+            .url(sonarqubeUrl + "/api/user_tokens/generate?name=" + name)
+            .header("Authorization", adminAuthorization)
             .post(requestBody)
             .build();
 

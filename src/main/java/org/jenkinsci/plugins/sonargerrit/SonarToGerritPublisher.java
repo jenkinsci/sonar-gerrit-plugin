@@ -92,7 +92,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       GerritRevision revision = GerritConnector.connect(connectionInfo).fetchRevision();
 
       // load inspection report
-      InspectionReport report = inspectionConfig.analyse(listener, revision, filePath);
+      InspectionReport report = inspectionConfig.analyse(run, listener, revision, filePath);
 
       Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
 

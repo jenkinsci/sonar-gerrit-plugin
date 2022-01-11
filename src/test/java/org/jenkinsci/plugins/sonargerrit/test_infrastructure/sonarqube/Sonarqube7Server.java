@@ -14,12 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
-import org.testcontainers.images.builder.ImageFromDockerfile;
 
 /** @author Réda Housni Alaoui */
-public class SonarqubeServer {
+public class Sonarqube7Server {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SonarqubeServer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Sonarqube7Server.class);
 
   private static final int HTTP_PORT = 9000;
 
@@ -30,11 +29,11 @@ public class SonarqubeServer {
   private final String url;
   private final String adminPassword;
 
-  public static CloseableResource<SonarqubeServer> start(Network network) {
-    SonarqubeServer sonarqubeServer = new SonarqubeServer(network);
-    return new CloseableResource<SonarqubeServer>() {
+  public static CloseableResource<Sonarqube7Server> start(Network network) {
+    Sonarqube7Server sonarqubeServer = new Sonarqube7Server(network);
+    return new CloseableResource<Sonarqube7Server>() {
       @Override
-      public SonarqubeServer resource() {
+      public Sonarqube7Server resource() {
         return sonarqubeServer;
       }
 
@@ -45,23 +44,9 @@ public class SonarqubeServer {
     };
   }
 
-  private SonarqubeServer(Network network) {
+  private Sonarqube7Server(Network network) {
     container =
-        new GenericContainer<>(
-                new ImageFromDockerfile()
-                    .withDockerfileFromBuilder(
-                        builder ->
-                            builder
-                                .from("docker.cosium.dev/sonarqube:8.9.2-community")
-                                .add(
-                                    "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/1.8.1/sonarqube-community-branch-plugin-1.8.1.jar",
-                                    "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin.jar")))
-            .withEnv(
-                "SONAR_WEB_JAVAADDITIONALOPTS",
-                "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin.jar=web")
-            .withEnv(
-                "SONAR_CE_JAVAADDITIONALOPTS",
-                "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin.jar=ce")
+        new GenericContainer<>("sonarqube:7.6-community")
             .withLogConsumer(new Slf4jLogConsumer(LOG))
             .withExposedPorts(HTTP_PORT)
             .withNetwork(network)

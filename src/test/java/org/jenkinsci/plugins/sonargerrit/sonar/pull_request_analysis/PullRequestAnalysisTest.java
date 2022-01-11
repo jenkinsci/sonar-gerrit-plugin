@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit;
+package org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,10 +18,10 @@ import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
-import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.cluster.Cluster;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.cluster.EnableCluster;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit.GerritChange;
@@ -38,19 +38,27 @@ import org.junit.jupiter.api.io.TempDir;
 
 /** @author Réda Housni Alaoui */
 @EnableCluster
-class PreviewModeAnalysisTest {
+class PullRequestAnalysisTest {
 
-  private static final String MAVEN_TARGET =
-      "clean verify sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json";
+  private static final String MAVEN_FREESTYLE_TARGET =
+      "clean verify sonar:sonar "
+          + "-Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.base=${GERRIT_BRANCH} "
+          + "-Dsonar.pullrequest.branch=${GERRIT_REFSPEC}";
+
+  private static final String MAVEN_PIPELINE_TARGET =
+      "clean verify sonar:sonar "
+          + "-Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.base=${env.GERRIT_BRANCH} "
+          + "-Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}";
 
   private static Cluster cluster;
   private static GerritGit git;
 
   @BeforeAll
-  static void beforeAll(Cluster cluster, @TempDir Path workTree)
-      throws GitAPIException, IOException {
+  static void beforeAll(Cluster cluster, @TempDir Path workTree) throws Exception {
 
-    PreviewModeAnalysisTest.cluster = cluster;
+    PullRequestAnalysisTest.cluster = cluster;
 
     git = GerritGit.createAndCloneRepository(cluster.gerrit(), workTree);
 
@@ -66,6 +74,20 @@ class PreviewModeAnalysisTest {
             + "</project>");
 
     git.push();
+
+    FreeStyleProject masterJob = cluster.jenkinsRule().createFreeStyleProject();
+    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk8InstallationName()));
+    masterJob.setScm(createGitSCM());
+    masterJob
+        .getBuildWrappersList()
+        .add(new SonarBuildWrapper(cluster.jenkinsSonarqubeInstallationName()));
+    masterJob
+        .getBuildersList()
+        .add(
+            new Maven(
+                "clean verify sonar:sonar -Dsonar.branch.name=master",
+                cluster.jenkinsMavenInstallationName()));
+    triggerAndAssertSuccess(masterJob);
   }
 
   @BeforeEach
@@ -150,16 +172,16 @@ class PreviewModeAnalysisTest {
             new EnvironmentVariableBuildWrapper()
                 .add("GERRIT_NAME", cluster.jenkinsGerritTriggerServerName())
                 .add("GERRIT_CHANGE_NUMBER", change.changeNumericId())
-                .add("GERRIT_PATCHSET_NUMBER", String.valueOf(patchSetNumber)));
+                .add("GERRIT_PATCHSET_NUMBER", String.valueOf(patchSetNumber))
+                .add("GERRIT_BRANCH", "master")
+                .add("GERRIT_REFSPEC", change.refName(patchSetNumber)));
 
-    job.getBuildersList().add(new Maven(MAVEN_TARGET, cluster.jenkinsMavenInstallationName()));
+    job.getBuildersList()
+        .add(new Maven(MAVEN_FREESTYLE_TARGET, cluster.jenkinsMavenInstallationName()));
 
     SonarToGerritPublisher sonarToGerrit = new SonarToGerritPublisher();
     Inspection inspectionConfig = sonarToGerrit.getInspectionConfig();
-    PreviewModeAnalysisStrategy analysisStrategy = new PreviewModeAnalysisStrategy();
-    analysisStrategy.setSonarQubeInstallationName(cluster.jenkinsSonarqubeInstallationName());
-    analysisStrategy.setAutoMatch(true);
-    inspectionConfig.setAnalysisStrategy(analysisStrategy);
+    inspectionConfig.setAnalysisStrategy(new PullRequestAnalysisStrategy());
     IssueFilterConfig issueFilterConfig = sonarToGerrit.getReviewConfig().getIssueFilterConfig();
     issueFilterConfig.setSeverity("MINOR");
     issueFilterConfig.setChangedLinesOnly(true);
@@ -187,6 +209,8 @@ class PreviewModeAnalysisTest {
             + String.format("env.GERRIT_NAME = '%s'\n", cluster.jenkinsGerritTriggerServerName())
             + String.format("env.GERRIT_CHANGE_NUMBER = '%s'\n", change.changeNumericId())
             + String.format("env.GERRIT_PATCHSET_NUMBER = '%s'\n", patchSetNumber)
+            + String.format("env.GERRIT_BRANCH = '%s'\n", "master")
+            + String.format("env.GERRIT_REFSPEC = '%s'\n", change.refName(patchSetNumber))
             + "checkout scm: ([\n"
             + "$class: 'GitSCM',\n"
             + String.format(
@@ -199,17 +223,13 @@ class PreviewModeAnalysisTest {
             + String.format(
                 "withMaven(jdk: '%s', maven: '%s') {\n",
                 cluster.jenkinsJdk8InstallationName(), cluster.jenkinsMavenInstallationName())
-            + String.format("sh 'mvn %s'\n", MAVEN_TARGET)
+            + String.format("sh \"mvn %s\"\n", MAVEN_PIPELINE_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv
             + "} finally {\n"
             + "sonarToGerrit(\n"
             + "inspectionConfig: [\n"
-            + "analysisStrategy: previewMode(\n"
-            + String.format(
-                "sonarQubeInstallationName: '%s',\n", cluster.jenkinsSonarqubeInstallationName())
-            + "baseConfig: [autoMatch: true]\n"
-            + ")\n"
+            + "analysisStrategy: pullRequest()\n"
             + "],\n" // inspectionConfig
             + "reviewConfig: [\n"
             + "issueFilterConfig: [\n"
@@ -250,8 +270,17 @@ class PreviewModeAnalysisTest {
         Collections.emptyList());
   }
 
+  private static GitSCM createGitSCM() {
+    return new GitSCM(
+        GitSCM.createRepoList(git.httpUrl(), cluster.jenkinsGerritCredentialsId()),
+        Collections.emptyList(),
+        null,
+        null,
+        Collections.emptyList());
+  }
+
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private void triggerAndAssertSuccess(Job job) throws Exception {
+  private static void triggerAndAssertSuccess(Job job) throws Exception {
     final QueueTaskFuture future =
         new ParameterizedJobMixIn() {
           @Override

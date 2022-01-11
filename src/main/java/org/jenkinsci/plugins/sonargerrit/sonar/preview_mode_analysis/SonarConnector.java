@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
+import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.kohsuke.accmod.Restricted;
@@ -93,10 +94,10 @@ class SonarConnector {
     // multimap file-to-issues generation for each report
     for (ReportInfo info : reports) {
       ReportRepresentation report = info.report;
-      final ComponentPathBuilder pathBuilder = new ComponentPathBuilder(report.getComponents());
+      final Components components = new Components(report.getComponents());
       for (IssueRepresentation issue : report.getIssues()) {
         Issue issueToRecord =
-            decorator.decorate(new SimpleIssue(issue, pathBuilder, info.config, sonarQubeUrl));
+            decorator.decorate(new SimpleIssue(issue, components, info.config, sonarQubeUrl));
         reportRecorder.recordIssue(issueToRecord);
       }
     }

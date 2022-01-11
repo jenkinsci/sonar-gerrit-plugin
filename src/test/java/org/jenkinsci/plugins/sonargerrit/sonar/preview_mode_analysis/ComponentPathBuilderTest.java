@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +30,7 @@ public class ComponentPathBuilderTest {
     Issue issue = issues.get(0);
 
     ReportRepresentation report = recordedReports.getRawReport(config);
-    ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
+    Components builder = new Components(report.getComponents());
     String issueComponent = issue.getComponent();
     String realFileName =
         builder
@@ -54,7 +55,7 @@ public class ComponentPathBuilderTest {
     Assertions.assertEquals(8, issues.size());
 
     ReportRepresentation report = recordedReports.getRawReport(config);
-    ComponentPathBuilder builder = new ComponentPathBuilder(report.getComponents());
+    Components builder = new Components(report.getComponents());
     testIssue(
         builder,
         issues.get(0),
@@ -298,7 +299,7 @@ public class ComponentPathBuilderTest {
   }
 
   private void testIssue(
-      ComponentPathBuilder builder, Issue issue, String projectPath, String expectedFilename) {
+      Components builder, Issue issue, String projectPath, String expectedFilename) {
     String issueComponent = issue.getComponent();
     String realFileName =
         builder
