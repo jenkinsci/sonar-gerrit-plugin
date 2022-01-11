@@ -1,0 +1,179 @@
+package org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis;
+
+import static java.util.Objects.requireNonNull;
+
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.plugins.sonar.SonarInstallation;
+import hudson.plugins.sonar.action.SonarAnalysisAction;
+import hudson.plugins.sonar.utils.SonarUtils;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
+import org.jenkinsci.plugins.sonargerrit.sonar.Components;
+import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
+import org.sonarqube.ws.Ce;
+import org.sonarqube.ws.Issues;
+import org.sonarqube.ws.client.HttpConnector;
+import org.sonarqube.ws.client.WsClient;
+import org.sonarqube.ws.client.WsClientFactories;
+import org.sonarqube.ws.client.ce.CeService;
+import org.sonarqube.ws.client.ce.TaskRequest;
+import org.sonarqube.ws.client.issues.SearchRequest;
+
+/** @author Réda Housni Alaoui */
+class PullRequestAnalysisTask {
+
+  private static final String PLEASE_USE_THE_WITH_SONAR_QUBE_ENV_WRAPPER_TO_RUN_YOUR_ANALYSIS =
+      "Please use the 'withSonarQubeEnv' wrapper to run your analysis.";
+  private static final Duration CE_TASK_COMPLETION_CHECK_INTERVAL = Duration.ofSeconds(5);
+
+  private final WsClient sonarClient;
+  private final String serverUrl;
+  private final String taskId;
+  private final String componentKey;
+
+  private PullRequestAnalysisTask(
+      WsClient sonarClient, String serverUrl, String taskId, String componentKey) {
+    this.sonarClient = requireNonNull(sonarClient);
+    this.serverUrl = requireNonNull(StringUtils.trimToNull(serverUrl));
+    this.taskId = requireNonNull(StringUtils.trimToNull(taskId));
+    this.componentKey = requireNonNull(StringUtils.trimToNull(componentKey));
+  }
+
+  public static PullRequestAnalysisTask parseLastAnalysis(Run<?, ?> run) {
+    List<SonarAnalysisAction> actions = run.getActions(SonarAnalysisAction.class);
+    if (actions.isEmpty()) {
+      throw new IllegalStateException(
+          String.format(
+              "No previous SonarQube analysis found on this build. %s",
+              PLEASE_USE_THE_WITH_SONAR_QUBE_ENV_WRAPPER_TO_RUN_YOUR_ANALYSIS));
+    }
+
+    // Consider last analysis first
+    List<SonarAnalysisAction> reversedActions = new ArrayList<>(actions);
+    Collections.reverse(reversedActions);
+    return reversedActions.stream()
+        .map(sonarAnalysisAction -> tryCreate(run, sonarAnalysisAction))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new IllegalStateException(
+                    String.format(
+                        "No previous SonarQube pull request analysis found on this build. %s",
+                        PLEASE_USE_THE_WITH_SONAR_QUBE_ENV_WRAPPER_TO_RUN_YOUR_ANALYSIS)));
+  }
+
+  private static Optional<PullRequestAnalysisTask> tryCreate(
+      Run<?, ?> run, SonarAnalysisAction action) {
+    String ceTaskId = action.getCeTaskId();
+    if (ceTaskId == null) {
+      return Optional.empty();
+    }
+    String serverUrl = action.getServerUrl();
+    if (serverUrl == null) {
+      return Optional.empty();
+    }
+    String installationName = action.getInstallationName();
+    SonarInstallation sonarInstallation =
+        Optional.ofNullable(SonarInstallation.get(installationName))
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        String.format("Invalid installation name: %s", installationName)));
+
+    String authenticationToken =
+        SonarUtils.getAuthenticationToken(
+            run, sonarInstallation, sonarInstallation.getCredentialsId());
+
+    WsClient sonarClient =
+        WsClientFactories.getDefault()
+            .newClient(
+                HttpConnector.newBuilder().url(serverUrl).token(authenticationToken).build());
+
+    Ce.Task ceTask = sonarClient.ce().task(new TaskRequest().setId(ceTaskId)).getTask();
+    String componentKey = ceTask.getComponentKey();
+    if (StringUtils.isBlank(componentKey)) {
+      return Optional.empty();
+    }
+
+    return Optional.of(new PullRequestAnalysisTask(sonarClient, serverUrl, ceTaskId, componentKey));
+  }
+
+  public List<Issue> fetchIssues(TaskListener listener) throws InterruptedException {
+    CeService ceService = sonarClient.ce();
+    Ce.Task ceTask;
+    while (true) {
+      ceTask = ceService.task(new TaskRequest().setId(taskId)).getTask();
+      if (isComplete(listener, ceTask)) {
+        break;
+      }
+      TaskListenerLogger.log(
+          listener,
+          "Waiting %s before re-checking SonarQube task '%s' status ...",
+          CE_TASK_COMPLETION_CHECK_INTERVAL,
+          taskId);
+      Thread.sleep(CE_TASK_COMPLETION_CHECK_INTERVAL.toMillis());
+    }
+
+    String pullRequest = ceTask.getPullRequest();
+    if (StringUtils.isBlank(pullRequest)) {
+      // Sometimes, when the task fails very early, the pull request attribute is blank.
+      // This is why, we can't control the presence of this attribute before creating the
+      // PullRequestAnalysisTask.
+      throw new IllegalStateException(
+          String.format("No pull request found for SonarQube task '%s'", taskId));
+    }
+
+    SearchRequest issueSearchRequest =
+        new SearchRequest()
+            .setComponentKeys(Collections.singletonList(componentKey))
+            .setPullRequest(pullRequest);
+
+    Issues.SearchWsResponse issueSearchResponse = sonarClient.issues().search(issueSearchRequest);
+
+    Components components =
+        new Components(
+            issueSearchResponse.getComponentsList().stream()
+                .map(PullRequestComponent::new)
+                .collect(Collectors.toList()));
+
+    return issueSearchResponse.getIssuesList().stream()
+        .map(issue -> new PullRequestIssue(components, issue, serverUrl))
+        .collect(Collectors.toList());
+  }
+
+  private boolean isComplete(TaskListener listener, Ce.Task ceTask) {
+    Ce.TaskStatus taskStatus = ceTask.getStatus();
+    switch (taskStatus) {
+      case SUCCESS:
+        TaskListenerLogger.log(listener, "SonarQube task '%s' completed.", taskId);
+        return true;
+      case PENDING:
+        TaskListenerLogger.log(listener, "SonarQube task '%s' is pending.", taskId);
+        return false;
+      case IN_PROGRESS:
+        TaskListenerLogger.log(listener, "SonarQube task '%s' is in progress.", taskId);
+        return false;
+      case FAILED:
+        throw new IllegalStateException(
+            String.format(
+                "SonarQube analysis '%s' failed with message: %s.",
+                taskId, ceTask.getErrorMessage()));
+      case CANCELED:
+        throw new IllegalStateException(
+            String.format("SonarQube analysis '%s' was canceled.", taskId));
+      default:
+        throw new IllegalStateException(
+            String.format(
+                "SonarQube analysis '%s' returned unexpected status '%s'", taskId, taskStatus));
+    }
+  }
+}

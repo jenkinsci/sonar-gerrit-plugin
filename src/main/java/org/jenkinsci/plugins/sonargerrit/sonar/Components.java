@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
+package org.jenkinsci.plugins.sonargerrit.sonar;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -28,13 +28,13 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
  * </pre>
  */
 @Restricted(NoExternalUse.class)
-class ComponentPathBuilder {
+public class Components {
 
   private final Map<String, Node> nodes = Maps.newHashMap();
 
-  public ComponentPathBuilder(final List<ComponentRepresentation> components) {
+  public Components(final List<? extends Component> components) {
     checkNotNull(components);
-    for (final ComponentRepresentation c : components) {
+    for (final Component c : components) {
       nodes.put(c.getKey(), new Node(c));
     }
   }
@@ -109,11 +109,11 @@ class ComponentPathBuilder {
   private static class Node {
     private static final String GERRIT_FILE_DELIMITER = "/";
 
-    private final ComponentRepresentation component;
+    private final Component component;
 
     private Node parent;
 
-    public Node(final ComponentRepresentation c) {
+    public Node(final Component c) {
       checkNotNull(c);
       this.component = c;
     }
@@ -154,7 +154,7 @@ class ComponentPathBuilder {
       }
     }
 
-    public ComponentRepresentation getComponent() {
+    public Component getComponent() {
       return component;
     }
 

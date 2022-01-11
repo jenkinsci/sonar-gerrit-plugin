@@ -8,15 +8,8 @@
 
 ## Introduction
 
-The plugin shares [SonarQube](http://www.sonarqube.org/) feedback with developers via [Gerrit Code Review](https://www.gerritcodereview.com/).
-
-## Incompatibility with Sonar 7.7
-
-Starting with Sonarqube 7.7 the preview mode (-Dsonar.analysis.mode=preview) was removed, making it incompatible with the plugin.
-
-Sonarqube release notes say it now has "native support for short-living branches" https://www.sonarqube.org/sonarqube-7-7/, author will make an effort to integrate these features. Contributions are appreciated (wink)
-
-A place to start with (for getting a json report): https://community.sonarsource.com/t/sonar-report-json-is-this-file-still-available/5827/6
+The plugin shares [SonarQube](http://www.sonarqube.org/) feedback with developers
+via [Gerrit Code Review](https://www.gerritcodereview.com/).
 
 ## Requirements
 
@@ -26,12 +19,22 @@ Jenkins version 2.249.3 or newer is required.
 
 ### SonarQube
 
-This plugin is intended to work with report provided by SonarQube running on a project in preview mode. That means SonarQube report generation should be included to build.
+SonarQube report generation *must* happen within [SonarQube Scanner](https://plugins.jenkins.io/sonar/) wrapper.
 
-If you use Maven, fill out "Goals and options" field in "Build" section of your Jenkins job:
+On a non-pipeline job, you can enable [SonarQube Scanner](https://plugins.jenkins.io/sonar/) wrapper by
+checking `Prepare SonarQube Scanner environment`:
 
-```bash
-clean verify sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json
+![Sonar scanner wrapper](doc/sonar-scanner-wrapper.png)
+
+On a pipeline job, [SonarQube Scanner](https://plugins.jenkins.io/sonar/) wrapper is represented by `withSonarQubeEnv`.
+For example:
+
+```groovy
+withSonarQubeEnv('my-sonar-installation-name') {
+    withMaven(maven: 'my-maven-installation-name') {
+        sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
+    }
+}
 ```
 
 ### Gerrit
@@ -44,9 +47,10 @@ Rest API should be configured in the Advanced section of Gerrit Trigger settings
 
 HTTP authentication data should be set up. Enable Code-Review and Enable Verified checkboxes should be checked on.
 
-For complete guidance please see [Gerrit Trigger Wiki page](https://plugins.jenkins.io/gerrit-trigger/#plugin-content-setup-requirements).
+For complete guidance please
+see [Gerrit Trigger Wiki page](https://plugins.jenkins.io/gerrit-trigger/#plugin-content-setup-requirements).
 
-![alt text](doc/gerrit-trigger-conf.png "Gerrit Trigger configuration")
+![Gerrit Trigger configuration](doc/gerrit-trigger-conf.png)
 
 #### Running out of Gerrit Trigger job
 
@@ -74,22 +78,103 @@ There are the next sections:
 
 #### SonarQube Settings
 
-##### Preview mode analysis
+##### Pull request analysis (since SonarQube 7.2)
 
-Use setting "Project configuration" if only one SonarQube report is generated and static code analysis of the whole project is required.
+This analysis strategy is based on https://docs.sonarqube.org/latest/analysis/pull-request/ .
 
-![alt text](doc/sonar-settings-base.png "Sonar settings base")
+The SonarQube instance must either
+have [sonarqube-community-branch-plugin](https://github.com/mc1arke/sonarqube-community-branch-plugin)
+enabled or be of [developer edition](https://www.sonarqube.org/developer-edition/) type.
 
-Use setting "Sub-project configurations" to specify modules and paths for separate reports if modules are analysed separately or not every module needs to be analysed.
+In order to run a pull request scan, `Sonar` requires the following mandatory properties:
 
-![alt text](doc/sonar-settings-multi.png "Sonar settings multi")
+| Key                      | Recommended value template                        | Example             |
+|--------------------------|---------------------------------------------------|---------------------|
+| sonar.pullrequest.key    | ${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} | 250-1               |
+| sonar.pullrequest.base   | ${GERRIT_BRANCH}                                  | master              |
+| sonar.pullrequest.branch | ${GERRIT_REFSPEC}                                 | refs/changes/01/1/1 |
+
+Example of `Maven` target:
+
+```
+clean verify sonar:sonar -Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${GERRIT_BRANCH} -Dsonar.pullrequest.branch=${GERRIT_REFSPEC}
+```
+
+###### Non pipeline
+
+![Gerrit Trigger configuration](doc/sonar-pull-request-analysis-radio.png)
+
+###### Pipeline
+
+```groovy
+sonarToGerrit(
+        inspectionConfig: [
+                analysisStrategy: pullRequest()
+        ]
+)
+```
+
+##### Preview mode analysis (until SonarQube 7.6)
+
+This analysis strategy is intended to work with report provided by SonarQube running on a project in preview mode. That
+means SonarQube report generation should be included to build.
+
+If you use Maven, fill out "Goals and options" field in "Build" section of your Jenkins job:
+
+```bash
+clean verify sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json
+```
+
+###### Non pipeline
+
+Use setting "Project configuration" if only one SonarQube report is generated and static code analysis of the whole
+project is required.
+
+![Sonar settings base](doc/sonar-settings-base.png)
+
+Use setting "Sub-project configurations" to specify modules and paths for separate reports if modules are analysed
+separately or not every module needs to be analysed.
+
+![Sonar settings multi](doc/sonar-settings-multi.png)
 
 Settings:
 
-1. SonarQube installation - The SonarQube installation (see https://plugins.jenkins.io/sonar/) to be used for analysis. It is also used to provide a link to a SonarQube rule in Gerrit comments.
-2. Project base directory - subdirectory for a case when Jenkins job is related to a specific module of a big project. The path is relative to a main project root directory. Default value is empty.
-3. SonarQube report path - Path to a SonarQube report generated by SonarQube while a project was being built. The path is relative to a build working directory. Default value: `target/sonar/sonar-report.json`
-4. Allow auto match - setting to allow automatically match SonarQube issues to Gerrit files in case if project consists of several sub-modules, but only one SonarQube report is generated for the whole project.
+1. SonarQube installation - The SonarQube installation (see https://plugins.jenkins.io/sonar/) to be used for analysis.
+   It is also used to provide a link to a SonarQube rule in Gerrit comments.
+2. Project base directory - subdirectory for a case when Jenkins job is related to a specific module of a big project.
+   The path is relative to a main project root directory. Default value is empty.
+3. SonarQube report path - Path to a SonarQube report generated by SonarQube while a project was being built. The path
+   is relative to a build working directory. Default value: `target/sonar/sonar-report.json`
+4. Allow auto match - setting to allow automatically match SonarQube issues to Gerrit files in case if project consists
+   of several sub-modules, but only one SonarQube report is generated for the whole project.
+
+###### Pipeline
+
+```groovy
+sonarToGerrit(
+        inspectionConfig: [
+                analysisStrategy: previewMode(
+                        sonarQubeInstallationName: 'My SonarQube Installation',
+                        baseConfig: [
+                                projectPath    : '',
+                                sonarReportPath: 'target/sonar/sonar-report.json',
+                                autoMatch      : true
+                        ]
+                        // OR
+                        //subJobConfigs : [
+                        //  [
+                        //      projectPath: 'module0',
+                        //      sonarReportPath: 'target/sonar/sonar-report.json'
+                        //  ],
+                        //  [
+                        //      projectPath: 'module1',
+                        //      sonarReportPath: 'target/module1/sonar/sonar-report.json'
+                        //  ]
+                        //]
+                )
+        ]
+)
+```
 
 #### Filter
 
@@ -101,54 +186,60 @@ Filter is used to specify what issues will be affected in the output:
 
 It is possible to filter issues by:
 
-1. Severity - SonarQube issue severity. If user doesn't want issues with low severity to be reported to Gerrit, he (or she) can choose the lowest severity level to be reported. For example if "Major" level is selected, information about issues with "Major", "Critical" and "Blocker" will be included to Gerrit review. Default value: Info.
-2. New issues only - reflects SonarQube issue "new" property. If issue is not marked as new that may be a sign that it is not created by processing commit and this issue is not supposed to be included to review.
-3. Changed lines only - when only several lines are changed in a commit user may not want other lines to be commented by Gerrit. With "Add comments to changed lines only" unchanged in the commit lines will not be commented in Gerrit.
+1. Severity - SonarQube issue severity. If user doesn't want issues with low severity to be reported to Gerrit, he (or
+   she) can choose the lowest severity level to be reported. For example if "Major" level is selected, information about
+   issues with "Major", "Critical" and "Blocker" will be included to Gerrit review. Default value: Info.
+2. New issues only - reflects SonarQube issue "new" property. If issue is not marked as new that may be a sign that it
+   is not created by processing commit and this issue is not supposed to be included to review.
+3. Changed lines only - when only several lines are changed in a commit user may not want other lines to be commented by
+   Gerrit. With "Add comments to changed lines only" unchanged in the commit lines will not be commented in Gerrit.
 
-![alt text](doc/filter-settings.png "Filter settings")
+![Filter settings](doc/filter-settings.png)
 
 #### Review Settings
 
 Review settings contains of issue filter to specify issues to be commented and review template.
 
-![alt text](doc/review-settings.png "Review settings")
+![Filter settings](doc/review-settings.png)
 
 #### Report Formatting
 
 This section allows user to customise text, intended to use as review title and issue comment.
 
-1. Title - Review title settings allow customization of Gerrit review titles for both cases (violations found or not) separately. There are several tags to be replaced by real values allowed in this context:
-   1. \<info_count> - will be replaced with count of issues having INFO severity level;
-   2. \<minor_count> - will be replaced with count of issues having MINOR severity level;
-   3. \<major_count> - will be replaced with count of issues having MAJOR severity level;
-   4. \<critical_count> - will be replaced with count of issues having CRITICAL severity level;
-   5. \<blocker_count> - will be replaced with count of issues having BLOCKER severity level;
-   6. \<min_minor_count> - will be replaced with count of issues having MINOR severity level or higher;
-   7. \<min_major_count> - will be replaced with count of issues having MAJOR severity level or higher;
-   8. \<min_critical_count> - will be replaced with count of issues having CRITICAL severity level or higher;
-   9. \<total_count> - will be replaced with total count of issues.      
+1. Title - Review title settings allow customization of Gerrit review titles for both cases (violations found or not)
+   separately. There are several tags to be replaced by real values allowed in this context:
+    1. \<info_count> - will be replaced with count of issues having INFO severity level;
+    2. \<minor_count> - will be replaced with count of issues having MINOR severity level;
+    3. \<major_count> - will be replaced with count of issues having MAJOR severity level;
+    4. \<critical_count> - will be replaced with count of issues having CRITICAL severity level;
+    5. \<blocker_count> - will be replaced with count of issues having BLOCKER severity level;
+    6. \<min_minor_count> - will be replaced with count of issues having MINOR severity level or higher;
+    7. \<min_major_count> - will be replaced with count of issues having MAJOR severity level or higher;
+    8. \<min_critical_count> - will be replaced with count of issues having CRITICAL severity level or higher;
+    9. \<total_count> - will be replaced with total count of issues.
 2. Comment - Issue comment pattern. Available tags:
-   1. \<key> - will be replaced with issue key;
-   2. \<component> - will be replaced with issue component info;
-   3. \<message> - will be replaced with issue message;
-   4. \<severity> - will be replaced with issue severity;
-   5. \<rule> - will be replaced with issue rule name;
-   6. \<rule_url> - will be replaced with link to rule description on SonarQube;
-   7. \<status> - will be replaced with issue status;
-   8. \<creation_date> - will be replaced with issue creation date.
+    1. \<key> - will be replaced with issue key;
+    2. \<component> - will be replaced with issue component info;
+    3. \<message> - will be replaced with issue message;
+    4. \<severity> - will be replaced with issue severity;
+    5. \<rule> - will be replaced with issue rule name;
+    6. \<rule_url> - will be replaced with link to rule description on SonarQube;
+    7. \<status> - will be replaced with issue status;
+    8. \<creation_date> - will be replaced with issue creation date.
 
 #### Score Settings
 
 Starting with v. 2.1 it's become possible to specify a separate filter for score settings.
 
-![alt text](doc/score-settings.png "Score settings")
+![Score settings](doc/score-settings.png)
 
 1. Post score - This setting describes whether it is necessary to post score to Gerrit or not.
 2. Category - Gerrit category used for score posting. Default value: Code-Review.
 3. Score for no SonarQube violation found case - Score to be posted to Gerrit. Default value: +1
 4. Score for SonarQube violations found case - Score to be posted to Gerrit. Default value: -1
 
-Please note: to use Gerrit category other than Default it is necessary to configure it in Gerrit. See details in [Gerrit Documentation](https://gerrit-review.googlesource.com/Documentation/config-labels.html).
+Please note: to use Gerrit category other than Default it is necessary to configure it in Gerrit. See details
+in [Gerrit Documentation](https://gerrit-review.googlesource.com/Documentation/config-labels.html).
 
 An example of settings to be added to the project.config for creating Sonar-Verified category:
 
@@ -171,13 +262,16 @@ And access rights:
 
 #### Credentials override
 
-To override the credentials used to post comments on the job level set up section "Override default HTTP credentials". (Global credentials on the Gerrit Trigger Server level should be set up as well for Gerrit Trigger needs.)
+To override the credentials used to post comments on the job level set up section "Override default HTTP credentials". (
+Global credentials on the Gerrit Trigger Server level should be set up as well for Gerrit Trigger needs.)
 
-![alt text](doc/credentials-settings.png "Credentials settings")
+![Credentials settings](doc/credentials-settings.png)
 
-1. Override default HTTP credentials? - This setting describes whether it is necessary to override Gerrit credentials from the Gerrit Trigger Server settings or not.
+1. Override default HTTP credentials? - This setting describes whether it is necessary to override Gerrit credentials
+   from the Gerrit Trigger Server settings or not.
 2. HTTP credentials - Credentials to be used to post review result to Gerrit.
-3. Gerrit Server - The server used to check connection with overridden credentials. The value *does not* affect plugin settings and only used to verify credentials.
+3. Gerrit Server - The server used to check connection with overridden credentials. The value *does not* affect plugin
+   settings and only used to verify credentials.
 
 #### Notification Settings
 
@@ -191,111 +285,160 @@ Options :
 
 * None - No notification regarding particular review will be sent.
 * Owner - Notification with review results will be sent to a change owner.
-* Owner & Reviewers - Notification with review results will be sent to an owner and to all the change reviewers added to the change.
+* Owner & Reviewers - Notification with review results will be sent to an owner and to all the change reviewers added to
+  the change.
 * All - Everyone in Gerrit project will receive notification.
 
-![alt text](doc/notification-settings.png "Notification settings")
+![Notification settings](doc/notification-settings.png)
 
-## Pipelines support
+## Pipeline full examples
 
-Basic support for pipelines is added in 2.0
-
-### Pipeline with default settings example
+### Pull request analysis (since SonarQube 7.2)
 
 ```groovy
 node {
-    // trigger build
-    git url: 'ssh://your_project_repo'
-    // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
-    def changeBranch = "change-${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER}"
-    sh "git fetch origin ${GERRIT_REFSPEC}:${changeBranch}"
-    sh "git checkout ${changeBranch}" 
- 
- 
-    // Get the maven tool.
-    def mvnHome = tool 'M3'
-    // Mark the code build 'stage'....
-    stage 'Build'
-    // Run the maven build
-    sh "${mvnHome}/bin/mvn clean verify sonar:sonar -Dmaven.test.skip=true -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json"
-
-
-    // to run plugin with default settings
-    stage 'Review'
-    sonarToGerrit()
- 
+   stage('Build') {
+      // trigger build
+      git url: 'ssh://your_project_repo'
+      // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
+      def changeBranch = "change-${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER}"
+      sh "git fetch origin ${GERRIT_REFSPEC}:${changeBranch}"
+      sh "git checkout ${changeBranch}"
+      try {
+         withSonarQubeEnv('my-sonar-installation') {
+            withMaven(maven: 'my-maven-installation') {
+               sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${GERRIT_BRANCH} -Dsonar.pullrequest.branch=${GERRIT_REFSPEC}"
+            }
+         }
+      } finally {
+         sonarToGerrit(
+                 inspectionConfig: [
+                         analysisStrategy: pullRequest()
+                 ]
+                 /* Optional parameters
+                 , reviewConfig: [
+                         issueFilterConfig      : [
+                                 severity        : 'INFO',
+                                 newIssuesOnly   : false,
+                                 changedLinesOnly: false
+                         ],
+                         noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
+                         someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
+                         issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
+                 ],
+                 scoreConfig: [
+                         issueFilterConfig: [
+                                 severity        : 'INFO',
+                                 newIssuesOnly   : false,
+                                 changedLinesOnly: false
+                         ],
+                         category         : 'Code-Review',
+                         noIssuesScore    : 0,
+                         issuesScore      : -1
+                 ],
+                 notificationConfig: [
+                         noIssuesNotificationRecipient       : 'NONE',
+                         commentedIssuesNotificationRecipient: 'OWNER',
+                         negativeScoreNotificationRecipient  : 'OWNER'
+                 ],
+                 authConfig: [
+                         httpCredentialsId: 'b948c0ba-51a2-4eb7-b42b-71e6a77d7d34'
+                 ]*/
+         )
+      }
+   }
 }
+
 ```
 
-### Pipeline overridden settings example
+### Preview mode analysis (until SonarQube 7.6)
 
 ```groovy
-sonarToGerrit (
-        inspectionConfig: [
-            analysisStrategy: previewMode(
-                    sonarQubeInstallationName: 'My SonarQube Installation',
-                    baseConfig: [
-                            projectPath: '',
-                            sonarReportPath: 'target/sonar/sonar-report.json',
-                            autoMatch: true
-                    ]
-                    // OR
-                    //subJobConfigs : [
-                    //  [
-                    //      projectPath: 'module0',
-                    //      sonarReportPath: 'target/sonar/sonar-report.json'
-                    //  ],
-                    //  [
-                    //      projectPath: 'module1',
-                    //      sonarReportPath: 'target/module1/sonar/sonar-report.json'
-                    //  ]
-                    //]
-            )
-        ],
-        reviewConfig: [ 
-            issueFilterConfig: [
-                severity: 'INFO', 
-                newIssuesOnly: false, 
-                changedLinesOnly: false
-                ], 
-            noIssuesTitleTemplate: 'SonarQube violations have not been found.', 
-            someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
-            issueCommentTemplate: '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
-        ],
-        scoreConfig: [ 
-            issueFilterConfig: [
-                severity: 'INFO', 
-                newIssuesOnly: false, 
-                changedLinesOnly: false
-                ], 
-            category: 'Code-Review', 
-            noIssuesScore: 0,
-            issuesScore: -1
-        ],
-        notificationConfig: [
-            noIssuesNotificationRecipient: 'NONE',
-            commentedIssuesNotificationRecipient: 'OWNER',
-            negativeScoreNotificationRecipient: 'OWNER'
-        ],
-        authConfig: [
-            httpCredentialsId: 'b948c0ba-51a2-4eb7-b42b-71e6a77d7d34'
-        ]
-    )
+node {
+   stage('Build') {
+      // trigger build
+      git url: 'ssh://your_project_repo'
+      // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
+      def changeBranch = "change-${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER}"
+      sh "git fetch origin ${GERRIT_REFSPEC}:${changeBranch}"
+      sh "git checkout ${changeBranch}"
+      try {
+         withSonarQubeEnv('my-sonar-installation') {
+            withMaven(maven: 'my-maven-installation') {
+               sh "mvn clean verify sonar:sonar -Dsonar.analysis.mode=preview -Dsonar.report.export.path=sonar-report.json"
+            }
+         }
+      } finally {
+         sonarToGerrit(
+                 inspectionConfig: [
+                         analysisStrategy: previewMode(
+                                 sonarQubeInstallationName: 'My SonarQube Installation',
+                                 baseConfig: [
+                                         projectPath    : '',
+                                         sonarReportPath: 'target/sonar/sonar-report.json',
+                                         autoMatch      : true
+                                 ]
+                                 // OR
+                                 //subJobConfigs : [
+                                 //  [
+                                 //      projectPath: 'module0',
+                                 //      sonarReportPath: 'target/sonar/sonar-report.json'
+                                 //  ],
+                                 //  [
+                                 //      projectPath: 'module1',
+                                 //      sonarReportPath: 'target/module1/sonar/sonar-report.json'
+                                 //  ]
+                                 //]
+                         )
+                 ]
+                 /* Optional parameters
+                 , reviewConfig: [
+                         issueFilterConfig      : [
+                                 severity        : 'INFO',
+                                 newIssuesOnly   : false,
+                                 changedLinesOnly: false
+                         ],
+                         noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
+                         someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
+                         issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
+                 ],
+                 scoreConfig: [
+                         issueFilterConfig: [
+                                 severity        : 'INFO',
+                                 newIssuesOnly   : false,
+                                 changedLinesOnly: false
+                         ],
+                         category         : 'Code-Review',
+                         noIssuesScore    : 0,
+                         issuesScore      : -1
+                 ],
+                 notificationConfig: [
+                         noIssuesNotificationRecipient       : 'NONE',
+                         commentedIssuesNotificationRecipient: 'OWNER',
+                         negativeScoreNotificationRecipient  : 'OWNER'
+                 ],
+                 authConfig: [
+                         httpCredentialsId: 'b948c0ba-51a2-4eb7-b42b-71e6a77d7d34'
+                 ]*/
+         )
+      }
+   }
+}
 ```
 
 ## Result example
 
 ### Result of plugin work in Gerrit history:
 
-![alt text](doc/gerrit-history-example.png "Gerrit history example")
+![Gerrit history example](doc/gerrit-history-example.png)
 
 ### Gerrit commit
 
-![alt text](doc/gerrit-commit-example.png "Gerrit commit example")
+![Gerrit commit example](doc/gerrit-commit-example.png)
 
 ### Score posted
 
-![alt text](doc/score-posted-example.png "Score posted example")
+![Score posted example](doc/score-posted-example.png)
 
 ## Troubleshooting
 
@@ -303,23 +446,26 @@ sonarToGerrit (
 
 This message occurres when RestAPIException is thrown by Gerrit API on attempt to post request.
 
-Since version 1.0.7 it is possible to obtain a full stacktrace of the exception using a logger for class `org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher`
+Since version 1.0.7 it is possible to obtain a full stacktrace of the exception using a logger for
+class `org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher`
 
-![alt text](doc/plugin-fails.png "Plugin failure")
+![Plugin failure](doc/plugin-fails.png)
 
 The log will contain necessary information about the exception as follows:
 
-![alt text](doc/sonar-gerrit-log.png "Sonar Gerrit log")
+![Sonar Gerrit log](doc/sonar-gerrit-log.png)
 
 ## Version incompatibilities
 
 ### Version 1.0.5
 
-In this version plugin settings has moved from Build Steps to Post Build Actions. User needs to reconfigure jobs, or settings will be erased to default.
+In this version plugin settings has moved from Build Steps to Post Build Actions. User needs to reconfigure jobs, or
+settings will be erased to default.
 
 ## Issues
 
-Report issues and enhancements in the [Issue tracker](https://issues.jenkins.io/issues/?jql=resolution%20is%20EMPTY%20and%20component%3D20853).
+Report issues and enhancements in
+the [Issue tracker](https://issues.jenkins.io/issues/?jql=resolution%20is%20EMPTY%20and%20component%3D20853).
 
 ## Contributing
 

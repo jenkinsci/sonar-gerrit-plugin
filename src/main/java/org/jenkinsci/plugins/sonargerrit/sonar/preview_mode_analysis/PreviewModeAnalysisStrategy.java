@@ -5,6 +5,7 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.sonar.SonarGlobalConfiguration;
 import hudson.plugins.sonar.SonarInstallation;
@@ -127,7 +128,8 @@ public class PreviewModeAnalysisStrategy
   }
 
   @Override
-  public InspectionReport analyse(TaskListener listener, Revision revision, FilePath workspace)
+  public InspectionReport analyse(
+      Run<?, ?> run, TaskListener listener, Revision revision, FilePath workspace)
       throws IOException, InterruptedException {
     return new SonarConnector(listener, this, revision, getSonarQubeInstallation().orElse(null))
         .readSonarReports(workspace);
@@ -162,7 +164,7 @@ public class PreviewModeAnalysisStrategy
 
     @Override
     public String getDisplayName() {
-      return "Preview mode analysis";
+      return "Preview mode analysis (until SonarQube 7.6)";
     }
   }
 }

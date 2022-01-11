@@ -16,6 +16,11 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 @Restricted(NoExternalUse.class)
 public class TaskListenerLogger {
 
+  public static void log(TaskListener listener, String message, Object... params) {
+    listener.getLogger().printf(message, params);
+    listener.getLogger().println();
+  }
+
   public static void logMessage(
       TaskListener listener, Logger logger, Level level, String message, Object... params) {
     message = getLocalized(message, params);

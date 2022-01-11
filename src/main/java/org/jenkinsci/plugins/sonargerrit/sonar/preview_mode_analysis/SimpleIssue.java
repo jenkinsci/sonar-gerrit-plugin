@@ -1,9 +1,9 @@
 package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Date;
+import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
+import org.jenkinsci.plugins.sonargerrit.sonar.Rule;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -13,7 +13,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 class SimpleIssue implements Issue {
 
   private final IssueRepresentation representation;
-  private final ComponentPathBuilder pathBuilder;
+  private final Components components;
   private final SubJobConfig config;
   private final String sonarQubeUrl;
 
@@ -21,48 +21,26 @@ class SimpleIssue implements Issue {
 
   public SimpleIssue(
       IssueRepresentation representation,
-      ComponentPathBuilder pathBuilder,
+      Components components,
       SubJobConfig config,
       String sonarQubeUrl) {
     this.representation = representation;
-    this.pathBuilder = pathBuilder;
+    this.components = components;
     this.config = config;
     this.sonarQubeUrl = sonarQubeUrl;
   }
 
   @Override
   public String getRuleLink() {
-    if (sonarQubeUrl == null) {
-      return getRule();
-    }
-    StringBuilder sb = new StringBuilder();
-    String url = sonarQubeUrl.trim();
-    if (!(url.startsWith("http://") || sonarQubeUrl.startsWith("https://"))) {
-      sb.append("http://");
-    }
-    sb.append(url);
-    if (!(url.endsWith("/"))) {
-      sb.append("/");
-    }
-    sb.append("coding_rules#rule_key=");
-    sb.append(escapeHttp(getRule())); // squid%3AS1319
-    return sb.toString();
-  }
-
-  private String escapeHttp(String query) {
-    try {
-      return URLEncoder.encode(query, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      return query;
-    }
+    return new Rule(getRule()).createLink(sonarQubeUrl);
   }
 
   @Override
   public String getFilepath() {
     if (filepath == null) {
-      if (pathBuilder != null) {
+      if (components != null) {
         filepath =
-            pathBuilder
+            components
                 .buildPrefixedPathForComponentWithKey(getComponent(), config.getProjectPath())
                 .or(getComponent());
       } else {
