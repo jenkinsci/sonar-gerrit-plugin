@@ -76,13 +76,13 @@ public class SonarqubeServer {
     OkHttpClient httpClient = SonarqubeOkHttpClients.get();
     RequestBody requestBody =
         RequestBody.create(
+            MediaType.parse("application/x-www-form-urlencoded"),
             "login="
                 + username
                 + "&previousPassword="
                 + currentPassword
                 + "&password="
-                + newPassword,
-            MediaType.get("application/x-www-form-urlencoded"));
+                + newPassword);
     Request request =
         new Request.Builder()
             .url(sonarqubeUrl + "/api/users/change_password")
@@ -108,8 +108,8 @@ public class SonarqubeServer {
     OkHttpClient httpClient = SonarqubeOkHttpClients.get();
     RequestBody requestBody =
         RequestBody.create(
-            "key=sonar.plugins.risk.consent&value=ACCEPTED",
-            MediaType.get("application/x-www-form-urlencoded"));
+            MediaType.parse("application/x-www-form-urlencoded"),
+            "key=sonar.plugins.risk.consent&value=ACCEPTED");
     Request request =
         new Request.Builder()
             .url(sonarqubeUrl + "/api/settings/set")

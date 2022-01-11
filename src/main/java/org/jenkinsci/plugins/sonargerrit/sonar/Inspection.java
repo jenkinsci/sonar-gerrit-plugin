@@ -19,6 +19,7 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SonarQubeInstallations;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
+import org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis.PullRequestAnalysisStrategy;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -198,7 +199,9 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
     @SuppressWarnings("unused")
     public List<Descriptor<?>> getAnalysisStrategyDescriptors() {
       Jenkins jenkins = Jenkins.get();
-      return ImmutableList.of(jenkins.getDescriptorOrDie(PreviewModeAnalysisStrategy.class));
+      return ImmutableList.of(
+          jenkins.getDescriptorOrDie(PreviewModeAnalysisStrategy.class),
+          jenkins.getDescriptorOrDie(PullRequestAnalysisStrategy.class));
     }
 
     @Override

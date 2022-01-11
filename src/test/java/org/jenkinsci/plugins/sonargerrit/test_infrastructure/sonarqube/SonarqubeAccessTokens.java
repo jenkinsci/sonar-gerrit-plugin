@@ -20,7 +20,7 @@ public class SonarqubeAccessTokens {
 
   public String createAdminAccessToken(String name) {
     RequestBody requestBody =
-        RequestBody.create("", MediaType.get("application/x-www-form-urlencoded"));
+        RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"), "");
     Request request =
         new Request.Builder()
             .url(sonarqubeServer.url() + "/api/user_tokens/generate?name=" + name)
