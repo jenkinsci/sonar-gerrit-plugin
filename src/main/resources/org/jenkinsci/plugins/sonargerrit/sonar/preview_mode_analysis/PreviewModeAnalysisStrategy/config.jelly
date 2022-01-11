@@ -1,6 +1,10 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
+  <f:entry title="${%jenkins.plugin.settings.inspection.sonar-qube.installation}" field="sonarQubeInstallationName">
+    <f:select/>
+  </f:entry>
+
   <f:radioBlock name="type"
                 title="${%jenkins.plugin.settings.inspection.base.config}"
                 value="${descriptor.BASE_TYPE}"

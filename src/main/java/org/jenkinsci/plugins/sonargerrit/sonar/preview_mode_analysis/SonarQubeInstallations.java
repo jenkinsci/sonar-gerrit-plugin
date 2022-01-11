@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.sonargerrit.sonar;
+package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import hudson.plugins.sonar.SonarGlobalConfiguration;
 import hudson.plugins.sonar.SonarInstallation;
@@ -11,7 +11,7 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /** @author Réda Housni Alaoui */
 @Restricted(NoExternalUse.class)
-class SonarQubeInstallations {
+public class SonarQubeInstallations {
 
   private SonarQubeInstallations() {}
 

@@ -1,71 +1,69 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.TaskListener;
-import hudson.plugins.sonar.SonarGlobalConfiguration;
 import hudson.plugins.sonar.SonarInstallation;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
+import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SonarQubeInstallations;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 07.12.2017 13:45 $Id$ */
 public class Inspection extends AbstractDescribableImpl<Inspection> {
 
   // Only kept for backward compatibility purpose
-  @SuppressWarnings("unused")
   private transient String serverURL;
 
-  private String sonarQubeInstallationName;
+  private transient String sonarQubeInstallationName;
 
-  @SuppressWarnings("unused")
   private transient SubJobConfig baseConfig;
 
-  @SuppressWarnings("unused")
   private transient Collection<SubJobConfig> subJobConfigs;
 
-  @SuppressWarnings("unused")
   private transient String type;
 
   private AnalysisStrategy analysisStrategy = new PreviewModeAnalysisStrategy();
 
   @SuppressWarnings("unused")
   protected Object readResolve() {
-    if (serverURL != null) {
-      sonarQubeInstallationName = SonarQubeInstallations.get().findOrCreate(serverURL).getName();
-      serverURL = null;
+    if (baseConfig == null
+        && subJobConfigs == null
+        && type == null
+        && serverURL == null
+        && sonarQubeInstallationName == null) {
+      return this;
     }
-    if (baseConfig != null || subJobConfigs != null || type != null) {
-      PreviewModeAnalysisStrategy previewModeAnalysisStrategy = new PreviewModeAnalysisStrategy();
-      analysisStrategy = previewModeAnalysisStrategy;
-      previewModeAnalysisStrategy.setBaseConfig(baseConfig);
-      previewModeAnalysisStrategy.setSubJobConfigs(subJobConfigs);
-      previewModeAnalysisStrategy.setType(type);
 
-      baseConfig = null;
-      subJobConfigs = null;
-      type = null;
-    }
+    PreviewModeAnalysisStrategy previewModeAnalysisStrategy = new PreviewModeAnalysisStrategy();
+    analysisStrategy = previewModeAnalysisStrategy;
+    Optional.ofNullable(baseConfig).ifPresent(previewModeAnalysisStrategy::setBaseConfig);
+    Optional.ofNullable(subJobConfigs).ifPresent(previewModeAnalysisStrategy::setSubJobConfigs);
+    Optional.ofNullable(type).ifPresent(previewModeAnalysisStrategy::setType);
+    Optional.ofNullable(serverURL)
+        .map(url -> SonarQubeInstallations.get().findOrCreate(serverURL).getName())
+        .ifPresent(previewModeAnalysisStrategy::setSonarQubeInstallationName);
+    Optional.ofNullable(sonarQubeInstallationName)
+        .ifPresent(previewModeAnalysisStrategy::setSonarQubeInstallationName);
+
+    baseConfig = null;
+    subJobConfigs = null;
+    type = null;
+    serverURL = null;
+    sonarQubeInstallationName = null;
     return this;
   }
 
@@ -74,23 +72,7 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
 
   public InspectionReport analyse(TaskListener listener, Revision revision, FilePath workspace)
       throws IOException, InterruptedException {
-    return analysisStrategy.analyse(
-        listener, revision, workspace, getSonarQubeInstallation().orElse(null));
-  }
-
-  @Nullable
-  public String getSonarQubeInstallationName() {
-    return sonarQubeInstallationName;
-  }
-
-  private Optional<SonarInstallation> getSonarQubeInstallation() {
-    return Optional.ofNullable(sonarQubeInstallationName)
-        .flatMap(name -> SonarQubeInstallations.get().byName(name));
-  }
-
-  @DataBoundSetter
-  public void setSonarQubeInstallationName(String name) {
-    this.sonarQubeInstallationName = StringUtils.defaultIfBlank(name, null);
+    return analysisStrategy.analyse(listener, revision, workspace);
   }
 
   public AnalysisStrategy getAnalysisStrategy() {
@@ -102,25 +84,43 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
     this.analysisStrategy = analysisStrategy;
   }
 
+  /** @deprecated Use {@link PreviewModeAnalysisStrategy} instead */
+  @Deprecated
+  @Nullable
+  public String getSonarQubeInstallationName() {
+    return getOrSpawnPreviewModeAnalysisStrategy().getSonarQubeInstallationName();
+  }
+
+  /** @deprecated Use {@link PreviewModeAnalysisStrategy} instead */
+  @Deprecated
+  @DataBoundSetter
+  public void setSonarQubeInstallationName(String name) {
+    getOrSetPreviewModeAnalysisStrategy().setSonarQubeInstallationName(name);
+  }
+
   /** @deprecated Use {@link #getSonarQubeInstallationName()} */
   @Deprecated
   @Nonnull
   public String getServerURL() {
-    return Optional.ofNullable(sonarQubeInstallationName)
-        .flatMap(name -> SonarQubeInstallations.get().byName(name))
+    return getOrSpawnPreviewModeAnalysisStrategy()
+        .getSonarQubeInstallation()
         .map(SonarInstallation::getServerUrl)
-        .orElse(DescriptorImpl.SONAR_URL);
+        .orElse(PreviewModeAnalysisStrategy.DescriptorImpl.SONAR_URL);
   }
 
   /** @deprecated Use {@link #setSonarQubeInstallationName(String)} */
+  @Deprecated
   @DataBoundSetter
   public void setServerURL(String serverURL) {
-    this.sonarQubeInstallationName =
+
+    String installationName =
         Optional.ofNullable(serverURL)
             .filter(StringUtils::isNotBlank)
             .map(name -> SonarQubeInstallations.get().findOrCreate(name))
             .map(SonarInstallation::getName)
             .orElse(null);
+
+    getOrSetPreviewModeAnalysisStrategy().setSonarQubeInstallationName(installationName);
   }
 
   /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
@@ -133,7 +133,7 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
   @Deprecated
   @DataBoundSetter
   public void setBaseConfig(SubJobConfig baseConfig) {
-    this.baseConfig = MoreObjects.firstNonNull(baseConfig, new SubJobConfig());
+    getOrSetPreviewModeAnalysisStrategy().setBaseConfig(baseConfig);
   }
 
   /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
@@ -194,20 +194,6 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
 
   @Extension
   public static class DescriptorImpl extends Descriptor<Inspection> {
-    public static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;
-
-    @SuppressWarnings(value = "unused")
-    public FormValidation doCheckSonarQubeInstallationName(@QueryParameter String value) {
-      return FormValidation.validateRequired(value);
-    }
-
-    @SuppressWarnings("unused")
-    public ListBoxModel doFillSonarQubeInstallationNameItems() {
-      return Stream.of(SonarGlobalConfiguration.get().getInstallations())
-          .map(SonarInstallation::getName)
-          .map(ListBoxModel.Option::new)
-          .collect(Collectors.collectingAndThen(Collectors.toList(), ListBoxModel::new));
-    }
 
     @SuppressWarnings("unused")
     public List<Descriptor<?>> getAnalysisStrategyDescriptors() {

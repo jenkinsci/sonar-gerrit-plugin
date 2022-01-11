@@ -156,8 +156,8 @@ class PreviewModeAnalysisTest {
 
     SonarToGerritPublisher sonarToGerrit = new SonarToGerritPublisher();
     Inspection inspectionConfig = sonarToGerrit.getInspectionConfig();
-    inspectionConfig.setSonarQubeInstallationName(cluster.jenkinsSonarqubeInstallationName());
     PreviewModeAnalysisStrategy analysisStrategy = new PreviewModeAnalysisStrategy();
+    analysisStrategy.setSonarQubeInstallationName(cluster.jenkinsSonarqubeInstallationName());
     analysisStrategy.setAutoMatch(true);
     inspectionConfig.setAnalysisStrategy(analysisStrategy);
     IssueFilterConfig issueFilterConfig = sonarToGerrit.getReviewConfig().getIssueFilterConfig();
@@ -205,9 +205,11 @@ class PreviewModeAnalysisTest {
             + "} finally {\n"
             + "sonarToGerrit(\n"
             + "inspectionConfig: [\n"
+            + "analysisStrategy: previewMode(\n"
             + String.format(
                 "sonarQubeInstallationName: '%s',\n", cluster.jenkinsSonarqubeInstallationName())
-            + "analysisStrategy: previewMode(baseConfig: [autoMatch: true])\n"
+            + "baseConfig: [autoMatch: true]\n"
+            + ")\n"
             + "],\n" // inspectionConfig
             + "reviewConfig: [\n"
             + "issueFilterConfig: [\n"
