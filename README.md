@@ -74,8 +74,6 @@ There are the next sections:
 
 #### SonarQube Settings
 
-![alt text](doc/sonar-qube-installation.png "SonarQube installation")
-
 ##### Preview mode analysis
 
 Use setting "Project configuration" if only one SonarQube report is generated and static code analysis of the whole project is required.
