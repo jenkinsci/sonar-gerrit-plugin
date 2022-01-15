@@ -301,13 +301,13 @@ node {
       // trigger build
       git url: 'ssh://your_project_repo'
       // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
-      def changeBranch = "change-${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER}"
-      sh "git fetch origin ${GERRIT_REFSPEC}:${changeBranch}"
+      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER}"
+      sh "git fetch origin ${env.GERRIT_REFSPEC}:${changeBranch}"
       sh "git checkout ${changeBranch}"
       try {
          withSonarQubeEnv('my-sonar-installation') {
             withMaven(maven: 'my-maven-installation') {
-               sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${GERRIT_BRANCH} -Dsonar.pullrequest.branch=${GERRIT_REFSPEC}"
+               sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
             }
          }
       } finally {
@@ -359,8 +359,8 @@ node {
       // trigger build
       git url: 'ssh://your_project_repo'
       // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
-      def changeBranch = "change-${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER}"
-      sh "git fetch origin ${GERRIT_REFSPEC}:${changeBranch}"
+      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER}"
+      sh "git fetch origin ${env.GERRIT_REFSPEC}:${changeBranch}"
       sh "git checkout ${changeBranch}"
       try {
          withSonarQubeEnv('my-sonar-installation') {
