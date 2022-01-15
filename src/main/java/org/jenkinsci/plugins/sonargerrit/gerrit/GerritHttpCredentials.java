@@ -37,7 +37,8 @@ class GerritHttpCredentials {
 
   /** @return Empty if username and password are null */
   public Optional<String> migrate(String username, Secret password) {
-    if (Util.fixEmpty(username) == null && password == null) {
+    if (Util.fixEmpty(username) == null
+        && (password == null || Util.fixEmpty(password.getPlainText()) == null)) {
       return Optional.empty();
     }
     StandardUsernamePasswordCredentials credentials =
