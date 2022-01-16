@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -9,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.NotifyHandling;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
@@ -46,7 +46,21 @@ public class GerritReviewBuilder {
     // review
     String reviewMessage = getReviewMessage(finalIssuesToComment);
     ReviewInput reviewInput = new ReviewInput().message(reviewMessage);
-    reviewInput.comments = generateComments();
+
+    switch (reviewConfig.getCommentType()) {
+      case STANDARD:
+        reviewInput.comments =
+            generateComments().entrySet().stream()
+                .collect(
+                    Collectors.toMap(
+                        Map.Entry::getKey, entry -> new ArrayList<>(entry.getValue())));
+        break;
+      case ROBOT:
+        reviewInput.robotComments = generateComments();
+        break;
+      default:
+        throw new IllegalStateException("Unexpected comment type " + reviewConfig.getCommentType());
+    }
 
     // score
     int score = 0;
@@ -88,19 +102,19 @@ public class GerritReviewBuilder {
     }
   }
 
-  private Map<String, List<ReviewInput.CommentInput>> generateComments() {
-    Map<String, List<ReviewInput.CommentInput>> file2comments = new HashMap<>();
+  private Map<String, List<ReviewInput.RobotCommentInput>> generateComments() {
+    Map<String, List<ReviewInput.RobotCommentInput>> file2comments = new HashMap<>();
     for (String file : finalIssuesToComment.keySet()) {
       Collection<Issue> issues = finalIssuesToComment.get(file);
-      Collection<ReviewInput.CommentInput> comments =
-          Collections2.transform(issues, new IssueToCommentTransformation());
-      ArrayList<ReviewInput.CommentInput> commentList = Lists.newArrayList(comments);
+      Collection<ReviewInput.RobotCommentInput> comments =
+          Collections2.transform(issues, this::createComment);
+      ArrayList<ReviewInput.RobotCommentInput> commentList = Lists.newArrayList(comments);
       file2comments.put(file, commentList);
     }
     return file2comments;
   }
 
-  private ReviewInput.CommentInput createComment(@Nullable Issue input) {
+  private ReviewInput.RobotCommentInput createComment(@Nullable Issue input) {
     if (input == null) {
       return null;
     }
@@ -108,19 +122,14 @@ public class GerritReviewBuilder {
     String commentTemplate = reviewConfig.getIssueCommentTemplate();
     String message = new CustomIssueFormatter(input, commentTemplate).getMessage();
 
-    ReviewInput.CommentInput commentInput = new ReviewInput.CommentInput();
+    ReviewInput.RobotCommentInput commentInput = new ReviewInput.RobotCommentInput();
     commentInput.id = input.getKey();
     commentInput.line = input.getLine();
     commentInput.message = message;
     commentInput.unresolved = true;
+    commentInput.robotId = input.inspectorName();
+    commentInput.robotRunId = input.inspectionId();
+    input.detailUrl().ifPresent(detailUrl -> commentInput.url = detailUrl);
     return commentInput;
-  }
-
-  private class IssueToCommentTransformation implements Function<Issue, ReviewInput.CommentInput> {
-    @Nullable
-    @Override
-    public ReviewInput.CommentInput apply(@Nullable Issue input) {
-      return createComment(input);
-    }
   }
 }

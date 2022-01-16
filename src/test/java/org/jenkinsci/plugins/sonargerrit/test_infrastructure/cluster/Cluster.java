@@ -22,6 +22,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class Cluster {
 
   private final GerritServer gerrit;
+  private final SonarqubeServer sonarqube;
   private final JenkinsRule jenkinsRule;
 
   private final String jenkinsGerritCredentialsId;
@@ -38,6 +39,7 @@ public class Cluster {
       JenkinsRule jenkinsRule)
       throws IOException {
     this.gerrit = requireNonNull(gerrit);
+    this.sonarqube = requireNonNull(sonarqube);
     this.jenkinsRule = requireNonNull(jenkinsRule);
 
     SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
@@ -88,6 +90,10 @@ public class Cluster {
 
   public GerritServer gerrit() {
     return gerrit;
+  }
+
+  public SonarqubeServer sonarqube() {
+    return sonarqube;
   }
 
   public JenkinsRule jenkinsRule() {

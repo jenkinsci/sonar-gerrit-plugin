@@ -39,7 +39,7 @@ class CustomIssueFormatter {
       case RULE:
         return issue.getRule();
       case RULE_URL:
-        return issue.getRuleLink();
+        return issue.getRuleUrl();
       case STATUS:
         return issue.getStatus();
       case CREATION_DATE:

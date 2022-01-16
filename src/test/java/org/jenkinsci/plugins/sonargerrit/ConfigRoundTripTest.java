@@ -4,6 +4,7 @@ import hudson.model.FreeStyleProject;
 import hudson.util.Secret;
 import java.util.UUID;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewCommentType;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewModeAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
@@ -223,6 +224,7 @@ class ConfigRoundTripTest {
     previewModeAnalysisStrategy.getBaseConfig().setProjectPath("foo");
     previewModeAnalysisStrategy.getBaseConfig().setSonarReportPath("bar");
 
+    before.getReviewConfig().setCommentType(ReviewCommentType.ROBOT);
     before.getReviewConfig().getIssueFilterConfig().setChangedLinesOnly(true);
     before.getReviewConfig().getIssueFilterConfig().setNewIssuesOnly(true);
     before.getReviewConfig().getIssueFilterConfig().setSeverity("BLOCKER");
@@ -256,6 +258,7 @@ class ConfigRoundTripTest {
             "inspectionConfig.analysisStrategy.baseConfig.autoMatch",
             "inspectionConfig.analysisStrategy.baseConfig.projectPath",
             "inspectionConfig.analysisStrategy.baseConfig.sonarReportPath",
+            "reviewConfig.commentType",
             "reviewConfig.issueFilterConfig.changedLinesOnly",
             "reviewConfig.issueFilterConfig.newIssuesOnly",
             "reviewConfig.issueFilterConfig.severity",
@@ -281,6 +284,7 @@ class ConfigRoundTripTest {
 
     before.getInspectionConfig().setAnalysisStrategy(new PullRequestAnalysisStrategy());
 
+    before.getReviewConfig().setCommentType(ReviewCommentType.ROBOT);
     before.getReviewConfig().getIssueFilterConfig().setChangedLinesOnly(true);
     before.getReviewConfig().getIssueFilterConfig().setNewIssuesOnly(true);
     before.getReviewConfig().getIssueFilterConfig().setSeverity("BLOCKER");
@@ -311,6 +315,7 @@ class ConfigRoundTripTest {
         String.join(
             ",",
             "inspectionConfig.analysisStrategy",
+            "reviewConfig.commentType",
             "reviewConfig.issueFilterConfig.changedLinesOnly",
             "reviewConfig.issueFilterConfig.newIssuesOnly",
             "reviewConfig.issueFilterConfig.severity",

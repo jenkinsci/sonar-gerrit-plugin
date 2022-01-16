@@ -19,12 +19,14 @@ import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.sonarqube.ws.Ce;
 import org.sonarqube.ws.Issues;
+import org.sonarqube.ws.ProjectPullRequests;
 import org.sonarqube.ws.client.HttpConnector;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.ce.CeService;
 import org.sonarqube.ws.client.ce.TaskRequest;
 import org.sonarqube.ws.client.issues.SearchRequest;
+import org.sonarqube.ws.client.projectpullrequests.ListRequest;
 
 /** @author Réda Housni Alaoui */
 class PullRequestAnalysisTask {
@@ -123,8 +125,8 @@ class PullRequestAnalysisTask {
       Thread.sleep(CE_TASK_COMPLETION_CHECK_INTERVAL.toMillis());
     }
 
-    String pullRequest = ceTask.getPullRequest();
-    if (StringUtils.isBlank(pullRequest)) {
+    String pullRequestKey = ceTask.getPullRequest();
+    if (StringUtils.isBlank(pullRequestKey)) {
       // Sometimes, when the task fails very early, the pull request attribute is blank.
       // This is why, we can't control the presence of this attribute before creating the
       // PullRequestAnalysisTask.
@@ -132,10 +134,22 @@ class PullRequestAnalysisTask {
           String.format("No pull request found for SonarQube task '%s'", taskId));
     }
 
+    ProjectPullRequests.PullRequest pullRequest =
+        sonarClient.projectPullRequests().list(new ListRequest().setProject(componentKey))
+            .getPullRequestsList().stream()
+            .filter(pr -> pullRequestKey.equals(pr.getKey()))
+            .findFirst()
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        String.format(
+                            "No pull request found for project '%s' and key '%s'.",
+                            componentKey, pullRequestKey)));
+
     SearchRequest issueSearchRequest =
         new SearchRequest()
             .setComponentKeys(Collections.singletonList(componentKey))
-            .setPullRequest(pullRequest);
+            .setPullRequest(pullRequestKey);
 
     Issues.SearchWsResponse issueSearchResponse = sonarClient.issues().search(issueSearchRequest);
 
@@ -146,7 +160,7 @@ class PullRequestAnalysisTask {
                 .collect(Collectors.toList()));
 
     return issueSearchResponse.getIssuesList().stream()
-        .map(issue -> new PullRequestIssue(components, issue, serverUrl))
+        .map(issue -> new PullRequestIssue(pullRequest, components, issue, serverUrl))
         .collect(Collectors.toList());
   }
 

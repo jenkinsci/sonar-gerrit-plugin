@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.gerrit;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Date;
+import java.util.Optional;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
@@ -62,7 +63,7 @@ public class ReviewResultTest {
     }
 
     @Override
-    public String getRuleLink() {
+    public String getRuleUrl() {
       return getRule();
     }
 
@@ -84,6 +85,21 @@ public class ReviewResultTest {
     @Override
     public String getMessage() {
       return "message";
+    }
+
+    @Override
+    public String inspectorName() {
+      return null;
+    }
+
+    @Override
+    public String inspectionId() {
+      return null;
+    }
+
+    @Override
+    public Optional<String> detailUrl() {
+      return Optional.empty();
     }
 
     @Override

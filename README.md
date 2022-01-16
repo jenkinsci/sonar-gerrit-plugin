@@ -56,9 +56,9 @@ see [Gerrit Trigger Wiki page](https://plugins.jenkins.io/gerrit-trigger/#plugin
 
 In case when the plugin is runing outside of a job with Gerrit Trigger the next environmental variables should be set:
 
-* GERRIT_NAME - Gerrit server name
-* GERRIT_CHANGE_NUMBER - Change number
-* GERRIT_PATCHSET_NUMBER - Patchset number
+* `GERRIT_NAME` - Gerrit server name
+* `GERRIT_CHANGE_NUMBER` - Change number
+* `GERRIT_PATCHSET_NUMBER` - Patchset number
 
 ## Setup
 
@@ -72,9 +72,7 @@ Sonar Gerrit plugin is intended to run as post-build action. Choose it from avai
 
 ### Plugin settings
 
-There are several settings allows customise plugin for your needs.
-
-There are the next sections:
+There are several settings allowing to customise the plugin for your needs.
 
 #### SonarQube Settings
 
@@ -200,9 +198,15 @@ It is possible to filter issues by:
 
 Review settings contains of issue filter to specify issues to be commented and review template.
 
-![Filter settings](doc/review-settings.png)
+![Review settings](doc/review-settings.png)
 
-#### Report Formatting
+##### Review Comment Type
+
+Posted review comments can be of one of the following types :
+* `STANDARD` - The usual review comment that everyone use.
+* `ROBOT` - Available since Gerrit 2.14. Review comment type to be used by robots. See https://gerrit-review.googlesource.com/Documentation/config-robot-comments.html for more details.
+
+##### Report Formatting
 
 This section allows user to customise text, intended to use as review title and issue comment.
 
@@ -317,6 +321,7 @@ node {
                  ]
                  /* Optional parameters
                  , reviewConfig: [
+                         commentType: 'STANDARD', // 'STANDARD' or 'ROBOT'
                          issueFilterConfig      : [
                                  severity        : 'INFO',
                                  newIssuesOnly   : false,
@@ -393,6 +398,7 @@ node {
                  ]
                  /* Optional parameters
                  , reviewConfig: [
+                         commentType: 'STANDARD', // 'STANDARD' or 'ROBOT'
                          issueFilterConfig      : [
                                  severity        : 'INFO',
                                  newIssuesOnly   : false,

@@ -7,6 +7,7 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.client.ListChangesOption;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.CommentInfo;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.RobotCommentInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.apache.commons.lang.StringUtils;
 
@@ -40,6 +41,12 @@ public class GerritChange {
 
   public List<CommentInfo> listComments() throws RestApiException {
     return changeApi.comments().values().stream()
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
+  }
+
+  public List<RobotCommentInfo> listRobotComments() throws RestApiException {
+    return changeApi.robotComments().values().stream()
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
   }
