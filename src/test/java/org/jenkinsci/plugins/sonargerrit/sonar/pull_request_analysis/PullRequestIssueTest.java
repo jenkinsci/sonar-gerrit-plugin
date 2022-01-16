@@ -6,12 +6,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.base.Optional;
+import me.redaalaoui.org.sonarqube.ws.Issues;
+import me.redaalaoui.org.sonarqube.ws.ProjectPullRequests;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.sonarqube.ws.Issues;
-import org.sonarqube.ws.ProjectPullRequests;
 
 /** @author Réda Housni Alaoui */
 class PullRequestIssueTest {

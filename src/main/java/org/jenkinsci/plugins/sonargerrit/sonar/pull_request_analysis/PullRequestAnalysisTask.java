@@ -13,20 +13,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import me.redaalaoui.org.sonarqube.ws.Ce;
+import me.redaalaoui.org.sonarqube.ws.Issues;
+import me.redaalaoui.org.sonarqube.ws.ProjectPullRequests;
+import me.redaalaoui.org.sonarqube.ws.client.HttpConnector;
+import me.redaalaoui.org.sonarqube.ws.client.WsClient;
+import me.redaalaoui.org.sonarqube.ws.client.WsClientFactories;
+import me.redaalaoui.org.sonarqube.ws.client.ce.CeService;
+import me.redaalaoui.org.sonarqube.ws.client.ce.TaskRequest;
+import me.redaalaoui.org.sonarqube.ws.client.issues.SearchRequest;
+import me.redaalaoui.org.sonarqube.ws.client.projectpullrequests.ListRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
-import org.sonarqube.ws.Ce;
-import org.sonarqube.ws.Issues;
-import org.sonarqube.ws.ProjectPullRequests;
-import org.sonarqube.ws.client.HttpConnector;
-import org.sonarqube.ws.client.WsClient;
-import org.sonarqube.ws.client.WsClientFactories;
-import org.sonarqube.ws.client.ce.CeService;
-import org.sonarqube.ws.client.ce.TaskRequest;
-import org.sonarqube.ws.client.issues.SearchRequest;
-import org.sonarqube.ws.client.projectpullrequests.ListRequest;
 
 /** @author Réda Housni Alaoui */
 class PullRequestAnalysisTask {
