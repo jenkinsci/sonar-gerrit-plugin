@@ -1,8 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis;
 
 import javax.annotation.Nullable;
+import me.redaalaoui.org.sonarqube.ws.Issues;
 import org.jenkinsci.plugins.sonargerrit.sonar.Component;
-import org.sonarqube.ws.Issues;
 
 /** @author Réda Housni Alaoui */
 class PullRequestComponent implements Component {

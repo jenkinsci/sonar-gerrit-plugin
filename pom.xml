@@ -38,7 +38,7 @@
     <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
     <assertj-core.version>3.21.0</assertj-core.version>
     <logback-classic.version>1.2.3</logback-classic.version>
-    <sonar-ws.version>7.7</sonar-ws.version>
+    <sonar-ws-shaded.version>7.7.0</sonar-ws-shaded.version>
   </properties>
 
   <name>Sonar Gerrit Plugin</name>
@@ -130,9 +130,9 @@
       <version>${gerrit-rest-java-client.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-ws</artifactId>
-      <version>${sonar-ws.version}</version>
+      <groupId>me.redaalaoui.sonar_ws</groupId>
+      <artifactId>sonar-ws-shaded</artifactId>
+      <version>${sonar-ws-shaded.version}</version>
     </dependency>
 
     <dependency>

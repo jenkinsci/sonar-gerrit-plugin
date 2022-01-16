@@ -5,13 +5,13 @@ import static java.util.Objects.requireNonNull;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Optional;
+import me.redaalaoui.org.sonarqube.ws.Issues;
+import me.redaalaoui.org.sonarqube.ws.ProjectPullRequests;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Rule;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.jenkinsci.plugins.sonargerrit.util.UrlBuilder;
-import org.sonarqube.ws.Issues;
-import org.sonarqube.ws.ProjectPullRequests;
 
 /** @author Réda Housni Alaoui */
 class PullRequestIssue implements Issue {
