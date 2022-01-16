@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
 import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Rule;
@@ -31,8 +33,23 @@ class SimpleIssue implements Issue {
   }
 
   @Override
-  public String getRuleLink() {
-    return new Rule(getRule()).createLink(sonarQubeUrl);
+  public String getRuleUrl() {
+    return new Rule(getRule()).createUrl(sonarQubeUrl);
+  }
+
+  @Override
+  public String inspectorName() {
+    return "Sonar";
+  }
+
+  @Override
+  public String inspectionId() {
+    return UUID.randomUUID().toString();
+  }
+
+  @Override
+  public Optional<String> detailUrl() {
+    return Optional.empty();
   }
 
   @Override

@@ -19,7 +19,7 @@ public class Rule {
     return id;
   }
 
-  public String createLink(String sonarQubeUrl) {
+  public String createUrl(String sonarQubeUrl) {
     if (sonarQubeUrl == null) {
       return id;
     }

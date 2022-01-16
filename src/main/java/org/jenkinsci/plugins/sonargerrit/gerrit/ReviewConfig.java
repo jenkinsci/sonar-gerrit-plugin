@@ -6,6 +6,7 @@ import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
 import org.jenkinsci.plugins.sonargerrit.sonar.IssueFilterConfig;
@@ -15,6 +16,9 @@ import org.kohsuke.stapler.QueryParameter;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 09.11.2017 14:02 $Id$ */
 public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
+
+  private ReviewCommentType commentType = DescriptorImpl.DEFAULT_COMMENT_TYPE;
+
   /*
    * Filter to be used to extract issues that need to be commented in Gerrit
    * */
@@ -53,6 +57,15 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE,
         DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE,
         DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
+  }
+
+  public ReviewCommentType getCommentType() {
+    return Optional.ofNullable(commentType).orElse(DescriptorImpl.DEFAULT_COMMENT_TYPE);
+  }
+
+  @DataBoundSetter
+  public void setCommentType(ReviewCommentType commentType) {
+    this.commentType = Optional.ofNullable(commentType).orElse(DescriptorImpl.DEFAULT_COMMENT_TYPE);
   }
 
   public IssueFilterConfig getIssueFilterConfig() {
@@ -108,12 +121,18 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
   @Extension
   public static class DescriptorImpl extends Descriptor<ReviewConfig> {
+    public static final ReviewCommentType DEFAULT_COMMENT_TYPE = ReviewCommentType.STANDARD;
     public static final String NO_ISSUES_TITLE_TEMPLATE =
         SonarToGerritPublisher.DescriptorImpl.NO_ISSUES_TEXT;
     public static final String SOME_ISSUES_TITLE_TEMPLATE =
         SonarToGerritPublisher.DescriptorImpl.SOME_ISSUES_TEXT;
     public static final String ISSUE_COMMENT_TEMPLATE =
         SonarToGerritPublisher.DescriptorImpl.ISSUE_COMMENT_TEXT;
+
+    @SuppressWarnings(value = "unused")
+    public String getCommentTypeDisplayName(ReviewCommentType commentType) {
+      return commentType.displayName();
+    }
 
     /**
      * Performs on-the-fly validation of the form field 'noIssuesTitleTemplate'.

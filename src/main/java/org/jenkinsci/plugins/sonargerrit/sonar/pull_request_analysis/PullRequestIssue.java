@@ -4,26 +4,58 @@ import static java.util.Objects.requireNonNull;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Optional;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.Rule;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
+import org.jenkinsci.plugins.sonargerrit.util.UrlBuilder;
 import org.sonarqube.ws.Issues;
+import org.sonarqube.ws.ProjectPullRequests;
 
 /** @author Réda Housni Alaoui */
 class PullRequestIssue implements Issue {
 
+  private final ProjectPullRequests.PullRequest pullRequest;
   private final Issues.Issue issue;
   private final String filePath;
   private final String sonarQubeUrl;
 
-  public PullRequestIssue(Components components, Issues.Issue issue, String sonarQubeUrl) {
+  public PullRequestIssue(
+      ProjectPullRequests.PullRequest pullRequest,
+      Components components,
+      Issues.Issue issue,
+      String sonarQubeUrl) {
+    this.pullRequest = requireNonNull(pullRequest);
     this.issue = requireNonNull(issue);
     this.filePath =
         components
             .buildPrefixedPathForComponentWithKey(issue.getComponent(), "")
             .or(issue.getComponent());
     this.sonarQubeUrl = requireNonNull(sonarQubeUrl);
+  }
+
+  @Override
+  public String inspectorName() {
+    return "Sonar";
+  }
+
+  @Override
+  public String inspectionId() {
+    return pullRequest.getKey();
+  }
+
+  @Override
+  public Optional<String> detailUrl() {
+    return Optional.of(
+        new UrlBuilder()
+            .addSegment(sonarQubeUrl)
+            .addSegment("project")
+            .addSegment("issues")
+            .addQueryParameter("id", issue.getProject())
+            .addQueryParameter("open", issue.getKey())
+            .addQueryParameter("pullRequest", pullRequest.getKey())
+            .build());
   }
 
   @Override
@@ -62,8 +94,8 @@ class PullRequestIssue implements Issue {
   }
 
   @Override
-  public String getRuleLink() {
-    return new Rule(issue.getRule()).createLink(sonarQubeUrl);
+  public String getRuleUrl() {
+    return new Rule(issue.getRule()).createUrl(sonarQubeUrl);
   }
 
   @Override
