@@ -17,6 +17,7 @@ import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import jenkins.model.Jenkins;
@@ -125,7 +126,7 @@ class GerritHttpCredentials {
     private final Secret password;
 
     PluginAuthoredCredentialsMatcher(String username, Secret password) {
-      this.username = username;
+      this.username = Util.fixEmpty(username);
       this.password = Optional.ofNullable(password).orElseGet(() -> Secret.fromString(null));
     }
 
@@ -138,7 +139,7 @@ class GerritHttpCredentials {
       if (!credentials.getId().startsWith(PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX)) {
         return false;
       }
-      return credentials.getUsername().equals(username)
+      return Objects.equals(Util.fixEmpty(credentials.getUsername()), username)
           && credentials.getPassword().equals(password);
     }
   }
