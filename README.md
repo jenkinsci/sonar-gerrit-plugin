@@ -88,7 +88,7 @@ In order to run a pull request scan, `Sonar` requires the following mandatory pr
 
 | Key                      | Recommended value template                        | Example             |
 |--------------------------|---------------------------------------------------|---------------------|
-| sonar.pullrequest.key    | ${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} | 250-1               |
+| sonar.pullrequest.key    | <span>${GERRIT_CHANGE_NUMBER}</span>-${GERRIT_PATCHSET_NUMBER} | 250-1               |
 | sonar.pullrequest.base   | ${GERRIT_BRANCH}                                  | master              |
 | sonar.pullrequest.branch | ${GERRIT_REFSPEC}                                 | refs/changes/01/1/1 |
 
