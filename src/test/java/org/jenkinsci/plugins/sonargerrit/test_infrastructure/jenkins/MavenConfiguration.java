@@ -22,7 +22,7 @@ public class MavenConfiguration {
     ZipExtractionInstaller installer =
         new ZipExtractionInstaller(
             null,
-            "https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz",
+            "https://archive.apache.org/dist/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz",
             "apache-maven-3.8.4");
 
     String name = UUID.randomUUID().toString();
