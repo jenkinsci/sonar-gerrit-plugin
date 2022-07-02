@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.sonargerrit.sonar;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -18,6 +19,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
   private String severity; // todo make enum
   private boolean newIssuesOnly;
   private boolean changedLinesOnly;
+  private String includedPathsGlobPattern;
 
   public IssueFilterConfig(String severity, boolean newIssuesOnly, boolean changedLinesOnly) {
     setSeverity(severity);
@@ -35,8 +37,10 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
     return severity;
   }
 
-  public boolean isChangedLinesOnly() {
-    return changedLinesOnly;
+  @DataBoundSetter
+  public void setSeverity(String severity) {
+    severity = DataHelper.checkEnumValueCorrect(Severity.class, severity);
+    this.severity = MoreObjects.firstNonNull(severity, DescriptorImpl.SEVERITY);
   }
 
   public boolean isNewIssuesOnly() {
@@ -44,19 +48,27 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
   }
 
   @DataBoundSetter
-  public void setSeverity(String severity) {
-    severity = DataHelper.checkEnumValueCorrect(Severity.class, severity);
-    this.severity = MoreObjects.firstNonNull(severity, DescriptorImpl.SEVERITY);
-  }
-
-  @DataBoundSetter
   public void setNewIssuesOnly(boolean newIssuesOnly) {
     this.newIssuesOnly = newIssuesOnly;
+  }
+
+  public boolean isChangedLinesOnly() {
+    return changedLinesOnly;
   }
 
   @DataBoundSetter
   public void setChangedLinesOnly(boolean changedLinesOnly) {
     this.changedLinesOnly = changedLinesOnly;
+  }
+
+  @Nullable
+  public String getIncludedPathsGlobPattern() {
+    return includedPathsGlobPattern;
+  }
+
+  @DataBoundSetter
+  public void setIncludedPathsGlobPattern(String includedPathsGlobPattern) {
+    this.includedPathsGlobPattern = includedPathsGlobPattern;
   }
 
   @Override
@@ -82,9 +94,11 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
      */
     @SuppressWarnings(value = "unused")
     public FormValidation doCheckSeverity(@QueryParameter String value) {
-      if (value == null || Severity.valueOf(value) == null) {
+      if (value == null) {
         return FormValidation.error(
             getLocalized("jenkins.plugin.error.review.filter.severity.unknown"));
+      } else {
+        Severity.valueOf(value);
       }
       return FormValidation.ok();
     }

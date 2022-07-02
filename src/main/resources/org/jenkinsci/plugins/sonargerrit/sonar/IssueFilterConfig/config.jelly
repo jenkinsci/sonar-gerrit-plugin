@@ -34,4 +34,11 @@
              description="${%jenkins.plugin.settings.gerrit.filter.lines.changed.description}">
         <f:checkbox selected="${changedLinesOnly}" default="descriptor.CHANGED_LINES_ONLY"/>
     </f:entry>
+
+    <f:entry
+            title="${%jenkins.plugin.settings.gerrit.filter.included-paths-glob-pattern}"
+            field="includedPathsGlobPattern"
+            description="${%jenkins.plugin.settings.gerrit.filter.included-paths-glob-pattern.description}">
+        <f:textbox/>
+    </f:entry>
 </j:jelly>

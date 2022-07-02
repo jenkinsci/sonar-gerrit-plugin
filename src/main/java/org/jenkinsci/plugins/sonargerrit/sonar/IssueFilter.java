@@ -46,6 +46,11 @@ public class IssueFilter {
       toBeApplied.add(ByMinSeverityPredicate.apply(severity));
     }
 
+    String includedPathsGlobPattern = filterConfig.getIncludedPathsGlobPattern();
+    if (includedPathsGlobPattern != null) {
+      toBeApplied.add(new ByGlobPatternPredicate(includedPathsGlobPattern));
+    }
+
     return Iterables.filter(issues, Predicates.and(toBeApplied));
   }
 }
