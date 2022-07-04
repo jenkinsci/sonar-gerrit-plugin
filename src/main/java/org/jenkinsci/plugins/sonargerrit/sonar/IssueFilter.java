@@ -51,6 +51,11 @@ public class IssueFilter {
       toBeApplied.add(new ByGlobPatternPredicate(includedPathsGlobPattern));
     }
 
+    String excludedPathsGlobPattern = filterConfig.getExcludedPathsGlobPattern();
+    if (excludedPathsGlobPattern != null) {
+      toBeApplied.add(new ByGlobPatternPredicate(excludedPathsGlobPattern).negate());
+    }
+
     return Iterables.filter(issues, Predicates.and(toBeApplied));
   }
 }

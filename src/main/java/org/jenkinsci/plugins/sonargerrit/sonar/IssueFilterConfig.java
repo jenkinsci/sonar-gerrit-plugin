@@ -20,6 +20,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
   private boolean newIssuesOnly;
   private boolean changedLinesOnly;
   private String includedPathsGlobPattern;
+  private String excludedPathsGlobPattern;
 
   public IssueFilterConfig(String severity, boolean newIssuesOnly, boolean changedLinesOnly) {
     setSeverity(severity);
@@ -69,6 +70,16 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
   @DataBoundSetter
   public void setIncludedPathsGlobPattern(String includedPathsGlobPattern) {
     this.includedPathsGlobPattern = includedPathsGlobPattern;
+  }
+
+  @Nullable
+  public String getExcludedPathsGlobPattern() {
+    return excludedPathsGlobPattern;
+  }
+
+  @DataBoundSetter
+  public void setExcludedPathsGlobPattern(String excludedPathsGlobPattern) {
+    this.excludedPathsGlobPattern = excludedPathsGlobPattern;
   }
 
   @Override

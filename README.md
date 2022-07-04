@@ -192,6 +192,7 @@ It is possible to filter issues by:
 3. Changed lines only - when only several lines are changed in a commit user may not want other lines to be commented by
    Gerrit. With "Add comments to changed lines only" unchanged in the commit lines will not be commented in Gerrit.
 4. Included paths' glob pattern - The glob pattern that file paths should match to be included by the filter. Leaving a blank value or setting value `**/*` means any file path will match. Tested file paths always start with `/`.
+5. Excluded paths' glob pattern - The glob pattern that file paths should match to be excluded by the filter. Leaving a blank value means no file path will match. Tested file paths always start with `/`.
 
 ![Filter settings](doc/filter-settings.png)
 
@@ -328,6 +329,7 @@ node {
                                  newIssuesOnly   : false,
                                  changedLinesOnly: false,
                                  includedPathsGlobPattern: null,
+                                 excludedPathsGlobPattern: null,
                          ],
                          noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
@@ -339,6 +341,7 @@ node {
                                  newIssuesOnly   : false,
                                  changedLinesOnly: false,
                                  includedPathsGlobPattern: null,
+                                 excludedPathsGlobPattern: null,
                          ],
                          category         : 'Code-Review',
                          noIssuesScore    : 0,
@@ -407,6 +410,7 @@ node {
                                  newIssuesOnly   : false,
                                  changedLinesOnly: false,
                                  includedPathsGlobPattern: null,
+                                 excludedPathsGlobPattern: null,
                          ],
                          noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
@@ -418,6 +422,7 @@ node {
                                  newIssuesOnly   : false,
                                  changedLinesOnly: false,
                                  includedPathsGlobPattern: null,
+                                 excludedPathsGlobPattern: null,
                          ],
                          category         : 'Code-Review',
                          noIssuesScore    : 0,
