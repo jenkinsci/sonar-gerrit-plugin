@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
+import static hudson.Functions.checkPermission;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.cloudbees.plugins.credentials.common.PasswordCredentials;
@@ -18,12 +19,15 @@ import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.ServletException;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 /** Project: Sonar-Gerrit Plugin Author: Tatiana Didik Created: 12.11.2017 21:43 $Id$ */
 public class GerritAuthenticationConfig
@@ -123,10 +127,14 @@ public class GerritAuthenticationConfig
     }
 
     @SuppressWarnings(value = "unused")
+    @RequirePOST
     public FormValidation doTestConnection(
         @AncestorInPath Item item,
         @QueryParameter("httpCredentialsId") final String httpCredentialsId,
-        @QueryParameter("serverName") final String serverName) {
+        @QueryParameter("serverName") final String serverName)
+        throws ServletException, IOException {
+      checkPermission(item, Item.CONFIGURE);
+
       FormValidation credentialsIdRequiredValidation =
           FormValidation.validateRequired(httpCredentialsId);
       if (credentialsIdRequiredValidation.kind == FormValidation.Kind.ERROR) {
