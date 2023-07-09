@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
-import static hudson.Functions.checkPermission;
 import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 
 import com.cloudbees.plugins.credentials.common.PasswordCredentials;
@@ -19,10 +18,8 @@ import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.ServletException;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -131,9 +128,8 @@ public class GerritAuthenticationConfig
     public FormValidation doTestConnection(
         @AncestorInPath Item item,
         @QueryParameter("httpCredentialsId") final String httpCredentialsId,
-        @QueryParameter("serverName") final String serverName)
-        throws ServletException, IOException {
-      checkPermission(item, Item.CONFIGURE);
+        @QueryParameter("serverName") final String serverName) {
+      item.checkPermission(Item.CONFIGURE);
 
       FormValidation credentialsIdRequiredValidation =
           FormValidation.validateRequired(httpCredentialsId);
