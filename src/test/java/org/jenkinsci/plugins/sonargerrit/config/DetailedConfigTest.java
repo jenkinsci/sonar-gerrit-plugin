@@ -42,6 +42,9 @@ public abstract class DetailedConfigTest extends BaseConfigTest {
   protected static final boolean PATH_AUTO_MATCH =
       PreviewModeAnalysisStrategy.DescriptorImpl.AUTO_MATCH;
 
+  protected static final boolean ISSUE_OMIT_DUPLICATE_COMMENTS =
+      ReviewConfig.DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS;
+
   // IssueFilterConfig
 
   @Test

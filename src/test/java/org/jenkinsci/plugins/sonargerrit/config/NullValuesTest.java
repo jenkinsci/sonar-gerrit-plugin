@@ -81,7 +81,7 @@ public class NullValuesTest extends DetailedConfigTest {
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
     Assertions.assertEquals(CHANGED_LINES_ONLY, config.getIssueFilterConfig().isChangedLinesOnly());
 
-    config = new ReviewConfig(null, null, null, null);
+    config = new ReviewConfig(null, null, null, null, false);
     Assertions.assertNotNull(config.getIssueFilterConfig());
     Assertions.assertEquals(SEVERITY, config.getIssueFilterConfig().getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
@@ -89,6 +89,7 @@ public class NullValuesTest extends DetailedConfigTest {
     Assertions.assertEquals(NO_ISSUES_TITLE_TEMPLATE, config.getNoIssuesTitleTemplate());
     Assertions.assertEquals(SOME_ISSUES_TITLE_TEMPLATE, config.getSomeIssuesTitleTemplate());
     Assertions.assertEquals(ISSUE_COMMENT_TEMPLATE, config.getIssueCommentTemplate());
+    Assertions.assertEquals(ISSUE_OMIT_DUPLICATE_COMMENTS, config.isOmitDuplicateComments());
   }
 
   @Override

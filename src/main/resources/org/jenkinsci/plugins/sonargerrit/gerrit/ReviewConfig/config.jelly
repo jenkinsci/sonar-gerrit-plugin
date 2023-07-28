@@ -32,4 +32,11 @@
                 placeholder="${descriptor.ISSUE_COMMENT_TEMPLATE}"/>
     </f:entry>
 
+    <f:entry
+            title="${%jenkins.plugin.settings.gerrit.review.omit.duplicate.comments}"
+            field="omitDuplicateComments"
+            value="${omitDuplicateComments}"
+            description="${%jenkins.plugin.settings.gerrit.review.omit.duplicate.comments.description}">
+        <f:checkbox selected="${omitDuplicateComments}" default="descriptor.ISSUE_OMIT_DUPLICATE_COMMENTS"/>
+    </f:entry>
 </j:jelly>
