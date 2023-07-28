@@ -150,6 +150,11 @@ public final class BackCompatibilityHelper {
     reviewConfig.setIssueCommentTemplate(issueComment);
   }
 
+  public void setOmitDuplicateComments(boolean omitDuplicateComments) {
+    ReviewConfig reviewConfig = getOrCreateReviewConfig();
+    reviewConfig.setOmitDuplicateComments(omitDuplicateComments);
+  }
+
   // set up Authentication Context
 
   public void setOverrideCredentials(Boolean overrideCredentials) {
@@ -242,6 +247,10 @@ public final class BackCompatibilityHelper {
   }
 
   public boolean isNewIssuesOnly() {
+    return false;
+  }
+
+  public boolean isOmitDuplicateComments() {
     return false;
   }
 

@@ -195,6 +195,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     public static final String ISSUE_COMMENT_TEXT =
         Localization.getLocalized("jenkins.plugin.default.review.body");
 
+    public static final boolean ISSUE_OMIT_DUPLICATE_COMMENTS = false;
+
     public static final String CATEGORY = "Code-Review";
     public static final Integer NO_ISSUES_SCORE = 1;
     public static final Integer SOME_ISSUES_SCORE = -1;
@@ -379,6 +381,12 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   }
 
   @Deprecated
+  @DataBoundSetter
+  public void setOmitDuplicateComments(boolean omitDuplicateComments) {
+    backCompatibilityHelper.setOmitDuplicateComments(omitDuplicateComments);
+  }
+
+  @Deprecated
   public String getSonarURL() {
     return backCompatibilityHelper.getSonarURL();
   }
@@ -396,6 +404,11 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   @Deprecated
   public boolean isNewIssuesOnly() {
     return backCompatibilityHelper.isNewIssuesOnly();
+  }
+
+  @Deprecated
+  public boolean isOmitDuplicateComments() {
+    return backCompatibilityHelper.isOmitDuplicateComments();
   }
 
   @Deprecated

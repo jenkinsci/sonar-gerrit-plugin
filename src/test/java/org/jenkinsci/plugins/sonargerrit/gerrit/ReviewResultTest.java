@@ -34,6 +34,14 @@ public class ReviewResultTest {
     publisher.setScoreConfig(null);
     ReviewInput reviewResult = getReviewResult();
     Assertions.assertNull(reviewResult.labels);
+    Assertions.assertFalse(reviewResult.omitDuplicateComments);
+  }
+
+  @Test
+  public void testOmitDuplicateCommentsSet() {
+    getReviewConfig().setOmitDuplicateComments(true);
+    ReviewInput reviewResult = getReviewResult();
+    Assertions.assertTrue(reviewResult.omitDuplicateComments);
   }
 
   protected ReviewInput getReviewResult() {

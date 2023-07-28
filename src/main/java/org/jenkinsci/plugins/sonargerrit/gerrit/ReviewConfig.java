@@ -39,15 +39,19 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
    * */
   @Nonnull private String issueCommentTemplate = DescriptorImpl.ISSUE_COMMENT_TEMPLATE;
 
+  private boolean omitDuplicateComments = DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS;
+
   public ReviewConfig(
       IssueFilterConfig issueFilterConfig,
       String noIssuesTitleTemplate,
       String someIssuesTitleTemplate,
-      String issueCommentTemplate) {
+      String issueCommentTemplate,
+      boolean omitDuplicateComments) {
     setIssueFilterConfig(issueFilterConfig);
     setNoIssuesTitleTemplate(noIssuesTitleTemplate);
     setSomeIssuesTitleTemplate(someIssuesTitleTemplate);
     setIssueCommentTemplate(issueCommentTemplate);
+    setOmitDuplicateComments(omitDuplicateComments);
   }
 
   @DataBoundConstructor
@@ -56,7 +60,8 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         new IssueFilterConfig(),
         DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE,
         DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE,
-        DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
+        DescriptorImpl.ISSUE_COMMENT_TEMPLATE,
+        DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS);
   }
 
   public ReviewCommentType getCommentType() {
@@ -114,6 +119,15 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
             Util.fixEmptyAndTrim(issueCommentTemplate), DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
   }
 
+  public boolean isOmitDuplicateComments() {
+    return omitDuplicateComments;
+  }
+
+  @DataBoundSetter
+  public void setOmitDuplicateComments(boolean omitDuplicateComments) {
+    this.omitDuplicateComments = omitDuplicateComments;
+  }
+
   @Override
   public DescriptorImpl getDescriptor() {
     return new DescriptorImpl();
@@ -128,6 +142,9 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         SonarToGerritPublisher.DescriptorImpl.SOME_ISSUES_TEXT;
     public static final String ISSUE_COMMENT_TEMPLATE =
         SonarToGerritPublisher.DescriptorImpl.ISSUE_COMMENT_TEXT;
+
+    public static final boolean ISSUE_OMIT_DUPLICATE_COMMENTS =
+        SonarToGerritPublisher.DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS;
 
     @SuppressWarnings(value = "unused")
     public String getCommentTypeDisplayName(ReviewCommentType commentType) {
