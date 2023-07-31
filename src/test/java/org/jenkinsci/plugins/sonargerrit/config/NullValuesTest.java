@@ -81,7 +81,7 @@ public class NullValuesTest extends DetailedConfigTest {
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());
     Assertions.assertEquals(CHANGED_LINES_ONLY, config.getIssueFilterConfig().isChangedLinesOnly());
 
-    config = new ReviewConfig(null, null, null, null, false);
+    config = new ReviewConfig(null, null, null, null);
     Assertions.assertNotNull(config.getIssueFilterConfig());
     Assertions.assertEquals(SEVERITY, config.getIssueFilterConfig().getSeverity());
     Assertions.assertEquals(NEW_ISSUES_ONLY, config.getIssueFilterConfig().isNewIssuesOnly());

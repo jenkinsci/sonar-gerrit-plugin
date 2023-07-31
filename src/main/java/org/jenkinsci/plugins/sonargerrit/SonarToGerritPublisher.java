@@ -380,11 +380,6 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     backCompatibilityHelper.setPath(path);
   }
 
-  @Deprecated
-  @DataBoundSetter
-  public void setOmitDuplicateComments(boolean omitDuplicateComments) {
-    backCompatibilityHelper.setOmitDuplicateComments(omitDuplicateComments);
-  }
 
   @Deprecated
   public String getSonarURL() {
@@ -404,11 +399,6 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
   @Deprecated
   public boolean isNewIssuesOnly() {
     return backCompatibilityHelper.isNewIssuesOnly();
-  }
-
-  @Deprecated
-  public boolean isOmitDuplicateComments() {
-    return backCompatibilityHelper.isOmitDuplicateComments();
   }
 
   @Deprecated

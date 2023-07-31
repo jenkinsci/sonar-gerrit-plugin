@@ -45,13 +45,11 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
       IssueFilterConfig issueFilterConfig,
       String noIssuesTitleTemplate,
       String someIssuesTitleTemplate,
-      String issueCommentTemplate,
-      boolean omitDuplicateComments) {
+      String issueCommentTemplate) {
     setIssueFilterConfig(issueFilterConfig);
     setNoIssuesTitleTemplate(noIssuesTitleTemplate);
     setSomeIssuesTitleTemplate(someIssuesTitleTemplate);
     setIssueCommentTemplate(issueCommentTemplate);
-    setOmitDuplicateComments(omitDuplicateComments);
   }
 
   @DataBoundConstructor
@@ -60,8 +58,7 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
         new IssueFilterConfig(),
         DescriptorImpl.NO_ISSUES_TITLE_TEMPLATE,
         DescriptorImpl.SOME_ISSUES_TITLE_TEMPLATE,
-        DescriptorImpl.ISSUE_COMMENT_TEMPLATE,
-        DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS);
+        DescriptorImpl.ISSUE_COMMENT_TEMPLATE);
   }
 
   public ReviewCommentType getCommentType() {
