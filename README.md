@@ -334,7 +334,7 @@ node {
                          noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
                          issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
-                         omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit.'
+                         omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit. Defaults to false.'
                  ],
                  scoreConfig: [
                          issueFilterConfig: [
@@ -416,7 +416,7 @@ node {
                          noIssuesTitleTemplate  : 'SonarQube violations have not been found.',
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
                          issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
-                         omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit.'
+                         omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit. Defaults to false.'
 
                  ],
                  scoreConfig: [
