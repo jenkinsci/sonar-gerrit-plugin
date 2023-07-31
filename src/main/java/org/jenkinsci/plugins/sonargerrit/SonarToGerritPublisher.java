@@ -380,7 +380,6 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     backCompatibilityHelper.setPath(path);
   }
 
-
   @Deprecated
   public String getSonarURL() {
     return backCompatibilityHelper.getSonarURL();
