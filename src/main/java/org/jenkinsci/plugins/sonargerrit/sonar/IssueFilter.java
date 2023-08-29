@@ -47,12 +47,12 @@ public class IssueFilter {
     }
 
     String includedPathsGlobPattern = filterConfig.getIncludedPathsGlobPattern();
-    if (includedPathsGlobPattern != null) {
+    if (includedPathsGlobPattern != null && !includedPathsGlobPattern.isEmpty()) {
       toBeApplied.add(new ByGlobPatternPredicate(includedPathsGlobPattern));
     }
 
     String excludedPathsGlobPattern = filterConfig.getExcludedPathsGlobPattern();
-    if (excludedPathsGlobPattern != null) {
+    if (excludedPathsGlobPattern != null && !excludedPathsGlobPattern.isEmpty()) {
       toBeApplied.add(new ByGlobPatternPredicate(excludedPathsGlobPattern).negate());
     }
 
