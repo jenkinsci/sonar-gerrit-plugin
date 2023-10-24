@@ -134,17 +134,25 @@ class PullRequestAnalysisTask {
           String.format("No pull request found for SonarQube task '%s'", taskId));
     }
 
-    ProjectPullRequests.PullRequest pullRequest =
-        sonarClient.projectPullRequests().list(new ListRequest().setProject(componentKey))
-            .getPullRequestsList().stream()
-            .filter(pr -> pullRequestKey.equals(pr.getKey()))
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        String.format(
-                            "No pull request found for project '%s' and key '%s'.",
-                            componentKey, pullRequestKey)));
+    ProjectPullRequests.PullRequest pullRequest;
+    while (true) {
+      pullRequest =
+          sonarClient.projectPullRequests().list(new ListRequest().setProject(componentKey))
+              .getPullRequestsList().stream()
+              .filter(pr -> pullRequestKey.equals(pr.getKey()))
+              .findFirst()
+              .orElse(null);
+      if (pullRequest != null) {
+        break;
+      }
+      TaskListenerLogger.log(
+          listener,
+          "Waiting %s before re-performing lookup of pull request '%s' on project '%s' ...",
+          CE_TASK_COMPLETION_CHECK_INTERVAL,
+          pullRequestKey,
+          componentKey);
+      Thread.sleep(CE_TASK_COMPLETION_CHECK_INTERVAL.toMillis());
+    }
 
     SearchRequest issueSearchRequest =
         new SearchRequest()
@@ -159,8 +167,10 @@ class PullRequestAnalysisTask {
                 .map(PullRequestComponent::new)
                 .collect(Collectors.toList()));
 
+    ProjectPullRequests.PullRequest finalPullRequest = pullRequest;
+
     return issueSearchResponse.getIssuesList().stream()
-        .map(issue -> new PullRequestIssue(pullRequest, components, issue, serverUrl))
+        .map(issue -> new PullRequestIssue(finalPullRequest, components, issue, serverUrl))
         .collect(Collectors.toList());
   }
 
