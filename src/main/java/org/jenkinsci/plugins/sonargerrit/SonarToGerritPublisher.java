@@ -140,7 +140,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       throw new AbortException("Unable to post review: " + e.getMessage());
     } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
       LOGGER.log(Level.SEVERE, e, e::getMessage);
-      throw new AbortException(e.getMessage());
+      throw new IOException(e.getMessage(), e);
     }
   }
 
