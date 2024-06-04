@@ -91,7 +91,7 @@
       <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
-        <version>20190722</version>
+        <version>20240303</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
