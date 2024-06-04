@@ -8,6 +8,7 @@ import hudson.plugins.sonar.SonarInstallation;
 import hudson.plugins.sonar.action.SonarAnalysisAction;
 import hudson.plugins.sonar.utils.SonarUtils;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.plugins.sonargerrit.TaskListenerLogger;
 import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
+import org.jenkinsci.plugins.sonargerrit.sonar.SonarInstallationAdditionalAnalysisProperties;
 
 /** @author Réda Housni Alaoui */
 class PullRequestAnalysisTask {
@@ -95,10 +97,18 @@ class PullRequestAnalysisTask {
         SonarUtils.getAuthenticationToken(
             run, sonarInstallation, sonarInstallation.getCredentialsId());
 
-    WsClient sonarClient =
-        WsClientFactories.getDefault()
-            .newClient(
-                HttpConnector.newBuilder().url(serverUrl).token(authenticationToken).build());
+    HttpConnector.Builder httpConnectorBuilder =
+        HttpConnector.newBuilder().url(serverUrl).token(authenticationToken);
+
+    httpConnectorBuilder =
+        SonarInstallationAdditionalAnalysisProperties.parse(sonarInstallation)
+            .getDuration("sonar.ws.timeout", ChronoUnit.SECONDS)
+            .map(Duration::toMillis)
+            .map(Long::intValue)
+            .map(httpConnectorBuilder::readTimeoutMilliseconds)
+            .orElse(httpConnectorBuilder);
+
+    WsClient sonarClient = WsClientFactories.getDefault().newClient(httpConnectorBuilder.build());
 
     Ce.Task ceTask = sonarClient.ce().task(new TaskRequest().setId(ceTaskId)).getTask();
     String componentKey = ceTask.getComponentKey();

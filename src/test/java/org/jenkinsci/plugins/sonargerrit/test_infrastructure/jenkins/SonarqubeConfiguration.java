@@ -45,7 +45,8 @@ public class SonarqubeConfiguration {
 
     String name = UUID.randomUUID().toString();
     SonarInstallation sonarInstallation =
-        new SonarInstallation(name, url, credentialsId, null, null, null, null, null, null);
+        new SonarInstallation(
+            name, url, credentialsId, null, null, null, null, "sonar.ws.timeout=600", null);
     globalConfiguration.setInstallations(
         ArrayUtils.add(globalConfiguration.getInstallations(), sonarInstallation));
 
