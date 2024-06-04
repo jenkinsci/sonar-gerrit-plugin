@@ -30,7 +30,7 @@
     <gerrit-trigger.version>2.35.0</gerrit-trigger.version>
     <guava.version>18.0</guava.version>
     <gerrit-rest-java-client.version>0.9.4.0</gerrit-rest-java-client.version>
-    <junit.jupiter.version>5.8.2</junit.jupiter.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
     <testcontainers.version>1.16.2</testcontainers.version>
     <jackson.version>2.13.0</jackson.version>
     <sonar.version>2.13.1</sonar.version>
