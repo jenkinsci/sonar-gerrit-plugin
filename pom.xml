@@ -177,7 +177,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-maven</artifactId>
-      <version>3.10.0</version>
+      <version>1421.v610fa_b_e2d60e</version>
       <scope>test</scope>
     </dependency>
     <dependency>
