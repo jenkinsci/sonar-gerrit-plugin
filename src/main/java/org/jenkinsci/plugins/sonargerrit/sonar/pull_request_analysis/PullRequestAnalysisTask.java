@@ -166,6 +166,7 @@ class PullRequestAnalysisTask {
 
     SearchRequest issueSearchRequest =
         new SearchRequest()
+            .setResolved("false")
             .setComponentKeys(Collections.singletonList(componentKey))
             .setPullRequest(pullRequestKey);
 
