@@ -113,28 +113,39 @@ class PullRequestAnalysisTest {
   @Test
   @DisplayName("Good quality freestyle build")
   void test2() throws Exception {
-    testWithGoodQualityCode(this::createFreestyleJob);
+    testWithGoodQualityCode(this::createFreestyleJob, false);
+  }
+
+  @Test
+  @DisplayName("Bad then good quality freestyle build")
+  void test3() throws Exception {
+    testWithBadQualityCode(this::createFreestyleJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true);
   }
 
   @Test
   @DisplayName("Bad quality pipeline build")
-  void test3() throws Exception {
+  void test4() throws Exception {
     testWithBadQualityCode(this::createPipelineJob);
   }
 
   @Test
   @DisplayName("Good quality pipeline build")
-  void test4() throws Exception {
-    testWithGoodQualityCode(this::createPipelineJob);
+  void test5() throws Exception {
+    testWithGoodQualityCode(this::createPipelineJob, false);
+  }
+
+  @Test
+  @DisplayName("Bad then good quality pipeline build")
+  void test6() throws Exception {
+    testWithBadQualityCode(this::createPipelineJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true);
   }
 
   private void testWithBadQualityCode(JobFactory jobFactory) throws Exception {
     git.addAndCommitFile(
-        "src/main/java/org/example/UselessConstructorDeclaration.java",
-        "package org.example; "
-            + "public class UselessConstructorDeclaration { "
-            + "public UselessConstructorDeclaration() {} "
-            + "}");
+        "src/main/java/org/example/Foo.java",
+        "package org.example; public class Foo { public Foo() {} }");
     GerritChange change = git.createGerritChangeForMaster();
 
     triggerAndAssertSuccess(jobFactory.build(change));
@@ -150,9 +161,11 @@ class PullRequestAnalysisTest {
         .hasSize(1);
   }
 
-  private void testWithGoodQualityCode(JobFactory jobFactory) throws Exception {
+  private void testWithGoodQualityCode(JobFactory jobFactory, boolean amend) throws Exception {
     git.addAndCommitFile(
-        "src/main/java/org/example/Foo.java", "package org.example; public interface Foo {}");
+        "src/main/java/org/example/Foo.java",
+        "package org.example; public interface Foo {}",
+        amend);
     GerritChange change = git.createGerritChangeForMaster();
 
     triggerAndAssertSuccess(jobFactory.build(change));
@@ -215,24 +228,24 @@ class PullRequestAnalysisTest {
         "node {\n"
             + "stage('Build') {\n"
             + "try {\n"
-            + String.format("env.GERRIT_NAME = '%s'\n", cluster.jenkinsGerritTriggerServerName())
-            + String.format("env.GERRIT_CHANGE_NUMBER = '%s'\n", change.changeNumericId())
-            + String.format("env.GERRIT_PATCHSET_NUMBER = '%s'\n", patchSetNumber)
-            + String.format("env.GERRIT_BRANCH = '%s'\n", "master")
-            + String.format("env.GERRIT_REFSPEC = '%s'\n", change.refName(patchSetNumber))
+            + String.format("env.GERRIT_NAME = '%s'%n", cluster.jenkinsGerritTriggerServerName())
+            + String.format("env.GERRIT_CHANGE_NUMBER = '%s'%n", change.changeNumericId())
+            + String.format("env.GERRIT_PATCHSET_NUMBER = '%s'%n", patchSetNumber)
+            + String.format("env.GERRIT_BRANCH = '%s'%n", "master")
+            + String.format("env.GERRIT_REFSPEC = '%s'%n", change.refName(patchSetNumber))
             + "checkout scm: ([\n"
             + "$class: 'GitSCM',\n"
             + String.format(
-                "userRemoteConfigs: [[url: '%s', refspec: '%s', credentialsId: '%s']],\n",
+                "userRemoteConfigs: [[url: '%s', refspec: '%s', credentialsId: '%s']],%n",
                 git.httpUrl(), change.refName(patchSetNumber), cluster.jenkinsGerritCredentialsId())
             + "branches: [[name: 'FETCH_HEAD']]\n"
             + "])\n"
             + String.format(
-                "withSonarQubeEnv('%s') {\n", cluster.jenkinsSonarqubeInstallationName())
+                "withSonarQubeEnv('%s') {%n", cluster.jenkinsSonarqubeInstallationName())
             + String.format(
-                "withMaven(jdk: '%s', maven: '%s') {\n",
+                "withMaven(jdk: '%s', maven: '%s') {%n",
                 cluster.jenkinsJdk17InstallationName(), cluster.jenkinsMavenInstallationName())
-            + String.format("sh \"mvn %s\"\n", MAVEN_PIPELINE_TARGET)
+            + String.format("sh \"mvn %s\"%n", MAVEN_PIPELINE_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv
             + "} finally {\n"
@@ -253,7 +266,7 @@ class PullRequestAnalysisTest {
             + "newIssuesOnly: false,"
             + "changedLinesOnly: true"
             + "],\n" // issueFilterConfig
-            + String.format("category: '%s',\n", GerritServer.CODE_QUALITY_LABEL)
+            + String.format("category: '%s',%n", GerritServer.CODE_QUALITY_LABEL)
             + "noIssuesScore: 1,\n"
             + "issuesScore: -1,\n"
             + "]\n" // scoreConfig

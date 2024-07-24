@@ -55,9 +55,10 @@ public class GerritGit {
     return git.getRepository().getWorkTree().toPath();
   }
 
-  public CommitCommand commit(String message) {
+  public CommitCommand commit(String message, boolean amend) {
     String changeId = "I" + DigestUtils.sha1Hex(String.format("%s|%s", UUID.randomUUID(), message));
     return git.commit()
+        .setAmend(amend)
         .setMessage(message + "\n\nChange-Id: " + changeId)
         .setAuthor(agent)
         .setCommitter(agent);
@@ -99,8 +100,13 @@ public class GerritGit {
 
   public GerritGit addAndCommitFile(String relativePath, String content)
       throws IOException, GitAPIException {
+    return addAndCommitFile(relativePath, content, false);
+  }
+
+  public GerritGit addAndCommitFile(String relativePath, String content, boolean amend)
+      throws IOException, GitAPIException {
     addFile(relativePath, content);
-    commit("Add " + relativePath).call();
+    commit("Add " + relativePath, amend).call();
     return this;
   }
 
