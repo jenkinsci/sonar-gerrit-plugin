@@ -113,14 +113,14 @@ class PullRequestAnalysisTest {
   @Test
   @DisplayName("Good quality freestyle build")
   void test2() throws Exception {
-    testWithGoodQualityCode(this::createFreestyleJob, false);
+    testWithGoodQualityCode(this::createFreestyleJob, false, null);
   }
 
   @Test
   @DisplayName("Bad then good quality freestyle build")
   void test3() throws Exception {
-    testWithBadQualityCode(this::createFreestyleJob);
-    testWithGoodQualityCode(this::createFreestyleJob, true);
+    GerritChange change = testWithBadQualityCode(this::createFreestyleJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true, change);
   }
 
   @Test
@@ -132,17 +132,17 @@ class PullRequestAnalysisTest {
   @Test
   @DisplayName("Good quality pipeline build")
   void test5() throws Exception {
-    testWithGoodQualityCode(this::createPipelineJob, false);
+    testWithGoodQualityCode(this::createPipelineJob, false, null);
   }
 
   @Test
   @DisplayName("Bad then good quality pipeline build")
   void test6() throws Exception {
-    testWithBadQualityCode(this::createPipelineJob);
-    testWithGoodQualityCode(this::createFreestyleJob, true);
+    GerritChange change = testWithBadQualityCode(this::createPipelineJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true, change);
   }
 
-  private void testWithBadQualityCode(JobFactory jobFactory) throws Exception {
+  private GerritChange testWithBadQualityCode(JobFactory jobFactory) throws Exception {
     git.addAndCommitFile(
         "src/main/java/org/example/Foo.java",
         "package org.example; public class Foo { public Foo() {} }");
@@ -159,14 +159,21 @@ class PullRequestAnalysisTest {
         .map(commentInfo -> commentInfo.message)
         .filteredOn(message -> message.contains("S1186"))
         .hasSize(1);
+
+    return change;
   }
 
-  private void testWithGoodQualityCode(JobFactory jobFactory, boolean amend) throws Exception {
+  private void testWithGoodQualityCode(
+      JobFactory jobFactory, boolean amend, GerritChange previousChange) throws Exception {
     git.addAndCommitFile(
         "src/main/java/org/example/Foo.java",
         "package org.example; public interface Foo {}",
         amend);
     GerritChange change = git.createGerritChangeForMaster();
+
+    if (previousChange != null) {
+      assertThat(previousChange.changeNumericId()).isEqualTo(change.changeNumericId());
+    }
 
     triggerAndAssertSuccess(jobFactory.build(change));
 
