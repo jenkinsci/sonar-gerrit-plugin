@@ -42,13 +42,13 @@ class PullRequestAnalysisTest {
 
   private static final String MAVEN_FREESTYLE_TARGET =
       "clean verify sonar:sonar "
-          + "-Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER} "
           + "-Dsonar.pullrequest.base=${GERRIT_BRANCH} "
           + "-Dsonar.pullrequest.branch=${GERRIT_REFSPEC}";
 
   private static final String MAVEN_PIPELINE_TARGET =
       "clean verify sonar:sonar "
-          + "-Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER} "
           + "-Dsonar.pullrequest.base=${env.GERRIT_BRANCH} "
           + "-Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}";
 
