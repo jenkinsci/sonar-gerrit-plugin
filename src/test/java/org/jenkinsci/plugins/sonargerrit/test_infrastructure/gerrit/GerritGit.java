@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,11 +16,14 @@ import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RefSpec;
 
 /** @author Réda Housni Alaoui */
 public class GerritGit {
+  private static final String CHANGE_ID = "Change-Id: I";
 
   private final GerritServer gerrit;
   private final Git git;
@@ -55,11 +59,27 @@ public class GerritGit {
     return git.getRepository().getWorkTree().toPath();
   }
 
-  public CommitCommand commit(String message, boolean amend) {
-    String changeId = "I" + DigestUtils.sha1Hex(String.format("%s|%s", UUID.randomUUID(), message));
+  public CommitCommand commit(String message, boolean amend) throws IOException {
+    String changeIdLine = null;
+    if (amend) {
+      Repository repository = git.getRepository();
+      String previousMessage =
+          repository.parseCommit(repository.resolve(Constants.HEAD)).getFullMessage();
+      changeIdLine =
+          Arrays.stream(previousMessage.split("\n"))
+              .filter(msg -> msg.startsWith(CHANGE_ID))
+              .findFirst()
+              .orElse(null);
+    }
+
+    if (changeIdLine == null) {
+      changeIdLine =
+          CHANGE_ID + DigestUtils.sha1Hex(String.format("%s|%s", UUID.randomUUID(), message));
+    }
+
     return git.commit()
         .setAmend(amend)
-        .setMessage(message + "\n\nChange-Id: " + changeId)
+        .setMessage(message + "\n\n" + changeIdLine)
         .setAuthor(agent)
         .setCommitter(agent);
   }
