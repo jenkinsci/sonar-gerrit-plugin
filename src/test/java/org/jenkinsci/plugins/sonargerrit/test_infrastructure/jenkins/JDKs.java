@@ -17,10 +17,10 @@ public class JDKs {
     this.jenkins = jenkins;
   }
 
-  public String addJdk8() throws IOException {
+  public String addJdk17() throws IOException {
     return addJdk(
-        "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_linux_hotspot_8u312b07.tar.gz",
-        "jdk8u312-b07");
+        "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.12_7.tar.gz",
+        "jdk-17.0.12+7");
   }
 
   private String addJdk(String url, String subdir) throws IOException {

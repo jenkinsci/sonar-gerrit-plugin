@@ -8,7 +8,8 @@ import java.util.Optional;
 /** @author Réda Housni Alaoui */
 public class LogbackConfigurator extends BasicConfigurator {
 
-  public void configure(LoggerContext lc) {
+  @Override
+  public ExecutionStatus configure(LoggerContext lc) {
     super.configure(lc);
     Level rootLevel =
         Optional.ofNullable(System.getenv("SONAR_GERRIT_PLUGIN_TEST_LOG_ROOT_LEVEL"))
@@ -16,5 +17,6 @@ public class LogbackConfigurator extends BasicConfigurator {
             .orElse(Level.OFF);
     lc.getLogger("ROOT").setLevel(rootLevel);
     lc.getLogger("com.sonyericsson.hudson").setLevel(Level.WARN);
+    return ExecutionStatus.NEUTRAL;
   }
 }

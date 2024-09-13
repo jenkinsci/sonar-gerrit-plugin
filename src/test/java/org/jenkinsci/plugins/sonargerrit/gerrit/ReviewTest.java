@@ -64,6 +64,15 @@ class ReviewTest {
                 + "  <version>1.0-SNAPSHOT</version>\n"
                 + "  <packaging>pom</packaging>"
                 + "\n"
+                + "  <build>\n"
+                + "    <plugins>\n"
+                + "      <plugin>\n"
+                + "        <groupId>org.apache.maven.plugins</groupId>\n"
+                + "        <artifactId>maven-compiler-plugin</artifactId>\n"
+                + "        <version>3.12.1</version>\n"
+                + "      </plugin>\n"
+                + "    </plugins>\n"
+                + "  </build>\n"
                 + "<modules>\n"
                 + "<module>child1</module>"
                 + "</modules>"
@@ -87,7 +96,7 @@ class ReviewTest {
     git.push();
 
     FreeStyleProject masterJob = cluster.jenkinsRule().createFreeStyleProject();
-    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk8InstallationName()));
+    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk17InstallationName()));
     masterJob.setScm(createGitSCM());
     masterJob
         .getBuildWrappersList()
@@ -240,7 +249,7 @@ class ReviewTest {
                 "withSonarQubeEnv('%s') {\n", cluster.jenkinsSonarqubeInstallationName())
             + String.format(
                 "withMaven(jdk: '%s', maven: '%s') {\n",
-                cluster.jenkinsJdk8InstallationName(), cluster.jenkinsMavenInstallationName())
+                cluster.jenkinsJdk17InstallationName(), cluster.jenkinsMavenInstallationName())
             + String.format("sh \"mvn %s\"\n", MAVEN_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv

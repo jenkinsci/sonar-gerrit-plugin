@@ -13,7 +13,6 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.GerritTrigg
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.JDKs;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.MavenConfiguration;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.SonarqubeConfiguration;
-import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.Sonarqube7Server;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeAccessTokens;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeServer;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -26,17 +25,12 @@ public class Cluster {
   private final JenkinsRule jenkinsRule;
 
   private final String jenkinsGerritCredentialsId;
-  private final String jenkinsJdk8InstallationName;
+  private final String jenkinsJdk17InstallationName;
   private final String jenkinsMavenInstallationName;
-  private final String jenkinsSonarqube7InstallationName;
   private final String jenkinsSonarqubeInstallationName;
   private final String jenkinsGerritTriggerServerName;
 
-  private Cluster(
-      GerritServer gerrit,
-      Sonarqube7Server sonarqube7,
-      SonarqubeServer sonarqube,
-      JenkinsRule jenkinsRule)
+  private Cluster(GerritServer gerrit, SonarqubeServer sonarqube, JenkinsRule jenkinsRule)
       throws IOException {
     this.gerrit = requireNonNull(gerrit);
     this.sonarqube = requireNonNull(sonarqube);
@@ -54,7 +48,7 @@ public class Cluster {
     credentialsProvider.getCredentials().add(credentials);
     credentialsProvider.save();
 
-    jenkinsJdk8InstallationName = new JDKs(jenkinsRule.jenkins).addJdk8();
+    jenkinsJdk17InstallationName = new JDKs(jenkinsRule.jenkins).addJdk17();
     jenkinsMavenInstallationName = new MavenConfiguration(jenkinsRule.jenkins).addInstallation();
 
     jenkinsGerritTriggerServerName =
@@ -63,11 +57,6 @@ public class Cluster {
 
     SonarqubeConfiguration sonarqubeConfiguration = new SonarqubeConfiguration(jenkinsRule.jenkins);
 
-    jenkinsSonarqube7InstallationName =
-        sonarqubeConfiguration.addInstallation(
-            sonarqube7.url(),
-            new SonarqubeAccessTokens(sonarqube7.url(), sonarqube7.adminAuthorization())
-                .createAdminAccessToken(UUID.randomUUID().toString()));
     jenkinsSonarqubeInstallationName =
         sonarqubeConfiguration.addInstallation(
             sonarqube.url(),
@@ -76,12 +65,8 @@ public class Cluster {
   }
 
   public static Cluster configure(
-      GerritServer gerrit,
-      Sonarqube7Server sonarqube7,
-      SonarqubeServer sonarqube,
-      JenkinsRule jenkinsRule)
-      throws IOException {
-    return new Cluster(gerrit, sonarqube7, sonarqube, jenkinsRule);
+      GerritServer gerrit, SonarqubeServer sonarqube, JenkinsRule jenkinsRule) throws IOException {
+    return new Cluster(gerrit, sonarqube, jenkinsRule);
   }
 
   public String jenkinsGerritCredentialsId() {
@@ -104,16 +89,12 @@ public class Cluster {
     return jenkinsMavenInstallationName;
   }
 
-  public String jenkinsSonarqube7InstallationName() {
-    return jenkinsSonarqube7InstallationName;
-  }
-
   public String jenkinsSonarqubeInstallationName() {
     return jenkinsSonarqubeInstallationName;
   }
 
-  public String jenkinsJdk8InstallationName() {
-    return jenkinsJdk8InstallationName;
+  public String jenkinsJdk17InstallationName() {
+    return jenkinsJdk17InstallationName;
   }
 
   public String jenkinsGerritTriggerServerName() {
