@@ -52,7 +52,7 @@ public class SonarqubeServer {
                     .withDockerfileFromBuilder(
                         builder ->
                             builder
-                                .from("docker.cosium.dev/sonarqube:8.9.2-community")
+                                .from("sonarqube:8.9.2-community")
                                 .add(
                                     "https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/1.8.1/sonarqube-community-branch-plugin-1.8.1.jar",
                                     "/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin.jar")))

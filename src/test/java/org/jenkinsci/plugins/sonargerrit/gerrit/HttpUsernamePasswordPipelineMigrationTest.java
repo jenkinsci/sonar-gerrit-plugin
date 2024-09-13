@@ -66,16 +66,24 @@ class HttpUsernamePasswordPipelineMigrationTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<project>\n"
             + "  <modelVersion>4.0.0</modelVersion>\n"
-            + "\n"
             + "  <groupId>org.example</groupId>\n"
             + "  <artifactId>example</artifactId>\n"
             + "  <version>1.0-SNAPSHOT</version>\n"
+            + "  <build>\n"
+            + "    <plugins>\n"
+            + "      <plugin>\n"
+            + "        <groupId>org.apache.maven.plugins</groupId>\n"
+            + "        <artifactId>maven-compiler-plugin</artifactId>\n"
+            + "        <version>3.12.1</version>\n"
+            + "      </plugin>\n"
+            + "    </plugins>\n"
+            + "  </build>\n"
             + "</project>");
 
     git.push();
 
     FreeStyleProject masterJob = cluster.jenkinsRule().createFreeStyleProject();
-    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk8InstallationName()));
+    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk17InstallationName()));
     masterJob.setScm(createGitSCM());
     masterJob
         .getBuildWrappersList()
@@ -163,7 +171,7 @@ class HttpUsernamePasswordPipelineMigrationTest {
                 "withSonarQubeEnv('%s') {\n", cluster.jenkinsSonarqubeInstallationName())
             + String.format(
                 "withMaven(jdk: '%s', maven: '%s') {\n",
-                cluster.jenkinsJdk8InstallationName(), cluster.jenkinsMavenInstallationName())
+                cluster.jenkinsJdk17InstallationName(), cluster.jenkinsMavenInstallationName())
             + String.format("sh \"mvn %s\"\n", MAVEN_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv

@@ -71,12 +71,21 @@ class PullRequestAnalysisTest {
             + "  <groupId>org.example</groupId>\n"
             + "  <artifactId>example</artifactId>\n"
             + "  <version>1.0-SNAPSHOT</version>\n"
+            + "  <build>\n"
+            + "    <plugins>\n"
+            + "      <plugin>\n"
+            + "        <groupId>org.apache.maven.plugins</groupId>\n"
+            + "        <artifactId>maven-compiler-plugin</artifactId>\n"
+            + "        <version>3.12.1</version>\n"
+            + "      </plugin>\n"
+            + "    </plugins>\n"
+            + "  </build>\n"
             + "</project>");
 
     git.push();
 
     FreeStyleProject masterJob = cluster.jenkinsRule().createFreeStyleProject();
-    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk8InstallationName()));
+    masterJob.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk17InstallationName()));
     masterJob.setScm(createGitSCM());
     masterJob
         .getBuildWrappersList()
@@ -159,7 +168,7 @@ class PullRequestAnalysisTest {
   @SuppressWarnings("rawtypes")
   private Job createFreestyleJob(GerritChange change) throws IOException {
     FreeStyleProject job = cluster.jenkinsRule().createFreeStyleProject();
-    job.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk8InstallationName()));
+    job.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk17InstallationName()));
 
     int patchSetNumber = 1;
     job.setScm(createGitSCM(change, patchSetNumber));
@@ -222,7 +231,7 @@ class PullRequestAnalysisTest {
                 "withSonarQubeEnv('%s') {\n", cluster.jenkinsSonarqubeInstallationName())
             + String.format(
                 "withMaven(jdk: '%s', maven: '%s') {\n",
-                cluster.jenkinsJdk8InstallationName(), cluster.jenkinsMavenInstallationName())
+                cluster.jenkinsJdk17InstallationName(), cluster.jenkinsMavenInstallationName())
             + String.format("sh \"mvn %s\"\n", MAVEN_PIPELINE_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv

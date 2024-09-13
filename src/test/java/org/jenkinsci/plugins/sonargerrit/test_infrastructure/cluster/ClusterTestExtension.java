@@ -1,7 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.test_infrastructure.cluster;
 
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit.GerritServer;
-import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.Sonarqube7Server;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeServer;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -20,13 +19,10 @@ class ClusterTestExtension implements BeforeAllCallback, ParameterResolver {
     }
 
     GerritServer gerritServer = store.get(GerritServer.class, GerritServer.class);
-    Sonarqube7Server sonarqube7Server = store.get(Sonarqube7Server.class, Sonarqube7Server.class);
     SonarqubeServer sonarqubeServer = store.get(SonarqubeServer.class, SonarqubeServer.class);
     JenkinsRule jenkinsRule = store.get(JenkinsRule.class, JenkinsRule.class);
 
-    store.put(
-        Cluster.class,
-        Cluster.configure(gerritServer, sonarqube7Server, sonarqubeServer, jenkinsRule));
+    store.put(Cluster.class, Cluster.configure(gerritServer, sonarqubeServer, jenkinsRule));
   }
 
   @Override
