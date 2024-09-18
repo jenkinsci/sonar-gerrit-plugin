@@ -3,23 +3,22 @@ package org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.logging.Logger;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.CloseableResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.JulLogConsumer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
 /** @author Réda Housni Alaoui */
 public class SonarqubeServer {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SonarqubeServer.class);
+  private static final Logger LOG = Logger.getLogger(SonarqubeServer.class.getName());
 
   private static final int HTTP_PORT = 9000;
 
@@ -62,7 +61,7 @@ public class SonarqubeServer {
             .withEnv(
                 "SONAR_CE_JAVAADDITIONALOPTS",
                 "-javaagent:./extensions/plugins/sonarqube-community-branch-plugin.jar=ce")
-            .withLogConsumer(new Slf4jLogConsumer(LOG))
+            .withLogConsumer(new JulLogConsumer(LOG).withPrefix("SonarQube"))
             .withExposedPorts(HTTP_PORT)
             .withNetwork(network)
             .withNetworkAliases(NETWORK_ALIAS);
