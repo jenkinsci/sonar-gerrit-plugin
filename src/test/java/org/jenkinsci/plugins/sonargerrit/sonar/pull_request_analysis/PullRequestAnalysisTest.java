@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.io.TempDir;
 /** @author Réda Housni Alaoui */
 @EnableCluster
 class PullRequestAnalysisTest {
+  private static final Logger LOGGER = Logger.getLogger(PullRequestAnalysisTest.class.getName());
 
   private static final String MAVEN_FREESTYLE_TARGET =
       "clean verify sonar:sonar "
@@ -147,6 +150,7 @@ class PullRequestAnalysisTest {
         "src/main/java/org/example/Foo.java",
         "package org.example; public class Foo { public Foo() {} }");
     GerritChange change = git.createGerritChangeForMaster();
+    LOGGER.log(Level.INFO, "Testing bad quality code with change {0}", change.changeNumericId());
 
     triggerAndAssertSuccess(jobFactory.build(change));
 
@@ -170,8 +174,11 @@ class PullRequestAnalysisTest {
         "package org.example; public interface Foo {}",
         amend);
     GerritChange change = git.createGerritChangeForMaster();
+    LOGGER.log(Level.INFO, "Testing good quality code with change {0}", change.changeNumericId());
 
     if (previousChange != null) {
+      LOGGER.log(
+          Level.INFO, "Comparing to previous change with ID {0}", previousChange.changeNumericId());
       assertThat(previousChange.changeNumericId()).isEqualTo(change.changeNumericId());
     }
 
