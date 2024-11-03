@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritAuthData;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritRestApiFactory;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.GerritApi;
@@ -19,16 +20,14 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.CloseableResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.JulLogConsumer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 /** @author Réda Housni Alaoui */
 public class GerritServer {
 
-  private static final Logger LOG = LoggerFactory.getLogger(GerritServer.class);
+  private static final Logger LOG = Logger.getLogger(GerritServer.class.getName());
 
   private static final int HTTP_PORT = 8080;
   private static final int SSH_PORT = 29418;
@@ -60,7 +59,7 @@ public class GerritServer {
   private GerritServer(Network network) {
     container =
         new GenericContainer<>("gerritcodereview/gerrit:3.4.1-ubuntu20")
-            .withLogConsumer(new Slf4jLogConsumer(LOG))
+            .withLogConsumer(new JulLogConsumer(LOG).withPrefix("Gerrit"))
             .withExposedPorts(HTTP_PORT, SSH_PORT)
             .withNetwork(network)
             .withNetworkAliases(NETWORK_ALIAS)
