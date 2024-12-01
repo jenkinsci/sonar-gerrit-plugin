@@ -34,7 +34,7 @@
 
     <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
     <assertj-core.version>3.21.0</assertj-core.version>
-    <logback-classic.version>1.5.8</logback-classic.version>
+    <logback-classic.version>1.5.12</logback-classic.version>
     <sonar-ws-shaded.version>7.7.0</sonar-ws-shaded.version>
   </properties>
 
