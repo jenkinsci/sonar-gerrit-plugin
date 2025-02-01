@@ -3,19 +3,15 @@ package org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import hudson.model.FreeStyleProject;
-import hudson.model.Job;
-import hudson.model.queue.QueueTaskFuture;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.UserRemoteConfig;
 import hudson.plugins.sonar.SonarBuildWrapper;
 import hudson.tasks.Maven;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import jenkins.model.Jenkins;
-import jenkins.model.ParameterizedJobMixIn;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jenkinsci.plugins.sonargerrit.SonarToGerritPublisher;
@@ -42,13 +38,13 @@ class PullRequestAnalysisTest {
 
   private static final String MAVEN_FREESTYLE_TARGET =
       "clean verify sonar:sonar "
-          + "-Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER} "
           + "-Dsonar.pullrequest.base=${GERRIT_BRANCH} "
           + "-Dsonar.pullrequest.branch=${GERRIT_REFSPEC}";
 
   private static final String MAVEN_PIPELINE_TARGET =
       "clean verify sonar:sonar "
-          + "-Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} "
+          + "-Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER} "
           + "-Dsonar.pullrequest.base=${env.GERRIT_BRANCH} "
           + "-Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}";
 
@@ -96,7 +92,7 @@ class PullRequestAnalysisTest {
             new Maven(
                 "clean verify sonar:sonar -Dsonar.branch.name=master",
                 cluster.jenkinsMavenInstallationName()));
-    triggerAndAssertSuccess(masterJob);
+    cluster.jenkinsRule().buildAndAssertSuccess(masterJob);
   }
 
   @BeforeEach
@@ -113,31 +109,43 @@ class PullRequestAnalysisTest {
   @Test
   @DisplayName("Good quality freestyle build")
   void test2() throws Exception {
-    testWithGoodQualityCode(this::createFreestyleJob);
+    testWithGoodQualityCode(this::createFreestyleJob, false);
+  }
+
+  @Test
+  @DisplayName("Bad then good quality freestyle build")
+  void test3() throws Exception {
+    testWithBadQualityCode(this::createFreestyleJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true);
   }
 
   @Test
   @DisplayName("Bad quality pipeline build")
-  void test3() throws Exception {
+  void test4() throws Exception {
     testWithBadQualityCode(this::createPipelineJob);
   }
 
   @Test
   @DisplayName("Good quality pipeline build")
-  void test4() throws Exception {
-    testWithGoodQualityCode(this::createPipelineJob);
+  void test5() throws Exception {
+    testWithGoodQualityCode(this::createPipelineJob, false);
+  }
+
+  @Test
+  @DisplayName("Bad then good quality pipeline build")
+  void test6() throws Exception {
+    testWithBadQualityCode(this::createPipelineJob);
+    testWithGoodQualityCode(this::createFreestyleJob, true);
   }
 
   private void testWithBadQualityCode(JobFactory jobFactory) throws Exception {
     git.addAndCommitFile(
-        "src/main/java/org/example/UselessConstructorDeclaration.java",
-        "package org.example; "
-            + "public class UselessConstructorDeclaration { "
-            + "public UselessConstructorDeclaration() {} "
-            + "}");
+        "src/main/java/org/example/Foo.java",
+        "package org.example; public class Foo { public Foo() {} }");
     GerritChange change = git.createGerritChangeForMaster();
 
-    triggerAndAssertSuccess(jobFactory.build(change));
+    int patchSetNumber = 1;
+    jobFactory.createAndBuild(change, patchSetNumber);
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -145,32 +153,35 @@ class PullRequestAnalysisTest {
         .map(approvalInfo -> approvalInfo.value)
         .containsExactly(-1);
     assertThat(change.listComments())
-        .map(commentInfo -> commentInfo.message)
-        .filteredOn(message -> message.contains("S1186"))
+        .filteredOn(
+            comment -> comment.patchSet == patchSetNumber && comment.message.contains("S1186"))
         .hasSize(1);
   }
 
-  private void testWithGoodQualityCode(JobFactory jobFactory) throws Exception {
+  private void testWithGoodQualityCode(JobFactory jobFactory, boolean amend) throws Exception {
     git.addAndCommitFile(
-        "src/main/java/org/example/Foo.java", "package org.example; public interface Foo {}");
+        "src/main/java/org/example/Foo.java",
+        "package org.example; public interface Foo {}",
+        amend);
     GerritChange change = git.createGerritChangeForMaster();
 
-    triggerAndAssertSuccess(jobFactory.build(change));
+    int patchSetNumber = amend ? 2 : 1;
+    jobFactory.createAndBuild(change, patchSetNumber);
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
         .hasSize(1)
         .map(approvalInfo -> approvalInfo.value)
         .containsExactly(1);
-    assertThat(change.listComments()).isEmpty();
+    assertThat(change.listComments())
+        .filteredOn(comment -> comment.patchSet == patchSetNumber)
+        .isEmpty();
   }
 
-  @SuppressWarnings("rawtypes")
-  private Job createFreestyleJob(GerritChange change) throws IOException {
+  private void createFreestyleJob(GerritChange change, int patchSetNumber) throws Exception {
     FreeStyleProject job = cluster.jenkinsRule().createFreeStyleProject();
     job.setJDK(Jenkins.get().getJDK(cluster.jenkinsJdk17InstallationName()));
 
-    int patchSetNumber = 1;
     job.setScm(createGitSCM(change, patchSetNumber));
 
     job.getBuildWrappersList()
@@ -204,35 +215,33 @@ class PullRequestAnalysisTest {
     scoreConfig.setIssuesScore(-1);
     sonarToGerrit.setScoreConfig(scoreConfig);
     job.getPublishersList().add(sonarToGerrit);
-    return job;
+    cluster.jenkinsRule().buildAndAssertSuccess(job);
   }
 
-  @SuppressWarnings("rawtypes")
-  private Job createPipelineJob(GerritChange change) throws IOException {
+  private void createPipelineJob(GerritChange change, int patchSetNumber) throws Exception {
     WorkflowJob job = cluster.jenkinsRule().createProject(WorkflowJob.class);
-    int patchSetNumber = 1;
     String script =
         "node {\n"
             + "stage('Build') {\n"
             + "try {\n"
-            + String.format("env.GERRIT_NAME = '%s'\n", cluster.jenkinsGerritTriggerServerName())
-            + String.format("env.GERRIT_CHANGE_NUMBER = '%s'\n", change.changeNumericId())
-            + String.format("env.GERRIT_PATCHSET_NUMBER = '%s'\n", patchSetNumber)
-            + String.format("env.GERRIT_BRANCH = '%s'\n", "master")
-            + String.format("env.GERRIT_REFSPEC = '%s'\n", change.refName(patchSetNumber))
+            + String.format("env.GERRIT_NAME = '%s'%n", cluster.jenkinsGerritTriggerServerName())
+            + String.format("env.GERRIT_CHANGE_NUMBER = '%s'%n", change.changeNumericId())
+            + String.format("env.GERRIT_PATCHSET_NUMBER = '%s'%n", patchSetNumber)
+            + String.format("env.GERRIT_BRANCH = '%s'%n", "master")
+            + String.format("env.GERRIT_REFSPEC = '%s'%n", change.refName(patchSetNumber))
             + "checkout scm: ([\n"
             + "$class: 'GitSCM',\n"
             + String.format(
-                "userRemoteConfigs: [[url: '%s', refspec: '%s', credentialsId: '%s']],\n",
+                "userRemoteConfigs: [[url: '%s', refspec: '%s', credentialsId: '%s']],%n",
                 git.httpUrl(), change.refName(patchSetNumber), cluster.jenkinsGerritCredentialsId())
             + "branches: [[name: 'FETCH_HEAD']]\n"
             + "])\n"
             + String.format(
-                "withSonarQubeEnv('%s') {\n", cluster.jenkinsSonarqubeInstallationName())
+                "withSonarQubeEnv('%s') {%n", cluster.jenkinsSonarqubeInstallationName())
             + String.format(
-                "withMaven(jdk: '%s', maven: '%s') {\n",
+                "withMaven(jdk: '%s', maven: '%s') {%n",
                 cluster.jenkinsJdk17InstallationName(), cluster.jenkinsMavenInstallationName())
-            + String.format("sh \"mvn %s\"\n", MAVEN_PIPELINE_TARGET)
+            + String.format("sh \"mvn %s\"%n", MAVEN_PIPELINE_TARGET)
             + "}\n" // withMaven
             + "}\n" // withSonarQubeEnv
             + "} finally {\n"
@@ -253,7 +262,7 @@ class PullRequestAnalysisTest {
             + "newIssuesOnly: false,"
             + "changedLinesOnly: true"
             + "],\n" // issueFilterConfig
-            + String.format("category: '%s',\n", GerritServer.CODE_QUALITY_LABEL)
+            + String.format("category: '%s',%n", GerritServer.CODE_QUALITY_LABEL)
             + "noIssuesScore: 1,\n"
             + "issuesScore: -1,\n"
             + "]\n" // scoreConfig
@@ -262,7 +271,7 @@ class PullRequestAnalysisTest {
             + "}\n" // stage('Build')
             + "}";
     job.setDefinition(new CpsFlowDefinition(script, true));
-    return job;
+    cluster.jenkinsRule().buildAndAssertSuccess(job);
   }
 
   private GitSCM createGitSCM(GerritChange change, int patchSetNumber) {
@@ -288,20 +297,7 @@ class PullRequestAnalysisTest {
         Collections.emptyList());
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private static void triggerAndAssertSuccess(Job job) throws Exception {
-    final QueueTaskFuture future =
-        new ParameterizedJobMixIn() {
-          @Override
-          protected Job asJob() {
-            return job;
-          }
-        }.scheduleBuild2(0);
-    cluster.jenkinsRule().assertBuildStatusSuccess(future);
-  }
-
   private interface JobFactory {
-    @SuppressWarnings("rawtypes")
-    Job build(GerritChange change) throws Exception;
+    void createAndBuild(GerritChange change, int patchSetNumber) throws Exception;
   }
 }
