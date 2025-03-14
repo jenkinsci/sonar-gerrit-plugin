@@ -136,11 +136,10 @@ class GerritHttpCredentials {
 
     @Override
     public boolean matches(@NonNull Credentials item) {
-      if (!(item instanceof StandardUsernamePasswordCredentials)) {
+      if (!(item instanceof StandardUsernamePasswordCredentials credentials)) {
         return false;
       }
-      StandardUsernamePasswordCredentials credentials = (StandardUsernamePasswordCredentials) item;
-      if (!credentials.getId().startsWith(PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX)) {
+        if (!credentials.getId().startsWith(PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX)) {
         return false;
       }
       return Objects.equals(Util.fixEmpty(credentials.getUsername()), username)
