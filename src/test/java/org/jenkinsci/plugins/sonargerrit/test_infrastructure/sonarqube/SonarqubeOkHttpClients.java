@@ -1,9 +1,6 @@
 package org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -30,7 +27,7 @@ class SonarqubeOkHttpClients {
     private static final Logger LOG = LoggerFactory.getLogger(RetryInterceptor.class);
 
     private static final Set<Integer> RETRYABLE_RESPONSE_CODES =
-        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(401, 404, 503)));
+            Set.of(401, 404, 503);
     private static final int MAX_ATTEMPTS = 60;
 
     @NotNull

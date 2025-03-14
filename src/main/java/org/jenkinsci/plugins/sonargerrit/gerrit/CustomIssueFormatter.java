@@ -27,26 +27,16 @@ class CustomIssueFormatter {
   }
 
   private String getValueToReplace(Tag tag) {
-    switch (tag) {
-      case KEY:
-        return issue.getKey();
-      case COMPONENT:
-        return issue.getComponent();
-      case MESSAGE:
-        return issue.getMessage();
-      case SEVERITY:
-        return issue.getSeverity().name();
-      case RULE:
-        return issue.getRule();
-      case RULE_URL:
-        return issue.getRuleUrl();
-      case STATUS:
-        return issue.getStatus();
-      case CREATION_DATE:
-        return issue.getCreationDate().toString();
-      default:
-        throw new IllegalArgumentException("Unexpected tag " + tag);
-    }
+      return switch (tag) {
+          case KEY -> issue.getKey();
+          case COMPONENT -> issue.getComponent();
+          case MESSAGE -> issue.getMessage();
+          case SEVERITY -> issue.getSeverity().name();
+          case RULE -> issue.getRule();
+          case RULE_URL -> issue.getRuleUrl();
+          case STATUS -> issue.getStatus();
+          case CREATION_DATE -> issue.getCreationDate().toString();
+      };
   }
 
   public enum Tag {

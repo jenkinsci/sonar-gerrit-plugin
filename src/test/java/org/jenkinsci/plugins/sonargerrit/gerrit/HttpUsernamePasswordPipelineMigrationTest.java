@@ -62,23 +62,23 @@ class HttpUsernamePasswordPipelineMigrationTest {
     git = GerritGit.createAndCloneRepository(cluster.gerrit(), workTree);
 
     git.addAndCommitFile(
-        "pom.xml",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<project>\n"
-            + "  <modelVersion>4.0.0</modelVersion>\n"
-            + "  <groupId>org.example</groupId>\n"
-            + "  <artifactId>example</artifactId>\n"
-            + "  <version>1.0-SNAPSHOT</version>\n"
-            + "  <build>\n"
-            + "    <plugins>\n"
-            + "      <plugin>\n"
-            + "        <groupId>org.apache.maven.plugins</groupId>\n"
-            + "        <artifactId>maven-compiler-plugin</artifactId>\n"
-            + "        <version>3.12.1</version>\n"
-            + "      </plugin>\n"
-            + "    </plugins>\n"
-            + "  </build>\n"
-            + "</project>");
+        "pom.xml", """
+                   <?xml version="1.0" encoding="UTF-8"?>
+                   <project>
+                     <modelVersion>4.0.0</modelVersion>
+                     <groupId>org.example</groupId>
+                     <artifactId>example</artifactId>
+                     <version>1.0-SNAPSHOT</version>
+                     <build>
+                       <plugins>
+                         <plugin>
+                           <groupId>org.apache.maven.plugins</groupId>
+                           <artifactId>maven-compiler-plugin</artifactId>
+                           <version>3.12.1</version>
+                         </plugin>
+                       </plugins>
+                     </build>
+                   </project>""");
 
     git.push();
 
@@ -234,11 +234,10 @@ class HttpUsernamePasswordPipelineMigrationTest {
 
     @Override
     public boolean matches(@NonNull Credentials item) {
-      if (!(item instanceof StandardUsernamePasswordCredentials)) {
+      if (!(item instanceof StandardUsernamePasswordCredentials credentials)) {
         return false;
       }
-      StandardUsernamePasswordCredentials credentials = (StandardUsernamePasswordCredentials) item;
-      return credentials.getId().startsWith("sonar-gerrit:");
+        return credentials.getId().startsWith("sonar-gerrit:");
     }
 
     @Override

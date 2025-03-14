@@ -32,16 +32,16 @@ public class SonarqubeServer {
 
   public static CloseableResource<SonarqubeServer> start(Network network) {
     SonarqubeServer sonarqubeServer = new SonarqubeServer(network);
-    return new CloseableResource<SonarqubeServer>() {
-      @Override
-      public SonarqubeServer resource() {
-        return sonarqubeServer;
-      }
+    return new CloseableResource<>() {
+        @Override
+        public SonarqubeServer resource() {
+            return sonarqubeServer;
+        }
 
-      @Override
-      public void close() {
-        sonarqubeServer.stop();
-      }
+        @Override
+        public void close() {
+            sonarqubeServer.stop();
+        }
     };
   }
 

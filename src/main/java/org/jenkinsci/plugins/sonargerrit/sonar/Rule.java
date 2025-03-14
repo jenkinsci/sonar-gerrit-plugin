@@ -1,7 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
@@ -38,10 +39,6 @@ public class Rule {
   }
 
   private String escapeHttp(String query) {
-    try {
-      return URLEncoder.encode(query, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      return query;
-    }
+      return URLEncoder.encode(query, StandardCharsets.UTF_8);
   }
 }
