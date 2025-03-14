@@ -208,7 +208,7 @@ class PullRequestAnalysisTest {
   }
 
   @SuppressWarnings("rawtypes")
-  private Job createPipelineJob(GerritChange change) throws IOException {
+  private Job createPipelineJob(GerritChange change) throws Exception {
     WorkflowJob job = cluster.jenkinsRule().createProject(WorkflowJob.class);
     int patchSetNumber = 1;
     String script =

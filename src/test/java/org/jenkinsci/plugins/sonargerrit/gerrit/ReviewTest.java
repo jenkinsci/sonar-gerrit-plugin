@@ -217,7 +217,7 @@ class ReviewTest {
       ReviewCommentType commentType,
       String includedPathsGlobPattern,
       String excludedPathsGlobPattern)
-      throws IOException {
+      throws Exception {
     WorkflowJob job = cluster.jenkinsRule().createProject(WorkflowJob.class);
     int patchSetNumber = 1;
     String quotedIncludedPathsGlobPattern =
