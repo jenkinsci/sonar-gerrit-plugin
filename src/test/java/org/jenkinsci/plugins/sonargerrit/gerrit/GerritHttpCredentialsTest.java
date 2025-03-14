@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor;
 import hudson.util.Secret;
 import java.io.IOException;
 import java.util.UUID;
@@ -49,18 +50,19 @@ class GerritHttpCredentialsTest {
   }
 
   private String createCredentials(String username, String password) {
-    SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
-    String credentialsId = UUID.randomUUID().toString();
-    credentialsProvider
-        .getCredentials()
-        .add(
-            new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, credentialsId, null, username, password));
     try {
+      SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
+      String credentialsId = UUID.randomUUID().toString();
+      credentialsProvider
+          .getCredentials()
+          .add(
+              new UsernamePasswordCredentialsImpl(
+                  CredentialsScope.GLOBAL, credentialsId, null, username, password));
+
       credentialsProvider.save();
-    } catch (IOException e) {
+      return credentialsId;
+    } catch (Descriptor.FormException | IOException e) {
       throw new RuntimeException(e);
     }
-    return credentialsId;
   }
 }

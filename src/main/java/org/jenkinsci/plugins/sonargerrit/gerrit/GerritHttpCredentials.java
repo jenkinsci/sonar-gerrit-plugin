@@ -11,6 +11,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Util;
+import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
@@ -102,22 +103,25 @@ class GerritHttpCredentials {
   }
 
   public StandardUsernamePasswordCredentials create(String username, Secret password) {
-    SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
-    String credentialsId = PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX + UUID.randomUUID();
-    String passwordPlainText = Optional.ofNullable(password).map(Secret::getPlainText).orElse(null);
-    credentialsProvider
-        .getCredentials()
-        .add(
-            new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, credentialsId, null, username, passwordPlainText));
     try {
+      SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
+      String credentialsId = PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX + UUID.randomUUID();
+      String passwordPlainText =
+          Optional.ofNullable(password).map(Secret::getPlainText).orElse(null);
+      credentialsProvider
+          .getCredentials()
+          .add(
+              new UsernamePasswordCredentialsImpl(
+                  CredentialsScope.GLOBAL, credentialsId, null, username, passwordPlainText));
+
       credentialsProvider.save();
-    } catch (IOException e) {
+      return findById(null, credentialsId)
+          .orElseThrow(
+              () ->
+                  new IllegalStateException("Could not find credentials for id " + credentialsId));
+    } catch (Descriptor.FormException | IOException e) {
       throw new RuntimeException(e);
     }
-    return findById(null, credentialsId)
-        .orElseThrow(
-            () -> new IllegalStateException("Could not find credentials for id " + credentialsId));
   }
 
   private static class PluginAuthoredCredentialsMatcher implements CredentialsMatcher {
