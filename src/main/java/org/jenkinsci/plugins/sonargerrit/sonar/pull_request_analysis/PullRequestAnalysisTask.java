@@ -186,28 +186,25 @@ class PullRequestAnalysisTask {
 
   private boolean isComplete(TaskListener listener, Ce.Task ceTask) {
     Ce.TaskStatus taskStatus = ceTask.getStatus();
-    switch (taskStatus) {
-      case SUCCESS:
-        TaskListenerLogger.log(listener, "SonarQube task '%s' completed.", taskId);
-        return true;
-      case PENDING:
-        TaskListenerLogger.log(listener, "SonarQube task '%s' is pending.", taskId);
-        return false;
-      case IN_PROGRESS:
-        TaskListenerLogger.log(listener, "SonarQube task '%s' is in progress.", taskId);
-        return false;
-      case FAILED:
-        throw new IllegalStateException(
-            String.format(
-                "SonarQube analysis '%s' failed with message: %s.",
-                taskId, ceTask.getErrorMessage()));
-      case CANCELED:
-        throw new IllegalStateException(
-            String.format("SonarQube analysis '%s' was canceled.", taskId));
-      default:
-        throw new IllegalStateException(
-            String.format(
-                "SonarQube analysis '%s' returned unexpected status '%s'", taskId, taskStatus));
-    }
+      return switch (taskStatus) {
+          case SUCCESS -> {
+              TaskListenerLogger.log(listener, "SonarQube task '%s' completed.", taskId);
+              yield true;
+          }
+          case PENDING -> {
+              TaskListenerLogger.log(listener, "SonarQube task '%s' is pending.", taskId);
+              yield false;
+          }
+          case IN_PROGRESS -> {
+              TaskListenerLogger.log(listener, "SonarQube task '%s' is in progress.", taskId);
+              yield false;
+          }
+          case FAILED -> throw new IllegalStateException(
+                  String.format(
+                          "SonarQube analysis '%s' failed with message: %s.",
+                          taskId, ceTask.getErrorMessage()));
+          case CANCELED -> throw new IllegalStateException(
+                  String.format("SonarQube analysis '%s' was canceled.", taskId));
+      };
   }
 }

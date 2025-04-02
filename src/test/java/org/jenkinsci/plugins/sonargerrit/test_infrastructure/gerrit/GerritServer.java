@@ -44,16 +44,16 @@ public class GerritServer {
 
   public static CloseableResource<GerritServer> start(Network network) {
     GerritServer gerritServer = new GerritServer(network);
-    return new CloseableResource<GerritServer>() {
-      @Override
-      public GerritServer resource() {
-        return gerritServer;
-      }
+    return new CloseableResource<>() {
+        @Override
+        public GerritServer resource() {
+            return gerritServer;
+        }
 
-      @Override
-      public void close() {
-        gerritServer.stop();
-      }
+        @Override
+        public void close() {
+            gerritServer.stop();
+        }
     };
   }
 
