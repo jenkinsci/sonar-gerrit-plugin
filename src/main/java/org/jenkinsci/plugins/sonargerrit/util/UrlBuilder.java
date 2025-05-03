@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,10 +43,6 @@ public class UrlBuilder {
   }
 
   private String urlEncode(String value) {
-    try {
-      return URLEncoder.encode(value, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+      return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 }

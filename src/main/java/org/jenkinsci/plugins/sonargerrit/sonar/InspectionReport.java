@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.sonargerrit.sonar;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -13,7 +11,7 @@ public class InspectionReport {
   private final List<Issue> issues;
 
   public InspectionReport(List<Issue> issues) {
-    this.issues = Collections.unmodifiableList(new ArrayList<>(issues));
+    this.issues = List.copyOf(issues);
   }
 
   public List<Issue> getIssues() {

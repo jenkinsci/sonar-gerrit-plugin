@@ -83,7 +83,7 @@ public class GerritGit {
         .setRefSpecs(new RefSpec("HEAD:refs/for/" + targetBranchName))
         .setOutputStream(outputStream)
         .call();
-    String output = outputStream.toString(StandardCharsets.UTF_8.name());
+    String output = outputStream.toString(StandardCharsets.UTF_8);
     Matcher matcher = Pattern.compile("/c/" + projectName + "/\\+/(\\d+)").matcher(output);
     if (!matcher.find()) {
       throw new IllegalStateException("Could not parse change numeric id");
@@ -108,7 +108,7 @@ public class GerritGit {
       throws IOException, GitAPIException {
     Path filePath = workTree().resolve(relativePath);
     Files.createDirectories(filePath.getParent());
-    Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
+    Files.writeString(filePath, content);
     git.add().addFilepattern(relativePath).call();
     return this;
   }
