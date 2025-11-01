@@ -34,23 +34,16 @@ class CustomReportFormatter {
 
   private String getValueToReplace(Tag tag) {
     int value;
-    switch (tag) {
-      case INFO_ISSUE_COUNT:
-      case MINOR_ISSUE_COUNT:
-      case MAJOR_ISSUE_COUNT:
-      case CRITICAL_ISSUE_COUNT:
-      case BLOCKER_ISSUE_COUNT:
-        value = getSize(filterByExactSeverityPredicate(tag.getSeverity()));
-        return String.valueOf(value);
-      case AT_LEAST_MINOR_ISSUE_COUNT:
-      case AT_LEAST_MAJOR_ISSUE_COUNT:
-      case AT_LEAST_CRITICAL_ISSUE_COUNT:
-      case TOTAL_COUNT:
-        value = getSize(filterByMinSeverityPredicate(tag.getSeverity()));
-        return String.valueOf(value);
-      default:
-        return "";
-    }
+      return switch (tag) {
+          case INFO_ISSUE_COUNT, MINOR_ISSUE_COUNT, MAJOR_ISSUE_COUNT, CRITICAL_ISSUE_COUNT, BLOCKER_ISSUE_COUNT -> {
+              value = getSize(filterByExactSeverityPredicate(tag.getSeverity()));
+              yield String.valueOf(value);
+          }
+          case AT_LEAST_MINOR_ISSUE_COUNT, AT_LEAST_MAJOR_ISSUE_COUNT, AT_LEAST_CRITICAL_ISSUE_COUNT, TOTAL_COUNT -> {
+              value = getSize(filterByMinSeverityPredicate(tag.getSeverity()));
+              yield String.valueOf(value);
+          }
+      };
   }
 
   private int getSize(Iterable<?> i) {

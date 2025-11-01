@@ -18,15 +18,16 @@ import org.junit.jupiter.api.Test;
 public class CustomReportFormatterTest {
   private static final String SUCCESS_TEXT = "SonarQube violations have not been found.";
   private static final String FAIL_TEXT =
-      "<total_count> SonarQube violations have been found.\n"
-          + "Info: <info_count>\n"
-          + "Minor: <minor_count>\n"
-          + "Major: <major_count>\n"
-          + "Critical: <critical_count>\n"
-          + "Blocker: <blocker_count>\n"
-          + "Minor or harder: <min_minor_count>\n"
-          + "Major or harder: <min_major_count>\n"
-          + "Critical or harder: <min_critical_count>";
+                  """
+                  <total_count> SonarQube violations have been found.
+                  Info: <info_count>
+                  Minor: <minor_count>
+                  Major: <major_count>
+                  Critical: <critical_count>
+                  Blocker: <blocker_count>
+                  Minor or harder: <min_minor_count>
+                  Major or harder: <min_major_count>
+                  Critical or harder: <min_critical_count>""";
 
   @Test
   public void testSuccess() {
@@ -41,15 +42,16 @@ public class CustomReportFormatterTest {
   public void testFail() throws IOException, InterruptedException, URISyntaxException {
     List<Issue> i = getIssues();
     String expectedResult =
-        "19 SonarQube violations have been found.\n"
-            + "Info: 1\n"
-            + "Minor: 6\n"
-            + "Major: 10\n"
-            + "Critical: 1\n"
-            + "Blocker: 1\n"
-            + "Minor or harder: 18\n"
-            + "Major or harder: 12\n"
-            + "Critical or harder: 2";
+                    """
+                    19 SonarQube violations have been found.
+                    Info: 1
+                    Minor: 6
+                    Major: 10
+                    Critical: 1
+                    Blocker: 1
+                    Minor or harder: 18
+                    Major or harder: 12
+                    Critical or harder: 2""";
     CustomReportFormatter basicIssueConverter =
         new CustomReportFormatter(i, FAIL_TEXT, SUCCESS_TEXT);
     Assertions.assertEquals(expectedResult, basicIssueConverter.getMessage());
