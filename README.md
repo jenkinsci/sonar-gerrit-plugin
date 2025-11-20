@@ -32,7 +32,7 @@ For example:
 ```groovy
 withSonarQubeEnv('my-sonar-installation-name') {
     withMaven(maven: 'my-maven-installation-name') {
-        sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
+        sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
     }
 }
 ```
@@ -58,7 +58,6 @@ In case when the plugin is runing outside of a job with Gerrit Trigger the next 
 
 * `GERRIT_NAME` - Gerrit server name
 * `GERRIT_CHANGE_NUMBER` - Change number
-* `GERRIT_PATCHSET_NUMBER` - Patchset number
 
 ## Setup
 
@@ -86,16 +85,16 @@ enabled or be of [developer edition](https://www.sonarqube.org/developer-edition
 
 In order to run a pull request scan, `Sonar` requires the following mandatory properties:
 
-| Key                      | Recommended value template                        | Example             |
-|--------------------------|---------------------------------------------------|---------------------|
-| sonar.pullrequest.key    | <span>$</span>{GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} | 250-1               |
-| sonar.pullrequest.base   | ${GERRIT_BRANCH}                                  | master              |
-| sonar.pullrequest.branch | ${GERRIT_REFSPEC}                                 | refs/changes/01/1/1 |
+| Key                      | Recommended value template           | Example             |
+|--------------------------|--------------------------------------|---------------------|
+| sonar.pullrequest.key    | <span>$</span>{GERRIT_CHANGE_NUMBER} | 250                 |
+| sonar.pullrequest.base   | ${GERRIT_BRANCH}                     | master              |
+| sonar.pullrequest.branch | ${GERRIT_REFSPEC}                    | refs/changes/01/1/1 |
 
 Example of `Maven` target:
 
 ```
-clean verify sonar:sonar -Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER}-${GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${GERRIT_BRANCH} -Dsonar.pullrequest.branch=${GERRIT_REFSPEC}
+clean verify sonar:sonar -Dsonar.pullrequest.key=${GERRIT_CHANGE_NUMBER} -Dsonar.pullrequest.base=${GERRIT_BRANCH} -Dsonar.pullrequest.branch=${GERRIT_REFSPEC}
 ```
 
 ###### Non pipeline
@@ -307,13 +306,13 @@ node {
       // trigger build
       git url: 'ssh://your_project_repo'
       // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
-      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER}"
+      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}"
       sh "git fetch origin ${env.GERRIT_REFSPEC}:${changeBranch}"
       sh "git checkout ${changeBranch}"
       try {
          withSonarQubeEnv('my-sonar-installation') {
             withMaven(maven: 'my-maven-installation') {
-               sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
+               sh "mvn clean verify sonar:sonar -Dsonar.pullrequest.key=${env.GERRIT_CHANGE_NUMBER} -Dsonar.pullrequest.base=${env.GERRIT_BRANCH} -Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}"
             }
          }
       } finally {
@@ -371,7 +370,7 @@ node {
       // trigger build
       git url: 'ssh://your_project_repo'
       // Fetch the changeset to a local branch using the build parameters provided to the build by the Gerrit Trigger...
-      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}-${env.GERRIT_PATCHSET_NUMBER}"
+      def changeBranch = "change-${env.GERRIT_CHANGE_NUMBER}"
       sh "git fetch origin ${env.GERRIT_REFSPEC}:${changeBranch}"
       sh "git checkout ${changeBranch}"
       try {
