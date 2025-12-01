@@ -30,7 +30,7 @@
     <gerrit-rest-java-client.version>0.9.4.0</gerrit-rest-java-client.version>
     <junit.jupiter.version>5.10.2</junit.jupiter.version>
     <testcontainers.version>1.20.4</testcontainers.version>
-    <jackson.version>2.19.0</jackson.version>
+    <jackson.version>2.20</jackson.version>
     <sonar.version>2.13.1</sonar.version>
 
     <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
