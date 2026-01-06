@@ -75,6 +75,15 @@ class PullRequestAnalysisTest {
             + "        <version>3.12.1</version>\n"
             + "      </plugin>\n"
             + "    </plugins>\n"
+            + "    <pluginManagement>\n"
+            + "      <plugins>\n"
+            + "        <plugin>\n"
+            + "          <groupId>org.sonarsource.scanner.maven</groupId>\n"
+            + "          <artifactId>sonar-maven-plugin</artifactId>\n"
+            + "          <version>4.0.0.4121</version>\n"
+            + "        </plugin>\n"
+            + "      </plugins>\n"
+            + "    </pluginManagement>\n"
             + "  </build>\n"
             + "</project>");
 
