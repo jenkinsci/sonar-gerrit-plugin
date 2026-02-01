@@ -33,7 +33,7 @@
     <jackson.version>2.19.0</jackson.version>
     <sonar.version>2.13.1</sonar.version>
 
-    <git-code-format-maven-plugin.version>2.7</git-code-format-maven-plugin.version>
+    <git-code-format-maven-plugin.version>5.4</git-code-format-maven-plugin.version>
     <assertj-core.version>3.27.6</assertj-core.version>
     <logback-classic.version>1.5.27</logback-classic.version>
     <sonar-ws-shaded.version>7.7.0</sonar-ws-shaded.version>
