@@ -205,7 +205,8 @@ Review settings contains of issue filter to specify issues to be commented and r
 
 Posted review comments can be of one of the following types :
 * `STANDARD` - The usual review comment that everyone use.
-* `ROBOT` - Available since Gerrit 2.14. Review comment type to be used by robots. See https://gerrit-review.googlesource.com/Documentation/config-robot-comments.html for more details.
+* `ROBOT` - Available between Gerrit 2.14 and 3.12. Review comment's type to be used by robots. Not supported by Gerrit
+  [since Gerrit 3.13](https://groups.google.com/g/repo-discuss/c/fIgEGcB2IAs/m/NO8kneC0AAAJ).
 
 ##### Report Formatting
 
