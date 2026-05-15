@@ -13,8 +13,10 @@ import org.jenkinsci.plugins.sonargerrit.sonar.AnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-/** @author Réda Housni Alaoui */
-public class PullRequestAnalysisStrategy
+/**
+ * @author Réda Housni Alaoui
+ */
+public final class PullRequestAnalysisStrategy
     extends AbstractDescribableImpl<PullRequestAnalysisStrategy> implements AnalysisStrategy {
 
   @DataBoundConstructor
@@ -38,5 +40,15 @@ public class PullRequestAnalysisStrategy
     public String getDisplayName() {
       return "Pull request analysis (since SonarQube 7.2)";
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return 1;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && PullRequestAnalysisStrategy.class.equals(obj.getClass());
   }
 }

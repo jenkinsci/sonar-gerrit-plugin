@@ -11,7 +11,9 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 @Restricted(NoExternalUse.class)
 public interface Issue {
 
-  /** @return The id of the inspector which generated this issue. */
+  /**
+   * @return The id of the inspector which generated this issue.
+   */
   String inspectorName();
 
   String inspectionId();

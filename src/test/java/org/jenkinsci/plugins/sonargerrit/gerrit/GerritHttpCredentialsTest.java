@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor;
 import hudson.util.Secret;
 import java.io.IOException;
 import java.util.UUID;
@@ -12,7 +13,9 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenki
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @EnableJenkinsRule
 class GerritHttpCredentialsTest {
 
@@ -51,11 +54,15 @@ class GerritHttpCredentialsTest {
   private String createCredentials(String username, String password) {
     SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
     String credentialsId = UUID.randomUUID().toString();
-    credentialsProvider
-        .getCredentials()
-        .add(
-            new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, credentialsId, null, username, password));
+    UsernamePasswordCredentialsImpl credentials;
+    try {
+      credentials =
+          new UsernamePasswordCredentialsImpl(
+              CredentialsScope.GLOBAL, credentialsId, null, username, password);
+    } catch (Descriptor.FormException e) {
+      throw new RuntimeException(e);
+    }
+    credentialsProvider.getCredentials().add(credentials);
     try {
       credentialsProvider.save();
     } catch (IOException e) {

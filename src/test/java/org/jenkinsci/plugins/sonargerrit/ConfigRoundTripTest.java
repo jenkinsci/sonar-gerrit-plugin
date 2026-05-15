@@ -2,7 +2,6 @@ package org.jenkinsci.plugins.sonargerrit;
 
 import hudson.model.FreeStyleProject;
 import hudson.util.Secret;
-import java.util.UUID;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritAuthenticationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewCommentType;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
@@ -10,23 +9,32 @@ import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.PreviewMode
 import org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis.SubJobConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.pull_request_analysis.PullRequestAnalysisStrategy;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenkinsRule;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.SonarqubeConfiguration;
+import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.UsernamePasswordCredentials;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @EnableJenkinsRule
 class ConfigRoundTripTest {
 
   @Test
   @DisplayName("351.vb_8d85df69260")
   void test1(JenkinsRule jenkinsRule) throws Exception {
+
     FreeStyleProject project = jenkinsRule.createFreeStyleProject();
 
     SonarToGerritPublisher before = new SonarToGerritPublisher();
     project.getPublishersList().add(before);
 
-    before.getInspectionConfig().setSonarQubeInstallationName(UUID.randomUUID().toString());
+    before
+        .getInspectionConfig()
+        .setSonarQubeInstallationName(
+            new SonarqubeConfiguration(jenkinsRule.jenkins)
+                .addInstallation("https://example.org", "foo"));
     before.getInspectionConfig().setBaseConfig(new SubJobConfig());
     before.getInspectionConfig().getBaseConfig().setAutoMatch(true);
     before.getInspectionConfig().getBaseConfig().setProjectPath("foo");
@@ -90,7 +98,11 @@ class ConfigRoundTripTest {
     SonarToGerritPublisher before = new SonarToGerritPublisher();
     project.getPublishersList().add(before);
 
-    before.getInspectionConfig().setSonarQubeInstallationName(UUID.randomUUID().toString());
+    before
+        .getInspectionConfig()
+        .setSonarQubeInstallationName(
+            new SonarqubeConfiguration(jenkinsRule.jenkins)
+                .addInstallation("https://example.org", "foo"));
     before.getInspectionConfig().setBaseConfig(new SubJobConfig());
     before.getInspectionConfig().getBaseConfig().setAutoMatch(true);
     before.getInspectionConfig().getBaseConfig().setProjectPath("foo");
@@ -113,7 +125,8 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
     GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
-    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    authenticationConfig.setHttpCredentialsId(
+        new UsernamePasswordCredentials(jenkinsRule.jenkins).create("foo", "bar"));
     before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
@@ -152,13 +165,17 @@ class ConfigRoundTripTest {
     SonarToGerritPublisher before = new SonarToGerritPublisher();
     project.getPublishersList().add(before);
 
-    before.getInspectionConfig().setSonarQubeInstallationName(UUID.randomUUID().toString());
     PreviewModeAnalysisStrategy previewModeAnalysisStrategy = new PreviewModeAnalysisStrategy();
     before.getInspectionConfig().setAnalysisStrategy(previewModeAnalysisStrategy);
     previewModeAnalysisStrategy.setBaseConfig(new SubJobConfig());
     previewModeAnalysisStrategy.getBaseConfig().setAutoMatch(true);
     previewModeAnalysisStrategy.getBaseConfig().setProjectPath("foo");
     previewModeAnalysisStrategy.getBaseConfig().setSonarReportPath("bar");
+    before
+        .getInspectionConfig()
+        .setSonarQubeInstallationName(
+            new SonarqubeConfiguration(jenkinsRule.jenkins)
+                .addInstallation("https://example.org", "foo"));
 
     before.getReviewConfig().getIssueFilterConfig().setChangedLinesOnly(true);
     before.getReviewConfig().getIssueFilterConfig().setNewIssuesOnly(true);
@@ -177,7 +194,8 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
     GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
-    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    authenticationConfig.setHttpCredentialsId(
+        new UsernamePasswordCredentials(jenkinsRule.jenkins).create("foo", "bar"));
     before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
@@ -218,7 +236,9 @@ class ConfigRoundTripTest {
 
     PreviewModeAnalysisStrategy previewModeAnalysisStrategy = new PreviewModeAnalysisStrategy();
     before.getInspectionConfig().setAnalysisStrategy(previewModeAnalysisStrategy);
-    previewModeAnalysisStrategy.setSonarQubeInstallationName(UUID.randomUUID().toString());
+    previewModeAnalysisStrategy.setSonarQubeInstallationName(
+        new SonarqubeConfiguration(jenkinsRule.jenkins)
+            .addInstallation("https://example.org", "foo"));
     previewModeAnalysisStrategy.setBaseConfig(new SubJobConfig());
     previewModeAnalysisStrategy.getBaseConfig().setAutoMatch(true);
     previewModeAnalysisStrategy.getBaseConfig().setProjectPath("foo");
@@ -242,7 +262,8 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
     GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
-    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    authenticationConfig.setHttpCredentialsId(
+        new UsernamePasswordCredentials(jenkinsRule.jenkins).create("foo", "bar"));
     before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(
@@ -302,7 +323,8 @@ class ConfigRoundTripTest {
     before.getNotificationConfig().setNegativeScoreNotificationRecipient("baz");
 
     GerritAuthenticationConfig authenticationConfig = new GerritAuthenticationConfig();
-    authenticationConfig.setHttpCredentialsId(UUID.randomUUID().toString());
+    authenticationConfig.setHttpCredentialsId(
+        new UsernamePasswordCredentials(jenkinsRule.jenkins).create("foo", "bar"));
     before.setAuthConfig(authenticationConfig);
 
     jenkinsRule.submit(

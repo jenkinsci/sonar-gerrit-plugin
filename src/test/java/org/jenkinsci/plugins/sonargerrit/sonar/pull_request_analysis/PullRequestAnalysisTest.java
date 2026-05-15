@@ -32,7 +32,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @EnableCluster
 class PullRequestAnalysisTest {
 
@@ -60,32 +62,33 @@ class PullRequestAnalysisTest {
 
     git.addAndCommitFile(
         "pom.xml",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<project>\n"
-            + "  <modelVersion>4.0.0</modelVersion>\n"
-            + "\n"
-            + "  <groupId>org.example</groupId>\n"
-            + "  <artifactId>example</artifactId>\n"
-            + "  <version>1.0-SNAPSHOT</version>\n"
-            + "  <build>\n"
-            + "    <plugins>\n"
-            + "      <plugin>\n"
-            + "        <groupId>org.apache.maven.plugins</groupId>\n"
-            + "        <artifactId>maven-compiler-plugin</artifactId>\n"
-            + "        <version>3.12.1</version>\n"
-            + "      </plugin>\n"
-            + "    </plugins>\n"
-            + "    <pluginManagement>\n"
-            + "      <plugins>\n"
-            + "        <plugin>\n"
-            + "          <groupId>org.sonarsource.scanner.maven</groupId>\n"
-            + "          <artifactId>sonar-maven-plugin</artifactId>\n"
-            + "          <version>4.0.0.4121</version>\n"
-            + "        </plugin>\n"
-            + "      </plugins>\n"
-            + "    </pluginManagement>\n"
-            + "  </build>\n"
-            + "</project>");
+        """
+					<?xml version="1.0" encoding="UTF-8"?>
+					<project>
+					  <modelVersion>4.0.0</modelVersion>
+
+					  <groupId>org.example</groupId>
+					  <artifactId>example</artifactId>
+					  <version>1.0-SNAPSHOT</version>
+					  <build>
+					    <plugins>
+					      <plugin>
+					        <groupId>org.apache.maven.plugins</groupId>
+					        <artifactId>maven-compiler-plugin</artifactId>
+					        <version>3.12.1</version>
+					      </plugin>
+					    </plugins>
+					    <pluginManagement>
+					      <plugins>
+					        <plugin>
+					          <groupId>org.sonarsource.scanner.maven</groupId>
+					          <artifactId>sonar-maven-plugin</artifactId>
+					          <version>4.0.0.4121</version>
+					        </plugin>
+					      </plugins>
+					    </pluginManagement>
+					  </build>
+					</project>""");
 
     git.push();
 

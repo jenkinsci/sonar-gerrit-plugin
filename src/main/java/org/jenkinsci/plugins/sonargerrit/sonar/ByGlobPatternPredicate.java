@@ -6,7 +6,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import org.apache.commons.lang3.StringUtils;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class ByGlobPatternPredicate implements Predicate<Issue> {
 
   private final PathMatcher pathMatcher;

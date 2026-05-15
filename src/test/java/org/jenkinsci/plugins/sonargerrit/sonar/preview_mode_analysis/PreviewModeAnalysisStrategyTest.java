@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class PreviewModeAnalysisStrategyTest {
 
   private static final String SONAR_URL = SonarToGerritPublisher.DescriptorImpl.SONAR_URL;

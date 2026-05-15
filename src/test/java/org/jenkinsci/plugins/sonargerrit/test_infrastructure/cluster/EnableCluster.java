@@ -11,7 +11,9 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenki
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.EnableSonarqubeServer;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @Target({TYPE, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @EnableGerritServer

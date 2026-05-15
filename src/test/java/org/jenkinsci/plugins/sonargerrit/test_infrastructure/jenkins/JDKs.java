@@ -8,7 +8,9 @@ import java.util.Collections;
 import java.util.UUID;
 import jenkins.model.Jenkins;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class JDKs {
 
   private final Jenkins jenkins;

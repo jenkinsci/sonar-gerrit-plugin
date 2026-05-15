@@ -87,21 +87,27 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
     this.analysisStrategy = analysisStrategy;
   }
 
-  /** @deprecated Use {@link PreviewModeAnalysisStrategy} instead */
+  /**
+   * @deprecated Use {@link PreviewModeAnalysisStrategy} instead
+   */
   @Deprecated
   @Nullable
   public String getSonarQubeInstallationName() {
     return getOrSpawnPreviewModeAnalysisStrategy().getSonarQubeInstallationName();
   }
 
-  /** @deprecated Use {@link PreviewModeAnalysisStrategy} instead */
+  /**
+   * @deprecated Use {@link PreviewModeAnalysisStrategy} instead
+   */
   @Deprecated
   @DataBoundSetter
   public void setSonarQubeInstallationName(String name) {
     getOrSetPreviewModeAnalysisStrategy().setSonarQubeInstallationName(name);
   }
 
-  /** @deprecated Use {@link #getSonarQubeInstallationName()} */
+  /**
+   * @deprecated Use {@link #getSonarQubeInstallationName()}
+   */
   @Deprecated
   @Nonnull
   public String getServerURL() {
@@ -111,7 +117,9 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
         .orElse(PreviewModeAnalysisStrategy.DescriptorImpl.SONAR_URL);
   }
 
-  /** @deprecated Use {@link #setSonarQubeInstallationName(String)} */
+  /**
+   * @deprecated Use {@link #setSonarQubeInstallationName(String)}
+   */
   @Deprecated
   @DataBoundSetter
   public void setServerURL(String serverURL) {
@@ -126,53 +134,69 @@ public class Inspection extends AbstractDescribableImpl<Inspection> {
     getOrSetPreviewModeAnalysisStrategy().setSonarQubeInstallationName(installationName);
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   public SubJobConfig getBaseConfig() {
     return getOrSpawnPreviewModeAnalysisStrategy().getBaseConfig();
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   @DataBoundSetter
   public void setBaseConfig(SubJobConfig baseConfig) {
     getOrSetPreviewModeAnalysisStrategy().setBaseConfig(baseConfig);
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   public Collection<SubJobConfig> getSubJobConfigs() {
     return getOrSpawnPreviewModeAnalysisStrategy().getSubJobConfigs();
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   @DataBoundSetter
   public void setSubJobConfigs(Collection<SubJobConfig> subJobConfigs) {
     getOrSetPreviewModeAnalysisStrategy().setSubJobConfigs(subJobConfigs);
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   @DataBoundSetter
   public void setType(String type) {
     getOrSetPreviewModeAnalysisStrategy().setType(type);
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   @SuppressWarnings("unused")
   public String getType() {
     return getOrSpawnPreviewModeAnalysisStrategy().getType();
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   public boolean isAutoMatch() {
     return getOrSpawnPreviewModeAnalysisStrategy().isAutoMatch();
   }
 
-  /** @deprecated Moved to {@link PreviewModeAnalysisStrategy} */
+  /**
+   * @deprecated Moved to {@link PreviewModeAnalysisStrategy}
+   */
   @Deprecated
   @DataBoundSetter
   public void setAutoMatch(boolean autoMatch) {

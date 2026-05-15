@@ -2,7 +2,9 @@ package org.jenkinsci.plugins.sonargerrit.sonar;
 
 import javax.annotation.Nullable;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public interface Component {
   String getKey();
 

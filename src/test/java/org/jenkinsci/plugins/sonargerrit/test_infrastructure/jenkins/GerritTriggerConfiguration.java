@@ -8,7 +8,9 @@ import java.util.UUID;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class GerritTriggerConfiguration {
 
   private final Jenkins jenkins;

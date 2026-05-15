@@ -15,7 +15,7 @@ via [Gerrit Code Review](https://www.gerritcodereview.com/).
 
 ### Jenkins
 
-Jenkins version 2.249.3 or newer is required.
+Jenkins version 2.479.1 or newer is required.
 
 ### SonarQube
 

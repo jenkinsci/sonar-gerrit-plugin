@@ -5,6 +5,7 @@ import static org.jenkinsci.plugins.sonargerrit.util.Localization.getLocalized;
 import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -69,7 +70,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
 
   @DataBoundSetter
   public void setIncludedPathsGlobPattern(String includedPathsGlobPattern) {
-    this.includedPathsGlobPattern = includedPathsGlobPattern;
+    this.includedPathsGlobPattern = Util.fixEmptyAndTrim(includedPathsGlobPattern);
   }
 
   @Nullable
@@ -79,7 +80,7 @@ public class IssueFilterConfig extends AbstractDescribableImpl<IssueFilterConfig
 
   @DataBoundSetter
   public void setExcludedPathsGlobPattern(String excludedPathsGlobPattern) {
-    this.excludedPathsGlobPattern = excludedPathsGlobPattern;
+    this.excludedPathsGlobPattern = Util.fixEmptyAndTrim(excludedPathsGlobPattern);
   }
 
   @Override

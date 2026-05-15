@@ -7,7 +7,9 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.jvnet.hudson.test.JenkinsRule;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class JenkinsRuleExtension implements BeforeAllCallback, ParameterResolver {
 
   @Override

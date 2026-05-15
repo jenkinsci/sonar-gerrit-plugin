@@ -32,7 +32,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class PreviewModeAnalysisStrategy
     extends AbstractDescribableImpl<PreviewModeAnalysisStrategy> implements AnalysisStrategy {
 

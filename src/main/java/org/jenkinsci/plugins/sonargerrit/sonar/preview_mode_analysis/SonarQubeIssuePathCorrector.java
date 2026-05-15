@@ -11,7 +11,9 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.Revision;
 import org.jenkinsci.plugins.sonargerrit.sonar.ByFilenameEndPredicate;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class SonarQubeIssuePathCorrector implements SonarQubeIssueDecorator {
 
   private static final Logger LOGGER =

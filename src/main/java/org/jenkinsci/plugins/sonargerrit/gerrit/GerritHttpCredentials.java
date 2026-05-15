@@ -11,6 +11,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Util;
+import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.security.ACL;
 import hudson.util.ListBoxModel;
@@ -24,7 +25,9 @@ import jenkins.model.Jenkins;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @Restricted(NoExternalUse.class)
 class GerritHttpCredentials {
 
@@ -36,7 +39,9 @@ class GerritHttpCredentials {
     return new GerritHttpCredentials();
   }
 
-  /** @return Empty if username and password are null */
+  /**
+   * @return Empty if username and password are null
+   */
   public Optional<String> migrate(String username, Secret password) {
     if (Util.fixEmpty(username) == null
         && (password == null || Util.fixEmpty(password.getPlainText()) == null)) {
@@ -105,11 +110,15 @@ class GerritHttpCredentials {
     SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
     String credentialsId = PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX + UUID.randomUUID();
     String passwordPlainText = Optional.ofNullable(password).map(Secret::getPlainText).orElse(null);
-    credentialsProvider
-        .getCredentials()
-        .add(
-            new UsernamePasswordCredentialsImpl(
-                CredentialsScope.GLOBAL, credentialsId, null, username, passwordPlainText));
+    UsernamePasswordCredentialsImpl credentials;
+    try {
+      credentials =
+          new UsernamePasswordCredentialsImpl(
+              CredentialsScope.GLOBAL, credentialsId, null, username, passwordPlainText);
+    } catch (Descriptor.FormException e) {
+      throw new RuntimeException(e);
+    }
+    credentialsProvider.getCredentials().add(credentials);
     try {
       credentialsProvider.save();
     } catch (IOException e) {
@@ -132,10 +141,9 @@ class GerritHttpCredentials {
 
     @Override
     public boolean matches(@NonNull Credentials item) {
-      if (!(item instanceof StandardUsernamePasswordCredentials)) {
+      if (!(item instanceof StandardUsernamePasswordCredentials credentials)) {
         return false;
       }
-      StandardUsernamePasswordCredentials credentials = (StandardUsernamePasswordCredentials) item;
       if (!credentials.getId().startsWith(PLUGIN_AUTHORED_CREDENTIALS_ID_PREFIX)) {
         return false;
       }

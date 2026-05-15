@@ -15,7 +15,9 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class SonarqubeConfiguration {
 
   private final Jenkins jenkins;

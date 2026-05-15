@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import jenkins.tasks.SimpleBuildWrapper;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class EnvironmentVariableBuildWrapper extends SimpleBuildWrapper {
 
   private final Map<String, String> variables = new HashMap<>();

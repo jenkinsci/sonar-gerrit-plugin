@@ -13,7 +13,9 @@ import java.util.Objects;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.DiffInfo;
 import org.jenkinsci.plugins.sonargerrit.gerrit.DummyRevision;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class JsonReports {
 
   public static ReportRepresentation readReport(String file)

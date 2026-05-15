@@ -9,7 +9,9 @@ import java.util.UUID;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang3.ArrayUtils;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class MavenConfiguration {
 
   private final Jenkins jenkins;

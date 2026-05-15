@@ -30,7 +30,9 @@ import org.jenkinsci.plugins.sonargerrit.sonar.Components;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 import org.jenkinsci.plugins.sonargerrit.sonar.SonarInstallationAdditionalAnalysisProperties;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class PullRequestAnalysisTask {
 
   private static final String PLEASE_USE_THE_WITH_SONAR_QUBE_ENV_WRAPPER_TO_RUN_YOUR_ANALYSIS =
@@ -147,8 +149,11 @@ class PullRequestAnalysisTask {
     ProjectPullRequests.PullRequest pullRequest;
     while (true) {
       pullRequest =
-          sonarClient.projectPullRequests().list(new ListRequest().setProject(componentKey))
-              .getPullRequestsList().stream()
+          sonarClient
+              .projectPullRequests()
+              .list(new ListRequest().setProject(componentKey))
+              .getPullRequestsList()
+              .stream()
               .filter(pr -> pullRequestKey.equals(pr.getKey()))
               .findFirst()
               .orElse(null);
@@ -187,28 +192,27 @@ class PullRequestAnalysisTask {
 
   private boolean isComplete(TaskListener listener, Ce.Task ceTask) {
     Ce.TaskStatus taskStatus = ceTask.getStatus();
-    switch (taskStatus) {
-      case SUCCESS:
+    return switch (taskStatus) {
+      case SUCCESS -> {
         TaskListenerLogger.log(listener, "SonarQube task '%s' completed.", taskId);
-        return true;
-      case PENDING:
+        yield true;
+      }
+      case PENDING -> {
         TaskListenerLogger.log(listener, "SonarQube task '%s' is pending.", taskId);
-        return false;
-      case IN_PROGRESS:
+        yield false;
+      }
+      case IN_PROGRESS -> {
         TaskListenerLogger.log(listener, "SonarQube task '%s' is in progress.", taskId);
-        return false;
-      case FAILED:
-        throw new IllegalStateException(
-            String.format(
-                "SonarQube analysis '%s' failed with message: %s.",
-                taskId, ceTask.getErrorMessage()));
-      case CANCELED:
-        throw new IllegalStateException(
-            String.format("SonarQube analysis '%s' was canceled.", taskId));
-      default:
-        throw new IllegalStateException(
-            String.format(
-                "SonarQube analysis '%s' returned unexpected status '%s'", taskId, taskStatus));
-    }
+        yield false;
+      }
+      case FAILED ->
+          throw new IllegalStateException(
+              String.format(
+                  "SonarQube analysis '%s' failed with message: %s.",
+                  taskId, ceTask.getErrorMessage()));
+      case CANCELED ->
+          throw new IllegalStateException(
+              String.format("SonarQube analysis '%s' was canceled.", taskId));
+    };
   }
 }

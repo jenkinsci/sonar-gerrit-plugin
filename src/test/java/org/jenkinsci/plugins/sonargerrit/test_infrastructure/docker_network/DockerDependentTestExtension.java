@@ -11,7 +11,9 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.testcontainers.containers.Network;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public abstract class DockerDependentTestExtension<T>
     implements BeforeAllCallback, ParameterResolver {
 
