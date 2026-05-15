@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.sonar.preview_mode_analysis;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class ReportInfo {
 
   public final SubJobConfig config;

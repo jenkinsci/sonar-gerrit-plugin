@@ -13,7 +13,9 @@ import org.jenkinsci.plugins.sonargerrit.sonar.Rule;
 import org.jenkinsci.plugins.sonargerrit.sonar.Severity;
 import org.jenkinsci.plugins.sonargerrit.util.UrlBuilder;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class PullRequestIssue implements Issue {
 
   private final ProjectPullRequests.PullRequest pullRequest;

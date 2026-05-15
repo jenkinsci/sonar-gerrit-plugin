@@ -9,7 +9,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.ObjectMappers;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class SonarqubeAccessTokens {
 
   private final String sonarqubeUrl;

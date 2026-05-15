@@ -21,7 +21,9 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.RefSpec;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class GerritGit {
   private static final String CHANGE_ID = "Change-Id: I";
 
@@ -89,7 +91,9 @@ public class GerritGit {
     return this;
   }
 
-  /** @return The gerrit change branch ref name */
+  /**
+   * @return The gerrit change branch ref name
+   */
   public GerritChange createGerritChangeForMaster()
       throws GitAPIException, RestApiException, UnsupportedEncodingException {
     return createGerritChange("master");
@@ -134,7 +138,7 @@ public class GerritGit {
       throws IOException, GitAPIException {
     Path filePath = workTree().resolve(relativePath);
     Files.createDirectories(filePath.getParent());
-    Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
+    Files.writeString(filePath, content);
     git.add().addFilepattern(relativePath).call();
     return this;
   }

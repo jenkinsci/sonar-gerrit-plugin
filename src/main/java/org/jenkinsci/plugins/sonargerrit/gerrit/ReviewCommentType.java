@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public enum ReviewCommentType {
   STANDARD("Standard"),
   ROBOT("Robot (since Gerrit 2.14)");

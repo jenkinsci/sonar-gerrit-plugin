@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class Reports {
 
   private Reports() {}

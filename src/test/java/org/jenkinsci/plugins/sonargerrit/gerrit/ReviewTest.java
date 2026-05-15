@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.sonargerrit.gerrit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
 import hudson.model.queue.QueueTaskFuture;
@@ -31,7 +32,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @EnableCluster
 class ReviewTest {
 
@@ -55,51 +58,53 @@ class ReviewTest {
 
     git.addAndCommitFile(
             "pom.xml",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<project>\n"
-                + "  <modelVersion>4.0.0</modelVersion>\n"
-                + "\n"
-                + "  <groupId>org.example</groupId>\n"
-                + "  <artifactId>example</artifactId>\n"
-                + "  <version>1.0-SNAPSHOT</version>\n"
-                + "  <packaging>pom</packaging>\n"
-                + "  <build>\n"
-                + "    <plugins>\n"
-                + "      <plugin>\n"
-                + "        <groupId>org.apache.maven.plugins</groupId>\n"
-                + "        <artifactId>maven-compiler-plugin</artifactId>\n"
-                + "        <version>3.12.1</version>\n"
-                + "      </plugin>\n"
-                + "    </plugins>\n"
-                + "    <pluginManagement>\n"
-                + "      <plugins>\n"
-                + "        <plugin>\n"
-                + "          <groupId>org.sonarsource.scanner.maven</groupId>\n"
-                + "          <artifactId>sonar-maven-plugin</artifactId>\n"
-                + "          <version>4.0.0.4121</version>\n"
-                + "        </plugin>\n"
-                + "      </plugins>\n"
-                + "    </pluginManagement>\n"
-                + "  </build>\n"
-                + "  <modules>\n"
-                + "    <module>child1</module>\n"
-                + "  </modules>\n"
-                + "</project>")
+            """
+							<?xml version="1.0" encoding="UTF-8"?>
+							<project>
+							  <modelVersion>4.0.0</modelVersion>
+
+							  <groupId>org.example</groupId>
+							  <artifactId>example</artifactId>
+							  <version>1.0-SNAPSHOT</version>
+							  <packaging>pom</packaging>
+							  <build>
+							    <plugins>
+							      <plugin>
+							        <groupId>org.apache.maven.plugins</groupId>
+							        <artifactId>maven-compiler-plugin</artifactId>
+							        <version>3.12.1</version>
+							      </plugin>
+							    </plugins>
+							    <pluginManagement>
+							      <plugins>
+							        <plugin>
+							          <groupId>org.sonarsource.scanner.maven</groupId>
+							          <artifactId>sonar-maven-plugin</artifactId>
+							          <version>4.0.0.4121</version>
+							        </plugin>
+							      </plugins>
+							    </pluginManagement>
+							  </build>
+							  <modules>
+							    <module>child1</module>
+							  </modules>
+							</project>""")
         .addAndCommitFile(
             "child1/pom.xml",
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<project>\n"
-                + "  <modelVersion>4.0.0</modelVersion>\n"
-                + "\n"
-                + "<parent>\n"
-                + "  <groupId>org.example</groupId>\n"
-                + "  <artifactId>example</artifactId>\n"
-                + "  <version>1.0-SNAPSHOT</version>\n"
-                + "</parent>\n"
-                + "\n"
-                + "  <artifactId>child1</artifactId>\n"
-                + "\n"
-                + "</project>");
+            """
+						<?xml version="1.0" encoding="UTF-8"?>
+						<project>
+						  <modelVersion>4.0.0</modelVersion>
+
+						<parent>
+						  <groupId>org.example</groupId>
+						  <artifactId>example</artifactId>
+						  <version>1.0-SNAPSHOT</version>
+						</parent>
+
+						  <artifactId>child1</artifactId>
+
+						</project>""");
 
     git.push();
 
@@ -292,7 +297,13 @@ class ReviewTest {
             + "}\n" // finally
             + "}\n" // stage('Build')
             + "}";
-    job.setDefinition(new CpsFlowDefinition(script, true));
+    CpsFlowDefinition cpsFlowDefinition;
+    try {
+      cpsFlowDefinition = new CpsFlowDefinition(script, true);
+    } catch (Descriptor.FormException e) {
+      throw new RuntimeException(e);
+    }
+    job.setDefinition(cpsFlowDefinition);
     return job;
   }
 

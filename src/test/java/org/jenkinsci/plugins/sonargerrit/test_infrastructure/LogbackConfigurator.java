@@ -5,7 +5,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import java.util.Optional;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class LogbackConfigurator extends BasicConfigurator {
 
   @Override

@@ -6,6 +6,7 @@ import com.cloudbees.plugins.credentials.Credentials;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl;
+import hudson.model.Descriptor;
 import java.io.IOException;
 import java.util.UUID;
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.gerrit.GerritServer;
@@ -17,7 +18,9 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.Sonarqube
 import org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube.SonarqubeServer;
 import org.jvnet.hudson.test.JenkinsRule;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class Cluster {
 
   private final GerritServer gerrit;
@@ -38,13 +41,18 @@ public class Cluster {
 
     SystemCredentialsProvider credentialsProvider = SystemCredentialsProvider.getInstance();
     jenkinsGerritCredentialsId = UUID.randomUUID().toString();
-    Credentials credentials =
-        new UsernamePasswordCredentialsImpl(
-            CredentialsScope.GLOBAL,
-            jenkinsGerritCredentialsId,
-            null,
-            gerrit.adminUsername(),
-            gerrit.adminPassword());
+    Credentials credentials;
+    try {
+      credentials =
+          new UsernamePasswordCredentialsImpl(
+              CredentialsScope.GLOBAL,
+              jenkinsGerritCredentialsId,
+              null,
+              gerrit.adminUsername(),
+              gerrit.adminPassword());
+    } catch (Descriptor.FormException e) {
+      throw new RuntimeException(e);
+    }
     credentialsProvider.getCredentials().add(credentials);
     credentialsProvider.save();
 

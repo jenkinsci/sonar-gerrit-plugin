@@ -3,7 +3,9 @@ package org.jenkinsci.plugins.sonargerrit.test_infrastructure;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class ObjectMappers {
 
   private static final ObjectMapper OBJECT_MAPPER =

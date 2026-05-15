@@ -6,7 +6,9 @@ import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extens
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @Restricted(NoExternalUse.class)
 class DiffInfos {
 

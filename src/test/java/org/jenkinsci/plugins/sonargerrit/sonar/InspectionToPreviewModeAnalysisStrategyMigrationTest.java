@@ -19,7 +19,9 @@ import org.jenkinsci.plugins.sonargerrit.test_infrastructure.jenkins.EnableJenki
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @EnableJenkinsRule
 class InspectionToPreviewModeAnalysisStrategyMigrationTest {
 

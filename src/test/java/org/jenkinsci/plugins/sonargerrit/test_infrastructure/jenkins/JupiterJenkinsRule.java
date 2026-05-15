@@ -8,7 +8,9 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class JupiterJenkinsRule extends JenkinsRule implements ExtensionContext.Store.CloseableResource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JupiterJenkinsRule.class);

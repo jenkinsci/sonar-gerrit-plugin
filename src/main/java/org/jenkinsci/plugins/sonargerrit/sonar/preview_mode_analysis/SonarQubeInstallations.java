@@ -9,7 +9,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 @Restricted(NoExternalUse.class)
 public class SonarQubeInstallations {
 

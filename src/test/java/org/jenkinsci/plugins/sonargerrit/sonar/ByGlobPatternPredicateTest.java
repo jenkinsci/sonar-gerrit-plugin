@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class ByGlobPatternPredicateTest {
 
   @Test

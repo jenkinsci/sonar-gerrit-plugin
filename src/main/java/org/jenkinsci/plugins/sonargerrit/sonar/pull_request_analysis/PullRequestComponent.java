@@ -4,7 +4,9 @@ import javax.annotation.Nullable;
 import me.redaalaoui.org.sonarqube.ws.Issues;
 import org.jenkinsci.plugins.sonargerrit.sonar.Component;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 class PullRequestComponent implements Component {
 
   private final Issues.Component component;

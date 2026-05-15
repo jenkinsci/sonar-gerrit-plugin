@@ -62,7 +62,9 @@ public class GerritAuthenticationConfig
     return httpCredentialsId;
   }
 
-  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  /**
+   * @deprecated Use {@link #setHttpCredentialsId(String)} instead
+   */
   @Deprecated
   @DataBoundSetter
   public void setUsername(String username) {
@@ -70,14 +72,18 @@ public class GerritAuthenticationConfig
         GerritHttpCredentials.get().migrate(username, getSecretPassword()).orElse(null);
   }
 
-  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  /**
+   * @deprecated Use {@link #setHttpCredentialsId(String)} instead
+   */
   @Deprecated
   @DataBoundSetter
   public void setPassword(String password) {
     setSecretPassword(Secret.fromString(password));
   }
 
-  /** @deprecated Use {@link #setHttpCredentialsId(String)} instead */
+  /**
+   * @deprecated Use {@link #setHttpCredentialsId(String)} instead
+   */
   @Deprecated
   @DataBoundSetter
   public void setSecretPassword(Secret secretPassword) {
@@ -85,14 +91,18 @@ public class GerritAuthenticationConfig
         GerritHttpCredentials.get().migrate(getUsername(), secretPassword).orElse(null);
   }
 
-  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
+  /**
+   * @deprecated Use {@link #getHttpCredentialsId()} instead
+   */
   @Deprecated
   @Nullable
   public String getUsername() {
     return getHttpCredentials(null).map(UsernameCredentials::getUsername).orElse(null);
   }
 
-  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
+  /**
+   * @deprecated Use {@link #getHttpCredentialsId()} instead
+   */
   @Deprecated
   @Nullable
   public String getPassword() {
@@ -103,7 +113,9 @@ public class GerritAuthenticationConfig
         .orElse(null);
   }
 
-  /** @deprecated Use {@link #getHttpCredentialsId()} instead */
+  /**
+   * @deprecated Use {@link #getHttpCredentialsId()} instead
+   */
   @Deprecated
   public Secret getSecretPassword() {
     return getHttpCredentials(null).map(PasswordCredentials::getPassword).orElse(null);

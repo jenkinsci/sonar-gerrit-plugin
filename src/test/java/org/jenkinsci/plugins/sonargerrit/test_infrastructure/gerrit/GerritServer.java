@@ -25,7 +25,9 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class GerritServer {
 
   private static final Logger LOG = LoggerFactory.getLogger(GerritServer.class);

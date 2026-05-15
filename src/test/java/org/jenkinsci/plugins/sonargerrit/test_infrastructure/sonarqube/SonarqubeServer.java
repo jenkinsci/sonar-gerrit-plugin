@@ -16,7 +16,9 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
-/** @author Réda Housni Alaoui */
+/**
+ * @author Réda Housni Alaoui
+ */
 public class SonarqubeServer {
 
   private static final Logger LOG = LoggerFactory.getLogger(SonarqubeServer.class);
@@ -32,7 +34,7 @@ public class SonarqubeServer {
 
   public static CloseableResource<SonarqubeServer> start(Network network) {
     SonarqubeServer sonarqubeServer = new SonarqubeServer(network);
-    return new CloseableResource<SonarqubeServer>() {
+    return new CloseableResource<>() {
       @Override
       public SonarqubeServer resource() {
         return sonarqubeServer;
