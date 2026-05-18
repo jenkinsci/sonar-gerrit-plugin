@@ -37,6 +37,7 @@
     <assertj-core.version>3.27.7</assertj-core.version>
     <logback-classic.version>1.5.27</logback-classic.version>
     <sonar-ws-shaded.version>7.7.0</sonar-ws-shaded.version>
+    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
   </properties>
 
   <name>Sonar Gerrit Plugin</name>
