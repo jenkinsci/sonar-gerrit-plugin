@@ -55,7 +55,9 @@ public abstract class CustomProjectPathAndFilePredicateMatchTest {
 
     IssueFilter f =
         new IssueFilter(
-            createFilterConfig(), reportRecorder.getIssuesList(), revision.getFileToChangedLines());
+            createFilterConfig(),
+            reportRecorder.getIssuesList(),
+            revision.fetchFileToChangedLines(revision.getChangedFiles()));
     Iterable<Issue> filtered = f.filter();
 
     boolean contains = isFilterResultContainsFile(getGerritFilename(), filtered);

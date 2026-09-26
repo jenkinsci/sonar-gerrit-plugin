@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.NotifyHandling;
@@ -94,7 +95,9 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       // load inspection report
       InspectionReport report = inspectionConfig.analyse(run, listener, revision, filePath);
 
-      Map<String, Set<Integer>> fileToChangedLines = revision.getFileToChangedLines();
+      Map<String, Set<Integer>> fileToChangedLines =
+          revision.fetchFileToChangedLines(
+              report.getIssues().stream().map(Issue::getFilepath).collect(Collectors.toSet()));
 
       // generate review output
       // get issues to be commented
