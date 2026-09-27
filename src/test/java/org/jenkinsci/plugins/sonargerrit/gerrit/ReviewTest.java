@@ -52,6 +52,10 @@ class ReviewTest {
           + "-Dsonar.pullrequest.branch=${env.GERRIT_REFSPEC}";
   private static final String FILEPATH =
       "child1/src/main/java/org/example/UselessConstructorDeclaration.java";
+  private static final boolean RESOLVE_STALE_COMMENTS = true;
+  private static final boolean LEAVE_STALE_COMMENTS = false;
+  private static final boolean OMIT_DUPLICATE_COMMENTS = true;
+  private static final boolean POST_DUPLICATE_COMMENTS = false;
   private static final String S1186_VIOLATION =
       "package org.example; "
           + "public class UselessConstructorDeclaration { "
@@ -145,7 +149,14 @@ class ReviewTest {
   void test1() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            LEAVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -163,7 +174,14 @@ class ReviewTest {
   void test2() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, null, false, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.ROBOT,
+            null,
+            null,
+            LEAVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -187,7 +205,14 @@ class ReviewTest {
   void test3() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            LEAVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -201,7 +226,14 @@ class ReviewTest {
   void test4() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, "/child2/**", null, false, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.ROBOT,
+            "/child2/**",
+            null,
+            LEAVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -217,7 +249,14 @@ class ReviewTest {
   void test5() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, "/child2/**", false, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.ROBOT,
+            null,
+            "/child2/**",
+            LEAVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -235,9 +274,23 @@ class ReviewTest {
   void test6() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            "/child2/**",
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     List<CommentInfo> issueComments =
@@ -256,11 +309,25 @@ class ReviewTest {
   void test7() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
     git.addAndCommitFile(FILEPATH, S1186_VIOLATION + "\n", true);
     git.createGerritChangeForMaster();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            2,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     Map<Integer, CommentInfo> issueCommentByPatchSet =
@@ -284,9 +351,23 @@ class ReviewTest {
   void test8() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     assertThat(comments).hasSize(1);
@@ -299,7 +380,14 @@ class ReviewTest {
   void test9() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
     CommentInfo issueComment = change.listComments().get(0);
     ReviewInput.CommentInput resolvingReply = new ReviewInput.CommentInput();
     resolvingReply.inReplyTo = issueComment.id;
@@ -311,7 +399,14 @@ class ReviewTest {
     change.postReview(1, humanReview);
 
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, true));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            OMIT_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     assertThat(comments)
@@ -327,7 +422,14 @@ class ReviewTest {
   void test10() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
     ReviewInput.CommentInput humanComment = new ReviewInput.CommentInput();
     humanComment.line = 1;
     humanComment.message = "Please check";
@@ -337,7 +439,14 @@ class ReviewTest {
     change.postReview(1, humanReview);
 
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            "/child2/**",
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     List<CommentInfo> humanComments =
@@ -357,10 +466,24 @@ class ReviewTest {
     git.addAndCommitFile(FILEPATH, S1186_VIOLATION + "\n", true);
     git.createGerritChangeForMaster();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true, false));
+        createPipelineJob(
+            change,
+            2,
+            ReviewCommentType.STANDARD,
+            null,
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
+        createPipelineJob(
+            change,
+            1,
+            ReviewCommentType.STANDARD,
+            "/child2/**",
+            null,
+            RESOLVE_STALE_COMMENTS,
+            POST_DUPLICATE_COMMENTS));
 
     assertThat(change.listComments())
         .extracting(comment -> comment.patchSet, comment -> comment.unresolved)
