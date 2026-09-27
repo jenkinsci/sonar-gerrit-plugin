@@ -16,7 +16,7 @@ class GerritRevisionTest {
 
   @Test
   @DisplayName("Fetches the diff only of the changed files carrying a Sonar issue")
-  void fetchesDiffOnlyForRequestedChangedFiles() throws RestApiException {
+  void test1() throws RestApiException {
     List<String> diffedPaths = new ArrayList<>();
     GerritRevision revision =
         GerritRevision.load(
