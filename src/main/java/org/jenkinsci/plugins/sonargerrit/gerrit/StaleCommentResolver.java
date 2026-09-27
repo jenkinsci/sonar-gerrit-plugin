@@ -41,13 +41,13 @@ public class StaleCommentResolver {
   }
 
   /**
-   * Amends {@code review}, the review of the reviewed patch set, and adds a review for each older
-   * patch set holding a stale thread. Gerrit requires a reply to be posted on the patch set of the
-   * comment it replies to.
+   * Amends {@code reviewedPatchSetReview}, and adds a review for each older patch set holding a
+   * stale thread. Gerrit requires a reply to be posted on the patch set of the comment it replies
+   * to.
    *
    * @return The reviews to post, by patch set number
    */
-  public Map<Integer, ReviewInput> amendReviews(ReviewInput review) {
+  public Map<Integer, ReviewInput> amendReviews(ReviewInput reviewedPatchSetReview) {
     Map<Integer, List<CommentThread>> threadsByPatchSet =
         selectUnresolvedOwnThreads().stream()
             .filter(thread -> thread.patchSet() <= reviewedPatchSet)
@@ -59,7 +59,7 @@ public class StaleCommentResolver {
                 Function.identity(),
                 patchSet ->
                     amend(
-                        selectOrCreateReview(patchSet, review),
+                        selectOrCreateReview(patchSet, reviewedPatchSetReview),
                         threadsByPatchSet.getOrDefault(patchSet, List.of()))));
   }
 
