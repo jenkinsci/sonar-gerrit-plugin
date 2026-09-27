@@ -44,11 +44,8 @@ public class StaleCommentResolver {
   /**
    * Drops from {@code review} the comments already opened as an unresolved thread of the reviewed
    * patch set, and adds to it the replies resolving the other threads of that patch set.
-   *
-   * @return The reviews resolving the threads of older patch sets, by patch set number. Gerrit
-   *     requires a reply to be posted on the patch set of the comment it replies to.
    */
-  public Map<Integer, ReviewInput> resolveStaleThreads(ReviewInput review) {
+  public void amendReview(ReviewInput review) {
     // Gerrit's duplicate detection also matches resolved comments. It would silently drop an issue
     // reported again after its thread was resolved.
     review.omitDuplicateComments = false;
@@ -64,27 +61,31 @@ public class StaleCommentResolver {
     }
     review.comments = newCommentsByPath;
 
+    for (CommentThread thread : selectUnresolvedOwnThreads()) {
+      if (thread.root().patchSet != reviewedPatchSet) {
+        continue;
+      }
+      if (removeMatchingComment(newCommentsByPath, thread)) {
+        continue;
+      }
+      thread.addResolvingReply(review);
+    }
+  }
+
+  /**
+   * @return The reviews resolving the threads of the patch sets older than the reviewed one, by
+   *     patch set number. Gerrit requires a reply to be posted on the patch set of the comment it
+   *     replies to.
+   */
+  public Map<Integer, ReviewInput> buildOldThreadRepliesByPatchSet() {
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet = new HashMap<>();
     for (CommentThread thread : selectUnresolvedOwnThreads()) {
       int patchSet = thread.root().patchSet;
-      if (patchSet > reviewedPatchSet) {
+      if (patchSet >= reviewedPatchSet) {
         continue;
       }
-      ReviewInput resolvingReview;
-      if (patchSet == reviewedPatchSet) {
-        if (removeMatchingComment(newCommentsByPath, thread)) {
-          continue;
-        }
-        resolvingReview = review;
-      } else {
-        resolvingReview =
-            oldThreadRepliesByPatchSet.computeIfAbsent(
-                patchSet, ignored -> createResolvingReview());
-      }
-      resolvingReview
-          .comments
-          .computeIfAbsent(thread.path(), ignored -> new ArrayList<>())
-          .add(thread.createResolvingReply());
+      thread.addResolvingReply(
+          oldThreadRepliesByPatchSet.computeIfAbsent(patchSet, ignored -> createResolvingReview()));
     }
     return oldThreadRepliesByPatchSet;
   }
@@ -162,7 +163,7 @@ public class StaleCommentResolver {
 
   private record CommentThread(String path, CommentInfo root, CommentInfo last) {
 
-    ReviewInput.CommentInput createResolvingReply() {
+    void addResolvingReply(ReviewInput review) {
       ReviewInput.CommentInput reply = new ReviewInput.CommentInput();
       reply.inReplyTo = last.id;
       reply.side = root.side;
@@ -170,7 +171,7 @@ public class StaleCommentResolver {
       reply.range = root.range;
       reply.message = RESOLUTION_MESSAGE;
       reply.unresolved = false;
-      return reply;
+      review.comments.computeIfAbsent(path, ignored -> new ArrayList<>()).add(reply);
     }
   }
 }
