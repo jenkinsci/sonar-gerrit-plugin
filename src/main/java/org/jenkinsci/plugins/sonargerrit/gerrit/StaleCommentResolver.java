@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,12 +106,21 @@ public class StaleCommentResolver {
       Map<CommentInfo, List<CommentInfo>> threadCommentsByRoot =
           changeCommentsByPathEntry.getValue().stream()
               .collect(Collectors.groupingBy(comment -> findRoot(comment, commentById)));
+      Set<String> repliedCommentIds =
+          changeCommentsByPathEntry.getValue().stream()
+              .map(comment -> comment.inReplyTo)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toSet());
       for (Map.Entry<CommentInfo, List<CommentInfo>> threadCommentsByRootEntry :
           threadCommentsByRoot.entrySet()) {
         CommentInfo root = threadCommentsByRootEntry.getKey();
+        // Replies posted within the same second share their timestamp, so the last comment is the
+        // one no other comment replies to.
         CommentInfo last =
             Collections.max(
-                threadCommentsByRootEntry.getValue(),
+                threadCommentsByRootEntry.getValue().stream()
+                    .filter(comment -> !repliedCommentIds.contains(comment.id))
+                    .toList(),
                 Comparator.comparing(comment -> comment.updated));
         if (isOwn(root) && Boolean.TRUE.equals(last.unresolved)) {
           threads.add(new CommentThread(changeCommentsByPathEntry.getKey(), root, last));
