@@ -56,10 +56,11 @@ public class StaleThreadReplyPlanner {
 
     Map<String, List<ReviewInput.CommentInput>> newCommentsByPath = new HashMap<>();
     if (review.comments != null) {
-      for (Map.Entry<String, List<ReviewInput.CommentInput>> reviewCommentsByPath :
+      for (Map.Entry<String, List<ReviewInput.CommentInput>> reviewCommentsByPathEntry :
           review.comments.entrySet()) {
         newCommentsByPath.put(
-            reviewCommentsByPath.getKey(), new ArrayList<>(reviewCommentsByPath.getValue()));
+            reviewCommentsByPathEntry.getKey(),
+            new ArrayList<>(reviewCommentsByPathEntry.getValue()));
       }
     }
     review.comments = newCommentsByPath;
@@ -91,21 +92,23 @@ public class StaleThreadReplyPlanner {
 
   private List<CommentThread> selectUnresolvedOwnThreads() {
     List<CommentThread> threads = new ArrayList<>();
-    for (Map.Entry<String, List<CommentInfo>> commentsByPath : publishedCommentsByPath.entrySet()) {
+    for (Map.Entry<String, List<CommentInfo>> publishedCommentsByPathEntry :
+        publishedCommentsByPath.entrySet()) {
       Map<String, CommentInfo> commentById =
-          commentsByPath.getValue().stream()
+          publishedCommentsByPathEntry.getValue().stream()
               .collect(Collectors.toMap(comment -> comment.id, Function.identity()));
-      Map<CommentInfo, List<CommentInfo>> commentsByRoot =
-          commentsByPath.getValue().stream()
+      Map<CommentInfo, List<CommentInfo>> threadCommentsByRoot =
+          publishedCommentsByPathEntry.getValue().stream()
               .collect(Collectors.groupingBy(comment -> findRoot(comment, commentById)));
-      for (Map.Entry<CommentInfo, List<CommentInfo>> threadCommentsByRoot :
-          commentsByRoot.entrySet()) {
-        CommentInfo root = threadCommentsByRoot.getKey();
+      for (Map.Entry<CommentInfo, List<CommentInfo>> threadCommentsByRootEntry :
+          threadCommentsByRoot.entrySet()) {
+        CommentInfo root = threadCommentsByRootEntry.getKey();
         CommentInfo last =
             Collections.max(
-                threadCommentsByRoot.getValue(), Comparator.comparing(comment -> comment.updated));
+                threadCommentsByRootEntry.getValue(),
+                Comparator.comparing(comment -> comment.updated));
         if (isOwn(root) && Boolean.TRUE.equals(last.unresolved)) {
-          threads.add(new CommentThread(commentsByPath.getKey(), root, last));
+          threads.add(new CommentThread(publishedCommentsByPathEntry.getKey(), root, last));
         }
       }
     }
