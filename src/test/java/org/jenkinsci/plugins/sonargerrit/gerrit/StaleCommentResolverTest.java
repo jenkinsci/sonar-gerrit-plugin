@@ -91,7 +91,7 @@ class StaleCommentResolverTest {
     assertThat(review.comments.get(PATH))
         .extracting(comment -> comment.inReplyTo)
         .containsExactly((String) null);
-    assertThat(reviewByPatchSet).containsOnlyKeys(1, 2);
+    assertThat(reviewByPatchSet.keySet()).containsExactly(2, 1);
     assertThat(reviewByPatchSet.get(2)).isSameAs(review);
     ReviewInput patchSet1Review = reviewByPatchSet.get(1);
     assertThat(patchSet1Review.tag).isEqualTo(GerritReviewBuilder.REVIEW_TAG);

@@ -3,10 +3,13 @@ package org.jenkinsci.plugins.sonargerrit.gerrit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,22 +48,28 @@ public class StaleCommentResolver {
    * patch set holding a stale thread. Gerrit requires a reply to be posted on the patch set of the
    * comment it replies to.
    *
-   * @return The reviews to post, by patch set number
+   * @return The reviews to post, by patch set number, the reviewed patch set first then the older
+   *     ones in ascending order
    */
   public Map<Integer, ReviewInput> amendReviews(ReviewInput review) {
-    Map<Integer, List<CommentThread>> threadsByPatchSet =
+    NavigableMap<Integer, List<CommentThread>> threadsByPatchSet =
         selectUnresolvedOwnThreads().stream()
-            .filter(thread -> thread.patchSet() <= reviewedPatchSet)
-            .collect(Collectors.groupingBy(CommentThread::patchSet));
-    return Stream.concat(Stream.of(reviewedPatchSet), threadsByPatchSet.keySet().stream())
-        .distinct()
-        .collect(
-            Collectors.toUnmodifiableMap(
-                Function.identity(),
-                patchSet ->
-                    amend(
-                        selectOrCreateReview(patchSet, review),
-                        threadsByPatchSet.getOrDefault(patchSet, List.of()))));
+            .collect(
+                Collectors.groupingBy(CommentThread::patchSet, TreeMap::new, Collectors.toList()));
+
+    Map<Integer, ReviewInput> reviewByPatchSet = new LinkedHashMap<>();
+    reviewByPatchSet.put(
+        reviewedPatchSet,
+        amend(review, threadsByPatchSet.getOrDefault(reviewedPatchSet, List.of())));
+    Map<Integer, List<CommentThread>> olderThreadsByPatchSet =
+        threadsByPatchSet.headMap(reviewedPatchSet, false);
+    for (Map.Entry<Integer, List<CommentThread>> olderThreadsByPatchSetEntry :
+        olderThreadsByPatchSet.entrySet()) {
+      reviewByPatchSet.put(
+          olderThreadsByPatchSetEntry.getKey(),
+          amend(createOlderPatchSetReview(), olderThreadsByPatchSetEntry.getValue()));
+    }
+    return Collections.unmodifiableMap(reviewByPatchSet);
   }
 
   /**
@@ -86,10 +95,7 @@ public class StaleCommentResolver {
     return review;
   }
 
-  private ReviewInput selectOrCreateReview(int patchSet, ReviewInput reviewedPatchSetReview) {
-    if (patchSet == reviewedPatchSet) {
-      return reviewedPatchSetReview;
-    }
+  private static ReviewInput createOlderPatchSetReview() {
     ReviewInput review = new ReviewInput();
     review.tag = GerritReviewBuilder.REVIEW_TAG;
     review.notify = NotifyHandling.NONE;
