@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -138,14 +139,20 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
                   scoreConfig,
                   notificationConfig)
               .buildReview();
-      Map<Integer, ReviewInput> reviewByPatchSet =
-          Map.of(connector.reviewedPatchSet(), reviewInput);
+      int reviewedPatchSet = connector.reviewedPatchSet();
+      Map<Integer, ReviewInput> reviewByPatchSet = Map.of(reviewedPatchSet, reviewInput);
       if (reviewConfig.isResolveStaleComments()
           && reviewConfig.getCommentType() == ReviewCommentType.STANDARD) {
         reviewByPatchSet = connector.createStaleCommentResolver().amendReviews(reviewInput);
       }
-      for (Map.Entry<Integer, ReviewInput> reviewByPatchSetEntry : reviewByPatchSet.entrySet()) {
-        connector.sendReview(reviewByPatchSetEntry.getKey(), reviewByPatchSetEntry.getValue());
+      // The reviewed patch set review carries the vote and the new issues: it goes first.
+      connector.sendReview(reviewedPatchSet, reviewByPatchSet.get(reviewedPatchSet));
+      Map<Integer, ReviewInput> olderReviewByPatchSet =
+          new TreeMap<>(reviewByPatchSet).headMap(reviewedPatchSet, false);
+      for (Map.Entry<Integer, ReviewInput> olderReviewByPatchSetEntry :
+          olderReviewByPatchSet.entrySet()) {
+        connector.sendReview(
+            olderReviewByPatchSetEntry.getKey(), olderReviewByPatchSetEntry.getValue());
       }
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
