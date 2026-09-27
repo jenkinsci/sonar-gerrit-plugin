@@ -2,6 +2,8 @@ package org.jenkinsci.plugins.sonargerrit.test_infrastructure.sonarqube;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
 /**
@@ -67,7 +70,11 @@ public class SonarqubeServer {
             .withLogConsumer(new Slf4jLogConsumer(LOG))
             .withExposedPorts(HTTP_PORT)
             .withNetwork(network)
-            .withNetworkAliases(NETWORK_ALIAS);
+            .withNetworkAliases(NETWORK_ALIAS)
+            .waitingFor(
+                Wait.forHttp("/api/system/status")
+                    .forResponsePredicate(body -> body.contains("\"status\":\"UP\""))
+                    .withStartupTimeout(Duration.of(10, ChronoUnit.MINUTES)));
     container.start();
     url = "http://localhost:" + container.getMappedPort(HTTP_PORT);
 
