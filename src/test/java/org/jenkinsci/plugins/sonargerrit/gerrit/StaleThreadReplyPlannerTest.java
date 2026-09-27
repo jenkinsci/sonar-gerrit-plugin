@@ -18,7 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @NullMarked
-class StaleCommentResolverTest {
+class StaleThreadReplyPlannerTest {
 
   private static final int OWN_ACCOUNT_ID = 1;
   private static final int OTHER_ACCOUNT_ID = 2;
@@ -28,8 +28,8 @@ class StaleCommentResolverTest {
   @DisplayName(
       "Does not comment again an issue with an unresolved thread on the reviewed patch set")
   void test1() {
-    StaleCommentResolver resolver =
-        new StaleCommentResolver(
+    StaleThreadReplyPlanner planner =
+        new StaleThreadReplyPlanner(
             OWN_ACCOUNT_ID,
             2,
             Map.of(
@@ -40,7 +40,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview(createNewComment(10, "Issue 10\n"), createNewComment(20));
 
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.prepareStaleThreadReplies(review);
+        planner.prepareStaleThreadReplies(review);
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH)).extracting(comment -> comment.line).containsExactly(20);
@@ -49,8 +49,8 @@ class StaleCommentResolverTest {
   @Test
   @DisplayName("Resolves an unresolved thread of the reviewed patch set whose issue is gone")
   void test2() {
-    StaleCommentResolver resolver =
-        new StaleCommentResolver(
+    StaleThreadReplyPlanner planner =
+        new StaleThreadReplyPlanner(
             OWN_ACCOUNT_ID,
             2,
             Map.of(
@@ -61,7 +61,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview();
 
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.prepareStaleThreadReplies(review);
+        planner.prepareStaleThreadReplies(review);
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH))
@@ -70,14 +70,14 @@ class StaleCommentResolverTest {
             reply -> reply.line,
             reply -> reply.unresolved,
             reply -> reply.message)
-        .containsExactly(tuple("1", 10, false, StaleCommentResolver.RESOLUTION_MESSAGE));
+        .containsExactly(tuple("1", 10, false, StaleThreadReplyPlanner.RESOLUTION_MESSAGE));
   }
 
   @Test
   @DisplayName("Resolves an unresolved thread of an older patch set on that patch set")
   void test3() {
-    StaleCommentResolver resolver =
-        new StaleCommentResolver(
+    StaleThreadReplyPlanner planner =
+        new StaleThreadReplyPlanner(
             OWN_ACCOUNT_ID,
             2,
             Map.of(
@@ -89,7 +89,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview(createNewComment(10));
 
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.prepareStaleThreadReplies(review);
+        planner.prepareStaleThreadReplies(review);
 
     assertThat(review.comments.get(PATH))
         .extracting(comment -> comment.inReplyTo)
@@ -107,8 +107,8 @@ class StaleCommentResolverTest {
   @Test
   @DisplayName("Leaves alone resolved threads, foreign threads and threads of newer patch sets")
   void test4() {
-    StaleCommentResolver resolver =
-        new StaleCommentResolver(
+    StaleThreadReplyPlanner planner =
+        new StaleThreadReplyPlanner(
             OWN_ACCOUNT_ID,
             2,
             Map.of(
@@ -124,7 +124,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview();
 
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.prepareStaleThreadReplies(review);
+        planner.prepareStaleThreadReplies(review);
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments).isEmpty();
@@ -133,8 +133,8 @@ class StaleCommentResolverTest {
   @Test
   @DisplayName("Comments again an issue whose thread was resolved")
   void test5() {
-    StaleCommentResolver resolver =
-        new StaleCommentResolver(
+    StaleThreadReplyPlanner planner =
+        new StaleThreadReplyPlanner(
             OWN_ACCOUNT_ID,
             2,
             Map.of(
@@ -147,7 +147,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview(createNewComment(10));
     review.omitDuplicateComments = true;
 
-    resolver.prepareStaleThreadReplies(review);
+    planner.prepareStaleThreadReplies(review);
 
     assertThat(review.omitDuplicateComments).isFalse();
     assertThat(review.comments.get(PATH))

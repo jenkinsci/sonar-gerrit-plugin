@@ -142,7 +142,7 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       if (reviewConfig.isResolveStaleComments()
           && reviewConfig.getCommentType() == ReviewCommentType.STANDARD) {
         oldThreadRepliesByPatchSet =
-            connector.createStaleCommentResolver().prepareStaleThreadReplies(reviewInput);
+            connector.createStaleThreadReplyPlanner().prepareStaleThreadReplies(reviewInput);
       }
       revision.sendReview(reviewInput);
       for (Map.Entry<Integer, ReviewInput> oldThreadReplies :

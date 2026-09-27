@@ -19,12 +19,13 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * Resolves the unresolved comment threads opened by this plugin whose issue is no longer reported.
+ * Prepares the replies resolving the unresolved comment threads opened by this plugin whose issue
+ * is no longer reported.
  *
  * @author Réda Housni Alaoui
  */
 @Restricted(NoExternalUse.class)
-public class StaleCommentResolver {
+public class StaleThreadReplyPlanner {
 
   static final String RESOLUTION_MESSAGE = "No longer reported by SonarQube.";
 
@@ -32,7 +33,7 @@ public class StaleCommentResolver {
   private final int reviewedPatchSet;
   private final Map<String, List<CommentInfo>> publishedCommentsByPath;
 
-  public StaleCommentResolver(
+  public StaleThreadReplyPlanner(
       int ownAccountId,
       int reviewedPatchSet,
       Map<String, List<CommentInfo>> publishedCommentsByPath) {
