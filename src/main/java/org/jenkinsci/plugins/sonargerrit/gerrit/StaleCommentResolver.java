@@ -29,15 +29,13 @@ public class StaleCommentResolver {
 
   private final int ownAccountId;
   private final int reviewedPatchSet;
-  private final Map<String, List<CommentInfo>> publishedCommentsByPath;
+  private final Map<String, List<CommentInfo>> changeCommentsByPath;
 
   public StaleCommentResolver(
-      int ownAccountId,
-      int reviewedPatchSet,
-      Map<String, List<CommentInfo>> publishedCommentsByPath) {
+      int ownAccountId, int reviewedPatchSet, Map<String, List<CommentInfo>> changeCommentsByPath) {
     this.ownAccountId = ownAccountId;
     this.reviewedPatchSet = reviewedPatchSet;
-    this.publishedCommentsByPath = publishedCommentsByPath;
+    this.changeCommentsByPath = changeCommentsByPath;
   }
 
   /**
@@ -99,13 +97,13 @@ public class StaleCommentResolver {
 
   private List<CommentThread> selectUnresolvedOwnThreads() {
     List<CommentThread> threads = new ArrayList<>();
-    for (Map.Entry<String, List<CommentInfo>> publishedCommentsByPathEntry :
-        publishedCommentsByPath.entrySet()) {
+    for (Map.Entry<String, List<CommentInfo>> changeCommentsByPathEntry :
+        changeCommentsByPath.entrySet()) {
       Map<String, CommentInfo> commentById =
-          publishedCommentsByPathEntry.getValue().stream()
+          changeCommentsByPathEntry.getValue().stream()
               .collect(Collectors.toMap(comment -> comment.id, Function.identity()));
       Map<CommentInfo, List<CommentInfo>> threadCommentsByRoot =
-          publishedCommentsByPathEntry.getValue().stream()
+          changeCommentsByPathEntry.getValue().stream()
               .collect(Collectors.groupingBy(comment -> findRoot(comment, commentById)));
       for (Map.Entry<CommentInfo, List<CommentInfo>> threadCommentsByRootEntry :
           threadCommentsByRoot.entrySet()) {
@@ -115,7 +113,7 @@ public class StaleCommentResolver {
                 threadCommentsByRootEntry.getValue(),
                 Comparator.comparing(comment -> comment.updated));
         if (isOwn(root) && Boolean.TRUE.equals(last.unresolved)) {
-          threads.add(new CommentThread(publishedCommentsByPathEntry.getKey(), root, last));
+          threads.add(new CommentThread(changeCommentsByPathEntry.getKey(), root, last));
         }
       }
     }
