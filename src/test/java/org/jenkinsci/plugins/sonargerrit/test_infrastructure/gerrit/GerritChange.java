@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ChangeApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.client.ListChangesOption;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.CommentInfo;
@@ -51,6 +52,10 @@ public class GerritChange {
     return changeApi.robotComments().values().stream()
         .flatMap(Collection::stream)
         .collect(Collectors.toList());
+  }
+
+  public void postReview(int patchSetNumber, ReviewInput reviewInput) throws RestApiException {
+    changeApi.revision(patchSetNumber).review(reviewInput);
   }
 
   public String changeNumericId() {

@@ -20,6 +20,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.CommentInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
@@ -144,7 +145,7 @@ class ReviewTest {
   void test1() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false, false));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -162,7 +163,7 @@ class ReviewTest {
   void test2() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, null, false));
+        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, null, false, false));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -186,7 +187,7 @@ class ReviewTest {
   void test3() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, false, false));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -200,7 +201,7 @@ class ReviewTest {
   void test4() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, "/child2/**", null, false));
+        createPipelineJob(change, 1, ReviewCommentType.ROBOT, "/child2/**", null, false, false));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -216,7 +217,7 @@ class ReviewTest {
   void test5() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, "/child2/**", false));
+        createPipelineJob(change, 1, ReviewCommentType.ROBOT, null, "/child2/**", false, false));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -234,9 +235,9 @@ class ReviewTest {
   void test6() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
 
     List<CommentInfo> comments = change.listComments();
     List<CommentInfo> issueComments =
@@ -255,11 +256,11 @@ class ReviewTest {
   void test7() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
     git.addAndCommitFile(FILEPATH, S1186_VIOLATION + "\n", true);
     git.createGerritChangeForMaster();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true));
+        createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true, false));
 
     List<CommentInfo> comments = change.listComments();
     Map<Integer, CommentInfo> issueCommentByPatchSet =
@@ -283,14 +284,87 @@ class ReviewTest {
   void test8() throws Exception {
     GerritChange change = createChangeViolatingS1186();
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
     triggerAndAssertSuccess(
-        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true));
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
 
     List<CommentInfo> comments = change.listComments();
     assertThat(comments).hasSize(1);
     assertThat(comments.get(0).message).contains("S1186");
     assertThat(comments.get(0).unresolved).isTrue();
+  }
+
+  @Test
+  @DisplayName("Comments again an issue whose thread was resolved, despite duplicate omission")
+  void test9() throws Exception {
+    GerritChange change = createChangeViolatingS1186();
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+    CommentInfo issueComment = change.listComments().get(0);
+    ReviewInput.CommentInput resolvingReply = new ReviewInput.CommentInput();
+    resolvingReply.inReplyTo = issueComment.id;
+    resolvingReply.line = issueComment.line;
+    resolvingReply.message = "Done";
+    resolvingReply.unresolved = false;
+    ReviewInput humanReview = new ReviewInput();
+    humanReview.comments = Map.of(FILEPATH, List.of(resolvingReply));
+    change.postReview(1, humanReview);
+
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, true));
+
+    List<CommentInfo> comments = change.listComments();
+    assertThat(comments)
+        .filteredOn(comment -> comment.message.contains("S1186"))
+        .extracting(comment -> comment.inReplyTo, comment -> comment.unresolved)
+        .containsExactlyInAnyOrder(tuple(null, true), tuple(null, true));
+    assertThat(comments)
+        .noneMatch(comment -> StaleCommentResolver.RESOLUTION_MESSAGE.equals(comment.message));
+  }
+
+  @Test
+  @DisplayName("Leaves alone the unresolved threads not opened by the plugin")
+  void test10() throws Exception {
+    GerritChange change = createChangeViolatingS1186();
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true, false));
+    ReviewInput.CommentInput humanComment = new ReviewInput.CommentInput();
+    humanComment.line = 1;
+    humanComment.message = "Please check";
+    humanComment.unresolved = true;
+    ReviewInput humanReview = new ReviewInput();
+    humanReview.comments = Map.of(FILEPATH, List.of(humanComment));
+    change.postReview(1, humanReview);
+
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
+
+    List<CommentInfo> comments = change.listComments();
+    List<CommentInfo> humanComments =
+        comments.stream().filter(comment -> "Please check".equals(comment.message)).toList();
+    assertThat(humanComments).hasSize(1);
+    String humanCommentId = humanComments.get(0).id;
+    assertThat(comments).noneMatch(comment -> humanCommentId.equals(comment.inReplyTo));
+    assertThat(comments)
+        .filteredOn(comment -> StaleCommentResolver.RESOLUTION_MESSAGE.equals(comment.message))
+        .hasSize(1);
+  }
+
+  @Test
+  @DisplayName("Leaves alone the threads of newer patch sets")
+  void test11() throws Exception {
+    GerritChange change = createChangeViolatingS1186();
+    git.addAndCommitFile(FILEPATH, S1186_VIOLATION + "\n", true);
+    git.createGerritChangeForMaster();
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true, false));
+
+    triggerAndAssertSuccess(
+        createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true, false));
+
+    assertThat(change.listComments())
+        .extracting(comment -> comment.patchSet, comment -> comment.unresolved)
+        .containsExactly(tuple(2, true));
   }
 
   private GerritChange createChangeViolatingS1186()
@@ -306,7 +380,8 @@ class ReviewTest {
       ReviewCommentType commentType,
       String includedPathsGlobPattern,
       String excludedPathsGlobPattern,
-      boolean resolveStaleComments)
+      boolean resolveStaleComments,
+      boolean omitDuplicateComments)
       throws IOException {
     WorkflowJob job = cluster.jenkinsRule().createProject(WorkflowJob.class);
     String quotedIncludedPathsGlobPattern =
@@ -350,6 +425,7 @@ class ReviewTest {
             + "reviewConfig: [\n"
             + String.format("commentType: '%s',\n", commentType)
             + String.format("resolveStaleComments: %s,\n", resolveStaleComments)
+            + String.format("omitDuplicateComments: %s,\n", omitDuplicateComments)
             + "issueFilterConfig: [\n"
             + "severity: 'MINOR',\n"
             + "newIssuesOnly: false,\n"
