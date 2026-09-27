@@ -39,9 +39,8 @@ class StaleCommentResolverTest {
                         "1", null, 2, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 10, true))));
     ReviewInput review = createReview(createNewComment(10, "Issue 10\n"), createNewComment(20));
 
-    resolver.amendReview(review);
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.buildOldThreadRepliesByPatchSet();
+        resolver.amendReview(review).buildOldThreadRepliesByPatchSet();
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH)).extracting(comment -> comment.line).containsExactly(20);
@@ -61,9 +60,8 @@ class StaleCommentResolverTest {
                         "1", null, 2, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 10, true))));
     ReviewInput review = createReview();
 
-    resolver.amendReview(review);
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.buildOldThreadRepliesByPatchSet();
+        resolver.amendReview(review).buildOldThreadRepliesByPatchSet();
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH))
@@ -90,9 +88,8 @@ class StaleCommentResolverTest {
                     createComment("2", "1", 1, OTHER_ACCOUNT_ID, null, 10, true))));
     ReviewInput review = createReview(createNewComment(10));
 
-    resolver.amendReview(review);
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.buildOldThreadRepliesByPatchSet();
+        resolver.amendReview(review).buildOldThreadRepliesByPatchSet();
 
     assertThat(review.comments.get(PATH))
         .extracting(comment -> comment.inReplyTo)
@@ -126,9 +123,8 @@ class StaleCommentResolverTest {
                         "5", null, 3, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 50, true))));
     ReviewInput review = createReview();
 
-    resolver.amendReview(review);
     Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
-        resolver.buildOldThreadRepliesByPatchSet();
+        resolver.amendReview(review).buildOldThreadRepliesByPatchSet();
 
     assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments).isEmpty();

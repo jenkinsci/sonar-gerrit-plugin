@@ -41,7 +41,6 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewCommentType;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
-import org.jenkinsci.plugins.sonargerrit.gerrit.StaleCommentResolver;
 import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
 import org.jenkinsci.plugins.sonargerrit.sonar.InspectionReport;
 import org.jenkinsci.plugins.sonargerrit.sonar.Issue;
@@ -142,9 +141,11 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       Map<Integer, ReviewInput> oldThreadRepliesByPatchSet = Map.of();
       if (reviewConfig.isResolveStaleComments()
           && reviewConfig.getCommentType() == ReviewCommentType.STANDARD) {
-        StaleCommentResolver staleCommentResolver = connector.createStaleCommentResolver();
-        staleCommentResolver.amendReview(reviewInput);
-        oldThreadRepliesByPatchSet = staleCommentResolver.buildOldThreadRepliesByPatchSet();
+        oldThreadRepliesByPatchSet =
+            connector
+                .createStaleCommentResolver()
+                .amendReview(reviewInput)
+                .buildOldThreadRepliesByPatchSet();
       }
       revision.sendReview(reviewInput);
       for (Map.Entry<Integer, ReviewInput> oldThreadRepliesByPatchSetEntry :

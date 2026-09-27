@@ -45,7 +45,7 @@ public class StaleCommentResolver {
    * Drops from {@code review} the comments already opened as an unresolved thread of the reviewed
    * patch set, and adds to it the replies resolving the other threads of that patch set.
    */
-  public void amendReview(ReviewInput review) {
+  public StaleCommentResolver amendReview(ReviewInput review) {
     // Gerrit's duplicate detection also matches resolved comments. It would silently drop an issue
     // reported again after its thread was resolved.
     review.omitDuplicateComments = false;
@@ -70,6 +70,7 @@ public class StaleCommentResolver {
       }
       thread.addResolvingReply(review);
     }
+    return this;
   }
 
   /**
