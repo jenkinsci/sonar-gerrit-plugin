@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -41,9 +42,7 @@ class StaleCommentResolverTest {
     Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
 
     assertThat(olderPatchSetReviews).isEmpty();
-    assertThat(review.comments.get(PATH))
-        .singleElement()
-        .satisfies(comment -> assertThat(comment.line).isEqualTo(20));
+    assertThat(review.comments.get(PATH)).extracting(comment -> comment.line).containsExactly(20);
   }
 
   @Test
@@ -64,14 +63,12 @@ class StaleCommentResolverTest {
 
     assertThat(olderPatchSetReviews).isEmpty();
     assertThat(review.comments.get(PATH))
-        .singleElement()
-        .satisfies(
-            reply -> {
-              assertThat(reply.inReplyTo).isEqualTo("1");
-              assertThat(reply.line).isEqualTo(10);
-              assertThat(reply.unresolved).isFalse();
-              assertThat(reply.message).isEqualTo(StaleCommentResolver.RESOLUTION_MESSAGE);
-            });
+        .extracting(
+            reply -> reply.inReplyTo,
+            reply -> reply.line,
+            reply -> reply.unresolved,
+            reply -> reply.message)
+        .containsExactly(tuple("1", 10, false, StaleCommentResolver.RESOLUTION_MESSAGE));
   }
 
   @Test
@@ -92,24 +89,16 @@ class StaleCommentResolverTest {
     Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
 
     assertThat(review.comments.get(PATH))
-        .singleElement()
-        .satisfies(comment -> assertThat(comment.inReplyTo).isNull());
-    assertThat(olderPatchSetReviews)
-        .containsOnlyKeys(1)
-        .extractingByKey(1)
-        .satisfies(
-            olderReview -> {
-              assertThat(olderReview.tag).isEqualTo(GerritReviewBuilder.REVIEW_TAG);
-              assertThat(olderReview.notify).isEqualTo(NotifyHandling.NONE);
-              assertThat(olderReview.labels).isNull();
-              assertThat(olderReview.comments.get(PATH))
-                  .singleElement()
-                  .satisfies(
-                      reply -> {
-                        assertThat(reply.inReplyTo).isEqualTo("2");
-                        assertThat(reply.unresolved).isFalse();
-                      });
-            });
+        .extracting(comment -> comment.inReplyTo)
+        .containsExactly((String) null);
+    assertThat(olderPatchSetReviews).containsOnlyKeys(1);
+    ReviewInput olderReview = olderPatchSetReviews.get(1);
+    assertThat(olderReview.tag).isEqualTo(GerritReviewBuilder.REVIEW_TAG);
+    assertThat(olderReview.notify).isEqualTo(NotifyHandling.NONE);
+    assertThat(olderReview.labels).isNull();
+    assertThat(olderReview.comments.get(PATH))
+        .extracting(reply -> reply.inReplyTo, reply -> reply.unresolved)
+        .containsExactly(tuple("2", false));
   }
 
   @Test
@@ -158,8 +147,8 @@ class StaleCommentResolverTest {
 
     assertThat(review.omitDuplicateComments).isFalse();
     assertThat(review.comments.get(PATH))
-        .singleElement()
-        .satisfies(comment -> assertThat(comment.inReplyTo).isNull());
+        .extracting(comment -> comment.inReplyTo)
+        .containsExactly((String) null);
   }
 
   private static ReviewInput createReview(ReviewInput.CommentInput... comments) {

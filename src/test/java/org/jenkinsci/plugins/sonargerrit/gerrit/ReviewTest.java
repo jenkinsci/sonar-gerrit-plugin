@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.sonargerrit.gerrit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
@@ -13,7 +14,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.ChangeInfo;
@@ -235,20 +239,15 @@ class ReviewTest {
         createPipelineJob(change, 1, ReviewCommentType.STANDARD, "/child2/**", null, true));
 
     List<CommentInfo> comments = change.listComments();
+    List<CommentInfo> issueComments =
+        comments.stream().filter(comment -> comment.message.contains("S1186")).toList();
+    assertThat(issueComments).hasSize(1);
+    String issueCommentId = issueComments.get(0).id;
+
     assertThat(comments)
-        .filteredOn(comment -> comment.message.contains("S1186"))
-        .singleElement()
-        .satisfies(
-            issueComment ->
-                assertThat(comments)
-                    .filteredOn(comment -> issueComment.id.equals(comment.inReplyTo))
-                    .singleElement()
-                    .satisfies(
-                        reply -> {
-                          assertThat(reply.message)
-                              .isEqualTo(StaleCommentResolver.RESOLUTION_MESSAGE);
-                          assertThat(reply.unresolved).isFalse();
-                        }));
+        .filteredOn(comment -> issueCommentId.equals(comment.inReplyTo))
+        .extracting(comment -> comment.message, comment -> comment.unresolved)
+        .containsExactly(tuple(StaleCommentResolver.RESOLUTION_MESSAGE, false));
   }
 
   @Test
@@ -263,26 +262,20 @@ class ReviewTest {
         createPipelineJob(change, 2, ReviewCommentType.STANDARD, null, null, true));
 
     List<CommentInfo> comments = change.listComments();
+    Map<Integer, CommentInfo> issueCommentByPatchSet =
+        comments.stream()
+            .filter(comment -> comment.message.contains("S1186"))
+            .collect(Collectors.toMap(comment -> comment.patchSet, Function.identity()));
+    assertThat(issueCommentByPatchSet).containsOnlyKeys(1, 2);
+    String patchSet1CommentId = issueCommentByPatchSet.get(1).id;
+    CommentInfo patchSet2Comment = issueCommentByPatchSet.get(2);
+
     assertThat(comments)
-        .filteredOn(comment -> comment.message.contains("S1186"))
-        .satisfiesExactlyInAnyOrder(
-            patchSet1Comment -> {
-              assertThat(patchSet1Comment.patchSet).isEqualTo(1);
-              assertThat(comments)
-                  .filteredOn(comment -> patchSet1Comment.id.equals(comment.inReplyTo))
-                  .singleElement()
-                  .satisfies(
-                      reply -> {
-                        assertThat(reply.patchSet).isEqualTo(1);
-                        assertThat(reply.unresolved).isFalse();
-                      });
-            },
-            patchSet2Comment -> {
-              assertThat(patchSet2Comment.patchSet).isEqualTo(2);
-              assertThat(patchSet2Comment.unresolved).isTrue();
-              assertThat(comments)
-                  .noneMatch(comment -> patchSet2Comment.id.equals(comment.inReplyTo));
-            });
+        .filteredOn(comment -> patchSet1CommentId.equals(comment.inReplyTo))
+        .extracting(comment -> comment.patchSet, comment -> comment.unresolved)
+        .containsExactly(tuple(1, false));
+    assertThat(patchSet2Comment.unresolved).isTrue();
+    assertThat(comments).noneMatch(comment -> patchSet2Comment.id.equals(comment.inReplyTo));
   }
 
   @Test
@@ -294,13 +287,10 @@ class ReviewTest {
     triggerAndAssertSuccess(
         createPipelineJob(change, 1, ReviewCommentType.STANDARD, null, null, true));
 
-    assertThat(change.listComments())
-        .singleElement()
-        .satisfies(
-            comment -> {
-              assertThat(comment.message).contains("S1186");
-              assertThat(comment.unresolved).isTrue();
-            });
+    List<CommentInfo> comments = change.listComments();
+    assertThat(comments).hasSize(1);
+    assertThat(comments.get(0).message).contains("S1186");
+    assertThat(comments.get(0).unresolved).isTrue();
   }
 
   private GerritChange createChangeViolatingS1186()
