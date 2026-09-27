@@ -95,9 +95,10 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
       // load inspection report
       InspectionReport report = inspectionConfig.analyse(run, listener, revision, filePath);
 
+      Set<String> filesWithIssues =
+          report.getIssues().stream().map(Issue::getFilepath).collect(Collectors.toSet());
       Map<String, Set<Integer>> fileToChangedLines =
-          revision.fetchFileToChangedLines(
-              report.getIssues().stream().map(Issue::getFilepath).collect(Collectors.toSet()));
+          revision.fetchFileToChangedLines(filesWithIssues);
 
       // generate review output
       // get issues to be commented
