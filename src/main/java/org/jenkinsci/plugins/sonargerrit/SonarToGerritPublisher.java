@@ -138,15 +138,16 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
                   scoreConfig,
                   notificationConfig)
               .buildReview();
-      Map<Integer, ReviewInput> olderPatchSetReviews = Map.of();
+      Map<Integer, ReviewInput> oldThreadRepliesByPatchSet = Map.of();
       if (reviewConfig.isResolveStaleComments()
           && reviewConfig.getCommentType() == ReviewCommentType.STANDARD) {
-        olderPatchSetReviews =
-            connector.createStaleCommentResolver().resolveStaleThreads(reviewInput);
+        oldThreadRepliesByPatchSet =
+            connector.createStaleCommentResolver().prepareStaleThreadReplies(reviewInput);
       }
       revision.sendReview(reviewInput);
-      for (Map.Entry<Integer, ReviewInput> olderPatchSetReview : olderPatchSetReviews.entrySet()) {
-        connector.sendReview(olderPatchSetReview.getKey(), olderPatchSetReview.getValue());
+      for (Map.Entry<Integer, ReviewInput> oldThreadReplies :
+          oldThreadRepliesByPatchSet.entrySet()) {
+        connector.sendReview(oldThreadReplies.getKey(), oldThreadReplies.getValue());
       }
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");

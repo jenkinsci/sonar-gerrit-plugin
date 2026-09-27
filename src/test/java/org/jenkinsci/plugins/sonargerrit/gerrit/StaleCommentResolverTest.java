@@ -39,9 +39,10 @@ class StaleCommentResolverTest {
                         "1", null, 2, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 10, true))));
     ReviewInput review = createReview(createNewComment(10, "Issue 10\n"), createNewComment(20));
 
-    Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
+    Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
+        resolver.prepareStaleThreadReplies(review);
 
-    assertThat(olderPatchSetReviews).isEmpty();
+    assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH)).extracting(comment -> comment.line).containsExactly(20);
   }
 
@@ -59,9 +60,10 @@ class StaleCommentResolverTest {
                         "1", null, 2, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 10, true))));
     ReviewInput review = createReview();
 
-    Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
+    Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
+        resolver.prepareStaleThreadReplies(review);
 
-    assertThat(olderPatchSetReviews).isEmpty();
+    assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments.get(PATH))
         .extracting(
             reply -> reply.inReplyTo,
@@ -86,17 +88,18 @@ class StaleCommentResolverTest {
                     createComment("2", "1", 1, OTHER_ACCOUNT_ID, null, 10, true))));
     ReviewInput review = createReview(createNewComment(10));
 
-    Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
+    Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
+        resolver.prepareStaleThreadReplies(review);
 
     assertThat(review.comments.get(PATH))
         .extracting(comment -> comment.inReplyTo)
         .containsExactly((String) null);
-    assertThat(olderPatchSetReviews).containsOnlyKeys(1);
-    ReviewInput olderReview = olderPatchSetReviews.get(1);
-    assertThat(olderReview.tag).isEqualTo(GerritReviewBuilder.REVIEW_TAG);
-    assertThat(olderReview.notify).isEqualTo(NotifyHandling.NONE);
-    assertThat(olderReview.labels).isNull();
-    assertThat(olderReview.comments.get(PATH))
+    assertThat(oldThreadRepliesByPatchSet).containsOnlyKeys(1);
+    ReviewInput oldThreadReplies = oldThreadRepliesByPatchSet.get(1);
+    assertThat(oldThreadReplies.tag).isEqualTo(GerritReviewBuilder.REVIEW_TAG);
+    assertThat(oldThreadReplies.notify).isEqualTo(NotifyHandling.NONE);
+    assertThat(oldThreadReplies.labels).isNull();
+    assertThat(oldThreadReplies.comments.get(PATH))
         .extracting(reply -> reply.inReplyTo, reply -> reply.unresolved)
         .containsExactly(tuple("2", false));
   }
@@ -120,9 +123,10 @@ class StaleCommentResolverTest {
                         "5", null, 3, OWN_ACCOUNT_ID, GerritReviewBuilder.REVIEW_TAG, 50, true))));
     ReviewInput review = createReview();
 
-    Map<Integer, ReviewInput> olderPatchSetReviews = resolver.resolveStaleThreads(review);
+    Map<Integer, ReviewInput> oldThreadRepliesByPatchSet =
+        resolver.prepareStaleThreadReplies(review);
 
-    assertThat(olderPatchSetReviews).isEmpty();
+    assertThat(oldThreadRepliesByPatchSet).isEmpty();
     assertThat(review.comments).isEmpty();
   }
 
@@ -143,7 +147,7 @@ class StaleCommentResolverTest {
     ReviewInput review = createReview(createNewComment(10));
     review.omitDuplicateComments = true;
 
-    resolver.resolveStaleThreads(review);
+    resolver.prepareStaleThreadReplies(review);
 
     assertThat(review.omitDuplicateComments).isFalse();
     assertThat(review.comments.get(PATH))
