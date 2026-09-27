@@ -56,8 +56,8 @@ public class GerritConnector {
     return GerritRevision.load(change().revision(connectionInfo.getPatchsetNumber()));
   }
 
-  public StaleThreadReplyPlanner createStaleThreadReplyPlanner() throws RestApiException {
-    return new StaleThreadReplyPlanner(
+  public StaleCommentResolver createStaleCommentResolver() throws RestApiException {
+    return new StaleCommentResolver(
         gerritApi.accounts().self().get()._accountId,
         Integer.parseInt(connectionInfo.getPatchsetNumber()),
         change().comments());

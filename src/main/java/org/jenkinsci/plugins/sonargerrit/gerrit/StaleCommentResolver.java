@@ -19,13 +19,12 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * Prepares the replies resolving the unresolved comment threads opened by this plugin whose issue
- * is no longer reported.
+ * Resolves the unresolved comment threads opened by this plugin whose issue is no longer reported.
  *
  * @author Réda Housni Alaoui
  */
 @Restricted(NoExternalUse.class)
-public class StaleThreadReplyPlanner {
+public class StaleCommentResolver {
 
   static final String RESOLUTION_MESSAGE = "No longer reported by SonarQube.";
 
@@ -33,7 +32,7 @@ public class StaleThreadReplyPlanner {
   private final int reviewedPatchSet;
   private final Map<String, List<CommentInfo>> publishedCommentsByPath;
 
-  public StaleThreadReplyPlanner(
+  public StaleCommentResolver(
       int ownAccountId,
       int reviewedPatchSet,
       Map<String, List<CommentInfo>> publishedCommentsByPath) {
@@ -49,7 +48,7 @@ public class StaleThreadReplyPlanner {
    * @return The reviews resolving the threads of older patch sets, by patch set number. Gerrit
    *     requires a reply to be posted on the patch set of the comment it replies to.
    */
-  public Map<Integer, ReviewInput> prepareStaleThreadReplies(ReviewInput review) {
+  public Map<Integer, ReviewInput> resolveStaleThreads(ReviewInput review) {
     // Gerrit's duplicate detection also matches resolved comments. It would silently drop an issue
     // reported again after its thread was resolved.
     review.omitDuplicateComments = false;

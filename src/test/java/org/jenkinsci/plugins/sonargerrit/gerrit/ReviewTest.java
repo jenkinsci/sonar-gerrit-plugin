@@ -247,7 +247,7 @@ class ReviewTest {
     assertThat(comments)
         .filteredOn(comment -> issueCommentId.equals(comment.inReplyTo))
         .extracting(comment -> comment.message, comment -> comment.unresolved)
-        .containsExactly(tuple(StaleThreadReplyPlanner.RESOLUTION_MESSAGE, false));
+        .containsExactly(tuple(StaleCommentResolver.RESOLUTION_MESSAGE, false));
   }
 
   @Test
