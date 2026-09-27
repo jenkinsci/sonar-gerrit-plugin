@@ -8,6 +8,8 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTrigge
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritAuthData;
 import me.redaalaoui.gerrit_rest_java_client.rest.GerritRestApiFactory;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.GerritApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ChangeApi;
+import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
 import org.jenkinsci.plugins.sonargerrit.util.DataHelper;
 import org.kohsuke.accmod.Restricted;
@@ -51,11 +53,22 @@ public class GerritConnector {
   }
 
   public GerritRevision fetchRevision() throws RestApiException {
-    return GerritRevision.load(
-        gerritApi
-            .changes()
-            .id(connectionInfo.getChangeNumber())
-            .revision(connectionInfo.getPatchsetNumber()));
+    return GerritRevision.load(change().revision(connectionInfo.getPatchsetNumber()));
+  }
+
+  public StaleCommentResolver createStaleCommentResolver() throws RestApiException {
+    return new StaleCommentResolver(
+        gerritApi.accounts().self().get()._accountId,
+        Integer.parseInt(connectionInfo.getPatchsetNumber()),
+        change().comments());
+  }
+
+  public void sendReview(int patchSetNumber, ReviewInput reviewInput) throws RestApiException {
+    change().revision(patchSetNumber).review(reviewInput);
+  }
+
+  private ChangeApi change() throws RestApiException {
+    return gerritApi.changes().id(connectionInfo.getChangeNumber());
   }
 
   private void checkRestApiAllowed(boolean useRestApi) {

@@ -1,0 +1,21 @@
+<div>
+    If checked, each build resolves the unresolved comment threads this plugin opened on the change whose issue is not
+    commented anymore:
+    <ul>
+        <li>on the built patch set, the threads whose issue is no longer reported or no longer passes the comment
+            filter;
+        </li>
+        <li>on the older patch sets, all of them, since the built patch set receives its own comment for each issue
+            still reported.
+        </li>
+    </ul>
+    An issue that already has an unresolved thread on the built patch set is not commented again. Gerrit's duplicate
+    comment omission is disabled, since it would also drop an issue reported again after its thread was resolved.
+    <p>
+        Threads are matched to issues by file, line and message. Changing the issue comment template makes every
+        existing thread look stale once.
+    </p>
+    <p>
+        Only applies to Standard comments: Gerrit ignores the resolution state of Robot comments.
+    </p>
+</div>

@@ -41,6 +41,8 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
   private boolean omitDuplicateComments = DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS;
 
+  private boolean resolveStaleComments = DescriptorImpl.RESOLVE_STALE_COMMENTS;
+
   public ReviewConfig(
       IssueFilterConfig issueFilterConfig,
       String noIssuesTitleTemplate,
@@ -125,6 +127,15 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
     this.omitDuplicateComments = omitDuplicateComments;
   }
 
+  public boolean isResolveStaleComments() {
+    return resolveStaleComments;
+  }
+
+  @DataBoundSetter
+  public void setResolveStaleComments(boolean resolveStaleComments) {
+    this.resolveStaleComments = resolveStaleComments;
+  }
+
   @Override
   public DescriptorImpl getDescriptor() {
     return new DescriptorImpl();
@@ -142,6 +153,8 @@ public class ReviewConfig extends AbstractDescribableImpl<ReviewConfig> {
 
     public static final boolean ISSUE_OMIT_DUPLICATE_COMMENTS =
         SonarToGerritPublisher.DescriptorImpl.ISSUE_OMIT_DUPLICATE_COMMENTS;
+
+    public static final boolean RESOLVE_STALE_COMMENTS = false;
 
     @SuppressWarnings(value = "unused")
     public String getCommentTypeDisplayName(ReviewCommentType commentType) {

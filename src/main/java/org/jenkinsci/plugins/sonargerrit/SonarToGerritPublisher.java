@@ -38,6 +38,7 @@ import org.jenkinsci.plugins.sonargerrit.gerrit.GerritConnector;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritReviewBuilder;
 import org.jenkinsci.plugins.sonargerrit.gerrit.GerritRevision;
 import org.jenkinsci.plugins.sonargerrit.gerrit.NotificationConfig;
+import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewCommentType;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ReviewConfig;
 import org.jenkinsci.plugins.sonargerrit.gerrit.ScoreConfig;
 import org.jenkinsci.plugins.sonargerrit.sonar.Inspection;
@@ -90,7 +91,8 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
     GerritConnectionInfo connectionInfo =
         new GerritConnectionInfo(env, trigger, authConfig, run.getParent());
     try {
-      GerritRevision revision = GerritConnector.connect(connectionInfo).fetchRevision();
+      GerritConnector connector = GerritConnector.connect(connectionInfo);
+      GerritRevision revision = connector.fetchRevision();
 
       // load inspection report
       InspectionReport report = inspectionConfig.analyse(run, listener, revision, filePath);
@@ -136,7 +138,16 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
                   scoreConfig,
                   notificationConfig)
               .buildReview();
+      Map<Integer, ReviewInput> olderPatchSetReviews = Map.of();
+      if (reviewConfig.isResolveStaleComments()
+          && reviewConfig.getCommentType() == ReviewCommentType.STANDARD) {
+        olderPatchSetReviews =
+            connector.createStaleCommentResolver().resolveStaleThreads(reviewInput);
+      }
       revision.sendReview(reviewInput);
+      for (Map.Entry<Integer, ReviewInput> olderPatchSetReview : olderPatchSetReviews.entrySet()) {
+        connector.sendReview(olderPatchSetReview.getKey(), olderPatchSetReview.getValue());
+      }
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
     } catch (RestApiException e) {
