@@ -48,11 +48,12 @@ public class StaleCommentResolver {
    * @return The reviews to post, by patch set number
    */
   public Map<Integer, ReviewInput> amendReviews(ReviewInput reviewedPatchSetReview) {
-    Map<Integer, List<CommentThread>> threadsByPatchSet =
+    Map<Integer, List<CommentThread>> unresolvedOwnThreadsByPatchSet =
         selectUnresolvedOwnThreads().stream()
             .filter(thread -> thread.patchSet() <= reviewedPatchSet)
             .collect(Collectors.groupingBy(CommentThread::patchSet));
-    return Stream.concat(Stream.of(reviewedPatchSet), threadsByPatchSet.keySet().stream())
+    return Stream.concat(
+            Stream.of(reviewedPatchSet), unresolvedOwnThreadsByPatchSet.keySet().stream())
         .distinct()
         .collect(
             Collectors.toUnmodifiableMap(
@@ -60,7 +61,7 @@ public class StaleCommentResolver {
                 patchSet ->
                     amend(
                         selectOrCreateReview(patchSet, reviewedPatchSetReview),
-                        threadsByPatchSet.getOrDefault(patchSet, List.of()))));
+                        unresolvedOwnThreadsByPatchSet.getOrDefault(patchSet, List.of()))));
   }
 
   /**
