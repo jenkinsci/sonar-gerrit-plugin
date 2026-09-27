@@ -3,14 +3,13 @@ package org.jenkinsci.plugins.sonargerrit.gerrit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.NotifyHandling;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.CommentInfo;
@@ -50,26 +49,23 @@ public class StaleCommentResolver {
     // reported again after its thread was resolved.
     review.omitDuplicateComments = false;
 
-    Map<String, List<ReviewInput.CommentInput>> newCommentsByPath = new HashMap<>();
-    if (review.comments != null) {
-      for (Map.Entry<String, List<ReviewInput.CommentInput>> reviewCommentsByPathEntry :
-          review.comments.entrySet()) {
-        newCommentsByPath.put(
-            reviewCommentsByPathEntry.getKey(),
-            new ArrayList<>(reviewCommentsByPathEntry.getValue()));
-      }
-    }
-    review.comments = newCommentsByPath;
+    List<CommentThread> reviewedPatchSetThreads =
+        selectUnresolvedOwnThreads().stream()
+            .filter(thread -> thread.root().patchSet == reviewedPatchSet)
+            .toList();
+    List<PathComment> newComments =
+        Optional.ofNullable(review.comments).orElseGet(Map::of).entrySet().stream()
+            .flatMap(PathComment::streamOf)
+            .toList();
 
-    for (CommentThread thread : selectUnresolvedOwnThreads()) {
-      if (thread.root().patchSet != reviewedPatchSet) {
-        continue;
-      }
-      if (removeMatchingComment(newCommentsByPath, thread)) {
-        continue;
-      }
-      thread.addResolvingReply(review);
-    }
+    Stream<PathComment> commentsToPost =
+        newComments.stream()
+            .filter(newComment -> isNotYetOpened(newComment, reviewedPatchSetThreads));
+    Stream<PathComment> resolvingReplies =
+        reviewedPatchSetThreads.stream()
+            .filter(thread -> isNoLongerReported(thread, newComments))
+            .map(CommentThread::createResolvingReply);
+    review.comments = groupByPath(Stream.concat(commentsToPost, resolvingReplies));
     return this;
   }
 
@@ -79,16 +75,13 @@ public class StaleCommentResolver {
    *     replies to.
    */
   public Map<Integer, ReviewInput> buildOldThreadRepliesByPatchSet() {
-    Map<Integer, ReviewInput> oldThreadRepliesByPatchSet = new HashMap<>();
-    for (CommentThread thread : selectUnresolvedOwnThreads()) {
-      int patchSet = thread.root().patchSet;
-      if (patchSet >= reviewedPatchSet) {
-        continue;
-      }
-      thread.addResolvingReply(
-          oldThreadRepliesByPatchSet.computeIfAbsent(patchSet, ignored -> createResolvingReview()));
-    }
-    return oldThreadRepliesByPatchSet;
+    return selectUnresolvedOwnThreads().stream()
+        .filter(thread -> thread.root().patchSet < reviewedPatchSet)
+        .collect(
+            Collectors.groupingBy(
+                thread -> thread.root().patchSet,
+                Collectors.collectingAndThen(
+                    Collectors.toList(), StaleCommentResolver::createResolvingReview)));
   }
 
   private List<CommentThread> selectUnresolvedOwnThreads() {
@@ -130,17 +123,12 @@ public class StaleCommentResolver {
         && GerritReviewBuilder.REVIEW_TAG.equals(comment.tag);
   }
 
-  private static boolean removeMatchingComment(
-      Map<String, List<ReviewInput.CommentInput>> newCommentsByPath, CommentThread thread) {
-    Iterator<ReviewInput.CommentInput> pathComments =
-        newCommentsByPath.getOrDefault(thread.path(), List.of()).iterator();
-    while (pathComments.hasNext()) {
-      if (matches(pathComments.next(), thread.root())) {
-        pathComments.remove();
-        return true;
-      }
-    }
-    return false;
+  private static boolean isNotYetOpened(PathComment newComment, List<CommentThread> threads) {
+    return threads.stream().noneMatch(thread -> thread.isOpenedBy(newComment));
+  }
+
+  private static boolean isNoLongerReported(CommentThread thread, List<PathComment> newComments) {
+    return newComments.stream().noneMatch(thread::isOpenedBy);
   }
 
   /** Gerrit stores a line 0 as a file comment, and trims the messages. */
@@ -154,17 +142,38 @@ public class StaleCommentResolver {
     return Optional.ofNullable(line).orElse(0);
   }
 
-  private static ReviewInput createResolvingReview() {
+  private static ReviewInput createResolvingReview(List<CommentThread> threads) {
     ReviewInput review = new ReviewInput();
     review.tag = GerritReviewBuilder.REVIEW_TAG;
     review.notify = NotifyHandling.NONE;
-    review.comments = new HashMap<>();
+    review.comments = groupByPath(threads.stream().map(CommentThread::createResolvingReply));
     return review;
+  }
+
+  private static Map<String, List<ReviewInput.CommentInput>> groupByPath(
+      Stream<PathComment> comments) {
+    return comments.collect(
+        Collectors.groupingBy(
+            PathComment::path,
+            Collectors.mapping(PathComment::comment, Collectors.toUnmodifiableList())));
+  }
+
+  private record PathComment(String path, ReviewInput.CommentInput comment) {
+
+    static Stream<PathComment> streamOf(
+        Map.Entry<String, List<ReviewInput.CommentInput>> commentsByPathEntry) {
+      return commentsByPathEntry.getValue().stream()
+          .map(comment -> new PathComment(commentsByPathEntry.getKey(), comment));
+    }
   }
 
   private record CommentThread(String path, CommentInfo root, CommentInfo last) {
 
-    void addResolvingReply(ReviewInput review) {
+    boolean isOpenedBy(PathComment comment) {
+      return path.equals(comment.path()) && matches(comment.comment(), root);
+    }
+
+    PathComment createResolvingReply() {
       ReviewInput.CommentInput reply = new ReviewInput.CommentInput();
       reply.inReplyTo = last.id;
       reply.side = root.side;
@@ -172,7 +181,7 @@ public class StaleCommentResolver {
       reply.range = root.range;
       reply.message = RESOLUTION_MESSAGE;
       reply.unresolved = false;
-      review.comments.computeIfAbsent(path, ignored -> new ArrayList<>()).add(reply);
+      return new PathComment(path, reply);
     }
   }
 }
