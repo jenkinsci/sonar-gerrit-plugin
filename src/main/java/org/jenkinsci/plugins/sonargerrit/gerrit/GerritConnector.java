@@ -25,9 +25,11 @@ public class GerritConnector {
 
   private final GerritConnectionInfo connectionInfo;
   private final GerritApi gerritApi;
+  private final int reviewedPatchSet;
 
   private GerritConnector(GerritConnectionInfo connectionInfo) {
     this.connectionInfo = connectionInfo;
+    reviewedPatchSet = Integer.parseInt(connectionInfo.getPatchsetNumber());
 
     String serverName = connectionInfo.getServerName();
 
@@ -58,13 +60,15 @@ public class GerritConnector {
 
   public StaleCommentResolver createStaleCommentResolver() throws RestApiException {
     return new StaleCommentResolver(
-        gerritApi.accounts().self().get()._accountId,
-        Integer.parseInt(connectionInfo.getPatchsetNumber()),
-        change().comments());
+        gerritApi.accounts().self().get()._accountId, reviewedPatchSet, change().comments());
   }
 
   public void sendReview(int patchSetNumber, ReviewInput reviewInput) throws RestApiException {
     change().revision(patchSetNumber).review(reviewInput);
+  }
+
+  public int reviewedPatchSet() {
+    return reviewedPatchSet;
   }
 
   private ChangeApi change() throws RestApiException {

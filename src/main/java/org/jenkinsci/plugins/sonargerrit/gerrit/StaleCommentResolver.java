@@ -41,47 +41,59 @@ public class StaleCommentResolver {
   }
 
   /**
-   * Drops from {@code review} the comments already opened as an unresolved thread of the reviewed
-   * patch set, and adds to it the replies resolving the other threads of that patch set.
+   * Amends {@code review}, the review of the reviewed patch set, and adds a review for each older
+   * patch set holding a stale thread. Gerrit requires a reply to be posted on the patch set of the
+   * comment it replies to.
+   *
+   * @return The reviews to post, by patch set number
    */
-  public StaleCommentResolver amendReview(ReviewInput review) {
+  public Map<Integer, ReviewInput> amendReviews(ReviewInput review) {
+    Map<Integer, List<CommentThread>> threadsByPatchSet =
+        selectUnresolvedOwnThreads().stream()
+            .filter(thread -> thread.patchSet() <= reviewedPatchSet)
+            .collect(Collectors.groupingBy(CommentThread::patchSet));
+    return Stream.concat(Stream.of(reviewedPatchSet), threadsByPatchSet.keySet().stream())
+        .distinct()
+        .collect(
+            Collectors.toUnmodifiableMap(
+                Function.identity(),
+                patchSet ->
+                    amend(
+                        selectOrCreateReview(patchSet, review),
+                        threadsByPatchSet.getOrDefault(patchSet, List.of()))));
+  }
+
+  /**
+   * Drops from {@code review} the comments already opened as one of the unresolved {@code threads},
+   * and adds to it the replies resolving the other threads.
+   */
+  private static ReviewInput amend(ReviewInput review, List<CommentThread> threads) {
     // Gerrit's duplicate detection also matches resolved comments. It would silently drop an issue
     // reported again after its thread was resolved.
     review.omitDuplicateComments = false;
 
-    List<CommentThread> reviewedPatchSetThreads =
-        selectUnresolvedOwnThreads().stream()
-            .filter(thread -> thread.root().patchSet == reviewedPatchSet)
-            .toList();
     List<PathComment> newComments =
         Optional.ofNullable(review.comments).orElseGet(Map::of).entrySet().stream()
             .flatMap(PathComment::streamOf)
             .toList();
-
     Stream<PathComment> commentsToPost =
-        newComments.stream()
-            .filter(newComment -> isNotYetOpened(newComment, reviewedPatchSetThreads));
+        newComments.stream().filter(newComment -> isNotYetOpened(newComment, threads));
     Stream<PathComment> resolvingReplies =
-        reviewedPatchSetThreads.stream()
+        threads.stream()
             .filter(thread -> isNoLongerReported(thread, newComments))
             .map(CommentThread::createResolvingReply);
     review.comments = groupByPath(Stream.concat(commentsToPost, resolvingReplies));
-    return this;
+    return review;
   }
 
-  /**
-   * @return The reviews resolving the threads of the patch sets older than the reviewed one, by
-   *     patch set number. Gerrit requires a reply to be posted on the patch set of the comment it
-   *     replies to.
-   */
-  public Map<Integer, ReviewInput> buildOldThreadRepliesByPatchSet() {
-    return selectUnresolvedOwnThreads().stream()
-        .filter(thread -> thread.root().patchSet < reviewedPatchSet)
-        .collect(
-            Collectors.groupingBy(
-                thread -> thread.root().patchSet,
-                Collectors.collectingAndThen(
-                    Collectors.toList(), StaleCommentResolver::createResolvingReview)));
+  private ReviewInput selectOrCreateReview(int patchSet, ReviewInput reviewedPatchSetReview) {
+    if (patchSet == reviewedPatchSet) {
+      return reviewedPatchSetReview;
+    }
+    ReviewInput review = new ReviewInput();
+    review.tag = GerritReviewBuilder.REVIEW_TAG;
+    review.notify = NotifyHandling.NONE;
+    return review;
   }
 
   private List<CommentThread> selectUnresolvedOwnThreads() {
@@ -142,14 +154,6 @@ public class StaleCommentResolver {
     return Optional.ofNullable(line).orElse(0);
   }
 
-  private static ReviewInput createResolvingReview(List<CommentThread> threads) {
-    ReviewInput review = new ReviewInput();
-    review.tag = GerritReviewBuilder.REVIEW_TAG;
-    review.notify = NotifyHandling.NONE;
-    review.comments = groupByPath(threads.stream().map(CommentThread::createResolvingReply));
-    return review;
-  }
-
   private static Map<String, List<ReviewInput.CommentInput>> groupByPath(
       Stream<PathComment> comments) {
     return comments.collect(
@@ -168,6 +172,10 @@ public class StaleCommentResolver {
   }
 
   private record CommentThread(String path, CommentInfo root, CommentInfo last) {
+
+    int patchSet() {
+      return root.patchSet;
+    }
 
     boolean isOpenedBy(PathComment comment) {
       return path.equals(comment.path()) && matches(comment.comment(), root);
