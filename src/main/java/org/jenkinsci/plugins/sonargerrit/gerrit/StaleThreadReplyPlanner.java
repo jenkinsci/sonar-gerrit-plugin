@@ -56,9 +56,10 @@ public class StaleThreadReplyPlanner {
 
     Map<String, List<ReviewInput.CommentInput>> newCommentsByPath = new HashMap<>();
     if (review.comments != null) {
-      for (Map.Entry<String, List<ReviewInput.CommentInput>> pathComments :
+      for (Map.Entry<String, List<ReviewInput.CommentInput>> reviewCommentsByPath :
           review.comments.entrySet()) {
-        newCommentsByPath.put(pathComments.getKey(), new ArrayList<>(pathComments.getValue()));
+        newCommentsByPath.put(
+            reviewCommentsByPath.getKey(), new ArrayList<>(reviewCommentsByPath.getValue()));
       }
     }
     review.comments = newCommentsByPath;
@@ -90,20 +91,21 @@ public class StaleThreadReplyPlanner {
 
   private List<CommentThread> selectUnresolvedOwnThreads() {
     List<CommentThread> threads = new ArrayList<>();
-    for (Map.Entry<String, List<CommentInfo>> pathComments : publishedCommentsByPath.entrySet()) {
+    for (Map.Entry<String, List<CommentInfo>> commentsByPath : publishedCommentsByPath.entrySet()) {
       Map<String, CommentInfo> commentById =
-          pathComments.getValue().stream()
+          commentsByPath.getValue().stream()
               .collect(Collectors.toMap(comment -> comment.id, Function.identity()));
       Map<CommentInfo, List<CommentInfo>> commentsByRoot =
-          pathComments.getValue().stream()
+          commentsByPath.getValue().stream()
               .collect(Collectors.groupingBy(comment -> findRoot(comment, commentById)));
-      for (Map.Entry<CommentInfo, List<CommentInfo>> threadComments : commentsByRoot.entrySet()) {
-        CommentInfo root = threadComments.getKey();
+      for (Map.Entry<CommentInfo, List<CommentInfo>> threadCommentsByRoot :
+          commentsByRoot.entrySet()) {
+        CommentInfo root = threadCommentsByRoot.getKey();
         CommentInfo last =
             Collections.max(
-                threadComments.getValue(), Comparator.comparing(comment -> comment.updated));
+                threadCommentsByRoot.getValue(), Comparator.comparing(comment -> comment.updated));
         if (isOwn(root) && Boolean.TRUE.equals(last.unresolved)) {
-          threads.add(new CommentThread(pathComments.getKey(), root, last));
+          threads.add(new CommentThread(commentsByPath.getKey(), root, last));
         }
       }
     }

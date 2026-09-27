@@ -145,9 +145,9 @@ public class SonarToGerritPublisher extends Notifier implements SimpleBuildStep 
             connector.createStaleThreadReplyPlanner().prepareStaleThreadReplies(reviewInput);
       }
       revision.sendReview(reviewInput);
-      for (Map.Entry<Integer, ReviewInput> oldThreadReplies :
+      for (Map.Entry<Integer, ReviewInput> repliesByPatchSet :
           oldThreadRepliesByPatchSet.entrySet()) {
-        connector.sendReview(oldThreadReplies.getKey(), oldThreadReplies.getValue());
+        connector.sendReview(repliesByPatchSet.getKey(), repliesByPatchSet.getValue());
       }
 
       TaskListenerLogger.logMessage(listener, LOGGER, Level.INFO, "jenkins.plugin.review.sent");
