@@ -55,7 +55,7 @@ class ReviewTest {
   private static final boolean RESOLVE_STALE_COMMENTS = true;
   private static final boolean LEAVE_STALE_COMMENTS = false;
   private static final boolean OMIT_DUPLICATE_COMMENTS = true;
-  private static final boolean POST_DUPLICATE_COMMENTS = false;
+  private static final boolean ALLOW_DUPLICATE_COMMENTS = false;
   private static final String S1186_VIOLATION =
       "package org.example; "
           + "public class UselessConstructorDeclaration { "
@@ -156,7 +156,7 @@ class ReviewTest {
             null,
             null,
             LEAVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -181,7 +181,7 @@ class ReviewTest {
             null,
             null,
             LEAVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -212,7 +212,7 @@ class ReviewTest {
             null,
             null,
             LEAVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -233,7 +233,7 @@ class ReviewTest {
             "/child2/**",
             null,
             LEAVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -256,7 +256,7 @@ class ReviewTest {
             null,
             "/child2/**",
             LEAVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     ChangeInfo changeDetail = change.getDetail();
     assertThat(changeDetail.labels.get(GerritServer.CODE_QUALITY_LABEL).all)
@@ -281,7 +281,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
     triggerAndAssertSuccess(
         createPipelineJob(
             change,
@@ -290,7 +290,7 @@ class ReviewTest {
             "/child2/**",
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     List<CommentInfo> issueComments =
@@ -316,7 +316,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
     git.addAndCommitFile(FILEPATH, S1186_VIOLATION + "\n", true);
     git.createGerritChangeForMaster();
     triggerAndAssertSuccess(
@@ -327,7 +327,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     Map<Integer, CommentInfo> issueCommentByPatchSet =
@@ -358,7 +358,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
     triggerAndAssertSuccess(
         createPipelineJob(
             change,
@@ -367,7 +367,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     assertThat(comments).hasSize(1);
@@ -387,7 +387,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
     CommentInfo issueComment = change.listComments().get(0);
     ReviewInput.CommentInput resolvingReply = new ReviewInput.CommentInput();
     resolvingReply.inReplyTo = issueComment.id;
@@ -429,7 +429,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
     ReviewInput.CommentInput humanComment = new ReviewInput.CommentInput();
     humanComment.line = 1;
     humanComment.message = "Please check";
@@ -446,7 +446,7 @@ class ReviewTest {
             "/child2/**",
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     List<CommentInfo> comments = change.listComments();
     List<CommentInfo> humanComments =
@@ -473,7 +473,7 @@ class ReviewTest {
             null,
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     triggerAndAssertSuccess(
         createPipelineJob(
@@ -483,7 +483,7 @@ class ReviewTest {
             "/child2/**",
             null,
             RESOLVE_STALE_COMMENTS,
-            POST_DUPLICATE_COMMENTS));
+            ALLOW_DUPLICATE_COMMENTS));
 
     assertThat(change.listComments())
         .extracting(comment -> comment.patchSet, comment -> comment.unresolved)
