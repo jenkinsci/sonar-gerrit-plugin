@@ -452,6 +452,7 @@ class ReviewTest {
     List<CommentInfo> humanComments =
         comments.stream().filter(comment -> "Please check".equals(comment.message)).toList();
     assertThat(humanComments).hasSize(1);
+    assertThat(humanComments.get(0).unresolved).isTrue();
     String humanCommentId = humanComments.get(0).id;
     assertThat(comments).noneMatch(comment -> humanCommentId.equals(comment.inReplyTo));
     assertThat(comments)
