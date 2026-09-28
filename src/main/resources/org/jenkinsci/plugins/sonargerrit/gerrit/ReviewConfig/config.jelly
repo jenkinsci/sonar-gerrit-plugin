@@ -39,4 +39,10 @@
             description="${%jenkins.plugin.settings.gerrit.review.omit.duplicate.comments.description}">
         <f:checkbox selected="${omitDuplicateComments}" default="descriptor.ISSUE_OMIT_DUPLICATE_COMMENTS"/>
     </f:entry>
+
+    <f:entry
+            title="${%jenkins.plugin.settings.gerrit.review.resolve.stale.comments}"
+            field="resolveStaleComments">
+        <f:checkbox default="${descriptor.RESOLVE_STALE_COMMENTS}"/>
+    </f:entry>
 </j:jelly>

@@ -335,6 +335,7 @@ node {
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
                          issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
                          omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit. Defaults to false.'
+                         resolveStaleComments   : 'If true, resolves the unresolved Standard comment threads of the plugin whose issue is no longer commented. Defaults to false.'
                  ],
                  scoreConfig: [
                          issueFilterConfig: [
@@ -417,6 +418,7 @@ node {
                          someIssuesTitleTemplate: '<total_count> SonarQube violations have been found.',
                          issueCommentTemplate   : '<severity> SonarQube violation:\n\n\n<message>\n\n\nRead more: <rule_url>'
                          omitDuplicateComments  : 'If true, comments with the same content at the same place will be omitted by Gerrit. Defaults to false.'
+                         resolveStaleComments   : 'If true, resolves the unresolved Standard comment threads of the plugin whose issue is no longer commented. Defaults to false.'
                  ],
                  scoreConfig: [
                          issueFilterConfig: [

@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.sonargerrit.gerrit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.ReviewInput;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.api.changes.RevisionApi;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.common.DiffInfo;
 import me.redaalaoui.gerrit_rest_java_client.thirdparty.com.google.gerrit.extensions.restapi.RestApiException;
@@ -29,10 +28,6 @@ public class GerritRevision implements Revision {
 
   public static GerritRevision load(RevisionApi revision) throws RestApiException {
     return new GerritRevision(revision, revision.files().keySet());
-  }
-
-  public void sendReview(ReviewInput reviewInput) throws RestApiException {
-    revision.review(reviewInput);
   }
 
   @Override
